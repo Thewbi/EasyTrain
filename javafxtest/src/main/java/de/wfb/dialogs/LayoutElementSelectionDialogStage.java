@@ -61,7 +61,6 @@ public class LayoutElementSelectionDialogStage extends Stage {
 
 	private void setupButtons(final GridPane gridPane) throws FileNotFoundException {
 
-		// Creating a ToggleGroup
 		final ToggleGroup toggleGroup = new ToggleGroup();
 
 		final ToggleButton turnTopRightButton = createToggleButton(toggleGroup,
@@ -105,6 +104,12 @@ public class LayoutElementSelectionDialogStage extends Stage {
 		GridPane.setColumnIndex(straightHorizontalButton, 6);
 		GridPane.setRowIndex(straightHorizontalButton, 1);
 		gridPane.getChildren().add(straightHorizontalButton);
+
+		final ToggleButton removeButton = createToggleButton(toggleGroup, "src/main/resources/REMOVE_SELECTED.png",
+				"src/main/resources/REMOVE.png", ShapeType.REMOVE);
+		GridPane.setColumnIndex(removeButton, 7);
+		GridPane.setRowIndex(removeButton, 1);
+		gridPane.getChildren().add(removeButton);
 
 		// straightHorizontalButton.setSelected(true);
 

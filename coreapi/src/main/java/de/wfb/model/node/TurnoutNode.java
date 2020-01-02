@@ -24,4 +24,9 @@ public class TurnoutNode extends Node {
 		thrown = !thrown;
 	}
 
+	@Override
+	public String toString() {
+		return "TurnoutNode(" + x + ", " + y + ", " + shapeType + ")";
+	}
+
 }

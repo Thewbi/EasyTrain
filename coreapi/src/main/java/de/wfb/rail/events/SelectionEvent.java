@@ -10,11 +10,16 @@ public class SelectionEvent extends ApplicationEvent {
 
 	private final int y;
 
-	public SelectionEvent(final Object source, final String message, final int x, final int y) {
+	private final boolean shiftState;
+
+	public SelectionEvent(final Object source, final String message, final int x, final int y,
+			final boolean shiftState) {
+
 		super(source);
 		this.message = message;
 		this.x = x;
 		this.y = y;
+		this.shiftState = shiftState;
 	}
 
 	public String getMessage() {
@@ -27,6 +32,10 @@ public class SelectionEvent extends ApplicationEvent {
 
 	public int getY() {
 		return y;
+	}
+
+	public boolean isShiftState() {
+		return shiftState;
 	}
 
 }

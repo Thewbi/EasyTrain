@@ -19,4 +19,6 @@ public interface ModelService {
 
 	void sendModelChangedEvent(int x, int y);
 
+	void connect(Node nodeA, Node nodeB);
+
 }

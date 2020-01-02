@@ -20,6 +20,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		switch (shapeType) {
 
 		case NONE:
+		case REMOVE:
 			return null;
 
 		case SQUARE:

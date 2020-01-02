@@ -68,7 +68,10 @@ public class DefaultModelService implements ModelService {
 		}
 	}
 
+	@Override
 	public void sendModelChangedEvent(final int x, final int y) {
+
+		logger.info("sendModelChangedEvent() x: " + x + " y: " + y);
 
 		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, x, y);
 
@@ -78,14 +81,30 @@ public class DefaultModelService implements ModelService {
 	@Override
 	public void addNode(final int x, final int y, final ShapeType shapeType) {
 
+		logger.info("addNode() x: " + x + " y: " + y + " shapeType: " + shapeType);
+
 		// remove a node that was at that location beforehand
 		final Node oldNode = model.getNode(x, y);
 		if (oldNode != null) {
+
 			nodeConnectorService.disconnect(oldNode);
 			model.removeNode(x, y);
 			model.getIdMap().remove(oldNode.getId());
 		}
 
+		// abort operation for certain shape types
+		switch (shapeType) {
+		case NONE:
+			return;
+		case REMOVE:
+			sendModelChangedEvent(x, y);
+			return;
+
+		default:
+			break;
+		}
+
+		logger.info("Creating new node!");
 		final Node newNode = nodeFactory.create(x, y, shapeType);
 		// for fast retrieval by id
 		model.getIdMap().put(newNode.getId(), newNode);
@@ -99,6 +118,9 @@ public class DefaultModelService implements ModelService {
 
 	@Override
 	public void storeModel() {
+
+		logger.info("storeModel()");
+
 		try {
 			modelPersistenceService.storeModel(model, "persistence/model.json");
 		} catch (final IOException e) {
@@ -113,6 +135,16 @@ public class DefaultModelService implements ModelService {
 		} catch (final IOException e) {
 			logger.error(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public void connect(final Node nodeA, final Node nodeB) {
+
+		nodeA.getLeftList().add(nodeB);
+		nodeB.getRightList().add(nodeA);
+
+		storeModel();
+
 	}
 
 }

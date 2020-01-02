@@ -84,6 +84,200 @@ public class DefaultNodeConnectorService implements NodeConnectorService {
 		}
 	}
 
+	private void connectStraightHorizontal(final Node node) {
+
+		final int x = node.getX();
+		final int y = node.getY();
+
+		// right
+		final Optional<Node> rightNodeOptional = modelService.getNode(x + 1, y);
+		if (rightNodeOptional.isPresent()) {
+
+			final Node rightNode = rightNodeOptional.get();
+			if (orientationMatches(node, rightNode)) {
+
+				node.getRightList().add(rightNode);
+				rightNode.getLeftList().add(node);
+				logger.info("Connected node " + node.getId() + " to node " + rightNode.getId());
+			}
+		}
+
+		// left
+		final Optional<Node> leftNodeOptional = modelService.getNode(x - 1, y);
+		if (leftNodeOptional.isPresent()) {
+
+			final Node leftNode = leftNodeOptional.get();
+			if (orientationMatches(node, leftNode)) {
+
+				node.getLeftList().add(leftNode);
+				leftNode.getRightList().add(node);
+				logger.info("Connected node " + node.getId() + " to node " + leftNode.getId());
+			}
+		}
+
+	}
+
+	private boolean orientationMatches(final Node lhs, final Node rhs) {
+
+		final Boolean lhsHorizontal = lhs.isHorizontal();
+		final Boolean rhsHorizontal = rhs.isHorizontal();
+
+		if (lhsHorizontal == null && rhsHorizontal == null) {
+			return true;
+		}
+
+		if (lhsHorizontal != null && rhsHorizontal != null) {
+			return lhsHorizontal.booleanValue() == rhsHorizontal.booleanValue();
+		}
+
+		return false;
+	}
+
+	private void connectStraightVertical(final Node node) {
+
+		logger.info("connectStraightVertical()");
+
+		final int x = node.getX();
+		final int y = node.getY();
+
+		final Optional<Node> rightNodeOptional = modelService.getNode(x, y + 1);
+		if (rightNodeOptional.isPresent()) {
+
+			final Node rightNode = rightNodeOptional.get();
+			if (orientationMatches(node, rightNode)) {
+
+				node.getRightList().add(rightNode);
+				rightNode.getLeftList().add(node);
+				logger.info("Connected node " + node.getId() + " to node " + rightNode.getId());
+			}
+		}
+
+		final Optional<Node> leftNodeOptional = modelService.getNode(x, y - 1);
+		if (leftNodeOptional.isPresent()) {
+
+			final Node leftNode = leftNodeOptional.get();
+			if (orientationMatches(node, leftNode)) {
+
+				node.getLeftList().add(leftNode);
+				leftNode.getRightList().add(node);
+				logger.info("Connected node " + node.getId() + " to node " + leftNode.getId());
+			}
+		}
+	}
+
+	private void connectTurnLeftTop(final Node node) {
+
+		final int x = node.getX();
+		final int y = node.getY();
+
+		// top
+		final Optional<Node> rightNodeOptional = modelService.getNode(x, y - 1);
+		if (rightNodeOptional.isPresent()) {
+
+			final Node rightNode = rightNodeOptional.get();
+			node.getRightList().add(rightNode);
+			rightNode.getLeftList().add(node);
+
+			logger.info("Connected node " + node.getId() + " to node " + rightNode.getId());
+		}
+
+		// left
+		final Optional<Node> leftNodeOptional = modelService.getNode(x - 1, y);
+		if (leftNodeOptional.isPresent()) {
+
+			final Node leftNode = leftNodeOptional.get();
+			node.getLeftList().add(leftNode);
+			leftNode.getRightList().add(node);
+
+			logger.info("Connected node " + node.getId() + " to node " + leftNode.getId());
+		}
+
+	}
+
+	private void connectTurnTopRight(final Node node) {
+
+		final int x = node.getX();
+		final int y = node.getY();
+
+		// top
+		final Optional<Node> rightNodeOptional = modelService.getNode(x, y - 1);
+		if (rightNodeOptional.isPresent()) {
+
+			final Node rightNode = rightNodeOptional.get();
+			node.getRightList().add(rightNode);
+			rightNode.getLeftList().add(node);
+
+			logger.info("Connected node " + node.getId() + " to node " + rightNode.getId());
+		}
+
+		// right
+		final Optional<Node> leftNodeOptional = modelService.getNode(x + 1, y);
+		if (leftNodeOptional.isPresent()) {
+
+			final Node leftNode = leftNodeOptional.get();
+			node.getLeftList().add(leftNode);
+			leftNode.getRightList().add(node);
+
+			logger.info("Connected node " + node.getId() + " to node " + leftNode.getId());
+		}
+	}
+
+	private void connectTurnRightBottom(final Node node) {
+
+		final int x = node.getX();
+		final int y = node.getY();
+
+		// right
+		final Optional<Node> rightNodeOptional = modelService.getNode(x + 1, y);
+		if (rightNodeOptional.isPresent()) {
+
+			final Node rightNode = rightNodeOptional.get();
+			node.getRightList().add(rightNode);
+			rightNode.getLeftList().add(node);
+
+			logger.info("Connected node " + node.getId() + " to node " + rightNode.getId());
+		}
+
+		// bottom
+		final Optional<Node> leftNodeOptional = modelService.getNode(x, y + 1);
+		if (leftNodeOptional.isPresent()) {
+
+			final Node leftNode = leftNodeOptional.get();
+			node.getLeftList().add(leftNode);
+			leftNode.getRightList().add(node);
+
+			logger.info("Connected node " + node.getId() + " to node " + leftNode.getId());
+		}
+	}
+
+	private void connectTurnBottomLeft(final Node node) {
+
+		final int x = node.getX();
+		final int y = node.getY();
+
+		// bottom
+		final Optional<Node> rightNodeOptional = modelService.getNode(x, y + 1);
+		if (rightNodeOptional.isPresent()) {
+
+			final Node rightNode = rightNodeOptional.get();
+			node.getRightList().add(rightNode);
+			rightNode.getLeftList().add(node);
+
+			logger.info("Connected node " + node.getId() + " to node " + rightNode.getId());
+		}
+
+		// left
+		final Optional<Node> leftNodeOptional = modelService.getNode(x - 1, y);
+		if (leftNodeOptional.isPresent()) {
+
+			final Node leftNode = leftNodeOptional.get();
+			node.getLeftList().add(leftNode);
+			leftNode.getRightList().add(node);
+
+			logger.info("Connected node " + node.getId() + " to node " + leftNode.getId());
+		}
+	}
+
 	private void connectSwitchLeft0(final Node node) {
 
 		final int x = node.getX();
@@ -610,200 +804,37 @@ public class DefaultNodeConnectorService implements NodeConnectorService {
 
 	private void disconnectStraightVertical(final Node node) {
 
+		logger.info("disconnectStraightVertical()");
+
 		final int x = node.getX();
 		final int y = node.getY();
 
-		// top
+		// bottom
 		final Optional<Node> rightNodeOptional = modelService.getNode(x, y + 1);
 		if (rightNodeOptional.isPresent()) {
 
 			final Node rightNode = rightNodeOptional.get();
 			rightNode.getLeftList().remove(node);
 
+			logger.info("left list = " + rightNode.getLeftList());
+
 			logger.info("Disconnected node " + node.getId() + " from node " + rightNode.getId());
 		}
 
-		// bottom
+		// top
 		final Optional<Node> leftNodeOptional = modelService.getNode(x, y - 1);
 		if (leftNodeOptional.isPresent()) {
 
 			final Node leftNode = leftNodeOptional.get();
 			leftNode.getRightList().remove(node);
 
+			logger.info("left list = " + leftNode.getRightList());
+
 			logger.info("Disconnected node " + node.getId() + " from node " + leftNode.getId());
 		}
 
 		node.getLeftList().clear();
 		node.getRightList().clear();
-	}
-
-	private void connectTurnLeftTop(final Node node) {
-
-		final int x = node.getX();
-		final int y = node.getY();
-
-		// top
-		final Optional<Node> rightNodeOptional = modelService.getNode(x, y - 1);
-		if (rightNodeOptional.isPresent()) {
-
-			final Node rightNode = rightNodeOptional.get();
-			node.getRightList().add(rightNode);
-			rightNode.getLeftList().add(node);
-
-			logger.info("Connected node " + node.getId() + " to node " + rightNode.getId());
-		}
-
-		// left
-		final Optional<Node> leftNodeOptional = modelService.getNode(x - 1, y);
-		if (leftNodeOptional.isPresent()) {
-
-			final Node leftNode = leftNodeOptional.get();
-			node.getLeftList().add(leftNode);
-			leftNode.getRightList().add(node);
-
-			logger.info("Connected node " + node.getId() + " to node " + leftNode.getId());
-		}
-
-	}
-
-	private void connectTurnTopRight(final Node node) {
-
-		final int x = node.getX();
-		final int y = node.getY();
-
-		// top
-		final Optional<Node> rightNodeOptional = modelService.getNode(x, y - 1);
-		if (rightNodeOptional.isPresent()) {
-
-			final Node rightNode = rightNodeOptional.get();
-			node.getRightList().add(rightNode);
-			rightNode.getLeftList().add(node);
-
-			logger.info("Connected node " + node.getId() + " to node " + rightNode.getId());
-		}
-
-		// right
-		final Optional<Node> leftNodeOptional = modelService.getNode(x + 1, y);
-		if (leftNodeOptional.isPresent()) {
-
-			final Node leftNode = leftNodeOptional.get();
-			node.getLeftList().add(leftNode);
-			leftNode.getRightList().add(node);
-
-			logger.info("Connected node " + node.getId() + " to node " + leftNode.getId());
-		}
-	}
-
-	private void connectTurnRightBottom(final Node node) {
-
-		final int x = node.getX();
-		final int y = node.getY();
-
-		// right
-		final Optional<Node> rightNodeOptional = modelService.getNode(x + 1, y);
-		if (rightNodeOptional.isPresent()) {
-
-			final Node rightNode = rightNodeOptional.get();
-			node.getRightList().add(rightNode);
-			rightNode.getLeftList().add(node);
-
-			logger.info("Connected node " + node.getId() + " to node " + rightNode.getId());
-		}
-
-		// bottom
-		final Optional<Node> leftNodeOptional = modelService.getNode(x, y + 1);
-		if (leftNodeOptional.isPresent()) {
-
-			final Node leftNode = leftNodeOptional.get();
-			node.getLeftList().add(leftNode);
-			leftNode.getRightList().add(node);
-
-			logger.info("Connected node " + node.getId() + " to node " + leftNode.getId());
-		}
-	}
-
-	private void connectTurnBottomLeft(final Node node) {
-
-		final int x = node.getX();
-		final int y = node.getY();
-
-		// bottom
-		final Optional<Node> rightNodeOptional = modelService.getNode(x, y + 1);
-		if (rightNodeOptional.isPresent()) {
-
-			final Node rightNode = rightNodeOptional.get();
-			node.getRightList().add(rightNode);
-			rightNode.getLeftList().add(node);
-
-			logger.info("Connected node " + node.getId() + " to node " + rightNode.getId());
-		}
-
-		// left
-		final Optional<Node> leftNodeOptional = modelService.getNode(x - 1, y);
-		if (leftNodeOptional.isPresent()) {
-
-			final Node leftNode = leftNodeOptional.get();
-			node.getLeftList().add(leftNode);
-			leftNode.getRightList().add(node);
-
-			logger.info("Connected node " + node.getId() + " to node " + leftNode.getId());
-		}
-	}
-
-	private void connectStraightHorizontal(final Node node) {
-
-		final int x = node.getX();
-		final int y = node.getY();
-
-		// right
-		final Optional<Node> rightNodeOptional = modelService.getNode(x + 1, y);
-		if (rightNodeOptional.isPresent()) {
-
-			final Node rightNode = rightNodeOptional.get();
-			node.getRightList().add(rightNode);
-			rightNode.getLeftList().add(node);
-
-			logger.info("Connected node " + node.getId() + " to node " + rightNode.getId());
-		}
-
-		// left
-		final Optional<Node> leftNodeOptional = modelService.getNode(x - 1, y);
-		if (leftNodeOptional.isPresent()) {
-
-			final Node leftNode = leftNodeOptional.get();
-			node.getLeftList().add(leftNode);
-			leftNode.getRightList().add(node);
-
-			logger.info("Connected node " + node.getId() + " to node " + leftNode.getId());
-		}
-
-	}
-
-	private void connectStraightVertical(final Node node) {
-
-		final int x = node.getX();
-		final int y = node.getY();
-
-		final Optional<Node> rightNodeOptional = modelService.getNode(x, y + 1);
-		if (rightNodeOptional.isPresent()) {
-
-			final Node rightNode = rightNodeOptional.get();
-			node.getRightList().add(rightNode);
-			rightNode.getLeftList().add(node);
-
-			logger.info("Connected node " + node.getId() + " to node " + rightNode.getId());
-		}
-
-		final Optional<Node> leftNodeOptional = modelService.getNode(x, y - 1);
-		if (leftNodeOptional.isPresent()) {
-
-			final Node leftNode = leftNodeOptional.get();
-			node.getLeftList().add(leftNode);
-			leftNode.getRightList().add(node);
-
-			logger.info("Connected node " + node.getId() + " to node " + leftNode.getId());
-		}
-
 	}
 
 	private void disconnectSwitchLeft0(final Node node) {

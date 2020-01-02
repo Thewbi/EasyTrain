@@ -118,6 +118,12 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 				for (final int leftNodeId : jsonNode.getLeftList()) {
 
 					final Node leftNode = model.getIdMap().get(leftNodeId);
+
+					logger.info("leftNode = " + leftNode);
+					if (leftNode == null) {
+						throw new NullPointerException("Cannot load node having the id: " + leftNodeId);
+					}
+
 					node.getLeftList().add(leftNode);
 				}
 			}
@@ -127,6 +133,12 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 				for (final int rightNodeId : jsonNode.getRightList()) {
 
 					final Node rightNode = model.getIdMap().get(rightNodeId);
+
+					logger.info("rightNode = " + rightNode);
+					if (rightNode == null) {
+						throw new NullPointerException("Cannot load node having the id: " + rightNodeId);
+					}
+
 					node.getRightList().add(rightNode);
 				}
 			}

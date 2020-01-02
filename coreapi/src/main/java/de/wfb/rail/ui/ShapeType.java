@@ -4,6 +4,8 @@ public enum ShapeType {
 
 	NONE,
 
+	REMOVE,
+
 	SQUARE,
 
 	TRIANGLE,

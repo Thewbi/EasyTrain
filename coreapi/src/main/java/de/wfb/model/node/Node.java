@@ -9,11 +9,17 @@ public class Node {
 
 	private int id;
 
-	private int x;
+	protected int x;
 
-	private int y;
+	protected int y;
 
-	private ShapeType shapeType;
+	protected ShapeType shapeType;
+
+	/**
+	 * Is this rail going from left to right (Horizontal). This is important when
+	 * automatically connecting nodes.
+	 */
+	private Boolean horizontal;
 
 	private final List<Node> leftList = new ArrayList<>();
 
@@ -57,6 +63,41 @@ public class Node {
 
 	public List<Node> getRightList() {
 		return rightList;
+	}
+
+	public Boolean isHorizontal() {
+		return horizontal;
+	}
+
+	public void setHorizontal(final Boolean horizontal) {
+		this.horizontal = horizontal;
+	}
+
+	@Override
+	public String toString() {
+		return "Node( id:" + id + " " + x + ", " + y + ", " + shapeType + ")";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final Node other = (Node) obj;
+		if (id != other.id)
+			return false;
+		return true;
 	}
 
 }

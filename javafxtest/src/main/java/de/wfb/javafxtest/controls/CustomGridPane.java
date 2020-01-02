@@ -42,6 +42,8 @@ public class CustomGridPane extends Pane implements ApplicationListener<ModelCha
 
 	private final SVGPath[][] viewModel = new SVGPath[rows][columns];
 
+	private boolean shiftState;
+
 	public void Initialize() {
 
 		setMinSize(rows * cell_width, columns * cell_width);
@@ -98,7 +100,8 @@ public class CustomGridPane extends Pane implements ApplicationListener<ModelCha
 				final int xIndex = (int) x / cell_width;
 				final int yIndex = (int) y / cell_width;
 
-				final SelectionEvent selectionEvent = new SelectionEvent(this, sceneX + " - " + sceneY, xIndex, yIndex);
+				final SelectionEvent selectionEvent = new SelectionEvent(this, sceneX + " - " + sceneY, xIndex, yIndex,
+						shiftState);
 
 				applicationEventPublisher.publishEvent(selectionEvent);
 			}
@@ -127,6 +130,9 @@ public class CustomGridPane extends Pane implements ApplicationListener<ModelCha
 		setScaleY(scaleY);
 	}
 
+	/**
+	 * Handler for model changed event. The grid pane updates accordingly.
+	 */
 	@Override
 	public void onApplicationEvent(final ModelChangedEvent event) {
 
@@ -135,18 +141,29 @@ public class CustomGridPane extends Pane implements ApplicationListener<ModelCha
 		final Model model = event.getModel();
 		final Node node = model.getNode(event.getX(), event.getY());
 
-		final boolean turnoutStraight = turnoutState(node);
+		logger.info("onApplicationEvent() node = " + node);
+
+		if (node == null) {
+
+			// remove
+			final SVGPath svgPathOld = viewModel[event.getX()][event.getY()];
+			getChildren().remove(svgPathOld);
+
+			return;
+
+		}
 
 		final ShapeType shapeType = node.getShapeType();
 		if (shapeType == ShapeType.NONE) {
 			return;
 		}
 
-		// replace the current node with a new one
+		// remove
 		final SVGPath svgPathOld = viewModel[event.getX()][event.getY()];
 		getChildren().remove(svgPathOld);
 
 		// create new path
+		final boolean turnoutStraight = turnoutState(node);
 		final SVGPath svgPathNew = svgPathFactory.create(shapeType, cell_width, turnoutStraight);
 		if (svgPathNew == null) {
 			return;
@@ -167,6 +184,14 @@ public class CustomGridPane extends Pane implements ApplicationListener<ModelCha
 		}
 
 		return false;
+	}
+
+	public boolean isShiftState() {
+		return shiftState;
+	}
+
+	public void setShiftState(final boolean shiftState) {
+		this.shiftState = shiftState;
 	}
 
 }

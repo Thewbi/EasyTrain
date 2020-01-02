@@ -31,8 +31,34 @@ public class DefaultNodeFactory implements Factory<Node> {
 		node.setX(x);
 		node.setY(y);
 		node.setShapeType(shapeType);
+		node.setHorizontal(retrieveHorizontal(shapeType));
 
 		return node;
+	}
+
+	private Boolean retrieveHorizontal(final ShapeType shapeType) {
+
+		switch (shapeType) {
+
+		case STRAIGHT_HORIZONTAL:
+			return true;
+
+		case STRAIGHT_VERTICAL:
+			return false;
+
+		default:
+			return null;
+		}
+
+//		case SWITCH_LEFT_0:
+//		case SWITCH_LEFT_180:
+//		case SWITCH_RIGHT_0:
+//		case SWITCH_RIGHT_180:
+//		case TURN_BOTTOM_LEFT:
+//		case TURN_LEFT_TOP:
+//		case TURN_RIGHT_BOTTOM:
+//		case TURN_TOP_RIGHT:
+
 	}
 
 	private boolean isTurnout(final ShapeType shapeType) {
