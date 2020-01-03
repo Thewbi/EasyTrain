@@ -1,0 +1,586 @@
+[
+  {
+    "id": 0,
+    "shapeType": "SWITCH_LEFT_0",
+    "x": 23,
+    "y": 19,
+    "leftList": [],
+    "rightList": [
+      6
+    ],
+    "protocolTurnoutId": 153
+  },
+  {
+    "id": 1,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 24,
+    "y": 19,
+    "leftList": [],
+    "rightList": [
+      2
+    ]
+  },
+  {
+    "id": 2,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 25,
+    "y": 19,
+    "leftList": [
+      1
+    ],
+    "rightList": [
+      3
+    ]
+  },
+  {
+    "id": 3,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 26,
+    "y": 19,
+    "leftList": [
+      2
+    ],
+    "rightList": [
+      5
+    ]
+  },
+  {
+    "id": 4,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 28,
+    "y": 19,
+    "leftList": [
+      5
+    ],
+    "rightList": [
+      12
+    ]
+  },
+  {
+    "id": 5,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 27,
+    "y": 19,
+    "leftList": [
+      3
+    ],
+    "rightList": [
+      4
+    ]
+  },
+  {
+    "id": 6,
+    "shapeType": "TURN_RIGHT_BOTTOM",
+    "x": 23,
+    "y": 18,
+    "leftList": [
+      0
+    ],
+    "rightList": []
+  },
+  {
+    "id": 7,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 24,
+    "y": 18,
+    "leftList": [],
+    "rightList": [
+      8
+    ]
+  },
+  {
+    "id": 8,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 25,
+    "y": 18,
+    "leftList": [
+      7
+    ],
+    "rightList": [
+      9
+    ]
+  },
+  {
+    "id": 9,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 26,
+    "y": 18,
+    "leftList": [
+      8
+    ],
+    "rightList": [
+      11
+    ]
+  },
+  {
+    "id": 10,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 28,
+    "y": 18,
+    "leftList": [
+      11
+    ],
+    "rightList": [
+      13
+    ]
+  },
+  {
+    "id": 11,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 27,
+    "y": 18,
+    "leftList": [
+      9
+    ],
+    "rightList": [
+      10
+    ]
+  },
+  {
+    "id": 12,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 29,
+    "y": 19,
+    "leftList": [
+      4
+    ],
+    "rightList": [
+      23
+    ]
+  },
+  {
+    "id": 13,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 29,
+    "y": 18,
+    "leftList": [
+      10
+    ],
+    "rightList": [
+      15
+    ]
+  },
+  {
+    "id": 15,
+    "shapeType": "TURN_BOTTOM_LEFT",
+    "x": 30,
+    "y": 18,
+    "leftList": [
+      13,
+      23
+    ],
+    "rightList": []
+  },
+  {
+    "id": 16,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 31,
+    "y": 19,
+    "leftList": [
+      23
+    ],
+    "rightList": [
+      17
+    ]
+  },
+  {
+    "id": 17,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 32,
+    "y": 19,
+    "leftList": [
+      16
+    ],
+    "rightList": [
+      18
+    ]
+  },
+  {
+    "id": 18,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 33,
+    "y": 19,
+    "leftList": [
+      17
+    ],
+    "rightList": [
+      24
+    ]
+  },
+  {
+    "id": 19,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 22,
+    "y": 19,
+    "leftList": [
+      20
+    ],
+    "rightList": []
+  },
+  {
+    "id": 20,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 21,
+    "y": 19,
+    "leftList": [
+      21
+    ],
+    "rightList": [
+      19
+    ]
+  },
+  {
+    "id": 21,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 20,
+    "y": 19,
+    "leftList": [
+      51
+    ],
+    "rightList": [
+      20
+    ]
+  },
+  {
+    "id": 23,
+    "shapeType": "SWITCH_RIGHT_180",
+    "x": 30,
+    "y": 19,
+    "leftList": [
+      15,
+      12
+    ],
+    "rightList": [
+      16
+    ],
+    "protocolTurnoutId": 123
+  },
+  {
+    "id": 24,
+    "shapeType": "TURN_BOTTOM_LEFT",
+    "x": 34,
+    "y": 19,
+    "leftList": [
+      18
+    ],
+    "rightList": []
+  },
+  {
+    "id": 25,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 34,
+    "y": 20,
+    "leftList": [],
+    "rightList": [
+      26
+    ]
+  },
+  {
+    "id": 26,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 34,
+    "y": 21,
+    "leftList": [
+      25
+    ],
+    "rightList": [
+      27
+    ]
+  },
+  {
+    "id": 27,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 34,
+    "y": 22,
+    "leftList": [
+      26
+    ],
+    "rightList": [
+      28
+    ]
+  },
+  {
+    "id": 28,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 34,
+    "y": 23,
+    "leftList": [
+      27
+    ],
+    "rightList": [
+      29
+    ]
+  },
+  {
+    "id": 29,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 34,
+    "y": 24,
+    "leftList": [
+      28,
+      49
+    ],
+    "rightList": []
+  },
+  {
+    "id": 30,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 19,
+    "y": 20,
+    "leftList": [],
+    "rightList": [
+      31,
+      51
+    ]
+  },
+  {
+    "id": 31,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 19,
+    "y": 21,
+    "leftList": [
+      30
+    ],
+    "rightList": [
+      32
+    ]
+  },
+  {
+    "id": 32,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 19,
+    "y": 22,
+    "leftList": [
+      31
+    ],
+    "rightList": [
+      33
+    ]
+  },
+  {
+    "id": 33,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 19,
+    "y": 23,
+    "leftList": [
+      32
+    ],
+    "rightList": [
+      34
+    ]
+  },
+  {
+    "id": 34,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 19,
+    "y": 24,
+    "leftList": [
+      33,
+      50
+    ],
+    "rightList": []
+  },
+  {
+    "id": 35,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 20,
+    "y": 25,
+    "leftList": [],
+    "rightList": [
+      36,
+      50
+    ]
+  },
+  {
+    "id": 36,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 21,
+    "y": 25,
+    "leftList": [
+      35
+    ],
+    "rightList": [
+      38
+    ]
+  },
+  {
+    "id": 37,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 23,
+    "y": 25,
+    "leftList": [
+      38
+    ],
+    "rightList": [
+      39
+    ]
+  },
+  {
+    "id": 38,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 22,
+    "y": 25,
+    "leftList": [
+      36
+    ],
+    "rightList": [
+      37
+    ]
+  },
+  {
+    "id": 39,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 24,
+    "y": 25,
+    "leftList": [
+      37
+    ],
+    "rightList": [
+      40
+    ]
+  },
+  {
+    "id": 40,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 25,
+    "y": 25,
+    "leftList": [
+      39
+    ],
+    "rightList": [
+      41
+    ]
+  },
+  {
+    "id": 41,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 26,
+    "y": 25,
+    "leftList": [
+      40
+    ],
+    "rightList": [
+      42
+    ]
+  },
+  {
+    "id": 42,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 27,
+    "y": 25,
+    "leftList": [
+      41
+    ],
+    "rightList": [
+      43
+    ]
+  },
+  {
+    "id": 43,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 28,
+    "y": 25,
+    "leftList": [
+      42
+    ],
+    "rightList": [
+      44
+    ]
+  },
+  {
+    "id": 44,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 29,
+    "y": 25,
+    "leftList": [
+      43
+    ],
+    "rightList": [
+      45
+    ]
+  },
+  {
+    "id": 45,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 30,
+    "y": 25,
+    "leftList": [
+      44
+    ],
+    "rightList": [
+      46
+    ]
+  },
+  {
+    "id": 46,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 31,
+    "y": 25,
+    "leftList": [
+      45
+    ],
+    "rightList": [
+      47
+    ]
+  },
+  {
+    "id": 47,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 32,
+    "y": 25,
+    "leftList": [
+      46
+    ],
+    "rightList": [
+      48
+    ]
+  },
+  {
+    "id": 48,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 33,
+    "y": 25,
+    "leftList": [
+      47
+    ],
+    "rightList": [
+      49
+    ]
+  },
+  {
+    "id": 49,
+    "shapeType": "TURN_LEFT_TOP",
+    "x": 34,
+    "y": 25,
+    "leftList": [
+      48
+    ],
+    "rightList": [
+      29
+    ]
+  },
+  {
+    "id": 50,
+    "shapeType": "TURN_TOP_RIGHT",
+    "x": 19,
+    "y": 25,
+    "leftList": [
+      35
+    ],
+    "rightList": [
+      34
+    ]
+  },
+  {
+    "id": 51,
+    "shapeType": "TURN_RIGHT_BOTTOM",
+    "x": 19,
+    "y": 19,
+    "leftList": [
+      30
+    ],
+    "rightList": [
+      21
+    ]
+  }
+]

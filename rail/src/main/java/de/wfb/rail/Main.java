@@ -125,6 +125,7 @@ import gnu.io.SerialPort;
  *
  * <pre>
  * -Djava.library.path=/Users/bischowg/Documents/workspace_p50x/rail/lib
+ * -Djava.library.path=/Users/bischowg/Documents/workspace_javafx/rail/lib
  * </pre>
  *
  * </li>
@@ -188,6 +189,16 @@ import gnu.io.SerialPort;
  *
  * Copy this to /Library/Java/Extensions or something???? OR specify a command
  * line parameter to the JVM???? What is the correct approach??? I forgot!!!!
+ *
+ * This worked:
+ *
+ * <pre>
+ * mkdir /Library
+ * mkdir /Library/Java
+ * mkdir /Library/Java/Extensions
+ *
+ * sudo cp /Users/bischowg/Documents/workspace_javafx/rail/lib/librxtxSerial.jnilib /Library/Java/Extensions
+ * </pre>
  */
 public class Main {
 

@@ -35,6 +35,11 @@
 		</dependency>
 		<dependency>
 			<groupId>de.wfb.rail</groupId>
+			<artifactId>rail</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>de.wfb.rail</groupId>
 			<artifactId>model</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
@@ -44,11 +49,17 @@
 			<artifactId>javafx-controls</artifactId>
 			<version>13</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-web</artifactId>
 			<version>13</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.rxtx/rxtx-->
+		<dependency>
+			<groupId>org.rxtx</groupId>
+			<artifactId>rxtx</artifactId>
+			<version>2.1.7</version>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->

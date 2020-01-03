@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="1" failures="0" name="de.wfb.rail.P50XTurnoutCommandTest" time="5.5" errors="0" skipped="0">
+<testsuite tests="1" failures="0" name="de.wfb.rail.P50XTurnoutCommandTest" time="5.457" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="java.vm.version" value="13.0.1+9"/>
@@ -22,7 +22,7 @@
 "/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="os.name" value="Mac OS X"/>
-    <property name="classworlds.conf" value="/Users/bischowg/Documents/workspace_javafx/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf14023475404226339246.tmp"/>
+    <property name="classworlds.conf" value="/Users/bischowg/Documents/workspace_javafx/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf5377722044697865256.tmp"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
     <property name="java.library.path" value="/Users/bischowg/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
     <property name="jdk.debug" value="release"/>
@@ -55,5 +55,5 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
   </properties>
-  <testcase classname="de.wfb.rail.P50XTurnoutCommandTest" name="ByteArrayTest" time="5.5"/>
+  <testcase classname="de.wfb.rail.P50XTurnoutCommandTest" name="ByteArrayTest" time="5.457"/>
 </testsuite>

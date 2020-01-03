@@ -164,16 +164,22 @@ public class CustomGridPane extends Pane implements ApplicationListener<ModelCha
 
 		// create new path
 		final boolean turnoutStraight = turnoutState(node);
-		final SVGPath svgPathNew = svgPathFactory.create(shapeType, cell_width, turnoutStraight);
-		if (svgPathNew == null) {
-			return;
+		try {
+			final SVGPath svgPathNew = svgPathFactory.create(shapeType, cell_width, turnoutStraight);
+
+			if (svgPathNew == null) {
+				return;
+			}
+			svgPathNew.setLayoutX(event.getX() * cell_width);
+			svgPathNew.setLayoutY(event.getY() * cell_width);
+
+			getChildren().add(svgPathNew);
+
+			viewModel[event.getX()][event.getY()] = svgPathNew;
+		} catch (final Exception e) {
+			logger.error(e.getMessage(), e);
 		}
-		svgPathNew.setLayoutX(event.getX() * cell_width);
-		svgPathNew.setLayoutY(event.getY() * cell_width);
 
-		getChildren().add(svgPathNew);
-
-		viewModel[event.getX()][event.getY()] = svgPathNew;
 	}
 
 	private boolean turnoutState(final Node node) {

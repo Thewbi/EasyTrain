@@ -12,6 +12,7 @@ import de.wfb.model.Model;
 import de.wfb.model.node.Node;
 import de.wfb.model.node.TurnoutNode;
 import de.wfb.rail.events.ModelChangedEvent;
+import de.wfb.rail.events.NodeSelectedEvent;
 import de.wfb.rail.factory.Factory;
 import de.wfb.rail.ui.ShapeType;
 
@@ -57,15 +58,32 @@ public class DefaultModelService implements ModelService {
 
 		logger.info("nodeClicked node id = " + node.getId() + " node = " + node.getClass().getSimpleName());
 
+		// store the currently selected node in the model
+		logger.info("setSelectedNode()");
+		model.setSelectedNode(node);
+		logger.info("sendNodeSelectedEvent()");
+		sendNodeSelectedEvent(node);
+
 		// switch turnouts
 		if (node instanceof TurnoutNode) {
 
 			final TurnoutNode turnoutNode = (TurnoutNode) node;
 
+			// change the node in the UI for visual feedback
 			turnoutNode.toggle();
 
+			// tell the UI
 			sendModelChangedEvent(x, y);
 		}
+	}
+
+	private void sendNodeSelectedEvent(final Node node) {
+
+		logger.info("sendNodeSelectedEvent() node: " + node);
+
+		final NodeSelectedEvent nodeSelectedEvent = new NodeSelectedEvent(this, model, node);
+
+		applicationEventPublisher.publishEvent(nodeSelectedEvent);
 	}
 
 	@Override
@@ -104,16 +122,21 @@ public class DefaultModelService implements ModelService {
 			break;
 		}
 
-		logger.info("Creating new node!");
-		final Node newNode = nodeFactory.create(x, y, shapeType);
-		// for fast retrieval by id
-		model.getIdMap().put(newNode.getId(), newNode);
-		model.setNode(x, y, newNode);
-		nodeConnectorService.connect(newNode);
+		try {
+			logger.info("Creating new node!");
+			final Node newNode = nodeFactory.create(x, y, shapeType);
 
-		logger.info("addNode() New node id = " + newNode.getId() + " added!");
+			// for fast retrieval by id
+			model.getIdMap().put(newNode.getId(), newNode);
+			model.setNode(x, y, newNode);
+			nodeConnectorService.connect(newNode);
 
-		sendModelChangedEvent(x, y);
+			logger.info("addNode() New node id = " + newNode.getId() + " added!");
+
+			sendModelChangedEvent(x, y);
+		} catch (final Exception e) {
+			logger.error(e.getMessage(), e);
+		}
 	}
 
 	@Override

@@ -1,2 +1,8 @@
+/Users/bischowg/Documents/workspace_javafx/model/src/main/java/de/wfb/model/service/DefaultIdService.java
 /Users/bischowg/Documents/workspace_javafx/model/src/main/java/de/wfb/model/DefaultModel.java
+/Users/bischowg/Documents/workspace_javafx/model/src/main/java/de/wfb/model/service/DefaultModelPersistenceService.java
+/Users/bischowg/Documents/workspace_javafx/model/src/main/java/de/wfb/model/node/DefaultNodeFactory.java
+/Users/bischowg/Documents/workspace_javafx/model/src/main/java/de/wfb/model/service/DefaultNodeConnectorService.java
 /Users/bischowg/Documents/workspace_javafx/model/src/main/java/de/wfb/model/service/DefaultModelService.java
+/Users/bischowg/Documents/workspace_javafx/model/src/main/java/de/wfb/model/converter/DefaultJsonNodeConverter.java
+/Users/bischowg/Documents/workspace_javafx/model/src/main/java/de/wfb/model/facade/DefaultModelFacade.java

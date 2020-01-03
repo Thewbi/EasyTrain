@@ -17,6 +17,8 @@ public class JsonNode {
 
 	private final List<Integer> rightList = new ArrayList<>();
 
+	private Integer protocolTurnoutId;
+
 	public int getId() {
 		return id;
 	}
@@ -55,6 +57,14 @@ public class JsonNode {
 
 	public List<Integer> getRightList() {
 		return rightList;
+	}
+
+	public Integer getProtocolTurnoutId() {
+		return protocolTurnoutId;
+	}
+
+	public void setProtocolTurnoutId(final Integer protocolTurnoutId) {
+		this.protocolTurnoutId = protocolTurnoutId;
 	}
 
 }

@@ -29,7 +29,6 @@ import de.wfb.model.node.JsonNode;
 import de.wfb.model.node.Node;
 import de.wfb.rail.converter.Converter;
 import de.wfb.rail.factory.Factory;
-import de.wfb.rail.ui.ShapeType;
 
 public class DefaultModelPersistenceService implements ModelPersistenceService {
 
@@ -96,14 +95,20 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 
 		for (final JsonNode jsonNode : nodeArray) {
 
-			final Node node = nodeFactory.create(jsonNode.getX(), jsonNode.getY(),
-					ShapeType.valueOf(jsonNode.getShapeType()), jsonNode.getId());
+//			final Node node = nodeFactory.create(jsonNode.getX(), jsonNode.getY(),
+//					ShapeType.valueOf(jsonNode.getShapeType()), jsonNode.getId());
 
-			model.getIdMap().put(node.getId(), node);
-			model.setNode(jsonNode.getX(), jsonNode.getY(), node);
+			try {
+				final Node node = nodeFactory.create(jsonNode);
 
-			if (jsonNode.getId() > maxId) {
-				maxId = jsonNode.getId();
+				model.getIdMap().put(node.getId(), node);
+				model.setNode(jsonNode.getX(), jsonNode.getY(), node);
+
+				if (jsonNode.getId() > maxId) {
+					maxId = jsonNode.getId();
+				}
+			} catch (final Exception e) {
+				logger.error(e.getMessage(), e);
 			}
 		}
 

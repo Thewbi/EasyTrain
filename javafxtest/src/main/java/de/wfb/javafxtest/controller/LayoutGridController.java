@@ -13,10 +13,12 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.node.Node;
-import de.wfb.model.service.ModelService;
+import de.wfb.rail.controller.Controller;
 import de.wfb.rail.events.SelectionEvent;
 import de.wfb.rail.events.ShapeTypeChangedEvent;
+import de.wfb.rail.facade.ProtocolFacade;
 import de.wfb.rail.ui.ShapeType;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -24,14 +26,17 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 
 @Component
-public class LayoutGridController implements ApplicationListener<ApplicationEvent> {
+public class LayoutGridController implements Controller, ApplicationListener<ApplicationEvent> {
 
 	private static final Logger logger = LogManager.getLogger(LayoutGridController.class);
 
 	private ShapeType currentShapeType = ShapeType.NONE;
 
 	@Autowired
-	private ModelService modelService;
+	private ModelFacade modelFacade;
+
+	@Autowired
+	private ProtocolFacade protocolFacade;
 
 	private boolean shiftState;
 
@@ -55,7 +60,7 @@ public class LayoutGridController implements ApplicationListener<ApplicationEven
 
 				logger.info("Shift selection");
 
-				final Optional<Node> nodeOptional = modelService.getNode(selectionEvent.getX(), selectionEvent.getY());
+				final Optional<Node> nodeOptional = modelFacade.getNode(selectionEvent.getX(), selectionEvent.getY());
 				if (nodeOptional.isPresent()) {
 					selectedNodes.add(nodeOptional.get());
 				}
@@ -75,23 +80,25 @@ public class LayoutGridController implements ApplicationListener<ApplicationEven
 
 			case NONE:
 				// if no shape type is selected, perform a simple click
-				modelService.nodeClicked(selectionEvent.getX(), selectionEvent.getY());
+				modelFacade.nodeClicked(selectionEvent.getX(), selectionEvent.getY());
+
+				protocolFacade.nodeClicked(selectionEvent.getX(), selectionEvent.getY());
 				break;
 
 			default:
 				// if a shape type is selected, add a node
 
 				// if a node of the same type is here already, return
-				final Optional<Node> currentNode = modelService.getNode(selectionEvent.getX(), selectionEvent.getY());
+				final Optional<Node> currentNode = modelFacade.getNode(selectionEvent.getX(), selectionEvent.getY());
 				if (currentNode.isPresent() && currentNode.get().getShapeType() == currentShapeType) {
 
 					logger.info("Not creating another node!");
 					return;
 				}
 
-				modelService.addNode(selectionEvent.getX(), selectionEvent.getY(), currentShapeType);
+				modelFacade.addNode(selectionEvent.getX(), selectionEvent.getY(), currentShapeType);
 
-				modelService.storeModel();
+				modelFacade.storeModel();
 				break;
 			}
 
@@ -111,6 +118,11 @@ public class LayoutGridController implements ApplicationListener<ApplicationEven
 		this.shiftState = shiftState;
 	}
 
+	/**
+	 * Functionality for manually connecting two arbitrary nodes in the node graph.
+	 * Useful if a layout was drawn where two nodes have to be connected even if
+	 * they are not immediately adjacent to each other.
+	 */
 	public void connect() {
 
 		logger.info("connect");
@@ -177,11 +189,11 @@ public class LayoutGridController implements ApplicationListener<ApplicationEven
 				if (alert.getResult().equals(ButtonType.OK)) {
 					System.out.println("Connecting ...");
 
-					modelService.connect(nodeA, nodeB);
+					modelFacade.connect(nodeA, nodeB);
 				} else if (alert.getResult().equals(ButtonType.YES)) {
 					System.out.println("Connecting ...");
 
-					modelService.connect(nodeA, nodeB);
+					modelFacade.connect(nodeA, nodeB);
 				} else {
 					System.out.println("Not Connecting ...");
 				}

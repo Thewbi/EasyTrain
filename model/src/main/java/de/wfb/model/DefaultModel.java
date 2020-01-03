@@ -15,6 +15,8 @@ public class DefaultModel implements Model {
 
 	private final Node[][] viewModel = new Node[rows][columns];
 
+	private Node selectedNode;
+
 	@Override
 	public Node getNode(final int x, final int y) {
 		return viewModel[x][y];
@@ -48,6 +50,14 @@ public class DefaultModel implements Model {
 	@Override
 	public Map<Integer, Node> getIdMap() {
 		return idMap;
+	}
+
+	public Node getSelectedNode() {
+		return selectedNode;
+	}
+
+	public void setSelectedNode(final Node selectedNode) {
+		this.selectedNode = selectedNode;
 	}
 
 }

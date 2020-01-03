@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.wfb.model.node.JsonNode;
 import de.wfb.model.node.Node;
+import de.wfb.model.node.TurnoutNode;
 import de.wfb.rail.converter.Converter;
 
 public class DefaultJsonNodeConverter implements Converter<Node, JsonNode> {
@@ -23,22 +24,32 @@ public class DefaultJsonNodeConverter implements Converter<Node, JsonNode> {
 		if (CollectionUtils.isNotEmpty(source.getLeftList())) {
 
 			for (final Node node : source.getLeftList()) {
+
 				target.getLeftList().add(node.getId());
 			}
 		}
 
-		logger.info(source.getRightList());
 		if (CollectionUtils.isNotEmpty(source.getRightList())) {
 
 			for (final Node node : source.getRightList()) {
 
-//				logger.info(target);
-//				logger.info(node);
-//				logger.info(target.getRightList());
-
 				target.getRightList().add(node.getId());
 			}
 		}
+
+		convertTurnoutNode(source, target);
+	}
+
+	private void convertTurnoutNode(final Node source, final JsonNode target) {
+
+		final boolean isTurnoutNode = source instanceof TurnoutNode;
+		if (!isTurnoutNode) {
+			return;
+		}
+
+		final TurnoutNode turnoutNode = (TurnoutNode) source;
+
+		target.setProtocolTurnoutId(turnoutNode.getProtocolTurnoutId());
 	}
 
 }

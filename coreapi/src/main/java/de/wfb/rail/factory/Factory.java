@@ -2,6 +2,6 @@ package de.wfb.rail.factory;
 
 public interface Factory<T> {
 
-	T create(Object... args);
+	T create(Object... args) throws Exception;
 
 }

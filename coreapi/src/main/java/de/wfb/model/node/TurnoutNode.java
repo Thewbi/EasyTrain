@@ -9,13 +9,11 @@ public class TurnoutNode extends Node {
 
 	private boolean thrown;
 
-	public boolean isThrown() {
-		return thrown;
-	}
-
-	public void setThrown(final boolean thrown) {
-		this.thrown = thrown;
-	}
+	/**
+	 * The id that is used to operate the turnout over the intellibox / controller
+	 * station
+	 */
+	private int protocolTurnoutId;
 
 	public void toggle() {
 
@@ -27,6 +25,22 @@ public class TurnoutNode extends Node {
 	@Override
 	public String toString() {
 		return "TurnoutNode(" + x + ", " + y + ", " + shapeType + ")";
+	}
+
+	public int getProtocolTurnoutId() {
+		return protocolTurnoutId;
+	}
+
+	public void setProtocolTurnoutId(final int protocolTurnoutId) {
+		this.protocolTurnoutId = protocolTurnoutId;
+	}
+
+	public boolean isThrown() {
+		return thrown;
+	}
+
+	public void setThrown(final boolean thrown) {
+		this.thrown = thrown;
 	}
 
 }

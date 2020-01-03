@@ -6,9 +6,13 @@ import de.wfb.model.node.Node;
 
 public interface Model {
 
-	Node getNode(final int x, final int y);
+	Node getNode(int x, int y);
 
-	void setNode(final int x, final int y, final Node node);
+	void setNode(int x, int y, Node node);
+
+	Node getSelectedNode();
+
+	void setSelectedNode(Node selectedNode);
 
 	void removeNode(int x, int y);
 

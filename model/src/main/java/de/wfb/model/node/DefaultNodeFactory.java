@@ -14,6 +14,21 @@ public class DefaultNodeFactory implements Factory<Node> {
 	@Override
 	public Node create(final Object... args) {
 
+		if (args[0] instanceof JsonNode) {
+
+			final JsonNode jsonNode = (JsonNode) args[0];
+			return populateFromJsonNode(jsonNode);
+
+		} else {
+
+			return populateFromParameters(args);
+
+		}
+
+	}
+
+	private Node populateFromParameters(final Object[] args) {
+
 		final int x = (Integer) args[0];
 		final int y = (Integer) args[1];
 		final ShapeType shapeType = (ShapeType) args[2];
@@ -32,6 +47,31 @@ public class DefaultNodeFactory implements Factory<Node> {
 		node.setY(y);
 		node.setShapeType(shapeType);
 		node.setHorizontal(retrieveHorizontal(shapeType));
+
+		return node;
+	}
+
+	private Node populateFromJsonNode(final JsonNode jsonNode) {
+
+		final int x = jsonNode.getX();
+		final int y = jsonNode.getY();
+		final ShapeType shapeType = ShapeType.valueOf(jsonNode.getShapeType());
+		final int id = jsonNode.getId();
+
+		final Node node = isTurnout(shapeType) ? new TurnoutNode() : new Node();
+		node.setId(id);
+		node.setX(x);
+		node.setY(y);
+		node.setShapeType(shapeType);
+		node.setHorizontal(retrieveHorizontal(shapeType));
+
+		if (node instanceof TurnoutNode) {
+
+			final TurnoutNode turnoutNode = (TurnoutNode) node;
+			if (jsonNode.getProtocolTurnoutId() != null) {
+				turnoutNode.setProtocolTurnoutId(jsonNode.getProtocolTurnoutId());
+			}
+		}
 
 		return node;
 	}
