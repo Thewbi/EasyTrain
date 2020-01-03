@@ -1,0 +1,50 @@
+package de.wfb.dialogs;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+
+import de.wfb.model.node.Node;
+import de.wfb.model.node.TurnoutNode;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+
+public class TurnoutDetailsPane extends GridPane {
+
+	private static final Logger logger = LogManager.getLogger(TurnoutDetailsPane.class);
+
+	/** https://www.baeldung.com/spring-events */
+	@Autowired
+	private ApplicationEventPublisher applicationEventPublisher;
+
+	private TextField textfield;
+
+	public void setup(final Node node) {
+
+		logger.info("setup()");
+
+		// getChildren()
+
+		if (node == null) {
+			return;
+		}
+
+		if (node instanceof TurnoutNode) {
+
+			final TurnoutNode turnoutNode = (TurnoutNode) node;
+
+			textfield = new TextField();
+			textfield.setText(turnoutNode.toString());
+			GridPane.setColumnIndex(textfield, 1);
+			GridPane.setRowIndex(textfield, 1);
+
+			getChildren().add(textfield);
+		}
+	}
+
+	public void clear() {
+		getChildren().remove(textfield);
+	}
+
+}

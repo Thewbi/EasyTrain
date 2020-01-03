@@ -1,0 +1,5 @@
+package de.wfb.model;
+
+public interface Model {
+
+}

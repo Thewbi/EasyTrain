@@ -1,0 +1,63 @@
+package de.wfb.dialogs;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Component;
+
+import de.wfb.rail.events.ShapeTypeChangedEvent;
+import de.wfb.rail.ui.ShapeType;
+import javafx.beans.binding.Bindings;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+
+@Component
+public class LayoutElementSelectionDialogStage extends Stage {
+
+	@SuppressWarnings("unused")
+	private static final Logger logger = LogManager.getLogger(LayoutElementSelectionDialogStage.class);
+
+	/** https://www.baeldung.com/spring-events */
+	@Autowired
+	private ApplicationEventPublisher applicationEventPublisher;
+
+	/**
+	 * ctor
+	 */
+	public LayoutElementSelectionDialogStage() {
+
+		setTitle("Layout Element Selection");
+
+		this.setScene(createContentGrid());
+	}
+
+	private Scene createContentGrid() {
+
+		try {
+			final LayoutElementButtonPane layoutElementButtonPane = new LayoutElementButtonPane();
+			layoutElementButtonPane.setupButtons(applicationEventPublisher);
+
+			return new Scene(layoutElementButtonPane);
+
+		} catch (final FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	
+
+}

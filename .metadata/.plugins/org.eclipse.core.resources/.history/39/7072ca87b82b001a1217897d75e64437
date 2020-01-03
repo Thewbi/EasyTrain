@@ -1,0 +1,5 @@
+package rail.io;
+
+public interface SerialWriter {
+
+}

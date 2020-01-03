@@ -1,0 +1,53 @@
+package de.wfb.model.node;
+
+import java.util.List;
+
+import de.wfb.rail.ui.ShapeType;
+
+public class Node {
+
+	private int id;
+
+	private int x;
+
+	private int y;
+
+	private ShapeType shapeType;
+	
+	private List<Node> leftList;
+	
+	private List<Node> rightList;
+
+	public int getX() {
+		return x;
+	}
+
+	public void setX(final int x) {
+		this.x = x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setY(final int y) {
+		this.y = y;
+	}
+
+	public ShapeType getShapeType() {
+		return shapeType;
+	}
+
+	public void setShapeType(final ShapeType shapeType) {
+		this.shapeType = shapeType;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(final int id) {
+		this.id = id;
+	}
+
+}

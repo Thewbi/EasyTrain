@@ -1,0 +1,15 @@
+package de.wfb.model.node;
+
+public class TurnoutNode extends Node {
+	
+	private boolean thrown;
+
+	public boolean isThrown() {
+		return thrown;
+	}
+
+	public void setThrown(boolean thrown) {
+		this.thrown = thrown;
+	}
+
+}

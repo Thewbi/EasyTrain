@@ -1,0 +1,25 @@
+package de.wfb.model.facade;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import de.wfb.model.node.Node;
+import de.wfb.model.service.ModelService;
+
+public class DefaultModelFacade implements ModelFacade {
+
+	@Autowired
+	private ModelService modelService;
+
+	@Override
+	public Optional<Node> getNode(final int x, final int y) {
+		return modelService.getNode(x, y);
+	}
+
+	@Override
+	public void nodeClicked(final int x, final int y) {
+		return modelService.nodeClicked(x, y);
+	}
+
+}

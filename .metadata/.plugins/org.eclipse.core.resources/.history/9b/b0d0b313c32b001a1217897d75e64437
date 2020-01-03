@@ -1,0 +1,11 @@
+package de.wfb.rail.events;
+
+public class DefaultEventPublisher implements EventPublisher<SelectionEvent> {
+
+	@Override
+	public void publish(SelectionEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

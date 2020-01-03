@@ -1,0 +1,18 @@
+[
+  {
+    "id": 0,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 41,
+    "y": 17,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 1,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 41,
+    "y": 19,
+    "leftList": [],
+    "rightList": []
+  }
+]

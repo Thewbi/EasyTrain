@@ -1,0 +1,18 @@
+package de.wfb.rail.events;
+
+import org.springframework.context.ApplicationEvent;
+
+public class SelectionEvent extends ApplicationEvent {
+
+	private final String message;
+
+	public SelectionEvent(final Object source, final String message) {
+		super(source);
+		this.message = message;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+}

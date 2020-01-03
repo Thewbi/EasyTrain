@@ -1,0 +1,47 @@
+package de.wfb.dialogs;
+
+import java.io.FileNotFoundException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Component;
+
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+@Component
+public class LayoutElementSelectionDialogStage extends Stage {
+
+	@SuppressWarnings("unused")
+	private static final Logger logger = LogManager.getLogger(LayoutElementSelectionDialogStage.class);
+
+	
+
+	/**
+	 * ctor
+	 */
+	public LayoutElementSelectionDialogStage() {
+
+		setTitle("Layout Element Selection");
+
+		this.setScene(createContentGrid());
+	}
+
+	private Scene createContentGrid() {
+
+		try {
+			final LayoutElementButtonPane layoutElementButtonPane = new LayoutElementButtonPane();
+			layoutElementButtonPane.setupButtons();
+
+			return new Scene(layoutElementButtonPane);
+
+		} catch (final FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+}

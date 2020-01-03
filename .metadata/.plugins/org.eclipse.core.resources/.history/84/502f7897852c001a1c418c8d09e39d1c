@@ -1,0 +1,11 @@
+package de.wfb.mode.service;
+
+import de.wfb.model.node.Node;
+
+public interface ModelService {
+
+	Node getNode(final int x, final int y);
+
+	void setNode(final int x, final int y, final Node node);
+
+}

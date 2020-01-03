@@ -1,0 +1,23 @@
+package de.wfb.rail.ui;
+
+public enum ShapeType {
+
+	SQUARE,
+
+	TRIANGLE,
+
+	STRAIGHT_HORIZONTAL,
+
+	STRAIGHT_VERTICAL,
+
+	TURN_TOP_RIGHT,
+
+	TURN_RIGHT_BOTTOM,
+
+	TURN_BOTTOM_LEFT,
+
+	TURN_LEFT_TOP,
+
+	SWITCH,
+
+}

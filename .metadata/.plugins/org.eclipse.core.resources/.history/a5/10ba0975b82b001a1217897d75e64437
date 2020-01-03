@@ -1,0 +1,7 @@
+package de.wfb.rail.ui;
+
+public enum ShapeType {
+
+	SQUARE
+
+}

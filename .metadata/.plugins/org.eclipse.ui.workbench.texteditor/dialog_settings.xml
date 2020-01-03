@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item key="selection" value="java.lang.UnsatisfiedLinkError: no rxtxSerial"/>
+		<item key="wrap" value="true"/>
+		<item key="casesensitive" value="false"/>
+		<item key="wholeword" value="false"/>
+		<item key="incremental" value="false"/>
+		<item key="isRegEx" value="false"/>
+		<list key="findhistory">
+			<item value="java.lang.UnsatisfiedLinkError: no rxtxSerial"/>
+			<item value="-D"/>
+			<item value="14"/>
+			<item value="LayoutElementSelectionDialogStage"/>
+			<item value="onClose"/>
+			<item value="43"/>
+			<item value="56"/>
+			<item value="SWITCH"/>
+			<item value="isTurnout"/>
+			<item value="System.out.println"/>
+			<item value="for (int j = 0; j &lt; rows; j++) {"/>
+			<item value="@Bean"/>
+			<item value="figureScrollOffset"/>
+		</list>
+		<list key="replacehistory">
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="980"/>
+		<item key="DIALOG_Y_ORIGIN" value="237"/>
+		<item key="DIALOG_WIDTH" value="294"/>
+		<item key="DIALOG_HEIGHT" value="408"/>
+		<item key="DIALOG_FONT_NAME" value="1|.AppleSystemUIFont|11.0|0|COCOA|1|.AppleSystemUIFont"/>
+	</section>
+</section>

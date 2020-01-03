@@ -1,0 +1,34 @@
+package de.wfb.model;
+
+import de.wfb.model.node.Node;
+
+public class DefaultModel implements Model {
+
+	private final int columns = 100;
+
+	private final int rows = 100;
+
+	private final Node[][] viewModel = new Node[rows][columns];
+
+	public Node getNode(final int x, final int y) {
+		return viewModel[x][y];
+	}
+
+	public void setNode(final int x, final int y, final Node node) {
+		viewModel[x][y] = node;
+	}
+	
+	@Override
+	public void removeNode(int x, int y) {
+		viewModel[x][y] = null;
+	}
+
+	public int getColumns() {
+		return columns;
+	}
+
+	public int getRows() {
+		return rows;
+	}
+
+}

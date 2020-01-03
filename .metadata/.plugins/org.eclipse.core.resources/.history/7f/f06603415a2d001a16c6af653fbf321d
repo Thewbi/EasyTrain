@@ -1,0 +1,36 @@
+[
+  {
+    "id": 0,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 16,
+    "y": 26,
+    "leftList": [],
+    "rightList": [
+      1,
+      2
+    ]
+  },
+  {
+    "id": 1,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 18,
+    "y": 26,
+    "leftList": [
+      0,
+      2
+    ],
+    "rightList": []
+  },
+  {
+    "id": 2,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 17,
+    "y": 26,
+    "leftList": [
+      0
+    ],
+    "rightList": [
+      1
+    ]
+  }
+]

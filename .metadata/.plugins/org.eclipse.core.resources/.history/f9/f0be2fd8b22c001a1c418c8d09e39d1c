@@ -1,0 +1,19 @@
+package de.wfb.model.converter;
+
+import de.wfb.model.node.JsonNode;
+import de.wfb.model.node.Node;
+import de.wfb.rail.converter.Converter;
+
+public class DefaultJsonNodeConverter implements Converter<Node, JsonNode> {
+
+	@Override
+	public void convert(final Node source, final JsonNode target) {
+
+		target.setId(source.getId());
+		target.setShapeType(source.getShapeType().name());
+		target.setX(source.getX());
+		target.setY(source.getY());
+
+	}
+
+}

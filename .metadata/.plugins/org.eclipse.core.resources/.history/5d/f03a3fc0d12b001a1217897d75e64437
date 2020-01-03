@@ -1,0 +1,11 @@
+package de.wfb.model;
+
+import de.wfb.model.node.Node;
+
+public interface Model {
+
+	Node getNode(final int x, final int y);
+
+	void setNode(final int x, final int y, final Node node);
+	
+}

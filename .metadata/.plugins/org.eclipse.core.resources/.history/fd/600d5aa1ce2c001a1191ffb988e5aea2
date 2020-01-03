@@ -1,0 +1,45 @@
+[
+  {
+    "id": 0,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 45,
+    "y": 17,
+    "leftList": [
+      3
+    ],
+    "rightList": []
+  },
+  {
+    "id": 1,
+    "shapeType": "TURN_LEFT_TOP",
+    "x": 44,
+    "y": 18,
+    "leftList": [
+      3
+    ],
+    "rightList": []
+  },
+  {
+    "id": 2,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 45,
+    "y": 19,
+    "leftList": [],
+    "rightList": [
+      3
+    ]
+  },
+  {
+    "id": 3,
+    "shapeType": "SWITCH_RIGHT_90",
+    "x": 45,
+    "y": 18,
+    "leftList": [
+      2
+    ],
+    "rightList": [
+      0,
+      1
+    ]
+  }
+]

@@ -1,0 +1,13 @@
+package de.wfb.model.node;
+
+import de.wfb.rail.ui.ShapeType;
+
+public class Node {
+
+	private int x;
+
+	private int y;
+
+	private ShapeType shapeType;
+
+}

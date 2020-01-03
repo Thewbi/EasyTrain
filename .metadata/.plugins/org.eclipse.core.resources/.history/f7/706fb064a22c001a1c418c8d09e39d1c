@@ -1,0 +1,24 @@
+package de.wfb.model.node;
+
+import de.wfb.rail.factory.Factory;
+import de.wfb.rail.ui.ShapeType;
+
+public class DefaultNodeFactory implements Factory<Node> {
+
+	public Node create(final Object... args) {
+
+		final int x = (Integer) args[0];
+		final int y = (Integer) args[1];
+		
+		final ShapeType shapeType = (ShapeType) args[1];
+		
+		// if a shape type is selected, add a node
+		final Node node = isTurnout(shapeType) ? new TurnoutNode() : new Node();
+		node.setX(x);
+		node.setY(y);
+		node.setShapeType(shapeType);
+
+		return null;
+	}
+
+}

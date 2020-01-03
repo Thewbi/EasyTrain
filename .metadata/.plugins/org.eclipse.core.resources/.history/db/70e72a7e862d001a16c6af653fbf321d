@@ -1,0 +1,11 @@
+package de.wfb.model.facade;
+
+import java.util.Optional;
+
+import de.wfb.model.node.Node;
+
+public interface ModelFacade {
+
+	Optional<Node> getNode(int x, int y);
+
+}

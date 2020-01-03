@@ -1,0 +1,16 @@
+package de.wfb.rail.events;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+
+public class DefaultEventPublisher implements EventPublisher<SelectionEvent> {
+
+	@Autowired
+	private ApplicationEventPublisher applicationEventPublisher;
+
+	@Override
+	public void publish(final SelectionEvent event) {
+		applicationEventPublisher.publishEvent(event);
+	}
+
+}

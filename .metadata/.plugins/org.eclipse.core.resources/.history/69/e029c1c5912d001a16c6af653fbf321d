@@ -1,0 +1,84 @@
+package de.wfb.rail.service;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import de.wfb.model.Model;
+import de.wfb.model.node.Node;
+import de.wfb.model.node.TurnoutNode;
+import de.wfb.rail.factory.Factory;
+import gnu.io.SerialPort;
+
+public class DefaultProtocolService implements ProtocolService {
+
+	// private static final String SERIAL_PORT_IDENTIFIER = "COM3";
+	private static final String SERIAL_PORT_IDENTIFIER = "/dev/cu.usbserial-AO007Q6Q";
+
+	private static final Logger logger = LogManager.getLogger(DefaultProtocolService.class);
+
+	private SerialPort serialPort;
+
+	@Autowired
+	private Model model;
+
+	@Autowired
+	private Factory<SerialPort> serialPortFactory;
+
+	@Override
+	public void nodeClicked(final int x, final int y) {
+
+		logger.info("nodeClicked x = " + x + " y = " + y);
+
+		final Node node = model.getNode(x, y);
+
+		if (node == null) {
+			logger.info("nodeClicked node is null");
+			return;
+		}
+
+		logger.info("nodeClicked node id = " + node.getId() + " node = " + node.getClass().getSimpleName());
+
+		// switch turnouts
+		if (node instanceof TurnoutNode) {
+
+			final TurnoutNode turnoutNode = (TurnoutNode) node;
+
+			turnTurnout(turnoutNode);
+		}
+	}
+
+	private void turnTurnout(final TurnoutNode turnoutNode) {
+
+		if (!isConnected()) {
+			logger.info("Not connected! Aborting operation!");
+			return;
+		}
+
+		// in order to operate a turnout once (one change of direction)
+		// two commands have to be sent!
+		final boolean straight = false;
+		turnoutCommandFirst(inputStream, outputStream, straight);
+		Thread.sleep(100);
+		turnoutCommandSecond(inputStream, outputStream, straight);
+
+	}
+
+	public boolean isConnected() {
+		return serialPort != null;
+	}
+
+	public void connect() throws Exception {
+
+		if (isConnected()) {
+			return;
+		}
+
+		serialPort = connect(SERIAL_PORT_IDENTIFIER);
+	}
+
+	SerialPort connect(final String portName) throws Exception {
+		return serialPortFactory.create(portName);
+	}
+
+}

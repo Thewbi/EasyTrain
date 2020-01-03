@@ -1,0 +1,29 @@
+package de.wfb.rail.events;
+
+import org.springframework.context.ApplicationEvent;
+import org.springframework.ui.Model;
+
+public class ModelChangedEvent extends ApplicationEvent {
+
+	public ModelChangedEvent(Object source) {
+		super(source);
+	}
+
+	private int x;
+
+	private int y;
+
+	private Model model;
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public Model getModel() {
+		return model;
+	}
+}

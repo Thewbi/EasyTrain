@@ -1,0 +1,5 @@
+package de.wfb.rail.events;
+
+public class DefaultEventPublisher {
+
+}

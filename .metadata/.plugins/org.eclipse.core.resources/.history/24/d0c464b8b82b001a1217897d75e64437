@@ -1,0 +1,45 @@
+package javafxtest;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Slider;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
+import javafxtest.controls.ZoomingPane;
+
+public class ScalingDemo extends Application {
+
+	public static void main(String[] args) {
+		launch(args);
+	}
+
+	public void start(Stage stage) throws Exception {
+		
+		stage.setScene(createScene());
+		
+		stage.setTitle("ScalingDemo");
+		stage.setWidth(800);
+		stage.setHeight(600);
+		
+		stage.show();
+	}
+	
+	private Scene createScene() {
+		
+		WebView webView = new WebView();
+		webView.getEngine().load("http://www.google.com");
+		
+		Slider slider = new Slider(0.5, 2, 1);
+		
+		ZoomingPane zoomingPane = new ZoomingPane(webView);
+		zoomingPane.zoomFactorProperty().bind(slider.valueProperty());
+		
+		BorderPane borderPane = new BorderPane(zoomingPane, null, null, slider, null);
+		
+		Scene scene = new Scene(borderPane);
+		
+		return scene;
+	}
+
+}

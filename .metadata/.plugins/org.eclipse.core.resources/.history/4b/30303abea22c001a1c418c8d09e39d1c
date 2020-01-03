@@ -1,0 +1,11 @@
+package de.wfb.model.service;
+
+public interface IdService {
+	
+ int getNextId() ;
+
+	 int getCurrentId();
+	
+		 void setCurrentId(final int currentId);
+
+}

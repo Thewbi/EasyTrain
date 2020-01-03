@@ -1,0 +1,15 @@
+package de.wfb.rail.commands;
+
+import java.nio.ByteBuffer;
+
+public interface Command {
+
+	// void execute(OutputStream outputStream);
+
+	int getResponseLength();
+
+	void result(ByteBuffer byteBuffer);
+
+	byte[] getByteArray();
+
+}

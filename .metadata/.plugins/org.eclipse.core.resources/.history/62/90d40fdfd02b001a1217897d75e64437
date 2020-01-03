@@ -1,0 +1,13 @@
+package de.wfb.model;
+
+import javafx.scene.shape.SVGPath;
+
+public class DefaultModel implements Model {
+
+	private final int columns = 100;
+
+	private final int rows = 100;
+	
+	private final Node[][] viewModel = new Node[rows][columns];
+
+}

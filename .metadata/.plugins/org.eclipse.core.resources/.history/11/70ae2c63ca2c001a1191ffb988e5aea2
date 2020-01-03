@@ -1,0 +1,22 @@
+[
+  {
+    "id": 0,
+    "shapeType": "SWITCH_LEFT_270",
+    "x": 37,
+    "y": 23,
+    "leftList": [
+      1
+    ],
+    "rightList": []
+  },
+  {
+    "id": 1,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 37,
+    "y": 22,
+    "leftList": [],
+    "rightList": [
+      0
+    ]
+  }
+]

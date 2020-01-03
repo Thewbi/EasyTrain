@@ -1,0 +1,25 @@
+package de.wfb.dialogs;
+
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
+import javafx.scene.layout.GridPane;
+
+public class LayoutElementSelectionDialog extends Dialog<String> {
+
+	private TextField usernameField;
+
+	public LayoutElementSelectionDialog() {
+
+		final DialogPane dialogPane = getDialogPane();
+
+		setTitle("Login dialog (programmatic)");
+	}
+
+	private Node createContentGrid() {
+		this.usernameField = new TextField();
+		this.usernameField.setMaxWidth(Double.MAX_VALUE);
+		GridPane.setHgrow(usernameField, Priority.ALWAYS);
+		GridPane.setFillWidth(usernameField, true);
+	}
+
+}

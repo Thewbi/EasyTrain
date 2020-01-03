@@ -1,0 +1,12 @@
+package de.wfb.rail.events;
+
+import org.springframework.context.ApplicationEvent;
+
+public class ShapeTypeChanged extends ApplicationEvent {
+
+	public ShapeTypeChanged(Object source, ShapeType shapeType) {
+		super(source);
+		// TODO Auto-generated constructor stub
+	}
+
+}

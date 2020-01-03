@@ -1,0 +1,153 @@
+[
+  {
+    "id": 0,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 33,
+    "y": 24,
+    "leftList": [
+      12,
+      1
+    ],
+    "rightList": []
+  },
+  {
+    "id": 1,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 34,
+    "y": 24,
+    "leftList": [
+      0,
+      2
+    ],
+    "rightList": []
+  },
+  {
+    "id": 2,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 35,
+    "y": 24,
+    "leftList": [
+      1
+    ],
+    "rightList": [
+      0
+    ]
+  },
+  {
+    "id": 3,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 36,
+    "y": 21,
+    "leftList": [
+      11
+    ],
+    "rightList": [
+      2
+    ]
+  },
+  {
+    "id": 4,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 32,
+    "y": 23,
+    "leftList": [
+      5,
+      12
+    ],
+    "rightList": []
+  },
+  {
+    "id": 5,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 32,
+    "y": 22,
+    "leftList": [
+      6
+    ],
+    "rightList": [
+      4
+    ]
+  },
+  {
+    "id": 6,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 32,
+    "y": 21,
+    "leftList": [],
+    "rightList": [
+      5,
+      10
+    ]
+  },
+  {
+    "id": 7,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 33,
+    "y": 20,
+    "leftList": [
+      8,
+      10
+    ],
+    "rightList": []
+  },
+  {
+    "id": 8,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 34,
+    "y": 20,
+    "leftList": [
+      7,
+      9
+    ],
+    "rightList": []
+  },
+  {
+    "id": 9,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 35,
+    "y": 20,
+    "leftList": [
+      8
+    ],
+    "rightList": [
+      11
+    ]
+  },
+  {
+    "id": 10,
+    "shapeType": "TURN_RIGHT_BOTTOM",
+    "x": 32,
+    "y": 20,
+    "leftList": [
+      6
+    ],
+    "rightList": [
+      7
+    ]
+  },
+  {
+    "id": 11,
+    "shapeType": "TURN_BOTTOM_LEFT",
+    "x": 36,
+    "y": 20,
+    "leftList": [
+      9
+    ],
+    "rightList": [
+      3
+    ]
+  },
+  {
+    "id": 12,
+    "shapeType": "TURN_TOP_RIGHT",
+    "x": 32,
+    "y": 24,
+    "leftList": [
+      2,
+      0
+    ],
+    "rightList": [
+      4
+    ]
+  }
+]

@@ -1,0 +1,9 @@
+package de.wfb.model.service;
+
+import de.wfb.model.Model;
+
+public interface ModelPersistenceService {
+	
+	void storeModel(Model model);
+
+}

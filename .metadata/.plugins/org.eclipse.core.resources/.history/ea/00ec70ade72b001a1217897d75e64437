@@ -1,0 +1,14 @@
+package de.wfb.dialogs;
+
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
+
+public class LayoutElementSelectionDialog extends Dialog<String> {
+
+	public LayoutElementSelectionDialog() {
+		final DialogPane dialogPane = getDialogPane();
+
+		setTitle("Login dialog (programmatic)");
+	}
+
+}
