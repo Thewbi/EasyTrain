@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 
 import de.wfb.dialogs.LayoutElementSelectionPane;
 import de.wfb.dialogs.SidePane;
+import de.wfb.dialogs.ThrottlePane;
+import de.wfb.dialogs.ThrottleStage;
 import de.wfb.dialogs.TurnoutDetailsPane;
 import de.wfb.model.DefaultModel;
 import de.wfb.model.Model;
@@ -103,6 +105,16 @@ public class ConfigurationClass {
 	@Bean
 	public TurnoutDetailsPane TurnoutDetailsPane() {
 		return new TurnoutDetailsPane();
+	}
+
+	@Bean
+	public ThrottleStage ThrottleStage() {
+		return new ThrottleStage();
+	}
+
+	@Bean
+	public ThrottlePane ThrottlePane() {
+		return new ThrottlePane();
 	}
 
 }

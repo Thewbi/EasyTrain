@@ -14,6 +14,7 @@ import de.wfb.model.node.TurnoutNode;
 import de.wfb.rail.commands.Command;
 import de.wfb.rail.commands.P50XTurnoutCommand;
 import de.wfb.rail.commands.P50XVersionCommand;
+import de.wfb.rail.commands.P50XXLokCommand;
 import de.wfb.rail.commands.P50XXNOPCommand;
 import de.wfb.rail.factory.Factory;
 import de.wfb.rail.io.template.DefaultSerialTemplate;
@@ -67,11 +68,13 @@ public class DefaultProtocolService implements ProtocolService {
 
 		if (turnoutNode.getProtocolTurnoutId() <= 0) {
 			logger.info("The turnout has no valid turnoutId! Cannot switch the turnout!");
+
 			return;
 		}
 
 		if (!isConnected()) {
 			logger.info("Not connected! Aborting operation!");
+
 			return;
 		}
 
@@ -84,7 +87,19 @@ public class DefaultProtocolService implements ProtocolService {
 			logger.error(e.getMessage(), e);
 		}
 		turnoutCommandSecond(inputStream, outputStream, turnoutNode.getProtocolTurnoutId(), turnoutNode.isThrown());
+	}
 
+	@Override
+	public void throttleLocomotive(final short locomotiveAddress, final double throttleValue,
+			final boolean dirForward) {
+
+		if (!isConnected()) {
+
+			logger.info("Not connected! Aborting operation!");
+
+			return;
+		}
+		throttleCommand(inputStream, outputStream, locomotiveAddress, throttleValue, dirForward);
 	}
 
 	private static void nopCommand(final InputStream inputStream, final OutputStream outputStream) {
@@ -113,6 +128,14 @@ public class DefaultProtocolService implements ProtocolService {
 			final int protocolTurnoutId, final boolean straight) {
 
 		final Command command = new P50XTurnoutCommand((short) protocolTurnoutId, straight, false);
+		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
+		serialTemplate.execute();
+	}
+
+	private static void throttleCommand(final InputStream inputStream, final OutputStream outputStream,
+			final short locomotiveAddress, final double throttleValue, final boolean dirForward) {
+
+		final Command command = new P50XXLokCommand(locomotiveAddress, throttleValue, dirForward);
 		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
 		serialTemplate.execute();
 	}
@@ -168,4 +191,5 @@ public class DefaultProtocolService implements ProtocolService {
 		serialPort.close();
 		serialPort = null;
 	}
+
 }

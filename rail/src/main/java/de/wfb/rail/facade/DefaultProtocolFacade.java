@@ -31,4 +31,10 @@ public class DefaultProtocolFacade implements ProtocolFacade {
 		protocolService.disconnect();
 	}
 
+	@Override
+	public void throttleLocomotive(final short locomotiveAddress, final double throttleValue,
+			final boolean dirForward) {
+		protocolService.throttleLocomotive(locomotiveAddress, throttleValue, dirForward);
+	}
+
 }

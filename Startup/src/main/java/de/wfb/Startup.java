@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import de.wfb.dialogs.SidePane;
+import de.wfb.dialogs.ThrottleStage;
 import de.wfb.javafxtest.controller.LayoutGridController;
 import de.wfb.javafxtest.controls.CustomGridPane;
 import de.wfb.model.service.ModelService;
@@ -36,6 +37,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
@@ -62,12 +64,6 @@ public class Startup extends Application {
 	private SidePane sidePane;
 
 	private ModelService modelService;
-
-//	private ModelPersistenceService modelPersistenceService;
-
-//	private Model model;
-
-//	private DefaultProtocolService defaultProtocolService;
 
 	private ProtocolFacade protocolFacade;
 
@@ -100,6 +96,7 @@ public class Startup extends Application {
 						alert.showAndWait();
 
 						if (alert.getResult().equals(ButtonType.OK)) {
+
 							logger.info("OK");
 							protocolFacade.disconnect();
 							try {
@@ -110,6 +107,7 @@ public class Startup extends Application {
 							Platform.exit();
 
 						} else if (alert.getResult().equals(ButtonType.YES)) {
+
 							logger.info("OK");
 							protocolFacade.disconnect();
 							try {
@@ -120,12 +118,14 @@ public class Startup extends Application {
 							Platform.exit();
 
 						} else {
+
 							logger.info("Cancel");
 							event.consume();
 
 							// I think, there is no way to prevent the main window from closing.
 							// If the the user did abort the exit, just display the main window again.
 							stage.show();
+
 						}
 					}
 				});
@@ -136,9 +136,6 @@ public class Startup extends Application {
 		final ApplicationContext context = new AnnotationConfigApplicationContext(ConfigurationClass.class);
 		modelService = context.getBean(ModelService.class);
 		sidePane = context.getBean(SidePane.class);
-//		modelPersistenceService = context.getBean(ModelPersistenceService.class);
-//		model = context.getBean(Model.class);
-//		defaultProtocolService = context.getBean(DefaultProtocolService.class);
 		protocolFacade = context.getBean(DefaultProtocolFacade.class);
 
 		// load the model
@@ -164,6 +161,15 @@ public class Startup extends Application {
 
 		// layoutElementSelectionDialogStage =
 		// context.getBean(LayoutElementSelectionDialogStage.class);
+
+		// locomotive throttle
+		final ThrottleStage throttleStage = context.getBean(ThrottleStage.class);
+		throttleStage.initialize();
+		throttleStage.initModality(Modality.WINDOW_MODAL);
+		throttleStage.setX(0);
+		throttleStage.setY(0);
+
+		throttleStage.show();
 
 		stage.setScene(createScene(stage, closeWindowEventHandler, context));
 		stage.setTitle("ScrollPaneDemo");

@@ -8,4 +8,6 @@ public interface ProtocolFacade {
 
 	void disconnect();
 
+	void throttleLocomotive(short locomotiveAddress, double throttleValue, boolean dirForward);
+
 }

@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-//@Component
 public class LayoutElementSelectionDialogStage extends Stage {
 
 	@SuppressWarnings("unused")
@@ -21,7 +20,7 @@ public class LayoutElementSelectionDialogStage extends Stage {
 
 		setTitle("Layout Element Selection");
 
-		this.setScene(createContentGrid());
+		setScene(createContentGrid());
 	}
 
 	private Scene createContentGrid() {
@@ -33,7 +32,7 @@ public class LayoutElementSelectionDialogStage extends Stage {
 			return new Scene(sidePane);
 
 		} catch (final FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 
 		return null;

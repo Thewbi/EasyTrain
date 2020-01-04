@@ -65,8 +65,15 @@ public class TurnoutDetailsPane extends GridPane {
 
 		logger.info("clear");
 
-		getChildren().remove(textfield);
-		getChildren().remove(savebutton);
+		if (textfield != null) {
+			getChildren().remove(textfield);
+			textfield = null;
+		}
+
+		if (savebutton != null) {
+			getChildren().remove(savebutton);
+			savebutton = null;
+		}
 	}
 
 }
