@@ -1,7 +1,0 @@
-package rail.factory;
-
-public interface Factory {
-	
-	create(object ... args);
-
-}

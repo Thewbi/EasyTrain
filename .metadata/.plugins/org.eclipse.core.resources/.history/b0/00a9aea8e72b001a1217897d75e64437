@@ -1,7 +1,0 @@
-package de.wfb.dialogs;
-
-import javafx.scene.control.Dialog;
-
-public class LayoutElementSelectionDialog extends Dialog<String> {
-
-}

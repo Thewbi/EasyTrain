@@ -1,7 +1,0 @@
-package rail.ui;
-
-public enum ShapeType {
-	
-	SQUARE
-
-}

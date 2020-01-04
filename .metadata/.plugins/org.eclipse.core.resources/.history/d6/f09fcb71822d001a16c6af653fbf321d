@@ -1,5 +1,0 @@
-package de.wfb.rail.Controller;
-
-public class RailController implements Controller {
-
-}

@@ -1,7 +1,0 @@
-package rail.io.template;
-
-public interface SerialTemplate {
-
-	void execute();
-
-}

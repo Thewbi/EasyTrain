@@ -1,5 +1,0 @@
-package rail.factory;
-
-public interface Factory {
-
-}
