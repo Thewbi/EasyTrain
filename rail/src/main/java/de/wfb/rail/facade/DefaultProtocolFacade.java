@@ -15,26 +15,43 @@ public class DefaultProtocolFacade implements ProtocolFacade {
 
 	@Override
 	public void nodeClicked(final int x, final int y) {
+
+		logger.trace("nodeClicked()");
+
 		protocolService.nodeClicked(x, y);
+	}
+
+	@Override
+	public void throttleLocomotive(final short locomotiveAddress, final double throttleValue,
+			final boolean dirForward) {
+
+		logger.trace("throttleLocomotive()");
+
+		protocolService.throttleLocomotive(locomotiveAddress, throttleValue, dirForward);
+	}
+
+	@Override
+	public void event() {
+
+		logger.trace("event()");
+
+		protocolService.event();
 	}
 
 	@Override
 	public void connect() throws Exception {
 
-		logger.info("connect()");
+		logger.trace("connect()");
 
 		protocolService.connect();
 	}
 
 	@Override
 	public void disconnect() {
-		protocolService.disconnect();
-	}
 
-	@Override
-	public void throttleLocomotive(final short locomotiveAddress, final double throttleValue,
-			final boolean dirForward) {
-		protocolService.throttleLocomotive(locomotiveAddress, throttleValue, dirForward);
+		logger.trace("disconnect()");
+
+		protocolService.disconnect();
 	}
 
 }

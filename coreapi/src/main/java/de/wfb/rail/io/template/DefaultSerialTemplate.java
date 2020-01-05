@@ -37,53 +37,90 @@ public class DefaultSerialTemplate implements SerialTemplate {
 	@Override
 	public void execute() {
 
-		// send request
-		// command.execute(outputStream);
-
 		final byte[] byteArray = command.getByteArray();
 
-		logger.info("REQUEST: " + Hex.encodeHexString(byteArray));
+		logger.trace("REQUEST: " + Hex.encodeHexString(byteArray));
 
 		try {
 			outputStream.write(byteArray, 0, byteArray.length);
-		} catch (final IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (final IOException e) {
+			logger.error(e.getMessage(), e);
 		}
 
-		// retrieve response
-		// final byte[] buffer = new byte[1024];
+		try {
+			final int responseLength = command.getResponseLength();
+			if (responseLength > 0) {
 
-		final ByteBuffer byteBuffer = ByteBuffer.allocate(command.getResponseLength() + 10);
+				processFixedLengthResponse(responseLength);
+
+			} else {
+
+				processVariableLengthResponse();
+			}
+		} catch (final Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+
+	private void processVariableLengthResponse() throws IOException {
+
+		int consumedLength = 0;
+
+		int mode = -1;
+
+		while (mode == -1) {
+
+			final ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+			final byte[] tempBuffer = new byte[1024];
+			final int bytesRead = inputStream.read(tempBuffer);
+
+			// logger.info("bytesRead: " + bytesRead);
+
+			if (bytesRead == -1) {
+
+				final String msg = "Cannot retrieve response!";
+				logger.error(msg);
+				throw new IOException(msg);
+			}
+
+			byteBuffer.put(tempBuffer, consumedLength, bytesRead);
+
+			consumedLength += bytesRead;
+
+			command.result(byteBuffer);
+			mode = command.getResponseLength();
+		}
+
+	}
+
+	private void processFixedLengthResponse(final int responseLength) throws IOException {
+
+		final ByteBuffer byteBuffer = ByteBuffer.allocate(responseLength + 10);
 
 		final byte[] tempBuffer = new byte[1024];
 		int consumedLength = 0;
 
-		try {
+		// read bytes until the command says that enough bytes have been read
+		do {
 
-			// eat bytes until the command says that enough bytes have been eaten
-			do {
+			final int bytesRead = inputStream.read(tempBuffer);
 
-				final int bytesRead = this.inputStream.read(tempBuffer);
+			logger.trace("bytesRead: " + bytesRead);
 
-				logger.info("bytesRead: " + bytesRead);
+			if (bytesRead == -1) {
 
-				if (bytesRead == -1) {
-					logger.error("Cannot retrieve response!");
-					return;
-				}
+				final String msg = "Cannot retrieve response!";
+				logger.error(msg);
+				throw new IOException(msg);
+			}
 
-				byteBuffer.put(tempBuffer, consumedLength, bytesRead);
+			byteBuffer.put(tempBuffer, consumedLength, bytesRead);
 
-				consumedLength += bytesRead;
+			consumedLength += bytesRead;
 
-			} while (consumedLength < command.getResponseLength());
+		} while (consumedLength < command.getResponseLength());
 
-		} catch (final Exception e) {
-			logger.error(e.getMessage(), e);
-		}
-
-		logger.info("RESPONSE: " + byteBuffer.toString());
+		logger.trace("RESPONSE: " + byteBuffer.toString());
 
 		command.result(byteBuffer);
 	}

@@ -3,6 +3,8 @@ package de.wfb.rail.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +16,8 @@ import de.wfb.model.node.TurnoutNode;
 import de.wfb.rail.commands.Command;
 import de.wfb.rail.commands.P50XTurnoutCommand;
 import de.wfb.rail.commands.P50XVersionCommand;
+import de.wfb.rail.commands.P50XXEventCommand;
+import de.wfb.rail.commands.P50XXEvtSenCommand;
 import de.wfb.rail.commands.P50XXLokCommand;
 import de.wfb.rail.commands.P50XXNOPCommand;
 import de.wfb.rail.factory.Factory;
@@ -34,6 +38,8 @@ public class DefaultProtocolService implements ProtocolService {
 	private InputStream inputStream;
 
 	private OutputStream outputStream;
+
+	private final Lock lock = new ReentrantLock(true);
 
 	@Autowired
 	private Model model;
@@ -66,40 +72,105 @@ public class DefaultProtocolService implements ProtocolService {
 
 	private void turnTurnout(final TurnoutNode turnoutNode) {
 
-		if (turnoutNode.getProtocolTurnoutId() <= 0) {
-			logger.info("The turnout has no valid turnoutId! Cannot switch the turnout!");
+		lock.lock();
 
-			return;
-		}
-
-		if (!isConnected()) {
-			logger.info("Not connected! Aborting operation!");
-
-			return;
-		}
-
-		// in order to operate a turnout once (one change of direction)
-		// two commands have to be sent!
-		turnoutCommandFirst(inputStream, outputStream, turnoutNode.getProtocolTurnoutId(), turnoutNode.isThrown());
 		try {
-			Thread.sleep(100);
-		} catch (final InterruptedException e) {
+
+			if (turnoutNode.getProtocolTurnoutId() <= 0) {
+				logger.info("The turnout has no valid turnoutId! Cannot switch the turnout!");
+
+				return;
+			}
+
+			if (!isConnected()) {
+				logger.info("Not connected! Aborting operation!");
+
+				return;
+			}
+
+			// in order to operate a turnout once (one change of direction)
+			// two commands have to be sent!
+			turnoutCommandFirst(inputStream, outputStream, turnoutNode.getProtocolTurnoutId(), turnoutNode.isThrown());
+			try {
+				Thread.sleep(100);
+			} catch (final InterruptedException e) {
+				logger.error(e.getMessage(), e);
+			}
+			turnoutCommandSecond(inputStream, outputStream, turnoutNode.getProtocolTurnoutId(), turnoutNode.isThrown());
+
+		} catch (final Exception e) {
+
 			logger.error(e.getMessage(), e);
+
+		} finally {
+
+			lock.unlock();
+
 		}
-		turnoutCommandSecond(inputStream, outputStream, turnoutNode.getProtocolTurnoutId(), turnoutNode.isThrown());
+	}
+
+	@Override
+	public void event() {
+
+		lock.lock();
+
+		try {
+
+			if (!isConnected()) {
+
+				logger.info("Not connected! Aborting operation!");
+
+				return;
+			}
+
+			// check the event status
+			final P50XXEventCommand eventCommand = eventCommand(inputStream, outputStream);
+
+			logger.trace("eventCommand.isxStatusShouldBeCalled() = " + eventCommand.isxStatusShouldBeCalled());
+
+			// if the event status says to check the S88 contacts, check those contacts
+			if (eventCommand.isxStatusShouldBeCalled()) {
+
+				final P50XXEvtSenCommand eventSenseCommand = eventSenseCommand(inputStream, outputStream);
+				logger.trace(eventSenseCommand);
+			}
+
+		} catch (final Exception e) {
+
+			logger.error(e.getMessage(), e);
+
+		} finally {
+
+			lock.unlock();
+
+		}
 	}
 
 	@Override
 	public void throttleLocomotive(final short locomotiveAddress, final double throttleValue,
 			final boolean dirForward) {
 
-		if (!isConnected()) {
+		lock.lock();
 
-			logger.info("Not connected! Aborting operation!");
+		try {
 
-			return;
+			if (!isConnected()) {
+
+				logger.info("Not connected! Aborting operation!");
+
+				return;
+			}
+			throttleCommand(inputStream, outputStream, locomotiveAddress, throttleValue, dirForward);
+
+		} catch (final Exception e) {
+
+			logger.error(e.getMessage(), e);
+
+		} finally {
+
+			lock.unlock();
+
 		}
-		throttleCommand(inputStream, outputStream, locomotiveAddress, throttleValue, dirForward);
 	}
 
 	private static void nopCommand(final InputStream inputStream, final OutputStream outputStream) {
@@ -138,6 +209,25 @@ public class DefaultProtocolService implements ProtocolService {
 		final Command command = new P50XXLokCommand(locomotiveAddress, throttleValue, dirForward);
 		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
 		serialTemplate.execute();
+	}
+
+	private static P50XXEventCommand eventCommand(final InputStream inputStream, final OutputStream outputStream) {
+
+		final P50XXEventCommand command = new P50XXEventCommand();
+		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
+		serialTemplate.execute();
+
+		return command;
+	}
+
+	private static P50XXEvtSenCommand eventSenseCommand(final InputStream inputStream,
+			final OutputStream outputStream) {
+
+		final P50XXEvtSenCommand command = new P50XXEvtSenCommand();
+		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
+		serialTemplate.execute();
+
+		return command;
 	}
 
 	public boolean isConnected() {

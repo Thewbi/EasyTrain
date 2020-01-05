@@ -117,4 +117,9 @@ public class ConfigurationClass {
 		return new ThrottlePane();
 	}
 
+	@Bean
+	public EvtSenCommandThread EvtSenCommandThread() {
+		return new EvtSenCommandThread();
+	}
+
 }

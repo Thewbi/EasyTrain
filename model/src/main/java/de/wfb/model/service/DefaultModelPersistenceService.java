@@ -95,9 +95,6 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 
 		for (final JsonNode jsonNode : nodeArray) {
 
-//			final Node node = nodeFactory.create(jsonNode.getX(), jsonNode.getY(),
-//					ShapeType.valueOf(jsonNode.getShapeType()), jsonNode.getId());
-
 			try {
 				final Node node = nodeFactory.create(jsonNode);
 

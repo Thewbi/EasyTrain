@@ -107,7 +107,7 @@ public class ThrottlePane extends GridPane {
 
 		slider.setValue(throttleValue);
 
-		logger.info("newValue = " + throttleValue);
+		logger.trace("newValue = " + throttleValue);
 
 		final String textFieldContent = textfield.getText();
 

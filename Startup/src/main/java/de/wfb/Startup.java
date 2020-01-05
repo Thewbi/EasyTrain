@@ -67,6 +67,10 @@ public class Startup extends Application {
 
 	private ProtocolFacade protocolFacade;
 
+	private EvtSenCommandThread evtSenCommandThread;
+
+	// private boolean running = true;
+
 	public static void main(final String[] args) {
 
 		logger.trace("main");
@@ -104,6 +108,8 @@ public class Startup extends Application {
 							} catch (final InterruptedException e) {
 								logger.error(e.getMessage(), e);
 							}
+//							running = false;
+							evtSenCommandThread.stop();
 							Platform.exit();
 
 						} else if (alert.getResult().equals(ButtonType.YES)) {
@@ -115,6 +121,8 @@ public class Startup extends Application {
 							} catch (final InterruptedException e) {
 								logger.error(e.getMessage(), e);
 							}
+//							running = false;
+							evtSenCommandThread.stop();
 							Platform.exit();
 
 						} else {
@@ -125,7 +133,6 @@ public class Startup extends Application {
 							// I think, there is no way to prevent the main window from closing.
 							// If the the user did abort the exit, just display the main window again.
 							stage.show();
-
 						}
 					}
 				});
@@ -137,6 +144,7 @@ public class Startup extends Application {
 		modelService = context.getBean(ModelService.class);
 		sidePane = context.getBean(SidePane.class);
 		protocolFacade = context.getBean(DefaultProtocolFacade.class);
+		evtSenCommandThread = context.getBean(EvtSenCommandThread.class);
 
 		// load the model
 		try {
@@ -185,6 +193,16 @@ public class Startup extends Application {
 
 		// https://stackoverflow.com/questions/26619566/javafx-stage-close-handler
 		stage.setOnCloseRequest(closeWindowEventHandler);
+
+		startP50XXEvtSenCommandThread();
+	}
+
+	private void startP50XXEvtSenCommandThread() {
+
+		logger.info("startP50XXEvtSenCommandThread()");
+
+		final Thread thread = new Thread(evtSenCommandThread);
+		thread.start();
 	}
 
 	@Override

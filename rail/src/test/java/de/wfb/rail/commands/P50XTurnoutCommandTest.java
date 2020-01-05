@@ -1,4 +1,4 @@
-package de.wfb.rail;
+package de.wfb.rail.commands;
 
 import org.apache.commons.codec.binary.Hex;
 import org.junit.Assert;
