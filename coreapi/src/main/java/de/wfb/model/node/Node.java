@@ -9,11 +9,11 @@ public class Node {
 
 	private int id;
 
-	protected int x;
+	private int x;
 
-	protected int y;
+	private int y;
 
-	protected ShapeType shapeType;
+	private ShapeType shapeType;
 
 	/**
 	 * Is this rail going from left to right (Horizontal). This is important when

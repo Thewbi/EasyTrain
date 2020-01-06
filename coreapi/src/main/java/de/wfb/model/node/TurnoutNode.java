@@ -24,7 +24,7 @@ public class TurnoutNode extends Node {
 
 	@Override
 	public String toString() {
-		return "TurnoutNode(" + x + ", " + y + ", " + shapeType + ")";
+		return "TurnoutNode(" + getX() + ", " + getY() + ", " + getShapeType() + ")";
 	}
 
 	public int getProtocolTurnoutId() {

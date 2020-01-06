@@ -1,4 +1,4 @@
-package de.wfb.rail.Controller;
+package de.wfb.rail.controller;
 
 import de.wfb.rail.controller.Controller;
 

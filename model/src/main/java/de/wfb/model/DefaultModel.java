@@ -19,12 +19,17 @@ public class DefaultModel implements Model {
 
 	@Override
 	public Node getNode(final int x, final int y) {
-		return viewModel[x][y];
+		if (0 <= x && x < columns && 0 <= y && y < columns) {
+			return viewModel[x][y];
+		}
+		return null;
 	}
 
 	@Override
 	public void setNode(final int x, final int y, final Node node) {
-		viewModel[x][y] = node;
+		if (0 <= x && x < columns && 0 <= y && y < columns) {
+			viewModel[x][y] = node;
+		}
 	}
 
 	@Override
@@ -52,10 +57,12 @@ public class DefaultModel implements Model {
 		return idMap;
 	}
 
+	@Override
 	public Node getSelectedNode() {
 		return selectedNode;
 	}
 
+	@Override
 	public void setSelectedNode(final Node selectedNode) {
 		this.selectedNode = selectedNode;
 	}
