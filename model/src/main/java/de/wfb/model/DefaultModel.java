@@ -67,4 +67,12 @@ public class DefaultModel implements Model {
 		this.selectedNode = selectedNode;
 	}
 
+	@Override
+	public void connectModel() {
+		for (final Map.Entry<Integer, Node> entry : idMap.entrySet()) {
+
+			entry.getValue().connect(this);
+		}
+	}
+
 }

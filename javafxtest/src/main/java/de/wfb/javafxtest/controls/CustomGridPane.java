@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import de.wfb.model.Model;
 import de.wfb.model.node.Node;
-import de.wfb.model.node.TurnoutNode;
 import de.wfb.rail.events.ModelChangedEvent;
 import de.wfb.rail.events.SelectionEvent;
 import de.wfb.rail.factory.Factory;
@@ -184,12 +183,14 @@ public class CustomGridPane extends Pane implements ApplicationListener<ModelCha
 
 	private boolean turnoutState(final Node node) {
 
-		if (node instanceof TurnoutNode) {
-			final TurnoutNode turnoutNode = (TurnoutNode) node;
-			return turnoutNode.isThrown();
-		}
+//		if (node instanceof TurnoutNode) {
+//			final TurnoutNode turnoutNode = (TurnoutNode) node;
+//			return turnoutNode.isThrown();
+//		}
+//
+//		return false;
 
-		return false;
+		return node.isThrown();
 	}
 
 	public boolean isShiftState() {

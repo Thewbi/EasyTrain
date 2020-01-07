@@ -5,7 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.wfb.model.node.Node;
-import de.wfb.model.node.TurnoutNode;
+import de.wfb.rail.ui.ShapeType;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -22,18 +22,18 @@ public class TurnoutDetailsPane extends GridPane {
 
 	public void setup(final Node node) {
 
-		logger.info("setup() node = " + node);
+		logger.trace("setup() node = " + node);
 
 		if (node == null) {
 			return;
 		}
 
-		if (node instanceof TurnoutNode) {
-
-			final TurnoutNode turnoutNode = (TurnoutNode) node;
+		if (ShapeType.isTurnout(node.getShapeType())) {
 
 			textfield = new TextField();
-			textfield.setText(Integer.toString(turnoutNode.getProtocolTurnoutId()));
+			if (node.getProtocolTurnoutId() != null) {
+				textfield.setText(Integer.toString(node.getProtocolTurnoutId()));
+			}
 			GridPane.setColumnIndex(textfield, 1);
 			GridPane.setRowIndex(textfield, 1);
 
@@ -53,7 +53,7 @@ public class TurnoutDetailsPane extends GridPane {
 					if (intValue != Integer.MIN_VALUE) {
 
 						logger.info("Saving protocolturnoutid " + intValue);
-						turnoutNode.setProtocolTurnoutId(intValue);
+						node.setProtocolTurnoutId(intValue);
 					}
 				}
 			});
@@ -63,14 +63,16 @@ public class TurnoutDetailsPane extends GridPane {
 
 	public void clear() {
 
-		logger.info("clear");
+		logger.trace("clear");
 
 		if (textfield != null) {
+
 			getChildren().remove(textfield);
 			textfield = null;
 		}
 
 		if (savebutton != null) {
+
 			getChildren().remove(savebutton);
 			savebutton = null;
 		}

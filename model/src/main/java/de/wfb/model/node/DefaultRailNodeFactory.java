@@ -1,19 +1,96 @@
 package de.wfb.model.node;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import de.wfb.model.service.IdService;
+import de.wfb.model.service.ModelService;
 import de.wfb.rail.factory.Factory;
 import de.wfb.rail.ui.ShapeType;
 
-public class DefaultRailNodeFactory implements Factory<RailNode> {
+public class DefaultRailNodeFactory implements Factory<Node> {
+
+	private static final Logger logger = LogManager.getLogger(DefaultRailNodeFactory.class);
 
 	private final Factory<GraphNode> graphNodeFactory = new DefaultGraphNodeFactory();
 
+	@Autowired
+	private IdService idService;
+
+	@Autowired
+	private ModelService modelService;
+
 	@Override
-	public RailNode create(final Object... args) throws Exception {
+	public Node create(final Object... args) throws Exception {
 
-		final ShapeType shapeType = (ShapeType) args[0];
+		final Object firstParameter = args[0];
 
-		final int x = (int) args[1];
-		final int y = (int) args[2];
+		RailNode railNode = null;
+
+		if (firstParameter instanceof JsonNode) {
+
+			railNode = createFromJsonNode((JsonNode) firstParameter);
+
+		} else {
+
+			railNode = createFromParameters(args);
+
+		}
+
+		return railNode;
+	}
+
+	private RailNode createFromJsonNode(final JsonNode jsonNode) throws Exception {
+
+		final int x = jsonNode.getX();
+		final int y = jsonNode.getY();
+		final ShapeType shapeType = ShapeType.valueOf(jsonNode.getShapeType());
+		final int id = jsonNode.getId();
+
+		final RailNode node = createFromParametersInternal(id, x, y, shapeType);
+
+		if (ShapeType.isTurnout(shapeType)) {
+
+			if (jsonNode.getProtocolTurnoutId() != null) {
+				node.setProtocolTurnoutId(jsonNode.getProtocolTurnoutId());
+			}
+		}
+
+//		// resolve manual connections
+//		logger.info("Factoring manual connections ...");
+//		if (CollectionUtils.isNotEmpty(jsonNode.getManualConnections())) {
+//
+//			for (final Integer nodeId : jsonNode.getManualConnections()) {
+//
+//				logger.info("Manual connection to node: " + nodeId);
+//
+//				final Node connectedNode = modelService.getNodeById(nodeId.intValue());
+//
+//				logger.info("Manual connection to connectedNode: " + connectedNode);
+//
+//				if (connectedNode != null) {
+//
+//					logger.info("Manual Connection resolved");
+//					node.getManualConnections().add((RailNode) connectedNode);
+//				}
+//			}
+//		}
+
+		return node;
+	}
+
+	private RailNode createFromParameters(final Object... args) throws Exception {
+
+		final int x = (int) args[0];
+		final int y = (int) args[1];
+		final ShapeType shapeType = (ShapeType) args[2];
+
+		return createFromParametersInternal(idService.getNextId(), x, y, shapeType);
+	}
+
+	private RailNode createFromParametersInternal(final int id, final int x, final int y, final ShapeType shapeType)
+			throws Exception {
 
 		RailNode railNode = null;
 		GraphNode graphNodeOne = null;
@@ -33,6 +110,7 @@ public class DefaultRailNodeFactory implements Factory<RailNode> {
 			railNode = new DefaultRailNode();
 			railNode.setX(x);
 			railNode.setY(y);
+			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 
 			graphNodeOne = graphNodeFactory.create();
@@ -60,6 +138,7 @@ public class DefaultRailNodeFactory implements Factory<RailNode> {
 			railNode = new DefaultRailNode();
 			railNode.setX(x);
 			railNode.setY(y);
+			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 
 			graphNodeOne = graphNodeFactory.create();
@@ -87,6 +166,7 @@ public class DefaultRailNodeFactory implements Factory<RailNode> {
 			railNode = new DefaultRailNode();
 			railNode.setX(x);
 			railNode.setY(y);
+			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 
 			graphNodeOne = graphNodeFactory.create();
@@ -114,6 +194,7 @@ public class DefaultRailNodeFactory implements Factory<RailNode> {
 			railNode = new DefaultRailNode();
 			railNode.setX(x);
 			railNode.setY(y);
+			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 
 			graphNodeOne = graphNodeFactory.create();
@@ -138,9 +219,57 @@ public class DefaultRailNodeFactory implements Factory<RailNode> {
 
 		case TURN_BOTTOM_LEFT:
 
+			railNode = new DefaultRailNode();
+			railNode.setX(x);
+			railNode.setY(y);
+			railNode.setId(id);
+			railNode.setShapeType(shapeType);
+
+			graphNodeOne = graphNodeFactory.create();
+			railNode.setGraphNodeOne(graphNodeOne);
+
+			graphNodeTwo = graphNodeFactory.create();
+			railNode.setGraphNodeTwo(graphNodeTwo);
+
+			// west
+			westEdge = new DefaultEdge();
+			railNode.setEdge(EdgeDirection.WEST, westEdge);
+			westEdge.setInGraphNode(graphNodeOne);
+			westEdge.setOutGraphNode(graphNodeTwo);
+
+			// south
+			southEdge = new DefaultEdge();
+			railNode.setEdge(EdgeDirection.SOUTH, southEdge);
+			southEdge.setInGraphNode(graphNodeTwo);
+			southEdge.setOutGraphNode(graphNodeOne);
+
 			break;
 
 		case TURN_LEFT_TOP:
+
+			railNode = new DefaultRailNode();
+			railNode.setX(x);
+			railNode.setY(y);
+			railNode.setId(id);
+			railNode.setShapeType(shapeType);
+
+			graphNodeOne = graphNodeFactory.create();
+			railNode.setGraphNodeOne(graphNodeOne);
+
+			graphNodeTwo = graphNodeFactory.create();
+			railNode.setGraphNodeTwo(graphNodeTwo);
+
+			// west
+			westEdge = new DefaultEdge();
+			railNode.setEdge(EdgeDirection.WEST, westEdge);
+			westEdge.setInGraphNode(graphNodeOne);
+			westEdge.setOutGraphNode(graphNodeTwo);
+
+			// north
+			northEdge = new DefaultEdge();
+			railNode.setEdge(EdgeDirection.NORTH, northEdge);
+			northEdge.setInGraphNode(graphNodeTwo);
+			northEdge.setOutGraphNode(graphNodeOne);
 
 			break;
 
@@ -149,6 +278,7 @@ public class DefaultRailNodeFactory implements Factory<RailNode> {
 			railNode = new DefaultRailNode();
 			railNode.setX(x);
 			railNode.setY(y);
+			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 
 			graphNodeOne = graphNodeFactory.create();
@@ -178,7 +308,7 @@ public class DefaultRailNodeFactory implements Factory<RailNode> {
 			break;
 
 		case SWITCH_RIGHT_0:
-			railNode = create(ShapeType.SWITCH_LEFT_0);
+			railNode = createFromParametersInternal(id, x, y, ShapeType.SWITCH_LEFT_0);
 			railNode.setShapeType(ShapeType.SWITCH_RIGHT_0);
 			temp = railNode.getNorthEdge();
 			railNode.setNorthEdge(null);
@@ -190,6 +320,7 @@ public class DefaultRailNodeFactory implements Factory<RailNode> {
 			railNode = new DefaultRailNode();
 			railNode.setX(x);
 			railNode.setY(y);
+			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 
 			graphNodeOne = graphNodeFactory.create();
@@ -201,8 +332,8 @@ public class DefaultRailNodeFactory implements Factory<RailNode> {
 			// north
 			northEdge = new DefaultEdge();
 			railNode.setEdge(EdgeDirection.NORTH, northEdge);
-			northEdge.setInGraphNode(graphNodeTwo);
-			northEdge.setOutGraphNode(graphNodeOne);
+			northEdge.setInGraphNode(graphNodeOne);
+			northEdge.setOutGraphNode(graphNodeTwo);
 
 			// east
 			eastEdge = new DefaultEdge();
@@ -213,13 +344,13 @@ public class DefaultRailNodeFactory implements Factory<RailNode> {
 			// south
 			southEdge = new DefaultEdge();
 			railNode.setEdge(EdgeDirection.SOUTH, southEdge);
-			southEdge.setInGraphNode(graphNodeOne);
-			southEdge.setOutGraphNode(graphNodeTwo);
+			southEdge.setInGraphNode(graphNodeTwo);
+			southEdge.setOutGraphNode(graphNodeOne);
 
 			break;
 
 		case SWITCH_RIGHT_90:
-			railNode = create(ShapeType.SWITCH_LEFT_90);
+			railNode = createFromParametersInternal(id, x, y, ShapeType.SWITCH_LEFT_90);
 			railNode.setShapeType(ShapeType.SWITCH_RIGHT_90);
 			temp = railNode.getEastEdge();
 			railNode.setEastEdge(null);
@@ -231,6 +362,7 @@ public class DefaultRailNodeFactory implements Factory<RailNode> {
 			railNode = new DefaultRailNode();
 			railNode.setX(x);
 			railNode.setY(y);
+			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 
 			graphNodeOne = graphNodeFactory.create();
@@ -242,14 +374,14 @@ public class DefaultRailNodeFactory implements Factory<RailNode> {
 			// east
 			eastEdge = new DefaultEdge();
 			railNode.setEdge(EdgeDirection.EAST, eastEdge);
-			eastEdge.setInGraphNode(graphNodeTwo);
-			eastEdge.setOutGraphNode(graphNodeOne);
+			eastEdge.setInGraphNode(graphNodeOne);
+			eastEdge.setOutGraphNode(graphNodeTwo);
 
 			// south
 			southEdge = new DefaultEdge();
 			railNode.setEdge(EdgeDirection.SOUTH, southEdge);
-			southEdge.setInGraphNode(graphNodeOne);
-			southEdge.setOutGraphNode(graphNodeTwo);
+			southEdge.setInGraphNode(graphNodeTwo);
+			southEdge.setOutGraphNode(graphNodeOne);
 
 			// west
 			westEdge = new DefaultEdge();
@@ -260,7 +392,7 @@ public class DefaultRailNodeFactory implements Factory<RailNode> {
 			break;
 
 		case SWITCH_RIGHT_180:
-			railNode = create(ShapeType.SWITCH_LEFT_180);
+			railNode = createFromParametersInternal(id, x, y, ShapeType.SWITCH_LEFT_180);
 			railNode.setShapeType(ShapeType.SWITCH_RIGHT_180);
 			temp = railNode.getSouthEdge();
 			railNode.setSouthEdge(null);
@@ -272,6 +404,7 @@ public class DefaultRailNodeFactory implements Factory<RailNode> {
 			railNode = new DefaultRailNode();
 			railNode.setX(x);
 			railNode.setY(y);
+			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 
 			graphNodeOne = graphNodeFactory.create();
@@ -301,7 +434,7 @@ public class DefaultRailNodeFactory implements Factory<RailNode> {
 			break;
 
 		case SWITCH_RIGHT_270:
-			railNode = create(ShapeType.SWITCH_LEFT_270);
+			railNode = createFromParametersInternal(id, x, y, ShapeType.SWITCH_LEFT_270);
 			railNode.setShapeType(ShapeType.SWITCH_RIGHT_270);
 			temp = railNode.getWestEdge();
 			railNode.setWestEdge(null);
@@ -313,6 +446,14 @@ public class DefaultRailNodeFactory implements Factory<RailNode> {
 		}
 
 		return railNode;
+	}
+
+	public IdService getIdService() {
+		return idService;
+	}
+
+	public void setIdService(final IdService idService) {
+		this.idService = idService;
 	}
 
 }

@@ -150,6 +150,7 @@ public class Startup extends Application {
 		try {
 			logger.info("Loading model ...");
 			modelService.loadModel();
+			modelService.connectModel();
 			logger.info("Loading model done.");
 		} catch (final Exception e) {
 			logger.error(e.getMessage(), e);
@@ -279,7 +280,7 @@ public class Startup extends Application {
 
 			if (event.getCode() == KeyCode.SHIFT) {
 
-				logger.info("SHIFT pressed");
+				logger.trace("SHIFT pressed");
 				layoutGridController.setShiftState(true);
 				customGridPane.setShiftState(true);
 			}
@@ -289,7 +290,7 @@ public class Startup extends Application {
 
 			if (event.getCode() == KeyCode.SHIFT) {
 
-				logger.info("SHIFT released");
+				logger.trace("SHIFT released");
 				layoutGridController.setShiftState(false);
 				customGridPane.setShiftState(false);
 			}
@@ -323,6 +324,7 @@ public class Startup extends Application {
 		final Menu editMenu = new Menu("Edit");
 		final Menu serialMenu = new Menu("Serial");
 		final Menu helpMenu = new Menu("Help");
+		final Menu debugMenu = new Menu("Debug");
 
 		// create MenuItems
 		final MenuItem newItem = new MenuItem("New");
@@ -405,13 +407,24 @@ public class Startup extends Application {
 			}
 		});
 
+		final MenuItem routingNodeMenuItem = new MenuItem("Routing Node");
+		routingNodeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(final ActionEvent event) {
+
+				modelService.debugRoute();
+			}
+		});
+
 		// add menuItems to the Menus
-		fileMenu.getItems().addAll(newItem, openFileItem, exitItem, saveItem);
+		fileMenu.getItems().addAll(newItem, openFileItem, saveItem, exitItem);
 		editMenu.getItems().addAll(connectItem, copyItem, pasteItem);
 		serialMenu.getItems().addAll(serialConnectItem, serialDisconnectItem);
+		debugMenu.getItems().addAll(routingNodeMenuItem);
 
 		// add Menus to the MenuBar
-		menuBar.getMenus().addAll(fileMenu, editMenu, serialMenu, helpMenu);
+		menuBar.getMenus().addAll(fileMenu, debugMenu, editMenu, serialMenu, helpMenu);
 
 		return menuBar;
 	}

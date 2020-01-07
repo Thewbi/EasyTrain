@@ -18,4 +18,6 @@ public interface Model {
 
 	Map<Integer, Node> getIdMap();
 
+	void connectModel();
+
 }

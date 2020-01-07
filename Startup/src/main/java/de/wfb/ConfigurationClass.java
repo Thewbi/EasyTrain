@@ -12,11 +12,10 @@ import de.wfb.dialogs.TurnoutDetailsPane;
 import de.wfb.model.DefaultModel;
 import de.wfb.model.Model;
 import de.wfb.model.facade.DefaultModelFacade;
-import de.wfb.model.node.DefaultNodeFactory;
+import de.wfb.model.node.DefaultRailNodeFactory;
 import de.wfb.model.service.DefaultIdService;
 import de.wfb.model.service.DefaultModelPersistenceService;
 import de.wfb.model.service.DefaultModelService;
-import de.wfb.model.service.DefaultNodeConnectorService;
 import de.wfb.model.service.ModelService;
 import de.wfb.rail.facade.DefaultProtocolFacade;
 import de.wfb.rail.factory.DefaultSVGPathFactory;
@@ -57,15 +56,20 @@ public class ConfigurationClass {
 		return new DefaultIdService();
 	}
 
-	@Bean
-	public DefaultNodeFactory DefaultNodeFactory() {
-		return new DefaultNodeFactory();
-	}
+//	@Bean
+//	public DefaultNodeFactory DefaultNodeFactory() {
+//		return new DefaultNodeFactory();
+//	}
 
 	@Bean
-	public DefaultNodeConnectorService DefaultNodeConnectorService() {
-		return new DefaultNodeConnectorService();
+	public DefaultRailNodeFactory DefaultRailNodeFactory() {
+		return new DefaultRailNodeFactory();
 	}
+
+//	@Bean
+//	public DefaultNodeConnectorService DefaultNodeConnectorService() {
+//		return new DefaultNodeConnectorService();
+//	}
 
 	@Bean
 	public DefaultModelPersistenceService DefaultModelPersistenceService() {

@@ -25,7 +25,7 @@ public class SidePane extends GridPane implements ApplicationListener<Applicatio
 	@Override
 	public void onApplicationEvent(final ApplicationEvent event) {
 
-		logger.info("onApplicationEvent " + event.getClass().getSimpleName());
+		logger.trace("onApplicationEvent " + event.getClass().getSimpleName());
 
 		if (event instanceof NodeSelectedEvent) {
 
@@ -39,7 +39,7 @@ public class SidePane extends GridPane implements ApplicationListener<Applicatio
 
 	public void setup() throws FileNotFoundException {
 
-		logger.info("setup()");
+		logger.trace("setup()");
 
 		layoutElementSelectionPane.setup();
 		turnoutDetailsPane.setup(null);

@@ -150,22 +150,12 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 				final Node nodeB = iterator.next();
 
 				final StringBuffer stringBuffer = new StringBuffer();
-				stringBuffer.append("Do you want to connect the node " + nodeA + " to " + nodeB + "?");
+				stringBuffer.append("Do you want to connect the node " + nodeA.getId() + " to " + nodeB.getId() + "?");
 
 				final Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 				alert.setTitle("Connect Operation ...");
 				alert.setHeaderText("Confirm connection.");
 				alert.setContentText(stringBuffer.toString());
-
-//				final ButtonType okButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
-//				final ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
-//				final ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-
-				// alert.getButtonTypes().setAll(okButton, noButton, cancelButton);
-
-//				alert.getButtonTypes().add(0, okButton);
-//				alert.getButtonTypes().add(1, noButton);
-//				alert.getButtonTypes().add(2, cancelButton);
 
 				alert.showAndWait().ifPresent(type -> {
 

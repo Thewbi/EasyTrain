@@ -1,16 +1,28 @@
 package de.wfb.model.node;
 
+import java.util.List;
+
 import de.wfb.model.Model;
 import de.wfb.rail.ui.ShapeType;
 
-public interface RailNode {
+public interface RailNode extends Node {
 
+	@Override
+	int getId();
+
+	@Override
+	void setId(int id);
+
+	@Override
 	int getX();
 
+	@Override
 	void setX(int x);
 
+	@Override
 	int getY();
 
+	@Override
 	void setY(int y);
 
 	Edge getNorthEdge();
@@ -33,8 +45,10 @@ public interface RailNode {
 
 	void setEdge(EdgeDirection edgeDirection, Edge edge);
 
+	@Override
 	ShapeType getShapeType();
 
+	@Override
 	void setShapeType(ShapeType shapeType);
 
 	void setGraphNodeOne(GraphNode graphNodeOut);
@@ -45,6 +59,17 @@ public interface RailNode {
 
 	GraphNode getGraphNodeTwo();
 
+	@Override
+	Integer getProtocolTurnoutId();
+
+	@Override
+	void setProtocolTurnoutId(Integer protocolTurnoutId);
+
+	List<RailNode> getManualConnections();
+
+	@Override
 	void connect(Model model);
+
+	void connectTo(final RailNode railNode);
 
 }

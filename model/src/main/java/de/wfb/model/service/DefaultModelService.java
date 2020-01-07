@@ -8,9 +8,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 
+import de.wfb.dot.DefaultDotSerializer;
 import de.wfb.model.Model;
+import de.wfb.model.node.DefaultRailNode;
 import de.wfb.model.node.Node;
-import de.wfb.model.node.TurnoutNode;
 import de.wfb.rail.events.ModelChangedEvent;
 import de.wfb.rail.events.NodeSelectedEvent;
 import de.wfb.rail.factory.Factory;
@@ -31,9 +32,6 @@ public class DefaultModelService implements ModelService {
 	private Factory<Node> nodeFactory;
 
 	@Autowired
-	private NodeConnectorService nodeConnectorService;
-
-	@Autowired
 	private ModelPersistenceService modelPersistenceService;
 
 	@Override
@@ -52,6 +50,7 @@ public class DefaultModelService implements ModelService {
 		final Node node = model.getNode(x, y);
 
 		if (node == null) {
+
 			logger.info("nodeClicked node is null");
 			return;
 		}
@@ -61,25 +60,28 @@ public class DefaultModelService implements ModelService {
 		// store the currently selected node in the model
 		logger.info("setSelectedNode()");
 		model.setSelectedNode(node);
+
 		logger.info("sendNodeSelectedEvent()");
 		sendNodeSelectedEvent(node);
 
 		// switch turnouts
-		if (node instanceof TurnoutNode) {
+		// if (node instanceof TurnoutNode) {
+		if (ShapeType.isTurnout(node.getShapeType())) {
 
-			final TurnoutNode turnoutNode = (TurnoutNode) node;
+			// final TurnoutNode turnoutNode = (TurnoutNode) node;
 
 			// change the node in the UI for visual feedback
-			turnoutNode.toggle();
+			node.toggleTurnout();
 
 			// tell the UI
 			sendModelChangedEvent(x, y);
 		}
+
 	}
 
 	private void sendNodeSelectedEvent(final Node node) {
 
-		logger.info("sendNodeSelectedEvent() node: " + node);
+		logger.trace("sendNodeSelectedEvent() node: " + node);
 
 		final NodeSelectedEvent nodeSelectedEvent = new NodeSelectedEvent(this, model, node);
 
@@ -89,7 +91,7 @@ public class DefaultModelService implements ModelService {
 	@Override
 	public void sendModelChangedEvent(final int x, final int y) {
 
-		logger.info("sendModelChangedEvent() x: " + x + " y: " + y);
+		logger.trace("sendModelChangedEvent() x: " + x + " y: " + y);
 
 		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, x, y);
 
@@ -99,21 +101,23 @@ public class DefaultModelService implements ModelService {
 	@Override
 	public void addNode(final int x, final int y, final ShapeType shapeType) {
 
-		logger.info("addNode() x: " + x + " y: " + y + " shapeType: " + shapeType);
+		logger.trace("addNode() x: " + x + " y: " + y + " shapeType: " + shapeType);
 
 		// remove a node that was at that location beforehand
 		final Node oldNode = model.getNode(x, y);
 		if (oldNode != null) {
 
-			nodeConnectorService.disconnect(oldNode);
+			oldNode.disconnect(model);
 			model.removeNode(x, y);
 			model.getIdMap().remove(oldNode.getId());
 		}
 
 		// abort operation for certain shape types
 		switch (shapeType) {
+
 		case NONE:
 			return;
+
 		case REMOVE:
 			sendModelChangedEvent(x, y);
 			return;
@@ -129,7 +133,7 @@ public class DefaultModelService implements ModelService {
 			// for fast retrieval by id
 			model.getIdMap().put(newNode.getId(), newNode);
 			model.setNode(x, y, newNode);
-			nodeConnectorService.connect(newNode);
+			newNode.connect(model);
 
 			logger.info("addNode() New node id = " + newNode.getId() + " added!");
 
@@ -142,7 +146,7 @@ public class DefaultModelService implements ModelService {
 	@Override
 	public void storeModel() {
 
-		logger.info("storeModel()");
+		logger.trace("storeModel()");
 
 		try {
 			modelPersistenceService.storeModel(model, "persistence/model.json");
@@ -163,11 +167,44 @@ public class DefaultModelService implements ModelService {
 	@Override
 	public void connect(final Node nodeA, final Node nodeB) {
 
-		nodeA.getLeftList().add(nodeB);
-		nodeB.getRightList().add(nodeA);
+		final DefaultRailNode railNodeA = (DefaultRailNode) nodeA;
+		final DefaultRailNode railNodeB = (DefaultRailNode) nodeB;
 
-		storeModel();
+		railNodeA.connectTo(railNodeB);
+	}
 
+	@Override
+	public void connectModel() {
+		model.connectModel();
+	}
+
+	@Override
+	public void debugRoute() {
+
+		final Node node = model.getSelectedNode();
+
+		dumpNode(node);
+	}
+
+	private void dumpNode(final Node node) {
+
+		if (node instanceof DefaultRailNode) {
+
+			final DefaultRailNode defaultRailNode = (DefaultRailNode) node;
+
+			DefaultDotSerializer defaultDotSerializer = null;
+
+			defaultDotSerializer = new DefaultDotSerializer();
+			defaultDotSerializer.serialize(defaultRailNode.getGraphNodeOne());
+
+			defaultDotSerializer = new DefaultDotSerializer();
+			defaultDotSerializer.serialize(defaultRailNode.getGraphNodeTwo());
+		}
+	}
+
+	@Override
+	public Node getNodeById(final int id) {
+		return model.getIdMap().get(id);
 	}
 
 }

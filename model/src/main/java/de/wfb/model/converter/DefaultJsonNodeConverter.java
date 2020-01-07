@@ -1,12 +1,15 @@
 package de.wfb.model.converter;
 
+import java.util.List;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.wfb.model.node.DefaultRailNode;
 import de.wfb.model.node.JsonNode;
 import de.wfb.model.node.Node;
-import de.wfb.model.node.TurnoutNode;
+import de.wfb.model.node.RailNode;
 import de.wfb.rail.converter.Converter;
 
 public class DefaultJsonNodeConverter implements Converter<Node, JsonNode> {
@@ -16,40 +19,26 @@ public class DefaultJsonNodeConverter implements Converter<Node, JsonNode> {
 	@Override
 	public void convert(final Node source, final JsonNode target) {
 
+		logger.info("convert!");
+
 		target.setId(source.getId());
 		target.setShapeType(source.getShapeType().name());
 		target.setX(source.getX());
 		target.setY(source.getY());
+		target.setProtocolTurnoutId(source.getProtocolTurnoutId());
 
-		if (CollectionUtils.isNotEmpty(source.getLeftList())) {
+		// manual connections
+		final DefaultRailNode defaultRailNode = (DefaultRailNode) source;
+		final List<RailNode> manualConnections = defaultRailNode.getManualConnections();
+		if (CollectionUtils.isNotEmpty(manualConnections)) {
 
-			for (final Node node : source.getLeftList()) {
+			logger.info("ManualConnection found!");
 
-				target.getLeftList().add(node.getId());
+			for (final RailNode railNode : manualConnections) {
+
+				target.getManualConnections().add(railNode.getId());
 			}
 		}
-
-		if (CollectionUtils.isNotEmpty(source.getRightList())) {
-
-			for (final Node node : source.getRightList()) {
-
-				target.getRightList().add(node.getId());
-			}
-		}
-
-		convertTurnoutNode(source, target);
-	}
-
-	private void convertTurnoutNode(final Node source, final JsonNode target) {
-
-		final boolean isTurnoutNode = source instanceof TurnoutNode;
-		if (!isTurnoutNode) {
-			return;
-		}
-
-		final TurnoutNode turnoutNode = (TurnoutNode) source;
-
-		target.setProtocolTurnoutId(turnoutNode.getProtocolTurnoutId());
 	}
 
 }

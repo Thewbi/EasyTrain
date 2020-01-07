@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import de.wfb.model.Model;
 import de.wfb.model.node.Node;
-import de.wfb.model.node.TurnoutNode;
 import de.wfb.rail.commands.Command;
 import de.wfb.rail.commands.P50XTurnoutCommand;
 import de.wfb.rail.commands.P50XVersionCommand;
@@ -23,6 +22,7 @@ import de.wfb.rail.commands.P50XXNOPCommand;
 import de.wfb.rail.factory.Factory;
 import de.wfb.rail.io.template.DefaultSerialTemplate;
 import de.wfb.rail.io.template.SerialTemplate;
+import de.wfb.rail.ui.ShapeType;
 import gnu.io.SerialPort;
 
 public class DefaultProtocolService implements ProtocolService {
@@ -50,7 +50,7 @@ public class DefaultProtocolService implements ProtocolService {
 	@Override
 	public void nodeClicked(final int x, final int y) {
 
-		logger.info("nodeClicked x = " + x + " y = " + y);
+		logger.trace("nodeClicked x = " + x + " y = " + y);
 
 		final Node node = model.getNode(x, y);
 
@@ -59,24 +59,26 @@ public class DefaultProtocolService implements ProtocolService {
 			return;
 		}
 
-		logger.info("nodeClicked node id = " + node.getId() + " node = " + node.getClass().getSimpleName());
+		// logger.trace("nodeClicked node id = " + node.getId() + " node = " +
+		// node.getClass().getSimpleName());
+
+		logger.info("nodeClicked " + node.getId() + " (" + node.getX() + ", " + node.getY() + ")");
+		logger.info(node);
 
 		// switch turnouts
-		if (node instanceof TurnoutNode) {
-
-			final TurnoutNode turnoutNode = (TurnoutNode) node;
-
-			turnTurnout(turnoutNode);
+		if (ShapeType.isTurnout(node.getShapeType())) {
+			turnTurnout(node);
 		}
 	}
 
-	private void turnTurnout(final TurnoutNode turnoutNode) {
+	// private void turnTurnout(final TurnoutNode turnoutNode) {
+	private void turnTurnout(final Node node) {
 
 		lock.lock();
 
 		try {
 
-			if (turnoutNode.getProtocolTurnoutId() <= 0) {
+			if (node.getProtocolTurnoutId() == null || node.getProtocolTurnoutId() <= 0) {
 				logger.info("The turnout has no valid turnoutId! Cannot switch the turnout!");
 
 				return;
@@ -90,13 +92,13 @@ public class DefaultProtocolService implements ProtocolService {
 
 			// in order to operate a turnout once (one change of direction)
 			// two commands have to be sent!
-			turnoutCommandFirst(inputStream, outputStream, turnoutNode.getProtocolTurnoutId(), turnoutNode.isThrown());
+			turnoutCommandFirst(inputStream, outputStream, node.getProtocolTurnoutId(), node.isThrown());
 			try {
 				Thread.sleep(100);
 			} catch (final InterruptedException e) {
 				logger.error(e.getMessage(), e);
 			}
-			turnoutCommandSecond(inputStream, outputStream, turnoutNode.getProtocolTurnoutId(), turnoutNode.isThrown());
+			turnoutCommandSecond(inputStream, outputStream, node.getProtocolTurnoutId(), node.isThrown());
 
 		} catch (final Exception e) {
 
@@ -118,7 +120,7 @@ public class DefaultProtocolService implements ProtocolService {
 
 			if (!isConnected()) {
 
-				logger.info("Not connected! Aborting operation!");
+				logger.trace("Not connected! Aborting operation!");
 
 				return;
 			}

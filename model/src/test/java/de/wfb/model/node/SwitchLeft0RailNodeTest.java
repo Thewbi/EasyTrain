@@ -19,14 +19,14 @@ public class SwitchLeft0RailNodeTest {
 	@Test
 	public void connectTest_East_HorizontalStraight() throws Exception {
 
-		final Factory<RailNode> railNodeFactory = new DefaultRailNodeFactory();
+		final Factory<Node> railNodeFactory = new DefaultRailNodeFactory();
 
-		final RailNode switchLeft0RailNode = railNodeFactory.create(ShapeType.SWITCH_LEFT_0, 1, 1);
-		final RailNode horizontalRailNode = railNodeFactory.create(ShapeType.STRAIGHT_HORIZONTAL, 0, 1);
+		final RailNode switchLeft0RailNode = (RailNode) railNodeFactory.create(1, 1, ShapeType.SWITCH_LEFT_0);
+		final RailNode horizontalRailNode = (RailNode) railNodeFactory.create(0, 1, ShapeType.STRAIGHT_HORIZONTAL);
 
 		final Model model = new DefaultModel();
-		model.setNode(1, 1, (Node) switchLeft0RailNode);
-		model.setNode(0, 1, (Node) horizontalRailNode);
+		model.setNode(1, 1, switchLeft0RailNode);
+		model.setNode(0, 1, horizontalRailNode);
 
 		switchLeft0RailNode.connect(model);
 		horizontalRailNode.connect(model);
@@ -51,14 +51,14 @@ public class SwitchLeft0RailNodeTest {
 	@Test
 	public void connectTest_West_HorizontalStraight() throws Exception {
 
-		final Factory<RailNode> railNodeFactory = new DefaultRailNodeFactory();
+		final Factory<Node> railNodeFactory = new DefaultRailNodeFactory();
 
-		final RailNode switchLeft0RailNode = railNodeFactory.create(ShapeType.SWITCH_LEFT_0, 1, 1);
-		final RailNode horizontalRailNode = railNodeFactory.create(ShapeType.STRAIGHT_HORIZONTAL, 2, 1);
+		final RailNode switchLeft0RailNode = (RailNode) railNodeFactory.create(1, 1, ShapeType.SWITCH_LEFT_0);
+		final RailNode horizontalRailNode = (RailNode) railNodeFactory.create(2, 1, ShapeType.STRAIGHT_HORIZONTAL);
 
 		final Model model = new DefaultModel();
-		model.setNode(1, 1, (Node) switchLeft0RailNode);
-		model.setNode(2, 1, (Node) horizontalRailNode);
+		model.setNode(1, 1, switchLeft0RailNode);
+		model.setNode(2, 1, horizontalRailNode);
 
 		switchLeft0RailNode.connect(model);
 		horizontalRailNode.connect(model);
@@ -83,14 +83,14 @@ public class SwitchLeft0RailNodeTest {
 	@Test
 	public void connectTest_North_VerticalStraight() throws Exception {
 
-		final Factory<RailNode> railNodeFactory = new DefaultRailNodeFactory();
+		final Factory<Node> railNodeFactory = new DefaultRailNodeFactory();
 
-		final RailNode switchLeft0RailNode = railNodeFactory.create(ShapeType.SWITCH_LEFT_0, 1, 1);
-		final RailNode horizontalRailNode = railNodeFactory.create(ShapeType.STRAIGHT_VERTICAL, 1, 0);
+		final RailNode switchLeft0RailNode = (RailNode) railNodeFactory.create(1, 1, ShapeType.SWITCH_LEFT_0);
+		final RailNode horizontalRailNode = (RailNode) railNodeFactory.create(1, 0, ShapeType.STRAIGHT_VERTICAL);
 
 		final Model model = new DefaultModel();
-		model.setNode(1, 1, (Node) switchLeft0RailNode);
-		model.setNode(1, 0, (Node) horizontalRailNode);
+		model.setNode(1, 1, switchLeft0RailNode);
+		model.setNode(1, 0, horizontalRailNode);
 
 		switchLeft0RailNode.connect(model);
 		horizontalRailNode.connect(model);
@@ -105,7 +105,6 @@ public class SwitchLeft0RailNodeTest {
 		assertEquals(0, horizontalRailNode.getGraphNodeOne().getChildren().size());
 		assertEquals(1, horizontalRailNode.getGraphNodeTwo().getChildren().size());
 		assertEquals(1, horizontalRailNode.getGraphNodeTwo().getChildren().get(0).getId());
-
 	}
 
 	/**
@@ -117,14 +116,14 @@ public class SwitchLeft0RailNodeTest {
 	@Test
 	public void connectTest_North_HorizontalStraight() throws Exception {
 
-		final Factory<RailNode> railNodeFactory = new DefaultRailNodeFactory();
+		final Factory<Node> railNodeFactory = new DefaultRailNodeFactory();
 
-		final RailNode switchLeft0RailNode = railNodeFactory.create(ShapeType.SWITCH_LEFT_0, 1, 1);
-		final RailNode horizontalRailNode = railNodeFactory.create(ShapeType.STRAIGHT_HORIZONTAL, 1, 0);
+		final RailNode switchLeft0RailNode = (RailNode) railNodeFactory.create(1, 1, ShapeType.SWITCH_LEFT_0);
+		final RailNode horizontalRailNode = (RailNode) railNodeFactory.create(1, 0, ShapeType.STRAIGHT_HORIZONTAL);
 
 		final Model model = new DefaultModel();
-		model.setNode(1, 1, (Node) switchLeft0RailNode);
-		model.setNode(1, 0, (Node) horizontalRailNode);
+		model.setNode(1, 1, switchLeft0RailNode);
+		model.setNode(1, 0, horizontalRailNode);
 
 		switchLeft0RailNode.connect(model);
 		horizontalRailNode.connect(model);

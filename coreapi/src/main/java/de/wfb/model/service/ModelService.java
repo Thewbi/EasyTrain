@@ -21,4 +21,10 @@ public interface ModelService {
 
 	void connect(Node nodeA, Node nodeB);
 
+	void connectModel();
+
+	void debugRoute();
+
+	Node getNodeById(int id);
+
 }

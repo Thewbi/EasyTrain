@@ -1,103 +1,38 @@
 package de.wfb.model.node;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import de.wfb.model.Model;
 import de.wfb.rail.ui.ShapeType;
 
-public class Node {
+public interface Node {
 
-	private int id;
+	int getId();
 
-	private int x;
+	void setId(int id);
 
-	private int y;
+	int getX();
 
-	private ShapeType shapeType;
+	void setX(int x);
 
-	/**
-	 * Is this rail going from left to right (Horizontal). This is important when
-	 * automatically connecting nodes.
-	 */
-	private Boolean horizontal;
+	int getY();
 
-	private final List<Node> leftList = new ArrayList<>();
+	void setY(int y);
 
-	private final List<Node> rightList = new ArrayList<>();
+	ShapeType getShapeType();
 
-	public int getX() {
-		return x;
-	}
+	void setShapeType(ShapeType shapeType);
 
-	public void setX(final int x) {
-		this.x = x;
-	}
+	boolean isThrown();
 
-	public int getY() {
-		return y;
-	}
+	void setThrown(boolean thrown);
 
-	public void setY(final int y) {
-		this.y = y;
-	}
+	Integer getProtocolTurnoutId();
 
-	public ShapeType getShapeType() {
-		return shapeType;
-	}
+	void setProtocolTurnoutId(Integer protocolTurnoutId);
 
-	public void setShapeType(final ShapeType shapeType) {
-		this.shapeType = shapeType;
-	}
+	void toggleTurnout();
 
-	public int getId() {
-		return id;
-	}
+	void connect(Model model);
 
-	public void setId(final int id) {
-		this.id = id;
-	}
-
-	public List<Node> getLeftList() {
-		return leftList;
-	}
-
-	public List<Node> getRightList() {
-		return rightList;
-	}
-
-	public Boolean isHorizontal() {
-		return horizontal;
-	}
-
-	public void setHorizontal(final Boolean horizontal) {
-		this.horizontal = horizontal;
-	}
-
-	@Override
-	public String toString() {
-		return "Node( id:" + id + " " + x + ", " + y + ", " + shapeType + ")";
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		return result;
-	}
-
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final Node other = (Node) obj;
-		if (id != other.id)
-			return false;
-		return true;
-	}
+	void disconnect(Model model);
 
 }

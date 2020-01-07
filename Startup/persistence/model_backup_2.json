@@ -1,0 +1,258 @@
+[
+  {
+    "id": 0,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 14,
+    "y": 16,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 1,
+    "shapeType": "SWITCH_LEFT_0",
+    "x": 15,
+    "y": 16,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 2,
+    "shapeType": "TURN_RIGHT_BOTTOM",
+    "x": 15,
+    "y": 15,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 3,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 16,
+    "y": 15,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 4,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 16,
+    "y": 16,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 5,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 17,
+    "y": 15,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 6,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 17,
+    "y": 16,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 7,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 18,
+    "y": 15,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 8,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 18,
+    "y": 16,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 9,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 19,
+    "y": 15,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 10,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 19,
+    "y": 16,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 11,
+    "shapeType": "SWITCH_RIGHT_180",
+    "x": 20,
+    "y": 16,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 12,
+    "shapeType": "TURN_BOTTOM_LEFT",
+    "x": 20,
+    "y": 15,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 13,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 21,
+    "y": 16,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 14,
+    "shapeType": "TURN_BOTTOM_LEFT",
+    "x": 22,
+    "y": 16,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 15,
+    "shapeType": "TURN_RIGHT_BOTTOM",
+    "x": 13,
+    "y": 16,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 16,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 13,
+    "y": 17,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 17,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 13,
+    "y": 18,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 19,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 22,
+    "y": 17,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 20,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 22,
+    "y": 18,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 21,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 22,
+    "y": 19,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 22,
+    "shapeType": "TURN_LEFT_TOP",
+    "x": 22,
+    "y": 20,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 24,
+    "shapeType": "TURN_TOP_RIGHT",
+    "x": 13,
+    "y": 20,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 25,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 13,
+    "y": 19,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 26,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 14,
+    "y": 20,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 27,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 15,
+    "y": 20,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 28,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 16,
+    "y": 20,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 29,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 17,
+    "y": 20,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 31,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 19,
+    "y": 20,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 32,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 20,
+    "y": 20,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 33,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 21,
+    "y": 20,
+    "leftList": [],
+    "rightList": []
+  },
+  {
+    "id": 34,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 18,
+    "y": 20,
+    "leftList": [],
+    "rightList": []
+  }
+]

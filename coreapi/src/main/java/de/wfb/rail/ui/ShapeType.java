@@ -38,6 +38,25 @@ public enum ShapeType {
 
 	SWITCH_RIGHT_180,
 
-	SWITCH_RIGHT_270,
+	SWITCH_RIGHT_270;
+
+	public static boolean isTurnout(final ShapeType shapeType) {
+
+		switch (shapeType) {
+		case SWITCH:
+		case SWITCH_LEFT_0:
+		case SWITCH_LEFT_90:
+		case SWITCH_LEFT_180:
+		case SWITCH_LEFT_270:
+		case SWITCH_RIGHT_0:
+		case SWITCH_RIGHT_90:
+		case SWITCH_RIGHT_180:
+		case SWITCH_RIGHT_270:
+			return true;
+
+		default:
+			return false;
+		}
+	}
 
 }

@@ -1,6 +1,7 @@
 package de.wfb.model.service;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -27,6 +28,7 @@ import de.wfb.model.Model;
 import de.wfb.model.converter.DefaultJsonNodeConverter;
 import de.wfb.model.node.JsonNode;
 import de.wfb.model.node.Node;
+import de.wfb.model.node.RailNode;
 import de.wfb.rail.converter.Converter;
 import de.wfb.rail.factory.Factory;
 
@@ -75,14 +77,7 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 			return;
 		}
 
-		final JsonReader reader = new JsonReader(new FileReader(path));
-
-		final Type type = new TypeToken<Collection<JsonNode>>() {
-		}.getType();
-
-		final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		final Collection<JsonNode> nodeArray = gson.fromJson(reader, type);
-
+		final Collection<JsonNode> nodeArray = deserialize(path);
 		if (CollectionUtils.isEmpty(nodeArray)) {
 
 			logger.info("'" + Paths.get(path).toAbsolutePath() + "' contains no data!");
@@ -101,6 +96,7 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 				model.getIdMap().put(node.getId(), node);
 				model.setNode(jsonNode.getX(), jsonNode.getY(), node);
 
+				// update max ID for initializing the ID service later
 				if (jsonNode.getId() > maxId) {
 					maxId = jsonNode.getId();
 				}
@@ -109,44 +105,65 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 			}
 		}
 
+		for (final JsonNode jsonNode : nodeArray) {
+
+			logger.info("Looking for manual CONNECTION");
+
+			final RailNode railNode = (RailNode) model.getIdMap().get(jsonNode.getId());
+
+			// resolve manual connections
+			logger.info("Factoring manual connections ...");
+			if (CollectionUtils.isNotEmpty(jsonNode.getManualConnections())) {
+
+				for (final Integer nodeId : jsonNode.getManualConnections()) {
+
+					logger.info("Manual connection to node: " + nodeId);
+
+					final Node connectedNode = modelService.getNodeById(nodeId.intValue());
+
+					logger.info(railNode.getId() + " manual connection to connectedNode: " + connectedNode.getId());
+
+					if (connectedNode != null) {
+
+						logger.info("Manual Connection resolved");
+						// railNode.getManualConnections().add((RailNode) connectedNode);
+
+						railNode.connectTo((RailNode) connectedNode);
+					}
+				}
+			}
+
+//			// manual connections
+//
+//			if (CollectionUtils.isNotEmpty(railNode.getManualConnections())) {
+//
+//				logger.info("Found Manual CONNECTION");
+//
+//				for (final RailNode manualConnection : railNode.getManualConnections()) {
+//
+//					railNode.connectTo(manualConnection);
+//				}
+//			}
+		}
+
+		// initialize the ID-Service so it will only return non-used IDs
 		idService.setCurrentId(maxId);
 
 		for (final JsonNode jsonNode : nodeArray) {
 
-			final Node node = model.getIdMap().get(jsonNode.getId());
-
-			if (CollectionUtils.isNotEmpty(jsonNode.getLeftList())) {
-
-				for (final int leftNodeId : jsonNode.getLeftList()) {
-
-					final Node leftNode = model.getIdMap().get(leftNodeId);
-
-					logger.info("leftNode = " + leftNode);
-					if (leftNode == null) {
-						throw new NullPointerException("Cannot load node having the id: " + leftNodeId);
-					}
-
-					node.getLeftList().add(leftNode);
-				}
-			}
-
-			if (CollectionUtils.isNotEmpty(jsonNode.getRightList())) {
-
-				for (final int rightNodeId : jsonNode.getRightList()) {
-
-					final Node rightNode = model.getIdMap().get(rightNodeId);
-
-					logger.info("rightNode = " + rightNode);
-					if (rightNode == null) {
-						throw new NullPointerException("Cannot load node having the id: " + rightNodeId);
-					}
-
-					node.getRightList().add(rightNode);
-				}
-			}
-
 			modelService.sendModelChangedEvent(jsonNode.getX(), jsonNode.getY());
 		}
+	}
+
+	private Collection<JsonNode> deserialize(final String path) throws FileNotFoundException {
+		final JsonReader reader = new JsonReader(new FileReader(path));
+
+		final Type type = new TypeToken<Collection<JsonNode>>() {
+		}.getType();
+
+		final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		final Collection<JsonNode> nodeArray = gson.fromJson(reader, type);
+		return nodeArray;
 	}
 
 }

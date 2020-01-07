@@ -1,10 +1,17 @@
 package de.wfb.model.node;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.wfb.model.Model;
 
-public class DefaultRailNode extends Node implements RailNode {
+public class DefaultRailNode extends BaseNode implements RailNode {
+
+	private static final Logger logger = LogManager.getLogger(DefaultRailNode.class);
 
 	private static final int NORTH_INDEX = 0;
 
@@ -22,6 +29,12 @@ public class DefaultRailNode extends Node implements RailNode {
 	/** for turnouts, Two-Nodes exit the rail towards the two ends */
 	private GraphNode graphNodeTwo;
 
+	private Integer protocolTurnoutId;
+
+	private boolean thrown;
+
+	private final List<RailNode> manualConnections = new ArrayList<>();
+
 	public DefaultRailNode() {
 
 		for (int i = 0; i < 4; i++) {
@@ -29,8 +42,151 @@ public class DefaultRailNode extends Node implements RailNode {
 		}
 	}
 
+	public void connectTo(final RailNode railNodeB) {
+
+		final StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append(getId()).append("(").append(getX()).append(", ").append(getY()).append(") ");
+		stringBuffer.append(railNodeB.getId()).append("(").append(railNodeB.getX()).append(", ")
+				.append(railNodeB.getY()).append(") ");
+
+		logger.info(stringBuffer);
+
+		// find orientation
+
+		// north
+		if (railNodeB.getY() < getY()) {
+			logger.info("north");
+			connectNorth(railNodeB);
+		}
+
+		// east
+		if (railNodeB.getX() > getX()) {
+			logger.info("east");
+			connectEast(railNodeB);
+		}
+
+		// south
+		if (railNodeB.getY() > getY()) {
+			logger.info("south");
+			connectSouth(railNodeB);
+		}
+
+		// west
+		if (railNodeB.getX() < getX()) {
+			logger.info("west");
+			connectWest(railNodeB);
+		}
+
+		// because the automatic connection only looks into the immediate vincinity of
+		// nodes on the grid, but manually connected nodes can be apart over long
+		// distances, there is a manual connection list, which stores all manual
+		// connections
+		getManualConnections().add(railNodeB);
+		railNodeB.getManualConnections().add(this);
+	}
+
 	@Override
 	public void connect(final Model model) {
+
+		// north
+		final RailNode northNode = (RailNode) model.getNode(getX(), getY() - 1);
+		if (northNode != null) {
+			connectNorth(northNode);
+		}
+
+		// east
+		final RailNode eastNode = (RailNode) model.getNode(getX() + 1, getY());
+		if (eastNode != null) {
+			connectEast(eastNode);
+		}
+
+		// south
+		final RailNode southNode = (RailNode) model.getNode(getX(), getY() + 1);
+		if (southNode != null) {
+			connectSouth(southNode);
+		}
+
+		// west
+		final RailNode westNode = (RailNode) model.getNode(getX() - 1, getY());
+		if (westNode != null) {
+			connectWest(westNode);
+		}
+	}
+
+	private void connectWest(final RailNode westNode) {
+		final Edge westEdge = getWestEdge();
+		if (westEdge != null) {
+
+			final Edge innerEdge = westNode.getEastEdge();
+			if (innerEdge != null) {
+
+				if (!westEdge.getOutGraphNode().getChildren().contains(innerEdge.getInGraphNode())) {
+					westEdge.getOutGraphNode().getChildren().add(innerEdge.getInGraphNode());
+				}
+
+				if (!innerEdge.getOutGraphNode().getChildren().contains(westEdge.getInGraphNode())) {
+					innerEdge.getOutGraphNode().getChildren().add(westEdge.getInGraphNode());
+				}
+			}
+		}
+	}
+
+	private void connectSouth(final RailNode southNode) {
+		final Edge southEdge = getSouthEdge();
+		if (southEdge != null) {
+
+			final Edge innerEdge = southNode.getNorthEdge();
+			if (innerEdge != null) {
+
+				if (!southEdge.getOutGraphNode().getChildren().contains(innerEdge.getInGraphNode())) {
+					southEdge.getOutGraphNode().getChildren().add(innerEdge.getInGraphNode());
+				}
+
+				if (!innerEdge.getOutGraphNode().getChildren().contains(southEdge.getInGraphNode())) {
+					innerEdge.getOutGraphNode().getChildren().add(southEdge.getInGraphNode());
+				}
+			}
+		}
+	}
+
+	private void connectEast(final RailNode eastNode) {
+		final Edge eastEdge = getEastEdge();
+		if (eastEdge != null) {
+
+			final Edge innerEdge = eastNode.getWestEdge();
+			if (innerEdge != null) {
+
+				if (!eastEdge.getOutGraphNode().getChildren().contains(innerEdge.getInGraphNode())) {
+					eastEdge.getOutGraphNode().getChildren().add(innerEdge.getInGraphNode());
+				}
+
+				if (!innerEdge.getOutGraphNode().getChildren().contains(eastEdge.getInGraphNode())) {
+					innerEdge.getOutGraphNode().getChildren().add(eastEdge.getInGraphNode());
+				}
+			}
+		}
+	}
+
+	private void connectNorth(final RailNode northNode) {
+		final Edge northEdge = getNorthEdge();
+		if (northEdge != null) {
+
+			final Edge innerEdge = northNode.getSouthEdge();
+			if (innerEdge != null) {
+
+				if (!northEdge.getOutGraphNode().getChildren().contains(innerEdge.getInGraphNode())) {
+					northEdge.getOutGraphNode().getChildren().add(innerEdge.getInGraphNode());
+				}
+
+				if (!innerEdge.getOutGraphNode().getChildren().contains(northEdge.getInGraphNode())) {
+					innerEdge.getOutGraphNode().getChildren().add(northEdge.getInGraphNode());
+				}
+			}
+		}
+	}
+
+	@Override
+	public void disconnect(final Model model) {
 
 		// north
 		final Edge northEdge = getNorthEdge();
@@ -43,7 +199,8 @@ public class DefaultRailNode extends Node implements RailNode {
 				final Edge innerEdge = northNode.getSouthEdge();
 				if (innerEdge != null) {
 
-					northEdge.getOutGraphNode().getChildren().add(innerEdge.getInGraphNode());
+					northEdge.getOutGraphNode().getChildren().remove(innerEdge.getInGraphNode());
+					innerEdge.getOutGraphNode().getChildren().remove(northEdge.getInGraphNode());
 				}
 			}
 		}
@@ -59,7 +216,8 @@ public class DefaultRailNode extends Node implements RailNode {
 				final Edge innerEdge = eastNode.getWestEdge();
 				if (innerEdge != null) {
 
-					eastEdge.getOutGraphNode().getChildren().add(innerEdge.getInGraphNode());
+					eastEdge.getOutGraphNode().getChildren().remove(innerEdge.getInGraphNode());
+					innerEdge.getOutGraphNode().getChildren().remove(eastEdge.getInGraphNode());
 				}
 			}
 		}
@@ -75,7 +233,8 @@ public class DefaultRailNode extends Node implements RailNode {
 				final Edge innerEdge = southNode.getNorthEdge();
 				if (innerEdge != null) {
 
-					southEdge.getOutGraphNode().getChildren().add(innerEdge.getInGraphNode());
+					southEdge.getOutGraphNode().getChildren().remove(innerEdge.getInGraphNode());
+					innerEdge.getOutGraphNode().getChildren().remove(southEdge.getInGraphNode());
 				}
 			}
 		}
@@ -91,10 +250,12 @@ public class DefaultRailNode extends Node implements RailNode {
 				final Edge innerEdge = westNode.getEastEdge();
 				if (innerEdge != null) {
 
-					westEdge.getOutGraphNode().getChildren().add(innerEdge.getInGraphNode());
+					westEdge.getOutGraphNode().getChildren().remove(innerEdge.getInGraphNode());
+					innerEdge.getOutGraphNode().getChildren().remove(westEdge.getInGraphNode());
 				}
 			}
 		}
+
 	}
 
 	@Override
@@ -230,6 +391,39 @@ public class DefaultRailNode extends Node implements RailNode {
 	@Override
 	public void setGraphNodeTwo(final GraphNode graphNodeTwo) {
 		this.graphNodeTwo = graphNodeTwo;
+	}
+
+	@Override
+	public Integer getProtocolTurnoutId() {
+		return protocolTurnoutId;
+	}
+
+	@Override
+	public void setProtocolTurnoutId(final Integer protocolTurnoutId) {
+		this.protocolTurnoutId = protocolTurnoutId;
+	}
+
+	@Override
+	public void toggleTurnout() {
+
+		logger.info("toggle()");
+
+		thrown = !thrown;
+	}
+
+	@Override
+	public boolean isThrown() {
+		return thrown;
+	}
+
+	@Override
+	public void setThrown(final boolean thrown) {
+		this.thrown = thrown;
+	}
+
+	@Override
+	public List<RailNode> getManualConnections() {
+		return manualConnections;
 	}
 
 }

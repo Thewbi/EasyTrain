@@ -19,6 +19,8 @@ public class JsonNode {
 
 	private Integer protocolTurnoutId;
 
+	private final List<Integer> manualConnections = new ArrayList<>();
+
 	public int getId() {
 		return id;
 	}
@@ -65,6 +67,10 @@ public class JsonNode {
 
 	public void setProtocolTurnoutId(final Integer protocolTurnoutId) {
 		this.protocolTurnoutId = protocolTurnoutId;
+	}
+
+	public List<Integer> getManualConnections() {
+		return manualConnections;
 	}
 
 }
