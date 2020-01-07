@@ -5,12 +5,12 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.wfb.model.service.IdService;
-import de.wfb.model.service.ModelService;
 import de.wfb.rail.factory.Factory;
 import de.wfb.rail.ui.ShapeType;
 
 public class DefaultRailNodeFactory implements Factory<Node> {
 
+	@SuppressWarnings("unused")
 	private static final Logger logger = LogManager.getLogger(DefaultRailNodeFactory.class);
 
 	private final Factory<GraphNode> graphNodeFactory = new DefaultGraphNodeFactory();
@@ -18,8 +18,8 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 	@Autowired
 	private IdService idService;
 
-	@Autowired
-	private ModelService modelService;
+//	@Autowired
+//	private ModelService modelService;
 
 	@Override
 	public Node create(final Object... args) throws Exception {
@@ -57,26 +57,6 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			}
 		}
 
-//		// resolve manual connections
-//		logger.info("Factoring manual connections ...");
-//		if (CollectionUtils.isNotEmpty(jsonNode.getManualConnections())) {
-//
-//			for (final Integer nodeId : jsonNode.getManualConnections()) {
-//
-//				logger.info("Manual connection to node: " + nodeId);
-//
-//				final Node connectedNode = modelService.getNodeById(nodeId.intValue());
-//
-//				logger.info("Manual connection to connectedNode: " + connectedNode);
-//
-//				if (connectedNode != null) {
-//
-//					logger.info("Manual Connection resolved");
-//					node.getManualConnections().add((RailNode) connectedNode);
-//				}
-//			}
-//		}
-
 		return node;
 	}
 
@@ -113,10 +93,10 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 
-			graphNodeOne = graphNodeFactory.create();
+			graphNodeOne = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeOne(graphNodeOne);
 
-			graphNodeTwo = graphNodeFactory.create();
+			graphNodeTwo = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeTwo(graphNodeTwo);
 
 			// east
@@ -141,10 +121,10 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 
-			graphNodeOne = graphNodeFactory.create();
+			graphNodeOne = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeOne(graphNodeOne);
 
-			graphNodeTwo = graphNodeFactory.create();
+			graphNodeTwo = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeTwo(graphNodeTwo);
 
 			// north
@@ -169,10 +149,10 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 
-			graphNodeOne = graphNodeFactory.create();
+			graphNodeOne = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeOne(graphNodeOne);
 
-			graphNodeTwo = graphNodeFactory.create();
+			graphNodeTwo = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeTwo(graphNodeTwo);
 
 			// north
@@ -197,10 +177,10 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 
-			graphNodeOne = graphNodeFactory.create();
+			graphNodeOne = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeOne(graphNodeOne);
 
-			graphNodeTwo = graphNodeFactory.create();
+			graphNodeTwo = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeTwo(graphNodeTwo);
 
 			// east
@@ -225,10 +205,10 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 
-			graphNodeOne = graphNodeFactory.create();
+			graphNodeOne = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeOne(graphNodeOne);
 
-			graphNodeTwo = graphNodeFactory.create();
+			graphNodeTwo = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeTwo(graphNodeTwo);
 
 			// west
@@ -236,12 +216,16 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			railNode.setEdge(EdgeDirection.WEST, westEdge);
 			westEdge.setInGraphNode(graphNodeOne);
 			westEdge.setOutGraphNode(graphNodeTwo);
+//			westEdge.setInGraphNode(graphNodeTwo);
+//			westEdge.setOutGraphNode(graphNodeOne);
 
 			// south
 			southEdge = new DefaultEdge();
 			railNode.setEdge(EdgeDirection.SOUTH, southEdge);
 			southEdge.setInGraphNode(graphNodeTwo);
 			southEdge.setOutGraphNode(graphNodeOne);
+//			southEdge.setInGraphNode(graphNodeOne);
+//			southEdge.setOutGraphNode(graphNodeTwo);
 
 			break;
 
@@ -253,10 +237,10 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 
-			graphNodeOne = graphNodeFactory.create();
+			graphNodeOne = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeOne(graphNodeOne);
 
-			graphNodeTwo = graphNodeFactory.create();
+			graphNodeTwo = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeTwo(graphNodeTwo);
 
 			// west
@@ -281,10 +265,10 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 
-			graphNodeOne = graphNodeFactory.create();
+			graphNodeOne = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeOne(graphNodeOne);
 
-			graphNodeTwo = graphNodeFactory.create();
+			graphNodeTwo = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeTwo(graphNodeTwo);
 
 			// north
@@ -323,10 +307,10 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 
-			graphNodeOne = graphNodeFactory.create();
+			graphNodeOne = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeOne(graphNodeOne);
 
-			graphNodeTwo = graphNodeFactory.create();
+			graphNodeTwo = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeTwo(graphNodeTwo);
 
 			// north
@@ -365,10 +349,10 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 
-			graphNodeOne = graphNodeFactory.create();
+			graphNodeOne = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeOne(graphNodeOne);
 
-			graphNodeTwo = graphNodeFactory.create();
+			graphNodeTwo = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeTwo(graphNodeTwo);
 
 			// east
@@ -407,10 +391,10 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 
-			graphNodeOne = graphNodeFactory.create();
+			graphNodeOne = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeOne(graphNodeOne);
 
-			graphNodeTwo = graphNodeFactory.create();
+			graphNodeTwo = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeTwo(graphNodeTwo);
 
 			// north

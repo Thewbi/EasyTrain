@@ -1,7 +1,9 @@
 package de.wfb.model;
 
+import java.util.List;
 import java.util.Map;
 
+import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
 
 public interface Model {
@@ -19,5 +21,7 @@ public interface Model {
 	Map<Integer, Node> getIdMap();
 
 	void connectModel();
+
+	List<GraphNode> getSwitchingNodes();
 
 }

@@ -1,6 +1,7 @@
 package de.wfb.model.service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,7 +12,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import de.wfb.dot.DefaultDotSerializer;
 import de.wfb.model.Model;
 import de.wfb.model.node.DefaultRailNode;
+import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
+import de.wfb.model.node.RailNode;
 import de.wfb.rail.events.ModelChangedEvent;
 import de.wfb.rail.events.NodeSelectedEvent;
 import de.wfb.rail.factory.Factory;
@@ -205,6 +208,21 @@ public class DefaultModelService implements ModelService {
 	@Override
 	public Node getNodeById(final int id) {
 		return model.getIdMap().get(id);
+	}
+
+	@Override
+	public List<GraphNode> getSwitchingNodes() {
+		return model.getSwitchingNodes();
+	}
+
+	@Override
+	public RailNode getArbitraryNode() {
+
+		if (model.getIdMap().size() == 0) {
+			return null;
+		}
+
+		return (RailNode) model.getIdMap().entrySet().iterator().next().getValue();
 	}
 
 }

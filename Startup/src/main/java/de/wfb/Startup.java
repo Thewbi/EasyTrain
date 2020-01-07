@@ -1,7 +1,9 @@
 package de.wfb;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -11,7 +13,9 @@ import de.wfb.dialogs.SidePane;
 import de.wfb.dialogs.ThrottleStage;
 import de.wfb.javafxtest.controller.LayoutGridController;
 import de.wfb.javafxtest.controls.CustomGridPane;
+import de.wfb.model.service.DefaultRoutingService;
 import de.wfb.model.service.ModelService;
+import de.wfb.model.service.RoutingService;
 import de.wfb.rail.facade.DefaultProtocolFacade;
 import de.wfb.rail.facade.ProtocolFacade;
 import javafx.application.Application;
@@ -69,7 +73,9 @@ public class Startup extends Application {
 
 	private EvtSenCommandThread evtSenCommandThread;
 
-	// private boolean running = true;
+	private RoutingService routingService;
+
+	private LayoutGridController layoutGridController;
 
 	public static void main(final String[] args) {
 
@@ -145,6 +151,8 @@ public class Startup extends Application {
 		sidePane = context.getBean(SidePane.class);
 		protocolFacade = context.getBean(DefaultProtocolFacade.class);
 		evtSenCommandThread = context.getBean(EvtSenCommandThread.class);
+		routingService = context.getBean(DefaultRoutingService.class);
+		layoutGridController = context.getBean(LayoutGridController.class);
 
 		// load the model
 		try {
@@ -155,6 +163,10 @@ public class Startup extends Application {
 		} catch (final Exception e) {
 			logger.error(e.getMessage(), e);
 		}
+
+		// build the routing tables
+		routingService.buildRoutingTables();
+		routingService.colorGraph();
 
 		// connect to the intellibox
 		try {
@@ -208,6 +220,7 @@ public class Startup extends Application {
 
 	@Override
 	public void stop() {
+
 		logger.info("Startup.stop()");
 		Platform.exit();
 	}
@@ -321,10 +334,11 @@ public class Startup extends Application {
 
 		// create menus
 		final Menu fileMenu = new Menu("File");
+		final Menu debugMenu = new Menu("Debug");
+		final Menu routingMenu = new Menu("Routing");
 		final Menu editMenu = new Menu("Edit");
 		final Menu serialMenu = new Menu("Serial");
 		final Menu helpMenu = new Menu("Help");
-		final Menu debugMenu = new Menu("Debug");
 
 		// create MenuItems
 		final MenuItem newItem = new MenuItem("New");
@@ -339,6 +353,34 @@ public class Startup extends Application {
 
 				final Window window = stage.getScene().getWindow();
 				window.fireEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSE_REQUEST));
+			}
+		});
+
+		final MenuItem findRouteMenuItem = new MenuItem("Find Route");
+		findRouteMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(final ActionEvent event) {
+
+				logger.info("Route Menu clicked!");
+
+				final List<de.wfb.model.node.Node> selectedNodes = layoutGridController.getSelectedNodes();
+
+				if (CollectionUtils.isNotEmpty(selectedNodes) && selectedNodes.size() >= 2) {
+
+					logger.info("Selected Nodes found!");
+
+					final de.wfb.model.node.Node nodeA = selectedNodes.get(0);
+					final de.wfb.model.node.Node nodeB = selectedNodes.get(1);
+
+					// routingService.route(nodeA.getGraphNodeOne(), nodeB.getGraphNodeTwo());
+					routingService.route(nodeA, nodeB);
+
+				} else {
+
+					logger.info("Not enough selected nodes found!");
+
+				}
 			}
 		});
 
@@ -419,12 +461,13 @@ public class Startup extends Application {
 
 		// add menuItems to the Menus
 		fileMenu.getItems().addAll(newItem, openFileItem, saveItem, exitItem);
+		routingMenu.getItems().addAll(findRouteMenuItem);
 		editMenu.getItems().addAll(connectItem, copyItem, pasteItem);
 		serialMenu.getItems().addAll(serialConnectItem, serialDisconnectItem);
 		debugMenu.getItems().addAll(routingNodeMenuItem);
 
 		// add Menus to the MenuBar
-		menuBar.getMenus().addAll(fileMenu, debugMenu, editMenu, serialMenu, helpMenu);
+		menuBar.getMenus().addAll(fileMenu, routingMenu, debugMenu, editMenu, serialMenu, helpMenu);
 
 		return menuBar;
 	}

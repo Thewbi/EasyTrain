@@ -35,13 +35,18 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	private final List<RailNode> manualConnections = new ArrayList<>();
 
+	/**
+	 * ctor
+	 */
 	public DefaultRailNode() {
 
+		// no edge is used
 		for (int i = 0; i < 4; i++) {
 			edges[i] = null;
 		}
 	}
 
+	@Override
 	public void connectTo(final RailNode railNodeB) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
@@ -114,6 +119,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	}
 
 	private void connectWest(final RailNode westNode) {
+
 		final Edge westEdge = getWestEdge();
 		if (westEdge != null) {
 
@@ -132,6 +138,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	}
 
 	private void connectSouth(final RailNode southNode) {
+
 		final Edge southEdge = getSouthEdge();
 		if (southEdge != null) {
 
@@ -150,6 +157,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	}
 
 	private void connectEast(final RailNode eastNode) {
+
 		final Edge eastEdge = getEastEdge();
 		if (eastEdge != null) {
 
@@ -168,6 +176,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	}
 
 	private void connectNorth(final RailNode northNode) {
+
 		final Edge northEdge = getNorthEdge();
 		if (northEdge != null) {
 
@@ -255,7 +264,6 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 				}
 			}
 		}
-
 	}
 
 	@Override
@@ -281,6 +289,14 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 				stringBuffer.append(childGraphNode.getId()).append(", ");
 			}
 		}
+
+		stringBuffer.append("\n");
+		stringBuffer.append("GraphNode One: ").append(getGraphNodeOne()).append(" COLOR: ")
+				.append(getGraphNodeOne().getColor().name());
+
+		stringBuffer.append("\n");
+		stringBuffer.append("GraphNode Two: ").append(getGraphNodeTwo()).append(" COLOR: ")
+				.append(getGraphNodeTwo().getColor().name());
 
 		stringBuffer.append("\n");
 

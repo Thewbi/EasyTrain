@@ -11,7 +11,7 @@ public class DefaultGraphNodeFactory implements Factory<GraphNode> {
 
 		final GraphNode result = new GraphNode();
 		result.setId(graphNodeId);
-
+		result.setRailNode((RailNode) args[0]);
 		graphNodeId++;
 
 		return result;

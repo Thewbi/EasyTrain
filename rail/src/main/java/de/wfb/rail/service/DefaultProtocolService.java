@@ -59,9 +59,6 @@ public class DefaultProtocolService implements ProtocolService {
 			return;
 		}
 
-		// logger.trace("nodeClicked node id = " + node.getId() + " node = " +
-		// node.getClass().getSimpleName());
-
 		logger.info("nodeClicked " + node.getId() + " (" + node.getX() + ", " + node.getY() + ")");
 		logger.info(node);
 
@@ -79,7 +76,7 @@ public class DefaultProtocolService implements ProtocolService {
 		try {
 
 			if (node.getProtocolTurnoutId() == null || node.getProtocolTurnoutId() <= 0) {
-				logger.info("The turnout has no valid turnoutId! Cannot switch the turnout!");
+				logger.info("The turnout has no valid turnoutId! Cannot switch the turnout via the Intellibox!");
 
 				return;
 			}

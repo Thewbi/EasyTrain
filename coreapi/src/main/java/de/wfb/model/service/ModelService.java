@@ -1,8 +1,11 @@
 package de.wfb.model.service;
 
+import java.util.List;
 import java.util.Optional;
 
+import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
+import de.wfb.model.node.RailNode;
 import de.wfb.rail.ui.ShapeType;
 
 public interface ModelService {
@@ -26,5 +29,9 @@ public interface ModelService {
 	void debugRoute();
 
 	Node getNodeById(int id);
+
+	List<GraphNode> getSwitchingNodes();
+
+	RailNode getArbitraryNode();
 
 }

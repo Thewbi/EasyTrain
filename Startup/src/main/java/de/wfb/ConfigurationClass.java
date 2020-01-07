@@ -9,6 +9,7 @@ import de.wfb.dialogs.SidePane;
 import de.wfb.dialogs.ThrottlePane;
 import de.wfb.dialogs.ThrottleStage;
 import de.wfb.dialogs.TurnoutDetailsPane;
+import de.wfb.javafxtest.controller.LayoutGridController;
 import de.wfb.model.DefaultModel;
 import de.wfb.model.Model;
 import de.wfb.model.facade.DefaultModelFacade;
@@ -16,6 +17,7 @@ import de.wfb.model.node.DefaultRailNodeFactory;
 import de.wfb.model.service.DefaultIdService;
 import de.wfb.model.service.DefaultModelPersistenceService;
 import de.wfb.model.service.DefaultModelService;
+import de.wfb.model.service.DefaultRoutingService;
 import de.wfb.model.service.ModelService;
 import de.wfb.rail.facade.DefaultProtocolFacade;
 import de.wfb.rail.factory.DefaultSVGPathFactory;
@@ -56,20 +58,10 @@ public class ConfigurationClass {
 		return new DefaultIdService();
 	}
 
-//	@Bean
-//	public DefaultNodeFactory DefaultNodeFactory() {
-//		return new DefaultNodeFactory();
-//	}
-
 	@Bean
 	public DefaultRailNodeFactory DefaultRailNodeFactory() {
 		return new DefaultRailNodeFactory();
 	}
-
-//	@Bean
-//	public DefaultNodeConnectorService DefaultNodeConnectorService() {
-//		return new DefaultNodeConnectorService();
-//	}
 
 	@Bean
 	public DefaultModelPersistenceService DefaultModelPersistenceService() {
@@ -124,6 +116,16 @@ public class ConfigurationClass {
 	@Bean
 	public EvtSenCommandThread EvtSenCommandThread() {
 		return new EvtSenCommandThread();
+	}
+
+	@Bean
+	public DefaultRoutingService DefaultRoutingService() {
+		return new DefaultRoutingService();
+	}
+
+	@Bean
+	public LayoutGridController LayoutGridController() {
+		return new LayoutGridController();
 	}
 
 }

@@ -35,4 +35,8 @@ public interface Node {
 
 	void disconnect(Model model);
 
+	GraphNode getGraphNodeOne();
+
+	GraphNode getGraphNodeTwo();
+
 }

@@ -53,10 +53,12 @@ public interface RailNode extends Node {
 
 	void setGraphNodeOne(GraphNode graphNodeOut);
 
+	@Override
 	GraphNode getGraphNodeOne();
 
 	void setGraphNodeTwo(GraphNode graphNodeOut);
 
+	@Override
 	GraphNode getGraphNodeTwo();
 
 	@Override
@@ -70,6 +72,6 @@ public interface RailNode extends Node {
 	@Override
 	void connect(Model model);
 
-	void connectTo(final RailNode railNode);
+	void connectTo(RailNode railNode);
 
 }

@@ -1,8 +1,13 @@
 package de.wfb.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
+
+import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
 
 public class DefaultModel implements Model {
@@ -70,9 +75,34 @@ public class DefaultModel implements Model {
 	@Override
 	public void connectModel() {
 		for (final Map.Entry<Integer, Node> entry : idMap.entrySet()) {
-
 			entry.getValue().connect(this);
 		}
+	}
+
+	@Override
+	public List<GraphNode> getSwitchingNodes() {
+
+		final List<GraphNode> switchingNodes = new ArrayList<>();
+
+		for (final Map.Entry<Integer, Node> entry : idMap.entrySet()) {
+
+			final Node node = entry.getValue();
+
+			// TODO: what about graph node two
+			final GraphNode graphNodeOne = node.getGraphNodeOne();
+
+			final List<GraphNode> children = graphNodeOne.getChildren();
+
+			if (CollectionUtils.isEmpty(children)) {
+				continue;
+			}
+
+			if (children.size() > 1) {
+				switchingNodes.add(graphNodeOne);
+			}
+		}
+
+		return switchingNodes;
 	}
 
 }

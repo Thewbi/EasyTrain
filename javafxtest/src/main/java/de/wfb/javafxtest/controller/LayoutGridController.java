@@ -1,7 +1,8 @@
 package de.wfb.javafxtest.controller;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -10,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import de.wfb.model.facade.ModelFacade;
@@ -25,7 +25,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 
-@Component
 public class LayoutGridController implements Controller, ApplicationListener<ApplicationEvent> {
 
 	private static final Logger logger = LogManager.getLogger(LayoutGridController.class);
@@ -40,7 +39,8 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 
 	private boolean shiftState;
 
-	private final Set<Node> selectedNodes = new HashSet<>();
+	// private final Set<Node> selectedNodes = new HashSet<>();
+	private final List<Node> selectedNodes = new ArrayList<>();
 
 	/**
 	 * The user clicked onto a square of the layout using the left mouse button.
@@ -110,14 +110,6 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 		}
 	}
 
-	public boolean isShiftState() {
-		return shiftState;
-	}
-
-	public void setShiftState(final boolean shiftState) {
-		this.shiftState = shiftState;
-	}
-
 	/**
 	 * Functionality for manually connecting two arbitrary nodes in the node graph.
 	 * Useful if a layout was drawn where two nodes have to be connected even if
@@ -174,8 +166,6 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 					}
 				});
 
-				// alert.showAndWait();
-
 				if (alert.getResult().equals(ButtonType.OK)) {
 					System.out.println("Connecting ...");
 
@@ -189,6 +179,22 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 				}
 			}
 		});
+	}
+
+	public boolean isShiftState() {
+		return shiftState;
+	}
+
+	public void setShiftState(final boolean shiftState) {
+		this.shiftState = shiftState;
+	}
+
+//	public Set<Node> getSelectedNodes() {
+//		return selectedNodes;
+//	}
+
+	public List<Node> getSelectedNodes() {
+		return selectedNodes;
 	}
 
 }
