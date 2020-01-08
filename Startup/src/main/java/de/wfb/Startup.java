@@ -13,6 +13,7 @@ import de.wfb.dialogs.SidePane;
 import de.wfb.dialogs.ThrottleStage;
 import de.wfb.javafxtest.controller.LayoutGridController;
 import de.wfb.javafxtest.controls.CustomGridPane;
+import de.wfb.model.node.GraphNode;
 import de.wfb.model.service.DefaultRoutingService;
 import de.wfb.model.service.ModelService;
 import de.wfb.model.service.RoutingService;
@@ -364,6 +365,10 @@ public class Startup extends Application {
 
 				logger.info("Route Menu clicked!");
 
+				// build the routing tables
+				routingService.buildRoutingTables();
+				routingService.colorGraph();
+
 				final List<de.wfb.model.node.Node> selectedNodes = layoutGridController.getSelectedNodes();
 
 				if (CollectionUtils.isNotEmpty(selectedNodes) && selectedNodes.size() >= 2) {
@@ -373,8 +378,11 @@ public class Startup extends Application {
 					final de.wfb.model.node.Node nodeA = selectedNodes.get(0);
 					final de.wfb.model.node.Node nodeB = selectedNodes.get(1);
 
-					// routingService.route(nodeA.getGraphNodeOne(), nodeB.getGraphNodeTwo());
-					routingService.route(nodeA, nodeB);
+					final List<GraphNode> route = routingService.route(nodeA, nodeB);
+					if (CollectionUtils.isNotEmpty(route)) {
+
+						routingService.highlightRoute(route);
+					}
 
 				} else {
 

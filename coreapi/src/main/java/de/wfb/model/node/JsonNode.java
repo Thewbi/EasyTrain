@@ -21,6 +21,8 @@ public class JsonNode {
 
 	private final List<Integer> manualConnections = new ArrayList<>();
 
+	private int feedbackBlockNumber;
+
 	public int getId() {
 		return id;
 	}
@@ -71,6 +73,14 @@ public class JsonNode {
 
 	public List<Integer> getManualConnections() {
 		return manualConnections;
+	}
+
+	public int getFeedbackBlockNumber() {
+		return feedbackBlockNumber;
+	}
+
+	public void setFeedbackBlockNumber(final int feedbackBlockNumber) {
+		this.feedbackBlockNumber = feedbackBlockNumber;
 	}
 
 }

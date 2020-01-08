@@ -3,6 +3,7 @@ package de.wfb.model.service;
 import java.util.List;
 import java.util.Optional;
 
+import de.wfb.model.Model;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
 import de.wfb.model.node.RailNode;
@@ -33,5 +34,9 @@ public interface ModelService {
 	List<GraphNode> getSwitchingNodes();
 
 	RailNode getArbitraryNode();
+
+	Model getModel();
+
+	void resetGraphColors();
 
 }

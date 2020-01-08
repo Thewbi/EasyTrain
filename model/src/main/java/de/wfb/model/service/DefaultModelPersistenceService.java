@@ -69,22 +69,22 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 	}
 
 	@Override
-	public void loadModel(final Model model, final String path) throws IOException {
+	public void loadModel(final Model model, final String pathToModelFile) throws IOException {
 
-		logger.info("Trying to load '" + Paths.get(path).toAbsolutePath() + "'");
+		logger.info("Trying to load '" + Paths.get(pathToModelFile).toAbsolutePath() + "'");
 
-		if (!Files.exists(Paths.get(path))) {
+		if (!Files.exists(Paths.get(pathToModelFile))) {
 			return;
 		}
 
-		final Collection<JsonNode> nodeArray = deserialize(path);
+		final Collection<JsonNode> nodeArray = deserialize(pathToModelFile);
 		if (CollectionUtils.isEmpty(nodeArray)) {
 
-			logger.info("'" + Paths.get(path).toAbsolutePath() + "' contains no data!");
+			logger.info("'" + Paths.get(pathToModelFile).toAbsolutePath() + "' contains no data!");
 			return;
 		}
 
-		logger.info("'" + Paths.get(path).toAbsolutePath() + "' contains " + nodeArray.size() + " nodes!");
+		logger.info("'" + Paths.get(pathToModelFile).toAbsolutePath() + "' contains " + nodeArray.size() + " nodes!");
 
 		int maxId = Integer.MIN_VALUE;
 

@@ -19,20 +19,21 @@ public class DefaultJsonNodeConverter implements Converter<Node, JsonNode> {
 	@Override
 	public void convert(final Node source, final JsonNode target) {
 
-		logger.info("convert!");
+		logger.trace("convert!");
 
 		target.setId(source.getId());
 		target.setShapeType(source.getShapeType().name());
 		target.setX(source.getX());
 		target.setY(source.getY());
 		target.setProtocolTurnoutId(source.getProtocolTurnoutId());
+		target.setFeedbackBlockNumber(source.getFeedbackBlockNumber());
 
 		// manual connections
 		final DefaultRailNode defaultRailNode = (DefaultRailNode) source;
 		final List<RailNode> manualConnections = defaultRailNode.getManualConnections();
 		if (CollectionUtils.isNotEmpty(manualConnections)) {
 
-			logger.info("ManualConnection found!");
+			logger.trace("ManualConnection found!");
 
 			for (final RailNode railNode : manualConnections) {
 

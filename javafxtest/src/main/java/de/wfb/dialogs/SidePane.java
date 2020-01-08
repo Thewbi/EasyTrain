@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationListener;
 
 import de.wfb.model.node.Node;
 import de.wfb.rail.events.NodeSelectedEvent;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
 
 public class SidePane extends GridPane implements ApplicationListener<ApplicationEvent> {
@@ -22,6 +23,9 @@ public class SidePane extends GridPane implements ApplicationListener<Applicatio
 	@Autowired
 	private TurnoutDetailsPane turnoutDetailsPane;
 
+	@Autowired
+	private RailDetailsPane railDetailsPane;
+
 	@Override
 	public void onApplicationEvent(final ApplicationEvent event) {
 
@@ -31,10 +35,19 @@ public class SidePane extends GridPane implements ApplicationListener<Applicatio
 
 			final NodeSelectedEvent nodeSelectedEvent = (NodeSelectedEvent) event;
 
-			final Node node = nodeSelectedEvent.getNode();
-			turnoutDetailsPane.clear();
-			turnoutDetailsPane.setup(node);
+			processNodeSelectedEvent(nodeSelectedEvent);
 		}
+	}
+
+	private void processNodeSelectedEvent(final NodeSelectedEvent nodeSelectedEvent) {
+
+		final Node node = nodeSelectedEvent.getNode();
+
+		turnoutDetailsPane.clear();
+		turnoutDetailsPane.setup(node);
+
+		railDetailsPane.clear();
+		railDetailsPane.setup(node);
 	}
 
 	public void setup() throws FileNotFoundException {
@@ -42,15 +55,28 @@ public class SidePane extends GridPane implements ApplicationListener<Applicatio
 		logger.trace("setup()");
 
 		layoutElementSelectionPane.setup();
+		final TitledPane layoutElementTitledPane = new TitledPane();
+		GridPane.setColumnIndex(layoutElementTitledPane, 1);
+		GridPane.setRowIndex(layoutElementTitledPane, 1);
+		layoutElementTitledPane.setText("Layout Element Selection");
+		layoutElementTitledPane.setContent(layoutElementSelectionPane);
+		getChildren().add(layoutElementTitledPane);
+
+		railDetailsPane.setup(null);
+		final TitledPane railDetailsTitledPane = new TitledPane();
+		GridPane.setColumnIndex(railDetailsTitledPane, 1);
+		GridPane.setRowIndex(railDetailsTitledPane, 2);
+		railDetailsTitledPane.setText("Rail Details");
+		railDetailsTitledPane.setContent(railDetailsPane);
+		getChildren().add(railDetailsTitledPane);
+
 		turnoutDetailsPane.setup(null);
-
-		GridPane.setColumnIndex(layoutElementSelectionPane, 1);
-		GridPane.setRowIndex(layoutElementSelectionPane, 1);
-		getChildren().add(layoutElementSelectionPane);
-
-		GridPane.setColumnIndex(turnoutDetailsPane, 1);
-		GridPane.setRowIndex(turnoutDetailsPane, 2);
-		getChildren().add(turnoutDetailsPane);
+		final TitledPane turnoutDetailsTitledPane = new TitledPane();
+		GridPane.setColumnIndex(turnoutDetailsTitledPane, 1);
+		GridPane.setRowIndex(turnoutDetailsTitledPane, 3);
+		turnoutDetailsTitledPane.setText("Turnout Details");
+		turnoutDetailsTitledPane.setContent(turnoutDetailsPane);
+		getChildren().add(turnoutDetailsTitledPane);
 	}
 
 }

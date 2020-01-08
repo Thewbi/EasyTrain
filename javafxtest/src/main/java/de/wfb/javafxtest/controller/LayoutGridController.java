@@ -4,18 +4,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
 import org.springframework.util.CollectionUtils;
 
 import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.node.Node;
 import de.wfb.rail.controller.Controller;
+import de.wfb.rail.events.NodeHighlightedEvent;
+import de.wfb.rail.events.RemoveHighlightsEvent;
 import de.wfb.rail.events.SelectionEvent;
 import de.wfb.rail.events.ShapeTypeChangedEvent;
 import de.wfb.rail.facade.ProtocolFacade;
@@ -37,6 +39,9 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 	@Autowired
 	private ProtocolFacade protocolFacade;
 
+	@Autowired
+	private ApplicationEventPublisher applicationEventPublisher;
+
 	private boolean shiftState;
 
 	// private final Set<Node> selectedNodes = new HashSet<>();
@@ -48,7 +53,7 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 	@Override
 	public void onApplicationEvent(final ApplicationEvent event) {
 
-		logger.info("onApplicationEvent shiftState " + shiftState + " " + event.getClass().getSimpleName()
+		logger.trace("onApplicationEvent shiftState " + shiftState + " " + event.getClass().getSimpleName()
 				+ " currentShapeType: " + currentShapeType);
 
 		if (event instanceof SelectionEvent) {
@@ -62,7 +67,18 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 
 				final Optional<Node> nodeOptional = modelFacade.getNode(selectionEvent.getX(), selectionEvent.getY());
 				if (nodeOptional.isPresent()) {
-					selectedNodes.add(nodeOptional.get());
+
+					final Node node = nodeOptional.get();
+					selectedNodes.add(node);
+
+					logger.info("Sending NodeHighlightedEvent!");
+
+					final boolean hightlighted = true;
+					final NodeHighlightedEvent nodeHighlightedEvent = new NodeHighlightedEvent(this,
+							modelFacade.getModel(), node, node.getX(), node.getY(), hightlighted);
+
+					applicationEventPublisher.publishEvent(nodeHighlightedEvent);
+
 				}
 
 				logger.info("SelectedNodes: " + selectedNodes);
@@ -73,6 +89,10 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 
 				// remove all nodes from the selected list
 				selectedNodes.clear();
+
+				// remove all highlights
+				final RemoveHighlightsEvent removeHighlightsEvent = new RemoveHighlightsEvent(this);
+				applicationEventPublisher.publishEvent(removeHighlightsEvent);
 
 			}
 
@@ -188,10 +208,6 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 	public void setShiftState(final boolean shiftState) {
 		this.shiftState = shiftState;
 	}
-
-//	public Set<Node> getSelectedNodes() {
-//		return selectedNodes;
-//	}
 
 	public List<Node> getSelectedNodes() {
 		return selectedNodes;

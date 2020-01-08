@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import de.wfb.model.Model;
 import de.wfb.model.node.Node;
 import de.wfb.model.service.ModelService;
 import de.wfb.rail.ui.ShapeType;
@@ -36,6 +37,11 @@ public class DefaultModelFacade implements ModelFacade {
 	@Override
 	public void connect(final Node nodeA, final Node nodeB) {
 		modelService.connect(nodeA, nodeB);
+	}
+
+	@Override
+	public Model getModel() {
+		return modelService.getModel();
 	}
 
 }

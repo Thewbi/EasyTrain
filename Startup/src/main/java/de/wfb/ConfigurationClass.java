@@ -5,6 +5,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import de.wfb.dialogs.LayoutElementSelectionPane;
+import de.wfb.dialogs.RailDetailsPane;
 import de.wfb.dialogs.SidePane;
 import de.wfb.dialogs.ThrottlePane;
 import de.wfb.dialogs.ThrottleStage;
@@ -101,6 +102,11 @@ public class ConfigurationClass {
 	@Bean
 	public TurnoutDetailsPane TurnoutDetailsPane() {
 		return new TurnoutDetailsPane();
+	}
+
+	@Bean
+	public RailDetailsPane RailDetailsPane() {
+		return new RailDetailsPane();
 	}
 
 	@Bean

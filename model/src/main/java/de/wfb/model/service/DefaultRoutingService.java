@@ -8,11 +8,14 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 
 import de.wfb.model.node.Color;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
 import de.wfb.model.node.RailNode;
+import de.wfb.rail.events.NodeHighlightedEvent;
+import de.wfb.rail.events.RemoveHighlightsEvent;
 
 public class DefaultRoutingService implements RoutingService {
 
@@ -21,8 +24,11 @@ public class DefaultRoutingService implements RoutingService {
 	@Autowired
 	private ModelService modelService;
 
+	@Autowired
+	private ApplicationEventPublisher applicationEventPublisher;
+
 	@Override
-	public void route(final Node start, final Node end) {
+	public List<GraphNode> route(final Node start, final Node end) {
 
 		GraphNode graphNodeStart = null;
 		GraphNode graphNodeEnd = null;
@@ -41,17 +47,21 @@ public class DefaultRoutingService implements RoutingService {
 		graphNodeEnd = end.getGraphNodeOne().getColor() == Color.BLUE ? end.getGraphNodeOne() : end.getGraphNodeTwo();
 
 		logger.info("BLUE");
-		route(graphNodeStart, graphNodeEnd);
+		return route(graphNodeStart, graphNodeEnd);
 	}
 
 	@Override
-	public void route(final GraphNode graphNodeStart, final GraphNode graphNodeEnd) {
+	public List<GraphNode> route(final GraphNode graphNodeStart, final GraphNode graphNodeEnd) {
 
 		logger.info("Start: " + graphNodeStart.getId() + " End: " + graphNodeEnd.getId());
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
+		final List<GraphNode> route = new ArrayList<>();
+
 		GraphNode currentNode = graphNodeStart;
+
+		route.add(currentNode);
 
 		// current node is the end node -> done
 		while (currentNode.getId() != graphNodeEnd.getId()) {
@@ -62,22 +72,31 @@ public class DefaultRoutingService implements RoutingService {
 			if (currentNode.getChildren().size() == 1) {
 
 				currentNode = currentNode.getChildren().get(0);
+				route.add(currentNode);
+
 				continue;
 			}
 
 			// current node has more than one child -> look at routing map, go to node that
 			// leads to the end node
 			currentNode = currentNode.getRoutingTable().get(graphNodeEnd.getId());
+			route.add(currentNode);
 
 			if (currentNode == null) {
+
 				logger.info("No route found!");
-				return;
+				route.clear();
+
+				return new ArrayList<>();
 			}
 		}
 
 		stringBuffer.append(graphNodeEnd.getId());
+		route.add(graphNodeEnd);
 
 		logger.info(stringBuffer.toString());
+
+		return route;
 	}
 
 	@Override
@@ -143,6 +162,8 @@ public class DefaultRoutingService implements RoutingService {
 
 	@Override
 	public void colorGraph() {
+
+		modelService.resetGraphColors();
 		final RailNode railNode = modelService.getArbitraryNode();
 
 		walkGraph(railNode.getGraphNodeOne(), Color.GREEN);
@@ -175,6 +196,32 @@ public class DefaultRoutingService implements RoutingService {
 				}
 				workingList.add(node);
 			}
+		}
+	}
+
+	@Override
+	public void highlightRoute(final List<GraphNode> route) {
+
+		if (CollectionUtils.isEmpty(route)) {
+
+			return;
+		}
+
+		// remove all highlights
+		final RemoveHighlightsEvent removeHighlightsEvent = new RemoveHighlightsEvent(this);
+		applicationEventPublisher.publishEvent(removeHighlightsEvent);
+
+		for (final GraphNode graphNode : route) {
+
+			final RailNode railNode = graphNode.getRailNode();
+
+			logger.trace("Sending NodeHighlightedEvent!");
+
+			final boolean hightlighted = true;
+			final NodeHighlightedEvent nodeHighlightedEvent = new NodeHighlightedEvent(this, modelService.getModel(),
+					railNode, railNode.getX(), railNode.getY(), hightlighted);
+
+			applicationEventPublisher.publishEvent(nodeHighlightedEvent);
 		}
 	}
 

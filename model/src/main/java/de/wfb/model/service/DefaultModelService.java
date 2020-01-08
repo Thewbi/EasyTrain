@@ -2,6 +2,7 @@ package de.wfb.model.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,11 +12,13 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import de.wfb.dot.DefaultDotSerializer;
 import de.wfb.model.Model;
+import de.wfb.model.node.Color;
 import de.wfb.model.node.DefaultRailNode;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
 import de.wfb.model.node.RailNode;
 import de.wfb.rail.events.ModelChangedEvent;
+import de.wfb.rail.events.NodeHighlightedEvent;
 import de.wfb.rail.events.NodeSelectedEvent;
 import de.wfb.rail.factory.Factory;
 import de.wfb.rail.ui.ShapeType;
@@ -79,16 +82,19 @@ public class DefaultModelService implements ModelService {
 			// tell the UI
 			sendModelChangedEvent(x, y);
 		}
-
 	}
 
 	private void sendNodeSelectedEvent(final Node node) {
 
-		logger.trace("sendNodeSelectedEvent() node: " + node);
+		logger.info("sendNodeSelectedEvent() node: " + node);
 
 		final NodeSelectedEvent nodeSelectedEvent = new NodeSelectedEvent(this, model, node);
-
 		applicationEventPublisher.publishEvent(nodeSelectedEvent);
+
+		final boolean hightlighted = true;
+		final NodeHighlightedEvent nodeHighlightedEvent = new NodeHighlightedEvent(this, model, node, node.getX(),
+				node.getY(), hightlighted);
+		applicationEventPublisher.publishEvent(nodeHighlightedEvent);
 	}
 
 	@Override
@@ -96,7 +102,8 @@ public class DefaultModelService implements ModelService {
 
 		logger.trace("sendModelChangedEvent() x: " + x + " y: " + y);
 
-		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, x, y);
+		final boolean hightlighted = false;
+		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, x, y, hightlighted);
 
 		applicationEventPublisher.publishEvent(modelChangedEvent);
 	}
@@ -223,6 +230,22 @@ public class DefaultModelService implements ModelService {
 		}
 
 		return (RailNode) model.getIdMap().entrySet().iterator().next().getValue();
+	}
+
+	@Override
+	public Model getModel() {
+		return model;
+	}
+
+	@Override
+	public void resetGraphColors() {
+
+		for (final Map.Entry<Integer, Node> entry : model.getIdMap().entrySet()) {
+
+			final RailNode railNode = (RailNode) entry.getValue();
+			railNode.getGraphNodeOne().setColor(Color.NONE);
+			railNode.getGraphNodeTwo().setColor(Color.NONE);
+		}
 	}
 
 }

@@ -10,12 +10,25 @@ import javafx.scene.transform.Rotate;
 
 public class DefaultSVGPathFactory implements Factory<SVGPath> {
 
+	private static final Color STANDARD_STROKE_COLOR = Color.BLUE;
+
+	private static final Color STANDARD_FILL_COLOR = Color.ALICEBLUE;
+
+	private static final Color HIGHLIGHT_FILL_COLOR = Color.ORANGE;
+
+	@SuppressWarnings("unused")
 	private static final Logger logger = LogManager.getLogger(DefaultSVGPathFactory.class);
 
 	@Override
 	public SVGPath create(final Object... args) {
 
 		final ShapeType shapeType = (ShapeType) args[0];
+
+		final int size = (int) args[1];
+
+		final boolean thrown = (boolean) args[2];
+
+		final boolean highlighted = (boolean) args[3];
 
 		switch (shapeType) {
 
@@ -24,42 +37,42 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 			return null;
 
 		case SQUARE:
-			return createSquare((int) args[1]);
+			return createSquare(size, highlighted);
 
 		case TRIANGLE:
-			return createTriangle((int) args[1]);
+			return createTriangle(size, highlighted);
 
 		case STRAIGHT_HORIZONTAL:
-			return createStraightHorizontal((int) args[1]);
+			return createStraightHorizontal(size, highlighted);
 		case STRAIGHT_VERTICAL:
-			return createStraightVertical((int) args[1]);
+			return createStraightVertical(size, highlighted);
 
 		case TURN_BOTTOM_LEFT:
-			return createTurnBottomLeft((int) args[1]);
+			return createTurnBottomLeft(size, highlighted);
 		case TURN_LEFT_TOP:
-			return createTurnLeftTop((int) args[1]);
+			return createTurnLeftTop(size, highlighted);
 		case TURN_TOP_RIGHT:
-			return createTurnTopRight((int) args[1]);
+			return createTurnTopRight(size, highlighted);
 		case TURN_RIGHT_BOTTOM:
-			return createTurnRightBottom((int) args[1]);
+			return createTurnRightBottom(size, highlighted);
 
 		case SWITCH_LEFT_0:
-			return createSwitchLeft((int) args[1], 0, true, (boolean) args[2]);
+			return createSwitchLeft(size, 0, true, thrown, highlighted);
 		case SWITCH_LEFT_90:
-			return createSwitchLeft((int) args[1], 90, true, (boolean) args[2]);
+			return createSwitchLeft(size, 90, true, thrown, highlighted);
 		case SWITCH_LEFT_180:
-			return createSwitchLeft((int) args[1], 180, true, (boolean) args[2]);
+			return createSwitchLeft(size, 180, true, thrown, highlighted);
 		case SWITCH_LEFT_270:
-			return createSwitchLeft((int) args[1], 270, true, (boolean) args[2]);
+			return createSwitchLeft(size, 270, true, thrown, highlighted);
 
 		case SWITCH_RIGHT_0:
-			return createSwitchRight((int) args[1], 0, false, (boolean) args[2]);
+			return createSwitchRight(size, 0, false, thrown, highlighted);
 		case SWITCH_RIGHT_90:
-			return createSwitchRight((int) args[1], 90, false, (boolean) args[2]);
+			return createSwitchRight(size, 90, false, thrown, highlighted);
 		case SWITCH_RIGHT_180:
-			return createSwitchRight((int) args[1], 180, false, (boolean) args[2]);
+			return createSwitchRight(size, 180, false, thrown, highlighted);
 		case SWITCH_RIGHT_270:
-			return createSwitchRight((int) args[1], 270, false, (boolean) args[2]);
+			return createSwitchRight(size, 270, false, thrown, highlighted);
 
 		default:
 			throw new IllegalArgumentException("Uknown ShapeType " + shapeType);
@@ -67,7 +80,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 	}
 
 	private SVGPath createSwitchRight(final int size, final double rotateAngle, final boolean left,
-			final boolean thrown) {
+			final boolean thrown, final boolean highlighted) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -94,8 +107,8 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		}
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(Color.ALICEBLUE);
-		svgPath.setStroke(Color.BLUE);
+		svgPath.setFill(highlighted ? HIGHLIGHT_FILL_COLOR : STANDARD_FILL_COLOR);
+		svgPath.setStroke(STANDARD_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
 		// Creating the rotation transformation
@@ -116,22 +129,10 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		return svgPath;
 	}
 
-	private SVGPath createSwitchLeft(final int size, final double rotateAngle, final boolean left,
-			final boolean thrown) {
+	private SVGPath createSwitchLeft(final int size, final double rotateAngle, final boolean left, final boolean thrown,
+			final boolean highlighted) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
-
-//		// @formatter:off
-//		stringBuffer.append("M0,3").append("L")
-//			.append(" ").append(3).append(",").append(0)
-//			.append(" ").append(7).append(",").append(0)
-//			.append(" ").append(7).append(",").append(0)
-//			.append(" ").append(3).append(",").append(3)
-//		    .append(" ").append(10).append(",").append(3)
-//		    .append(" ").append(10).append(",").append(7)
-//		    .append(" ").append(0).append(",").append(7)
-//		    .append(" ").append(0).append(",").append(3);
-//		// @formatter:on
 
 		if (thrown) {
 
@@ -160,8 +161,8 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		}
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(Color.ALICEBLUE);
-		svgPath.setStroke(Color.BLUE);
+		svgPath.setFill(highlighted ? HIGHLIGHT_FILL_COLOR : STANDARD_FILL_COLOR);
+		svgPath.setStroke(STANDARD_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
 		// Creating the rotation transformation
@@ -177,33 +178,10 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		// Adding the transformation to rectangle2
 		svgPath.getTransforms().addAll(rotate);
 
-		// svgPath.setRotate(rotate);
-
-		// svgPath.setScaleY(left ? 1 : -1);
-
 		return svgPath;
 	}
 
-//	MatrixType getMatrixForRotation(final double degree, final int cx, final int cy)
-//	{
-//	  final double ca = Math.cos(degree * Math.PI / 180);
-//	  final double sa = Math.sin(degree * Math.PI / 180);
-//
-//	  final double a = ca;
-//	  final double b = sa;
-//	  final double c = (-sa);
-//	  final double d = ca;
-//	  final double e = (-ca * cx + sa * cy + cx);
-//	  final double f = (-sa * cx - ca * cy + cy);
-//
-//	  return "matrix(" + [a,b,c,d,e,f].join(' ') + ")";
-//
-//	  MatrixType matrix = new MatrixType();
-//
-//	  return matrix;
-//	}
-
-	private SVGPath createTurnRightBottom(final int i) {
+	private SVGPath createTurnRightBottom(final int i, final boolean highlighted) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -216,14 +194,14 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		// @formatter:on
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(Color.ALICEBLUE);
-		svgPath.setStroke(Color.BLUE);
+		svgPath.setFill(highlighted ? HIGHLIGHT_FILL_COLOR : STANDARD_FILL_COLOR);
+		svgPath.setStroke(STANDARD_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
 		return svgPath;
 	}
 
-	private SVGPath createTurnTopRight(final int i) {
+	private SVGPath createTurnTopRight(final int i, final boolean highlighted) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -236,14 +214,14 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		// @formatter:on
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(Color.ALICEBLUE);
-		svgPath.setStroke(Color.BLUE);
+		svgPath.setFill(highlighted ? HIGHLIGHT_FILL_COLOR : STANDARD_FILL_COLOR);
+		svgPath.setStroke(STANDARD_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
 		return svgPath;
 	}
 
-	private SVGPath createTurnBottomLeft(final int size) {
+	private SVGPath createTurnBottomLeft(final int size, final boolean highlighted) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -256,14 +234,14 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		// @formatter:on
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(Color.ALICEBLUE);
-		svgPath.setStroke(Color.BLUE);
+		svgPath.setFill(highlighted ? HIGHLIGHT_FILL_COLOR : STANDARD_FILL_COLOR);
+		svgPath.setStroke(STANDARD_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
 		return svgPath;
 	}
 
-	private SVGPath createTurnLeftTop(final int size) {
+	private SVGPath createTurnLeftTop(final int size, final boolean highlighted) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -276,14 +254,14 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		// @formatter:on
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(Color.ALICEBLUE);
-		svgPath.setStroke(Color.BLUE);
+		svgPath.setFill(highlighted ? HIGHLIGHT_FILL_COLOR : STANDARD_FILL_COLOR);
+		svgPath.setStroke(STANDARD_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
 		return svgPath;
 	}
 
-	private SVGPath createTriangle(final int size) {
+	private SVGPath createTriangle(final int size, final boolean highlighted) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -295,14 +273,14 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		// @formatter:on
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(Color.ALICEBLUE);
-		svgPath.setStroke(Color.BLUE);
+		svgPath.setFill(highlighted ? HIGHLIGHT_FILL_COLOR : STANDARD_FILL_COLOR);
+		svgPath.setStroke(STANDARD_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
 		return svgPath;
 	}
 
-	private SVGPath createSquare(final int size) {
+	private SVGPath createSquare(final int size, final boolean highlighted) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -315,14 +293,14 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		// @formatter:on
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(Color.ALICEBLUE);
-		svgPath.setStroke(Color.BLUE);
+		svgPath.setFill(highlighted ? HIGHLIGHT_FILL_COLOR : STANDARD_FILL_COLOR);
+		svgPath.setStroke(STANDARD_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
 		return svgPath;
 	}
 
-	private SVGPath createStraightHorizontal(final int size) {
+	private SVGPath createStraightHorizontal(final int size, final boolean highlighted) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -335,14 +313,14 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		// @formatter:on
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(Color.ALICEBLUE);
-		svgPath.setStroke(Color.BLUE);
+		svgPath.setFill(highlighted ? HIGHLIGHT_FILL_COLOR : STANDARD_FILL_COLOR);
+		svgPath.setStroke(STANDARD_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
 		return svgPath;
 	}
 
-	private SVGPath createStraightVertical(final int size) {
+	private SVGPath createStraightVertical(final int size, final boolean highlighted) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -355,8 +333,8 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		// @formatter:on
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(Color.ALICEBLUE);
-		svgPath.setStroke(Color.BLUE);
+		svgPath.setFill(highlighted ? HIGHLIGHT_FILL_COLOR : STANDARD_FILL_COLOR);
+		svgPath.setStroke(STANDARD_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
 		return svgPath;

@@ -6,7 +6,8 @@
     "y": 16,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 1,
@@ -15,7 +16,8 @@
     "y": 16,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 2,
@@ -24,7 +26,8 @@
     "y": 15,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 3,
@@ -33,7 +36,8 @@
     "y": 15,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 4,
@@ -42,7 +46,8 @@
     "y": 15,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 5,
@@ -51,7 +56,8 @@
     "y": 15,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 6,
@@ -60,7 +66,8 @@
     "y": 16,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 7,
@@ -69,7 +76,8 @@
     "y": 16,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 8,
@@ -78,7 +86,8 @@
     "y": 16,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 9,
@@ -87,7 +96,8 @@
     "y": 16,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 10,
@@ -96,7 +106,8 @@
     "y": 15,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 11,
@@ -105,7 +116,8 @@
     "y": 16,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 12,
@@ -114,7 +126,8 @@
     "y": 16,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 13,
@@ -123,7 +136,8 @@
     "y": 16,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 14,
@@ -132,7 +146,8 @@
     "y": 17,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 15,
@@ -141,7 +156,8 @@
     "y": 17,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 16,
@@ -150,7 +166,8 @@
     "y": 18,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 17,
@@ -159,7 +176,8 @@
     "y": 18,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 18,
@@ -168,7 +186,8 @@
     "y": 18,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 2
   },
   {
     "id": 19,
@@ -177,7 +196,8 @@
     "y": 18,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 1
   },
   {
     "id": 20,
@@ -186,7 +206,8 @@
     "y": 18,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 21,
@@ -195,7 +216,8 @@
     "y": 18,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 22,
@@ -204,7 +226,8 @@
     "y": 18,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 23,
@@ -213,7 +236,8 @@
     "y": 18,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   },
   {
     "id": 24,
@@ -222,6 +246,7 @@
     "y": 18,
     "leftList": [],
     "rightList": [],
-    "manualConnections": []
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
   }
 ]

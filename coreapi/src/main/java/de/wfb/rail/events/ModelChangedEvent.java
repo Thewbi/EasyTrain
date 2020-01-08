@@ -17,6 +17,8 @@ public class ModelChangedEvent extends ApplicationEvent {
 
 	private final Model model;
 
+	private final boolean highlighted;
+
 	/**
 	 * ctor
 	 *
@@ -24,13 +26,16 @@ public class ModelChangedEvent extends ApplicationEvent {
 	 * @param model
 	 * @param x
 	 * @param y
+	 * @param highlighted
 	 */
-	public ModelChangedEvent(final Object source, final Model model, final int x, final int y) {
+	public ModelChangedEvent(final Object source, final Model model, final int x, final int y,
+			final boolean highlighted) {
 
 		super(source);
 		this.model = model;
 		this.x = x;
 		this.y = y;
+		this.highlighted = highlighted;
 	}
 
 	public int getX() {
@@ -43,5 +48,9 @@ public class ModelChangedEvent extends ApplicationEvent {
 
 	public Model getModel() {
 		return model;
+	}
+
+	public boolean isHighlighted() {
+		return highlighted;
 	}
 }

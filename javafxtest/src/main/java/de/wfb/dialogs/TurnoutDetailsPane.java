@@ -9,6 +9,7 @@ import de.wfb.rail.ui.ShapeType;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
@@ -16,7 +17,9 @@ public class TurnoutDetailsPane extends GridPane {
 
 	private static final Logger logger = LogManager.getLogger(TurnoutDetailsPane.class);
 
-	private TextField textfield;
+	private final Label addressTextfieldLabel = new Label("Address:");
+
+	private TextField addressTextfield;
 
 	private Button savebutton;
 
@@ -30,14 +33,17 @@ public class TurnoutDetailsPane extends GridPane {
 
 		if (ShapeType.isTurnout(node.getShapeType())) {
 
-			textfield = new TextField();
-			if (node.getProtocolTurnoutId() != null) {
-				textfield.setText(Integer.toString(node.getProtocolTurnoutId()));
-			}
-			GridPane.setColumnIndex(textfield, 1);
-			GridPane.setRowIndex(textfield, 1);
+			GridPane.setColumnIndex(addressTextfieldLabel, 1);
+			GridPane.setRowIndex(addressTextfieldLabel, 1);
 
-			getChildren().add(textfield);
+			addressTextfield = new TextField();
+			if (node.getProtocolTurnoutId() != null) {
+				addressTextfield.setText(Integer.toString(node.getProtocolTurnoutId()));
+			}
+			GridPane.setColumnIndex(addressTextfield, 2);
+			GridPane.setRowIndex(addressTextfield, 1);
+
+			getChildren().addAll(addressTextfieldLabel, addressTextfield);
 
 			savebutton = new Button();
 			savebutton.setText("Save");
@@ -48,7 +54,7 @@ public class TurnoutDetailsPane extends GridPane {
 				@Override
 				public void handle(final ActionEvent e) {
 
-					final String textFieldContent = textfield.getText();
+					final String textFieldContent = addressTextfield.getText();
 					final int intValue = NumberUtils.toInt(textFieldContent, Integer.MIN_VALUE);
 					if (intValue != Integer.MIN_VALUE) {
 
@@ -65,10 +71,11 @@ public class TurnoutDetailsPane extends GridPane {
 
 		logger.trace("clear");
 
-		if (textfield != null) {
+		if (addressTextfield != null) {
 
-			getChildren().remove(textfield);
-			textfield = null;
+			getChildren().remove(addressTextfieldLabel);
+			getChildren().remove(addressTextfield);
+			addressTextfield = null;
 		}
 
 		if (savebutton != null) {

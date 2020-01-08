@@ -35,6 +35,10 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	private final List<RailNode> manualConnections = new ArrayList<>();
 
+	private int feedbackBlockNumber = -1;
+
+	private boolean feedbackBlockUsed;
+
 	/**
 	 * ctor
 	 */
@@ -440,6 +444,24 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	@Override
 	public List<RailNode> getManualConnections() {
 		return manualConnections;
+	}
+
+	@Override
+	public int getFeedbackBlockNumber() {
+		return feedbackBlockNumber;
+	}
+
+	@Override
+	public void setFeedbackBlockNumber(final int feedbackBlockNumber) {
+		this.feedbackBlockNumber = feedbackBlockNumber;
+	}
+
+	public boolean isFeedbackBlockUsed() {
+		return feedbackBlockUsed;
+	}
+
+	public void setFeedbackBlockUsed(final boolean feedbackBlockUsed) {
+		this.feedbackBlockUsed = feedbackBlockUsed;
 	}
 
 }

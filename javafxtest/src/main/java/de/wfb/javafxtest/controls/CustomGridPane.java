@@ -3,6 +3,7 @@ package de.wfb.javafxtest.controls;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -10,18 +11,27 @@ import org.springframework.stereotype.Component;
 import de.wfb.model.Model;
 import de.wfb.model.node.Node;
 import de.wfb.rail.events.ModelChangedEvent;
+import de.wfb.rail.events.NodeHighlightedEvent;
+import de.wfb.rail.events.RemoveHighlightsEvent;
 import de.wfb.rail.events.SelectionEvent;
 import de.wfb.rail.factory.Factory;
 import de.wfb.rail.ui.ShapeType;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 
 @Component
-public class CustomGridPane extends Pane implements ApplicationListener<ModelChangedEvent> {
+public class CustomGridPane extends Pane implements ApplicationListener<ApplicationEvent> {
 
-	@SuppressWarnings("unused")
+//	private static final Color STANDARD_STROKE_COLOR = Color.BLUE;
+
+	private static final Color STANDARD_FILL_COLOR = Color.ALICEBLUE;
+
+	private static final Color HIGHLIGHT_FILL_COLOR = Color.ORANGE;
+
+//	@SuppressWarnings("unused")
 	private static final Logger logger = LogManager.getLogger(CustomGridPane.class);
 
 	private final int columns = 100;
@@ -46,22 +56,6 @@ public class CustomGridPane extends Pane implements ApplicationListener<ModelCha
 	public void Initialize() {
 
 		setMinSize(rows * cell_width, columns * cell_width);
-
-//		for (int j = 0; j < rows; j++) {
-//
-//			for (int i = 0; i < columns; i++) {
-//
-//				final SVGPath svgPath = svgPathFactory.create(ShapeType.SQUARE, cell_width);
-//
-//				// set position
-//				svgPath.setLayoutX(cell_width * i);
-//				svgPath.setLayoutY(cell_width * j);
-//
-//				viewModel[i][j] = svgPath;
-//
-//				getChildren().add(svgPath);
-//			}
-//		}
 
 		final double scaleX = scale;
 		final double scaleY = scale;
@@ -133,63 +127,102 @@ public class CustomGridPane extends Pane implements ApplicationListener<ModelCha
 	 * Handler for model changed event. The grid pane updates accordingly.
 	 */
 	@Override
-	public void onApplicationEvent(final ModelChangedEvent event) {
+	public void onApplicationEvent(final ApplicationEvent event) {
 
 		logger.trace("onApplicationEvent " + event.getClass().getSimpleName());
 
-		final Model model = event.getModel();
-		final Node node = model.getNode(event.getX(), event.getY());
+		if (event instanceof ModelChangedEvent) {
 
-		logger.info("onApplicationEvent() node = " + node);
+			final ModelChangedEvent modelChangedEvent = (ModelChangedEvent) event;
+			processModelChangedEvent(modelChangedEvent);
+
+		} else if (event instanceof NodeHighlightedEvent) {
+
+			final NodeHighlightedEvent nodeHighlightedEvent = (NodeHighlightedEvent) event;
+			processNodeHighlightedEvent(nodeHighlightedEvent);
+
+		} else if (event instanceof RemoveHighlightsEvent) {
+
+			final RemoveHighlightsEvent removeHighlightsEvent = (RemoveHighlightsEvent) event;
+			processRemoveHighlightsEvent(removeHighlightsEvent);
+
+		}
+	}
+
+	private void processRemoveHighlightsEvent(final RemoveHighlightsEvent removeHighlightsEvent) {
+
+		for (int i = 0; i < columns; i++) {
+			for (int j = 0; j < rows; j++) {
+				final SVGPath svgPath = viewModel[j][i];
+				if (svgPath == null) {
+					continue;
+				}
+				svgPath.setFill(STANDARD_FILL_COLOR);
+			}
+		}
+	}
+
+	private void processNodeHighlightedEvent(final NodeHighlightedEvent nodeHighlightedEvent) {
+
+		logger.trace(nodeHighlightedEvent);
+
+		final SVGPath svgPath = viewModel[nodeHighlightedEvent.getX()][nodeHighlightedEvent.getY()];
+		if (svgPath != null) {
+
+			logger.trace("changing fill color!");
+			svgPath.setFill(nodeHighlightedEvent.isHighlighted() ? HIGHLIGHT_FILL_COLOR : STANDARD_FILL_COLOR);
+		} else {
+			logger.info("No node at location!");
+		}
+	}
+
+	private void processModelChangedEvent(final ModelChangedEvent modelChangedEvent) {
+
+		final Model model = modelChangedEvent.getModel();
+		final Node node = model.getNode(modelChangedEvent.getX(), modelChangedEvent.getY());
+
+		logger.trace("onApplicationEvent() node = " + node);
 
 		if (node == null) {
 
 			// remove
-			final SVGPath svgPathOld = viewModel[event.getX()][event.getY()];
+			final SVGPath svgPathOld = viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()];
 			getChildren().remove(svgPathOld);
 
 			return;
-
 		}
 
 		final ShapeType shapeType = node.getShapeType();
 		if (shapeType == ShapeType.NONE) {
+
 			return;
 		}
 
 		// remove
-		final SVGPath svgPathOld = viewModel[event.getX()][event.getY()];
+		final SVGPath svgPathOld = viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()];
 		getChildren().remove(svgPathOld);
 
 		// create new path
 		final boolean turnoutStraight = turnoutState(node);
+		final boolean highlighted = modelChangedEvent.isHighlighted();
 		try {
-			final SVGPath svgPathNew = svgPathFactory.create(shapeType, cell_width, turnoutStraight);
+			final SVGPath svgPathNew = svgPathFactory.create(shapeType, cell_width, turnoutStraight, highlighted);
 
 			if (svgPathNew == null) {
 				return;
 			}
-			svgPathNew.setLayoutX(event.getX() * cell_width);
-			svgPathNew.setLayoutY(event.getY() * cell_width);
+			svgPathNew.setLayoutX(modelChangedEvent.getX() * cell_width);
+			svgPathNew.setLayoutY(modelChangedEvent.getY() * cell_width);
 
 			getChildren().add(svgPathNew);
 
-			viewModel[event.getX()][event.getY()] = svgPathNew;
+			viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()] = svgPathNew;
 		} catch (final Exception e) {
 			logger.error(e.getMessage(), e);
 		}
-
 	}
 
 	private boolean turnoutState(final Node node) {
-
-//		if (node instanceof TurnoutNode) {
-//			final TurnoutNode turnoutNode = (TurnoutNode) node;
-//			return turnoutNode.isThrown();
-//		}
-//
-//		return false;
-
 		return node.isThrown();
 	}
 
