@@ -9,6 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 
 import de.wfb.model.Model;
 import de.wfb.model.node.Node;
@@ -47,6 +48,9 @@ public class DefaultProtocolService implements ProtocolService {
 	@Autowired
 	private Factory<SerialPort> serialPortFactory;
 
+	@Autowired
+	private ApplicationEventPublisher applicationEventPublisher;
+
 	@Override
 	public void nodeClicked(final int x, final int y) {
 
@@ -55,7 +59,11 @@ public class DefaultProtocolService implements ProtocolService {
 		final Node node = model.getNode(x, y);
 
 		if (node == null) {
+
 			logger.info("nodeClicked node is null");
+
+			// all nodes that are selected have to be unused
+
 			return;
 		}
 
@@ -64,6 +72,7 @@ public class DefaultProtocolService implements ProtocolService {
 
 		// switch turnouts
 		if (ShapeType.isTurnout(node.getShapeType())) {
+
 			turnTurnout(node);
 		}
 	}
@@ -172,21 +181,23 @@ public class DefaultProtocolService implements ProtocolService {
 		}
 	}
 
-	private static void nopCommand(final InputStream inputStream, final OutputStream outputStream) {
+	@SuppressWarnings("unused")
+	private void nopCommand(final InputStream inputStream, final OutputStream outputStream) {
 
 		final Command command = new P50XXNOPCommand();
 		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
 		serialTemplate.execute();
 	}
 
-	private static void versionCommand(final InputStream inputStream, final OutputStream outputStream) {
+	@SuppressWarnings("unused")
+	private void versionCommand(final InputStream inputStream, final OutputStream outputStream) {
 
 		final Command command = new P50XVersionCommand();
 		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
 		serialTemplate.execute();
 	}
 
-	private static void turnoutCommandFirst(final InputStream inputStream, final OutputStream outputStream,
+	private void turnoutCommandFirst(final InputStream inputStream, final OutputStream outputStream,
 			final int protocolTurnoutId, final boolean straight) {
 
 		final Command command = new P50XTurnoutCommand((short) protocolTurnoutId, straight, true);
@@ -194,7 +205,7 @@ public class DefaultProtocolService implements ProtocolService {
 		serialTemplate.execute();
 	}
 
-	private static void turnoutCommandSecond(final InputStream inputStream, final OutputStream outputStream,
+	private void turnoutCommandSecond(final InputStream inputStream, final OutputStream outputStream,
 			final int protocolTurnoutId, final boolean straight) {
 
 		final Command command = new P50XTurnoutCommand((short) protocolTurnoutId, straight, false);
@@ -202,7 +213,7 @@ public class DefaultProtocolService implements ProtocolService {
 		serialTemplate.execute();
 	}
 
-	private static void throttleCommand(final InputStream inputStream, final OutputStream outputStream,
+	private void throttleCommand(final InputStream inputStream, final OutputStream outputStream,
 			final short locomotiveAddress, final double throttleValue, final boolean dirForward) {
 
 		final Command command = new P50XXLokCommand(locomotiveAddress, throttleValue, dirForward);
@@ -210,7 +221,7 @@ public class DefaultProtocolService implements ProtocolService {
 		serialTemplate.execute();
 	}
 
-	private static P50XXEventCommand eventCommand(final InputStream inputStream, final OutputStream outputStream) {
+	private P50XXEventCommand eventCommand(final InputStream inputStream, final OutputStream outputStream) {
 
 		final P50XXEventCommand command = new P50XXEventCommand();
 		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
@@ -219,10 +230,14 @@ public class DefaultProtocolService implements ProtocolService {
 		return command;
 	}
 
-	private static P50XXEvtSenCommand eventSenseCommand(final InputStream inputStream,
-			final OutputStream outputStream) {
+	private P50XXEvtSenCommand eventSenseCommand(final InputStream inputStream, final OutputStream outputStream) {
 
 		final P50XXEvtSenCommand command = new P50XXEvtSenCommand();
+
+		// this command will send out a FeedbackBlockUpdateEvent per S88 module state
+		// update. To send events, it gets a reference to a ApplicationEventPublisher
+		command.setApplicationEventPublisher(applicationEventPublisher);
+
 		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
 		serialTemplate.execute();
 

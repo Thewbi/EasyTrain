@@ -91,7 +91,6 @@ public class SVGTest extends Application {
 		final EventHandler<MouseEvent> mouseClickEventHandler = new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(final MouseEvent e) {
-//				System.out.println("mouse clicked");
 			}
 		};
 

@@ -29,13 +29,6 @@ public class DefaultSerialPortFactory implements Factory<SerialPort> {
 
 		logger.info("Creating serial port via name: '" + serialPortIdentifier + "'");
 
-//		try {
-//			return connect(serialPortIdentifier);
-//		} catch (final Exception e) {
-//			logger.error(e.getMessage(), e);
-//		}
-//		return null;
-
 		return connect(serialPortIdentifier);
 	}
 

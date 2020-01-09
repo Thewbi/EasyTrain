@@ -1,14 +1,18 @@
 package de.wfb.model.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationListener;
 
 import de.wfb.dot.DefaultDotSerializer;
 import de.wfb.model.Model;
@@ -17,13 +21,16 @@ import de.wfb.model.node.DefaultRailNode;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
 import de.wfb.model.node.RailNode;
+import de.wfb.rail.events.FeedbackBlockEvent;
+import de.wfb.rail.events.FeedbackBlockState;
 import de.wfb.rail.events.ModelChangedEvent;
+import de.wfb.rail.events.NodeClickedEvent;
 import de.wfb.rail.events.NodeHighlightedEvent;
 import de.wfb.rail.events.NodeSelectedEvent;
 import de.wfb.rail.factory.Factory;
 import de.wfb.rail.ui.ShapeType;
 
-public class DefaultModelService implements ModelService {
+public class DefaultModelService implements ModelService, ApplicationListener<ApplicationEvent> {
 
 	private static final Logger logger = LogManager.getLogger(DefaultModelService.class);
 
@@ -45,45 +52,120 @@ public class DefaultModelService implements ModelService {
 		return Optional.ofNullable(model.getNode(x, y));
 	}
 
+	@Override
+	public void onApplicationEvent(final ApplicationEvent event) {
+
+		if (event instanceof FeedbackBlockEvent) {
+
+			final FeedbackBlockEvent feedbackBlockEvent = (FeedbackBlockEvent) event;
+			processFeedbackBlockEvent(feedbackBlockEvent);
+		}
+	}
+
+	private void processFeedbackBlockEvent(final FeedbackBlockEvent feedbackBlockEvent) {
+
+		// update the state of all railnodes that are part of the block to used
+		//
+		// Send a model change event to update the frontend
+
+		final int feedbackBlockNumber = feedbackBlockEvent.getFeedbackBlockNumber();
+		final FeedbackBlockState feedbackBlockState = feedbackBlockEvent.getFeedbackBlockState();
+
+		final List<Node> feedbackBlockNodes = retrieveNodesOfFeedbackBlock(feedbackBlockNumber);
+
+		if (CollectionUtils.isNotEmpty(feedbackBlockNodes)) {
+
+			for (final Node node : feedbackBlockNodes) {
+
+				node.setFeedbackBlockUsed(feedbackBlockState == FeedbackBlockState.BLOCKED);
+
+				final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, node.getX(), node.getY(),
+						node.isHighlighted(), node.isFeedbackBlockUsed(), node.isSelected());
+
+				applicationEventPublisher.publishEvent(modelChangedEvent);
+			}
+		}
+	}
+
+	private List<Node> retrieveNodesOfFeedbackBlock(final int feedbackBlockNumber) {
+
+		final List<Node> result = new ArrayList<>();
+		for (final Map.Entry<Integer, Node> entry : model.getIdMap().entrySet()) {
+
+			final RailNode railNode = (RailNode) entry.getValue();
+
+			if (railNode.getFeedbackBlockNumber() == feedbackBlockNumber) {
+				result.add(railNode);
+			}
+		}
+
+		return result;
+	}
+
 	/**
 	 * The user clicked a tile. No ShapeType was selected for editing.
 	 */
 	@Override
-	public void nodeClicked(final int x, final int y) {
+	public void nodeClicked(final int x, final int y, final boolean shiftSelected) {
 
 		logger.info("nodeClicked x = " + x + " y = " + y);
 
 		final Node node = model.getNode(x, y);
 
-		if (node == null) {
+		if (!shiftSelected) {
 
-			logger.info("nodeClicked node is null");
+			// all selected nodes have to be unselected
+			final List<RailNode> allRailNodes = model.getAllRailNodes();
+			if (CollectionUtils.isNotEmpty(allRailNodes)) {
+
+				for (final RailNode railNode : allRailNodes) {
+
+					railNode.setSelected(false);
+					railNode.setHighlighted(false);
+
+					sendModelChangedEvent(railNode);
+				}
+			}
+		}
+
+		if (node == null) {
 			return;
 		}
 
-		logger.info("nodeClicked node id = " + node.getId() + " node = " + node.getClass().getSimpleName());
+		logger.trace("nodeClicked node id = " + node.getId() + " node = " + node.getClass().getSimpleName());
 
 		// store the currently selected node in the model
-		logger.info("setSelectedNode()");
-		model.setSelectedNode(node);
+		if (shiftSelected) {
 
-		logger.info("sendNodeSelectedEvent()");
-		sendNodeSelectedEvent(node);
+			node.setSelected(true);
+			model.setSelectedNode(node);
 
-		// switch turnouts
-		// if (node instanceof TurnoutNode) {
-		if (ShapeType.isTurnout(node.getShapeType())) {
+		} else {
 
-			// final TurnoutNode turnoutNode = (TurnoutNode) node;
+			sendNodeClickedEvent(node);
 
-			// change the node in the UI for visual feedback
-			node.toggleTurnout();
+			// switch turnouts
+			// if (node instanceof TurnoutNode) {
+			if (ShapeType.isTurnout(node.getShapeType())) {
 
-			// tell the UI
-			sendModelChangedEvent(x, y);
+				// final TurnoutNode turnoutNode = (TurnoutNode) node;
+
+				// change the node in the UI for visual feedback
+				node.toggleTurnout();
+			}
 		}
+
+		// tell the UI
+		sendModelChangedEvent(x, y, node.isHighlighted(), node.isFeedbackBlockUsed(), node.isSelected());
 	}
 
+	private void sendNodeClickedEvent(final Node node) {
+
+		final NodeClickedEvent nodeClickedEvent = new NodeClickedEvent(this, node);
+		applicationEventPublisher.publishEvent(nodeClickedEvent);
+	}
+
+	@SuppressWarnings("unused")
 	private void sendNodeSelectedEvent(final Node node) {
 
 		logger.info("sendNodeSelectedEvent() node: " + node);
@@ -98,12 +180,22 @@ public class DefaultModelService implements ModelService {
 	}
 
 	@Override
-	public void sendModelChangedEvent(final int x, final int y) {
+	public void sendModelChangedEvent(final int x, final int y, final boolean hightlighted, final boolean blocked,
+			final boolean selected) {
 
 		logger.trace("sendModelChangedEvent() x: " + x + " y: " + y);
 
-		final boolean hightlighted = false;
-		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, x, y, hightlighted);
+		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, x, y, hightlighted, blocked,
+				selected);
+
+		applicationEventPublisher.publishEvent(modelChangedEvent);
+	}
+
+	@Override
+	public void sendModelChangedEvent(final RailNode railNode) {
+
+		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, railNode.getX(), railNode.getY(),
+				railNode.isHighlighted(), railNode.isFeedbackBlockUsed(), railNode.isSelected());
 
 		applicationEventPublisher.publishEvent(modelChangedEvent);
 	}
@@ -129,7 +221,7 @@ public class DefaultModelService implements ModelService {
 			return;
 
 		case REMOVE:
-			sendModelChangedEvent(x, y);
+			sendModelChangedEvent(x, y, false, false, false);
 			return;
 
 		default:
@@ -137,6 +229,7 @@ public class DefaultModelService implements ModelService {
 		}
 
 		try {
+
 			logger.info("Creating new node!");
 			final Node newNode = nodeFactory.create(x, y, shapeType);
 
@@ -147,7 +240,8 @@ public class DefaultModelService implements ModelService {
 
 			logger.info("addNode() New node id = " + newNode.getId() + " added!");
 
-			sendModelChangedEvent(x, y);
+			sendModelChangedEvent(x, y, newNode.isHighlighted(), newNode.isFeedbackBlockUsed(), newNode.isSelected());
+
 		} catch (final Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -246,6 +340,22 @@ public class DefaultModelService implements ModelService {
 			railNode.getGraphNodeOne().setColor(Color.NONE);
 			railNode.getGraphNodeTwo().setColor(Color.NONE);
 		}
+	}
+
+	@Override
+	public List<Node> getSelectedNodes() {
+
+		final List<Node> selectedNodes = new ArrayList<>();
+		for (final Map.Entry<Integer, Node> entry : model.getIdMap().entrySet()) {
+
+			final RailNode railNode = (RailNode) entry.getValue();
+
+			if (railNode.isSelected()) {
+				selectedNodes.add(railNode);
+			}
+		}
+
+		return selectedNodes;
 	}
 
 }

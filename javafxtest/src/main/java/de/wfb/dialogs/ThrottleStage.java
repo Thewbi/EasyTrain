@@ -21,8 +21,6 @@ public class ThrottleStage extends Stage {
 	public ThrottleStage() {
 
 		setTitle("Locomotive Throttle");
-
-		// setScene(createContentGrid());
 	}
 
 	private Scene createContentGrid() {

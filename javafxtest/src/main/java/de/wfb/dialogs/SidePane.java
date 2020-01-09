@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
 import de.wfb.model.node.Node;
-import de.wfb.rail.events.NodeSelectedEvent;
+import de.wfb.rail.events.NodeClickedEvent;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
 
@@ -31,17 +31,17 @@ public class SidePane extends GridPane implements ApplicationListener<Applicatio
 
 		logger.trace("onApplicationEvent " + event.getClass().getSimpleName());
 
-		if (event instanceof NodeSelectedEvent) {
+		if (event instanceof NodeClickedEvent) {
 
-			final NodeSelectedEvent nodeSelectedEvent = (NodeSelectedEvent) event;
+			final NodeClickedEvent nodeClickedEvent = (NodeClickedEvent) event;
 
-			processNodeSelectedEvent(nodeSelectedEvent);
+			processNodeClickedEvent(nodeClickedEvent);
 		}
 	}
 
-	private void processNodeSelectedEvent(final NodeSelectedEvent nodeSelectedEvent) {
+	private void processNodeClickedEvent(final NodeClickedEvent nodeClickedEvent) {
 
-		final Node node = nodeSelectedEvent.getNode();
+		final Node node = nodeClickedEvent.getNode();
 
 		turnoutDetailsPane.clear();
 		turnoutDetailsPane.setup(node);

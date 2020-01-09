@@ -8,6 +8,8 @@ import de.wfb.rail.facade.ProtocolFacade;
 
 public class EvtSenCommandThread implements Runnable {
 
+	private static final int THREAD_SLEEP_MILLIS = 1000;
+
 	private static final Logger logger = LogManager.getLogger(EvtSenCommandThread.class);
 
 	private boolean running = true;
@@ -23,11 +25,12 @@ public class EvtSenCommandThread implements Runnable {
 		while (running) {
 
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(THREAD_SLEEP_MILLIS);
 			} catch (final InterruptedException e) {
 				logger.error(e.getMessage(), e);
 			}
 
+			// send the P50XXEventCommand
 			protocolFacade.event();
 		}
 

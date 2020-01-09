@@ -5,8 +5,6 @@ import java.nio.ByteBuffer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.wfb.rail.commands.Command;
-
 /**
  * XVer (0A0h) - length = 1 byte - show versions
  *
@@ -21,32 +19,20 @@ import de.wfb.rail.commands.Command;
  */
 public class P50XVersionCommand implements Command {
 
+	@SuppressWarnings("unused")
 	private static Logger logger = LogManager.getLogger(P50XVersionCommand.class);
 
-//	public void execute(final OutputStream outputStream) {
-//
-//		logger.info("Version");
-//
-//		try {
-//			final byte[] byteArray = Hex.decodeHex("78A0".toCharArray());
-//			outputStream.write(byteArray, 0, byteArray.length);
-//		} catch (final IOException e) {
-//			e.printStackTrace();
-//		} catch (final DecoderException e) {
-//			e.printStackTrace();
-//		}
-//
-//	}
-
+	@Override
 	public int getResponseLength() {
 		return 19;
 	}
 
+	@Override
 	public void result(final ByteBuffer byteBuffer) {
-		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public byte[] getByteArray() {
 
 		final byte[] byteArray = new byte[2];

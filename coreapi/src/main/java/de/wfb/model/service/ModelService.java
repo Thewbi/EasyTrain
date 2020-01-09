@@ -13,7 +13,7 @@ public interface ModelService {
 
 	Optional<Node> getNode(int x, int y);
 
-	void nodeClicked(int x, int y);
+	void nodeClicked(int x, int y, boolean shiftClicked);
 
 	void addNode(int x, int y, ShapeType shapeType);
 
@@ -21,7 +21,9 @@ public interface ModelService {
 
 	void loadModel();
 
-	void sendModelChangedEvent(int x, int y);
+	void sendModelChangedEvent(int x, int y, boolean hightlighted, boolean blocked, boolean selected);
+
+	void sendModelChangedEvent(RailNode railNode);
 
 	void connect(Node nodeA, Node nodeB);
 
@@ -38,5 +40,7 @@ public interface ModelService {
 	Model getModel();
 
 	void resetGraphColors();
+
+	List<Node> getSelectedNodes();
 
 }

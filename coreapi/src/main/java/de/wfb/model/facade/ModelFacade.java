@@ -1,5 +1,6 @@
 package de.wfb.model.facade;
 
+import java.util.List;
 import java.util.Optional;
 
 import de.wfb.model.Model;
@@ -10,7 +11,7 @@ public interface ModelFacade {
 
 	Optional<Node> getNode(int x, int y);
 
-	void nodeClicked(int x, int y);
+	void nodeClicked(int x, int y, boolean shiftClicked);
 
 	void addNode(int x, int y, ShapeType shapeType);
 
@@ -19,5 +20,13 @@ public interface ModelFacade {
 	void connect(Node nodeA, Node nodeB);
 
 	Model getModel();
+
+	List<Node> getSelectedNodes();
+
+	void debugRoute();
+
+	void loadModel();
+
+	void connectModel();
 
 }

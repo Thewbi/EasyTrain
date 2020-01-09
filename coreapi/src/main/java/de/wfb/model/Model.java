@@ -5,6 +5,7 @@ import java.util.Map;
 
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
+import de.wfb.model.node.RailNode;
 
 public interface Model {
 
@@ -23,5 +24,7 @@ public interface Model {
 	void connectModel();
 
 	List<GraphNode> getSwitchingNodes();
+
+	List<RailNode> getAllRailNodes();
 
 }

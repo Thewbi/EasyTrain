@@ -12,26 +12,18 @@ import de.wfb.model.Model;
 import de.wfb.model.node.Node;
 import de.wfb.rail.events.ModelChangedEvent;
 import de.wfb.rail.events.NodeHighlightedEvent;
-import de.wfb.rail.events.RemoveHighlightsEvent;
 import de.wfb.rail.events.SelectionEvent;
 import de.wfb.rail.factory.Factory;
+import de.wfb.rail.factory.LayoutColors;
 import de.wfb.rail.ui.ShapeType;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 
 @Component
 public class CustomGridPane extends Pane implements ApplicationListener<ApplicationEvent> {
 
-//	private static final Color STANDARD_STROKE_COLOR = Color.BLUE;
-
-	private static final Color STANDARD_FILL_COLOR = Color.ALICEBLUE;
-
-	private static final Color HIGHLIGHT_FILL_COLOR = Color.ORANGE;
-
-//	@SuppressWarnings("unused")
 	private static final Logger logger = LogManager.getLogger(CustomGridPane.class);
 
 	private final int columns = 100;
@@ -129,7 +121,7 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 	@Override
 	public void onApplicationEvent(final ApplicationEvent event) {
 
-		logger.trace("onApplicationEvent " + event.getClass().getSimpleName());
+		logger.info("onApplicationEvent " + event.getClass().getSimpleName());
 
 		if (event instanceof ModelChangedEvent) {
 
@@ -141,38 +133,19 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 			final NodeHighlightedEvent nodeHighlightedEvent = (NodeHighlightedEvent) event;
 			processNodeHighlightedEvent(nodeHighlightedEvent);
 
-		} else if (event instanceof RemoveHighlightsEvent) {
-
-			final RemoveHighlightsEvent removeHighlightsEvent = (RemoveHighlightsEvent) event;
-			processRemoveHighlightsEvent(removeHighlightsEvent);
-
-		}
-	}
-
-	private void processRemoveHighlightsEvent(final RemoveHighlightsEvent removeHighlightsEvent) {
-
-		for (int i = 0; i < columns; i++) {
-			for (int j = 0; j < rows; j++) {
-				final SVGPath svgPath = viewModel[j][i];
-				if (svgPath == null) {
-					continue;
-				}
-				svgPath.setFill(STANDARD_FILL_COLOR);
-			}
 		}
 	}
 
 	private void processNodeHighlightedEvent(final NodeHighlightedEvent nodeHighlightedEvent) {
 
-		logger.trace(nodeHighlightedEvent);
+		logger.info(nodeHighlightedEvent);
 
 		final SVGPath svgPath = viewModel[nodeHighlightedEvent.getX()][nodeHighlightedEvent.getY()];
 		if (svgPath != null) {
 
 			logger.trace("changing fill color!");
-			svgPath.setFill(nodeHighlightedEvent.isHighlighted() ? HIGHLIGHT_FILL_COLOR : STANDARD_FILL_COLOR);
-		} else {
-			logger.info("No node at location!");
+			svgPath.setFill(nodeHighlightedEvent.isHighlighted() ? LayoutColors.HIGHLIGHT_FILL_COLOR
+					: LayoutColors.STANDARD_FILL_COLOR);
 		}
 	}
 
@@ -181,7 +154,7 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 		final Model model = modelChangedEvent.getModel();
 		final Node node = model.getNode(modelChangedEvent.getX(), modelChangedEvent.getY());
 
-		logger.trace("onApplicationEvent() node = " + node);
+		logger.info("onApplicationEvent() node = " + node);
 
 		if (node == null) {
 
@@ -192,11 +165,18 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 			return;
 		}
 
+		logger.info("A");
+
+		// if the new ShapeType is none, do not add a new shape but bail here
 		final ShapeType shapeType = node.getShapeType();
 		if (shapeType == ShapeType.NONE) {
 
 			return;
 		}
+
+		logger.info("B");
+
+		// TODO: handle case, when only the color changed!
 
 		// remove
 		final SVGPath svgPathOld = viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()];
@@ -205,8 +185,11 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 		// create new path
 		final boolean turnoutStraight = turnoutState(node);
 		final boolean highlighted = modelChangedEvent.isHighlighted();
+		final boolean blocked = modelChangedEvent.isBlocked();
+		final boolean selected = modelChangedEvent.isSelected();
 		try {
-			final SVGPath svgPathNew = svgPathFactory.create(shapeType, cell_width, turnoutStraight, highlighted);
+			final SVGPath svgPathNew = svgPathFactory.create(shapeType, cell_width, turnoutStraight, highlighted,
+					blocked, selected);
 
 			if (svgPathNew == null) {
 				return;

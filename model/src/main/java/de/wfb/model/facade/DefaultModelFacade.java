@@ -1,5 +1,6 @@
 package de.wfb.model.facade;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,8 @@ public class DefaultModelFacade implements ModelFacade {
 	}
 
 	@Override
-	public void nodeClicked(final int x, final int y) {
-		modelService.nodeClicked(x, y);
+	public void nodeClicked(final int x, final int y, final boolean shiftClicked) {
+		modelService.nodeClicked(x, y, shiftClicked);
 	}
 
 	@Override
@@ -42,6 +43,26 @@ public class DefaultModelFacade implements ModelFacade {
 	@Override
 	public Model getModel() {
 		return modelService.getModel();
+	}
+
+	@Override
+	public List<Node> getSelectedNodes() {
+		return modelService.getSelectedNodes();
+	}
+
+	@Override
+	public void debugRoute() {
+		modelService.debugRoute();
+	}
+
+	@Override
+	public void loadModel() {
+		modelService.loadModel();
+	}
+
+	@Override
+	public void connectModel() {
+		modelService.connectModel();
 	}
 
 }

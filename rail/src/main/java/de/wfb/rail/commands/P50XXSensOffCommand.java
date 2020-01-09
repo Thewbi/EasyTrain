@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 public class P50XXSensOffCommand implements Command {
 
+	@SuppressWarnings("unused")
 	private static Logger logger = LogManager.getLogger(P50XXSensOffCommand.class);
 
 	@Override

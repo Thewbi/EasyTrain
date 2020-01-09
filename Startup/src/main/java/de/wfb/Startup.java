@@ -13,10 +13,12 @@ import de.wfb.dialogs.SidePane;
 import de.wfb.dialogs.ThrottleStage;
 import de.wfb.javafxtest.controller.LayoutGridController;
 import de.wfb.javafxtest.controls.CustomGridPane;
+import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.service.DefaultRoutingService;
-import de.wfb.model.service.ModelService;
 import de.wfb.model.service.RoutingService;
+import de.wfb.rail.events.FeedbackBlockEvent;
+import de.wfb.rail.events.FeedbackBlockState;
 import de.wfb.rail.facade.DefaultProtocolFacade;
 import de.wfb.rail.facade.ProtocolFacade;
 import javafx.application.Application;
@@ -68,7 +70,7 @@ public class Startup extends Application {
 
 	private SidePane sidePane;
 
-	private ModelService modelService;
+	private ModelFacade modelFacade;
 
 	private ProtocolFacade protocolFacade;
 
@@ -76,7 +78,9 @@ public class Startup extends Application {
 
 	private RoutingService routingService;
 
-	private LayoutGridController layoutGridController;
+	private DefaultDebugFacade defaultDebugFacade;
+
+	private FeedbackBlockState feedbackBlockState = FeedbackBlockState.BLOCKED;
 
 	public static void main(final String[] args) {
 
@@ -115,7 +119,6 @@ public class Startup extends Application {
 							} catch (final InterruptedException e) {
 								logger.error(e.getMessage(), e);
 							}
-//							running = false;
 							evtSenCommandThread.stop();
 							Platform.exit();
 
@@ -128,7 +131,6 @@ public class Startup extends Application {
 							} catch (final InterruptedException e) {
 								logger.error(e.getMessage(), e);
 							}
-//							running = false;
 							evtSenCommandThread.stop();
 							Platform.exit();
 
@@ -140,6 +142,7 @@ public class Startup extends Application {
 							// I think, there is no way to prevent the main window from closing.
 							// If the the user did abort the exit, just display the main window again.
 							stage.show();
+
 						}
 					}
 				});
@@ -148,18 +151,18 @@ public class Startup extends Application {
 
 		// https://stackoverflow.com/questions/31886204/where-is-javaconfigapplicationcontext-class-nowadays
 		final ApplicationContext context = new AnnotationConfigApplicationContext(ConfigurationClass.class);
-		modelService = context.getBean(ModelService.class);
+		modelFacade = context.getBean(ModelFacade.class);
 		sidePane = context.getBean(SidePane.class);
 		protocolFacade = context.getBean(DefaultProtocolFacade.class);
 		evtSenCommandThread = context.getBean(EvtSenCommandThread.class);
 		routingService = context.getBean(DefaultRoutingService.class);
-		layoutGridController = context.getBean(LayoutGridController.class);
+		defaultDebugFacade = context.getBean(DefaultDebugFacade.class);
 
 		// load the model
 		try {
 			logger.info("Loading model ...");
-			modelService.loadModel();
-			modelService.connectModel();
+			modelFacade.loadModel();
+			modelFacade.connectModel();
 			logger.info("Loading model done.");
 		} catch (final Exception e) {
 			logger.error(e.getMessage(), e);
@@ -175,14 +178,6 @@ public class Startup extends Application {
 		} catch (final Exception e) {
 			logger.error(e.getMessage(), e);
 		}
-		// display the layout element selection view
-//		final LayoutElementSelectionDialogStage layoutElementSelectionDialogStage = context
-//				.getBean(LayoutElementSelectionDialogStage.class);
-//		layoutElementSelectionDialogStage.initModality(Modality.WINDOW_MODAL);
-//		layoutElementSelectionDialogStage.show();
-
-		// layoutElementSelectionDialogStage =
-		// context.getBean(LayoutElementSelectionDialogStage.class);
 
 		// locomotive throttle
 		final ThrottleStage throttleStage = context.getBean(ThrottleStage.class);
@@ -222,7 +217,7 @@ public class Startup extends Application {
 	@Override
 	public void stop() {
 
-		logger.info("Startup.stop()");
+		logger.trace("Startup.stop()");
 		Platform.exit();
 	}
 
@@ -363,17 +358,17 @@ public class Startup extends Application {
 			@Override
 			public void handle(final ActionEvent event) {
 
-				logger.info("Route Menu clicked!");
+				logger.trace("Route Menu clicked!");
 
 				// build the routing tables
 				routingService.buildRoutingTables();
 				routingService.colorGraph();
 
-				final List<de.wfb.model.node.Node> selectedNodes = layoutGridController.getSelectedNodes();
+				final List<de.wfb.model.node.Node> selectedNodes = modelFacade.getSelectedNodes();
 
 				if (CollectionUtils.isNotEmpty(selectedNodes) && selectedNodes.size() >= 2) {
 
-					logger.info("Selected Nodes found!");
+					logger.trace("Selected Nodes found!");
 
 					final de.wfb.model.node.Node nodeA = selectedNodes.get(0);
 					final de.wfb.model.node.Node nodeB = selectedNodes.get(1);
@@ -382,6 +377,7 @@ public class Startup extends Application {
 					if (CollectionUtils.isNotEmpty(route)) {
 
 						routingService.highlightRoute(route);
+						routingService.switchTurnouts(route);
 					}
 
 				} else {
@@ -400,7 +396,7 @@ public class Startup extends Application {
 
 				logger.info("Save Menu clicked!");
 
-				modelService.storeModel();
+				modelFacade.storeModel();
 			}
 		});
 
@@ -463,7 +459,24 @@ public class Startup extends Application {
 			@Override
 			public void handle(final ActionEvent event) {
 
-				modelService.debugRoute();
+				modelFacade.debugRoute();
+			}
+		});
+
+		final MenuItem feedbackBlockEventMenuItem = new MenuItem("Feedback Block Event");
+		feedbackBlockEventMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(final ActionEvent event) {
+
+				final int feedbackBlockNumber = 1;
+
+				final FeedbackBlockEvent feedbackBlockEvent = new FeedbackBlockEvent(this, feedbackBlockNumber,
+						feedbackBlockState);
+				defaultDebugFacade.publishEvent(feedbackBlockEvent);
+
+				feedbackBlockState = feedbackBlockState == FeedbackBlockState.BLOCKED ? FeedbackBlockState.FREE
+						: FeedbackBlockState.BLOCKED;
 			}
 		});
 
@@ -472,7 +485,7 @@ public class Startup extends Application {
 		routingMenu.getItems().addAll(findRouteMenuItem);
 		editMenu.getItems().addAll(connectItem, copyItem, pasteItem);
 		serialMenu.getItems().addAll(serialConnectItem, serialDisconnectItem);
-		debugMenu.getItems().addAll(routingNodeMenuItem);
+		debugMenu.getItems().addAll(routingNodeMenuItem, feedbackBlockEventMenuItem);
 
 		// add Menus to the MenuBar
 		menuBar.getMenus().addAll(fileMenu, routingMenu, debugMenu, editMenu, serialMenu, helpMenu);

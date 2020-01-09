@@ -33,7 +33,7 @@ public class DefaultProtocolFacade implements ProtocolFacade {
 	@Override
 	public void event() {
 
-		logger.trace("event()");
+		logger.trace("event() - Sending P50XXEventCommand");
 
 		protocolService.event();
 	}

@@ -23,17 +23,13 @@ public class ConsoleOutputSerialReader implements SerialWriter, Runnable {
 		this.in = in;
 	}
 
+	@Override
 	public void run() {
 
 		final byte[] buffer = new byte[1024];
 		int len = -1;
 		try {
 			while ((len = this.in.read(buffer)) > -1) {
-
-//				final String response = new String(buffer, 0, len);
-//				System.out.print(response);
-//
-				final byte[] stringBuffer = new byte[len];
 
 				final String response = Hex.encodeHexString(Arrays.copyOf(buffer, len));
 

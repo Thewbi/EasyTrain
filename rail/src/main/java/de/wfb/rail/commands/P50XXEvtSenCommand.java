@@ -5,7 +5,16 @@ import java.nio.ByteBuffer;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 
+import de.wfb.rail.events.FeedbackBlockState;
+import de.wfb.rail.events.FeedbackBlockUpdateEvent;
+
+/**
+ * https://tams-online.de/WebRoot/Store11/Shops/642f1858-c39b-4b7d-af86-f6a1feaca0e4/MediaGallery/15_Download/Sonstiges/interface.txt
+ * https://www.opendcc.de/elektronik/opendcc/opendcc_doc_ib.html
+ */
 public class P50XXEvtSenCommand implements Command {
 
 	private static Logger logger = LogManager.getLogger(P50XXEvtSenCommand.class);
@@ -24,6 +33,9 @@ public class P50XXEvtSenCommand implements Command {
 
 	private byte inputDescriptor2;
 
+	@Autowired
+	private ApplicationEventPublisher applicationEventPublisher;
+
 	@Override
 	public int getResponseLength() {
 		return responseLength;
@@ -32,16 +44,14 @@ public class P50XXEvtSenCommand implements Command {
 	@Override
 	public void result(final ByteBuffer byteBuffer) {
 
-//		logger.trace(Hex.encodeHexString(byteBuffer));
-
 		final byte[] array = byteBuffer.array();
 
 		for (int i = 0; i < byteBuffer.position(); i++) {
 
 			final byte data = array[i];
-			final String dataAsHex = Hex.encodeHexString(new byte[] { data });
 
-//			logger.trace("data = " + dataAsHex);
+			final String dataAsHex = Hex.encodeHexString(new byte[] { data });
+			logger.trace("data = " + dataAsHex);
 
 			switch (index) {
 			case 0:
@@ -52,18 +62,15 @@ public class P50XXEvtSenCommand implements Command {
 					return;
 				}
 				s88ID = data;
-//				logger.info("S88 ID = 0x" + dataAsHex);
 				break;
 
 			case 1:
 				inputDescriptor1 = data;
-//				logger.info("S88 data 1 = 0x" + dataAsHex);
 				break;
 
 			case 2:
 				inputDescriptor2 = data;
-				retrieveConnectionId(s88ID, inputDescriptor1, inputDescriptor2);
-//				logger.info("S88 data 2 = 0x" + dataAsHex);
+				retrieveConnectionIds(s88ID, inputDescriptor1, inputDescriptor2);
 				break;
 			}
 
@@ -81,39 +88,46 @@ public class P50XXEvtSenCommand implements Command {
 	 * @param inputDescriptor1
 	 * @param inputDescriptor2
 	 */
-	private void retrieveConnectionId(final int s88id, final byte inputDescriptor1, final byte inputDescriptor2) {
+	private void retrieveConnectionIds(final int s88id, final byte inputDescriptor1, final byte inputDescriptor2) {
 
-		if (inputDescriptor1 == 0 && inputDescriptor2 == 0) {
-
-			logger.info("No contact used!");
-
-			return;
-		}
+		final FeedbackBlockUpdateEvent feedbackBlockUpdateEvent = new FeedbackBlockUpdateEvent(this);
 
 		final int base = 16 * (s88id - 1);
 
 		int currentOffset = 1;
 
+		// ausgaenge 1 - 8 am modul (laut
+		// https://tams-online.de/WebRoot/Store11/Shops/642f1858-c39b-4b7d-af86-f6a1feaca0e4/MediaGallery/15_Download/Sonstiges/interface.txt)
 		for (byte i = 7; i >= 0; i--) {
 
-			if (((inputDescriptor2 >> i) & 1) > 0) {
+			final int value = ((inputDescriptor1 >> i) & 1);
+			final int offset = base + currentOffset;
 
-				logger.info("Contact used: " + (base + currentOffset));
-			}
+			logger.info("Contact " + offset + (value == 0 ? ") UNUSED" : ") USED"));
+
+			feedbackBlockUpdateEvent.getFeedbackBlockState()[offset - 1] = value == 0 ? FeedbackBlockState.FREE
+					: FeedbackBlockState.BLOCKED;
 
 			currentOffset++;
 		}
 
+		// ausgaenge 9 - 16 am modul (laut
+		// https://tams-online.de/WebRoot/Store11/Shops/642f1858-c39b-4b7d-af86-f6a1feaca0e4/MediaGallery/15_Download/Sonstiges/interface.txt)
 		for (byte i = 7; i >= 0; i--) {
 
-			if (((inputDescriptor1 >> i) & 1) > 0) {
+			final int value = ((inputDescriptor2 >> i) & 1);
+			final int offset = base + currentOffset;
 
-				logger.info("Contact used: " + (base + currentOffset));
-			}
+			logger.info("Contact " + offset + (value == 0 ? ") UNUSED" : ") USED"));
+
+			feedbackBlockUpdateEvent.getFeedbackBlockState()[offset - 1] = value == 0 ? FeedbackBlockState.FREE
+					: FeedbackBlockState.BLOCKED;
 
 			currentOffset++;
 		}
 
+		// send event
+		applicationEventPublisher.publishEvent(feedbackBlockUpdateEvent);
 	}
 
 	@Override
@@ -124,6 +138,14 @@ public class P50XXEvtSenCommand implements Command {
 		byteArray[1] = (byte) 0xCB;
 
 		return byteArray;
+	}
+
+	public ApplicationEventPublisher getApplicationEventPublisher() {
+		return applicationEventPublisher;
+	}
+
+	public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
+		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
 }

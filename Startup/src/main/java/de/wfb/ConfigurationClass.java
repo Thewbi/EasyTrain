@@ -134,4 +134,9 @@ public class ConfigurationClass {
 		return new LayoutGridController();
 	}
 
+	@Bean
+	public DefaultDebugFacade DefaultDebugFacade() {
+		return new DefaultDebugFacade();
+	}
+
 }

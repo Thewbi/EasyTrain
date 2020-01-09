@@ -6,8 +6,10 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.ApplicationEventPublisher;
 
 import de.wfb.model.Model;
+import de.wfb.rail.events.ModelChangedEvent;
 
 public class DefaultRailNode extends BaseNode implements RailNode {
 
@@ -39,6 +41,10 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	private boolean feedbackBlockUsed;
 
+	private boolean selected;
+
+	private boolean highlighted;
+
 	/**
 	 * ctor
 	 */
@@ -51,7 +57,107 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	}
 
 	@Override
+	public void toggleTurnout() {
+
+		logger.info("toggle()");
+
+		thrown = !thrown;
+	}
+
+	@Override
+	public void switchToGraphNode(final ApplicationEventPublisher applicationEventPublisher, final Model model,
+			final GraphNode nextGraphNode) {
+
+		logger.info("switchToGraphNode()");
+
+		final Edge outEdge = findOutEdge(nextGraphNode);
+		if (outEdge == null) {
+
+			logger.warn("Switch is not connected to nextGraphNode! Cannot switch!");
+			return;
+		}
+
+		logger.info("OUT EDGE: " + outEdge.getDirection().name());
+
+		updateSwitchState(outEdge);
+
+		// tell the UI
+		sendModelChangedEvent(applicationEventPublisher, model, this);
+	}
+
+	private void updateSwitchState(final Edge outEdge) {
+
+		switch (getShapeType()) {
+
+		case SWITCH_LEFT_0:
+			this.setThrown(outEdge.getDirection() == Direction.NORTH);
+			break;
+
+		case SWITCH_RIGHT_0:
+			this.setThrown(outEdge.getDirection() == Direction.SOUTH);
+			break;
+
+		case SWITCH_LEFT_90:
+			this.setThrown(outEdge.getDirection() == Direction.EAST);
+			break;
+
+		case SWITCH_RIGHT_90:
+			this.setThrown(outEdge.getDirection() == Direction.WEST);
+			break;
+
+		case SWITCH_LEFT_180:
+			this.setThrown(outEdge.getDirection() == Direction.SOUTH);
+			break;
+
+		case SWITCH_RIGHT_180:
+			this.setThrown(outEdge.getDirection() == Direction.NORTH);
+			break;
+
+		case SWITCH_LEFT_270:
+			this.setThrown(outEdge.getDirection() == Direction.WEST);
+			break;
+
+		case SWITCH_RIGHT_270:
+			this.setThrown(outEdge.getDirection() == Direction.EAST);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	public void sendModelChangedEvent(final ApplicationEventPublisher applicationEventPublisher, final Model model,
+			final RailNode railNode) {
+
+		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, railNode.getX(), railNode.getY(),
+				railNode.isHighlighted(), railNode.isFeedbackBlockUsed(), railNode.isSelected());
+
+		applicationEventPublisher.publishEvent(modelChangedEvent);
+	}
+
+	private Edge findOutEdge(final GraphNode nextGraphNode) {
+
+		for (int i = 0; i < 4; i++) {
+
+			final Edge edge = edges[i];
+
+			if (edge == null || edge.getNextOutGraphNode() == null) {
+				continue;
+			}
+
+			if (edge.getNextOutGraphNode().equals(nextGraphNode)) {
+
+				return edge;
+			}
+		}
+
+		return null;
+	}
+
+	@Override
 	public void connectTo(final RailNode railNodeB) {
+
+		logger.info("connectTo()");
 
 		final StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append(getId()).append("(").append(getX()).append(", ").append(getY()).append(") ");
@@ -97,6 +203,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	@Override
 	public void connect(final Model model) {
 
+		logger.info("connect()");
+
 		// north
 		final RailNode northNode = (RailNode) model.getNode(getX(), getY() - 1);
 		if (northNode != null) {
@@ -132,10 +240,12 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 				if (!westEdge.getOutGraphNode().getChildren().contains(innerEdge.getInGraphNode())) {
 					westEdge.getOutGraphNode().getChildren().add(innerEdge.getInGraphNode());
+					westEdge.setNextOutGraphNode(innerEdge.getInGraphNode());
 				}
 
 				if (!innerEdge.getOutGraphNode().getChildren().contains(westEdge.getInGraphNode())) {
 					innerEdge.getOutGraphNode().getChildren().add(westEdge.getInGraphNode());
+					innerEdge.setNextOutGraphNode(westEdge.getInGraphNode());
 				}
 			}
 		}
@@ -151,10 +261,12 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 				if (!southEdge.getOutGraphNode().getChildren().contains(innerEdge.getInGraphNode())) {
 					southEdge.getOutGraphNode().getChildren().add(innerEdge.getInGraphNode());
+					southEdge.setNextOutGraphNode(innerEdge.getInGraphNode());
 				}
 
 				if (!innerEdge.getOutGraphNode().getChildren().contains(southEdge.getInGraphNode())) {
 					innerEdge.getOutGraphNode().getChildren().add(southEdge.getInGraphNode());
+					innerEdge.setNextOutGraphNode(southEdge.getInGraphNode());
 				}
 			}
 		}
@@ -170,10 +282,12 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 				if (!eastEdge.getOutGraphNode().getChildren().contains(innerEdge.getInGraphNode())) {
 					eastEdge.getOutGraphNode().getChildren().add(innerEdge.getInGraphNode());
+					eastEdge.setNextOutGraphNode(innerEdge.getInGraphNode());
 				}
 
 				if (!innerEdge.getOutGraphNode().getChildren().contains(eastEdge.getInGraphNode())) {
 					innerEdge.getOutGraphNode().getChildren().add(eastEdge.getInGraphNode());
+					innerEdge.setNextOutGraphNode(eastEdge.getInGraphNode());
 				}
 			}
 		}
@@ -189,10 +303,12 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 				if (!northEdge.getOutGraphNode().getChildren().contains(innerEdge.getInGraphNode())) {
 					northEdge.getOutGraphNode().getChildren().add(innerEdge.getInGraphNode());
+					northEdge.setNextOutGraphNode(innerEdge.getInGraphNode());
 				}
 
 				if (!innerEdge.getOutGraphNode().getChildren().contains(northEdge.getInGraphNode())) {
 					innerEdge.getOutGraphNode().getChildren().add(northEdge.getInGraphNode());
+					innerEdge.setNextOutGraphNode(northEdge.getInGraphNode());
 				}
 			}
 		}
@@ -213,7 +329,9 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 				if (innerEdge != null) {
 
 					northEdge.getOutGraphNode().getChildren().remove(innerEdge.getInGraphNode());
+					northEdge.setNextOutGraphNode(null);
 					innerEdge.getOutGraphNode().getChildren().remove(northEdge.getInGraphNode());
+					innerEdge.setNextOutGraphNode(null);
 				}
 			}
 		}
@@ -230,7 +348,9 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 				if (innerEdge != null) {
 
 					eastEdge.getOutGraphNode().getChildren().remove(innerEdge.getInGraphNode());
+					eastEdge.setNextOutGraphNode(null);
 					innerEdge.getOutGraphNode().getChildren().remove(eastEdge.getInGraphNode());
+					innerEdge.setNextOutGraphNode(null);
 				}
 			}
 		}
@@ -247,7 +367,9 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 				if (innerEdge != null) {
 
 					southEdge.getOutGraphNode().getChildren().remove(innerEdge.getInGraphNode());
+					southEdge.setNextOutGraphNode(null);
 					innerEdge.getOutGraphNode().getChildren().remove(southEdge.getInGraphNode());
+					innerEdge.setNextOutGraphNode(null);
 				}
 			}
 		}
@@ -264,7 +386,9 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 				if (innerEdge != null) {
 
 					westEdge.getOutGraphNode().getChildren().remove(innerEdge.getInGraphNode());
+					westEdge.setNextOutGraphNode(null);
 					innerEdge.getOutGraphNode().getChildren().remove(westEdge.getInGraphNode());
+					innerEdge.setNextOutGraphNode(null);
 				}
 			}
 		}
@@ -424,14 +548,6 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	}
 
 	@Override
-	public void toggleTurnout() {
-
-		logger.info("toggle()");
-
-		thrown = !thrown;
-	}
-
-	@Override
 	public boolean isThrown() {
 		return thrown;
 	}
@@ -456,12 +572,34 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 		this.feedbackBlockNumber = feedbackBlockNumber;
 	}
 
+	@Override
 	public boolean isFeedbackBlockUsed() {
 		return feedbackBlockUsed;
 	}
 
+	@Override
 	public void setFeedbackBlockUsed(final boolean feedbackBlockUsed) {
 		this.feedbackBlockUsed = feedbackBlockUsed;
+	}
+
+	@Override
+	public boolean isSelected() {
+		return selected;
+	}
+
+	@Override
+	public void setSelected(final boolean selected) {
+		this.selected = selected;
+	}
+
+	@Override
+	public boolean isHighlighted() {
+		return highlighted;
+	}
+
+	@Override
+	public void setHighlighted(final boolean highlighted) {
+		this.highlighted = highlighted;
 	}
 
 }

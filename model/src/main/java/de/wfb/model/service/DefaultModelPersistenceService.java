@@ -80,17 +80,18 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 		final Collection<JsonNode> nodeArray = deserialize(pathToModelFile);
 		if (CollectionUtils.isEmpty(nodeArray)) {
 
-			logger.info("'" + Paths.get(pathToModelFile).toAbsolutePath() + "' contains no data!");
+			logger.trace("'" + Paths.get(pathToModelFile).toAbsolutePath() + "' contains no data!");
 			return;
 		}
 
-		logger.info("'" + Paths.get(pathToModelFile).toAbsolutePath() + "' contains " + nodeArray.size() + " nodes!");
+		logger.trace("'" + Paths.get(pathToModelFile).toAbsolutePath() + "' contains " + nodeArray.size() + " nodes!");
 
 		int maxId = Integer.MIN_VALUE;
 
 		for (final JsonNode jsonNode : nodeArray) {
 
 			try {
+
 				final Node node = nodeFactory.create(jsonNode);
 
 				model.getIdMap().put(node.getId(), node);
@@ -107,12 +108,12 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 
 		for (final JsonNode jsonNode : nodeArray) {
 
-			logger.info("Looking for manual CONNECTION");
+			logger.trace("Looking for manual CONNECTION");
 
 			final RailNode railNode = (RailNode) model.getIdMap().get(jsonNode.getId());
 
 			// resolve manual connections
-			logger.info("Factoring manual connections ...");
+			logger.trace("Factoring manual connections ...");
 			if (CollectionUtils.isNotEmpty(jsonNode.getManualConnections())) {
 
 				for (final Integer nodeId : jsonNode.getManualConnections()) {
@@ -132,18 +133,6 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 					}
 				}
 			}
-
-//			// manual connections
-//
-//			if (CollectionUtils.isNotEmpty(railNode.getManualConnections())) {
-//
-//				logger.info("Found Manual CONNECTION");
-//
-//				for (final RailNode manualConnection : railNode.getManualConnections()) {
-//
-//					railNode.connectTo(manualConnection);
-//				}
-//			}
 		}
 
 		// initialize the ID-Service so it will only return non-used IDs
@@ -151,11 +140,12 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 
 		for (final JsonNode jsonNode : nodeArray) {
 
-			modelService.sendModelChangedEvent(jsonNode.getX(), jsonNode.getY());
+			modelService.sendModelChangedEvent(jsonNode.getX(), jsonNode.getY(), false, false, false);
 		}
 	}
 
 	private Collection<JsonNode> deserialize(final String path) throws FileNotFoundException {
+
 		final JsonReader reader = new JsonReader(new FileReader(path));
 
 		final Type type = new TypeToken<Collection<JsonNode>>() {
@@ -163,6 +153,7 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 
 		final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		final Collection<JsonNode> nodeArray = gson.fromJson(reader, type);
+
 		return nodeArray;
 	}
 

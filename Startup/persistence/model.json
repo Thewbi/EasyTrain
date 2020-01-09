@@ -16,6 +16,7 @@
     "y": 16,
     "leftList": [],
     "rightList": [],
+    "protocolTurnoutId": 153,
     "manualConnections": [],
     "feedbackBlockNumber": 0
   },
@@ -96,6 +97,7 @@
     "y": 16,
     "leftList": [],
     "rightList": [],
+    "protocolTurnoutId": 154,
     "manualConnections": [],
     "feedbackBlockNumber": 0
   },
@@ -217,7 +219,7 @@
     "leftList": [],
     "rightList": [],
     "manualConnections": [],
-    "feedbackBlockNumber": 0
+    "feedbackBlockNumber": 1
   },
   {
     "id": 22,

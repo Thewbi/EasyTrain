@@ -1,6 +1,5 @@
 package de.wfb.javafxtest.controller;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -9,15 +8,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
 import org.springframework.util.CollectionUtils;
 
 import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.node.Node;
 import de.wfb.rail.controller.Controller;
-import de.wfb.rail.events.NodeHighlightedEvent;
-import de.wfb.rail.events.RemoveHighlightsEvent;
 import de.wfb.rail.events.SelectionEvent;
 import de.wfb.rail.events.ShapeTypeChangedEvent;
 import de.wfb.rail.facade.ProtocolFacade;
@@ -39,13 +35,7 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 	@Autowired
 	private ProtocolFacade protocolFacade;
 
-	@Autowired
-	private ApplicationEventPublisher applicationEventPublisher;
-
 	private boolean shiftState;
-
-	// private final Set<Node> selectedNodes = new HashSet<>();
-	private final List<Node> selectedNodes = new ArrayList<>();
 
 	/**
 	 * The user clicked onto a square of the layout using the left mouse button.
@@ -60,73 +50,50 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 
 			final SelectionEvent selectionEvent = (SelectionEvent) event;
 
-			// the shift key adds the selected node onto the selected node
-			if (selectionEvent.isShiftState()) {
-
-				logger.info("Shift selection");
-
-				final Optional<Node> nodeOptional = modelFacade.getNode(selectionEvent.getX(), selectionEvent.getY());
-				if (nodeOptional.isPresent()) {
-
-					final Node node = nodeOptional.get();
-					selectedNodes.add(node);
-
-					logger.info("Sending NodeHighlightedEvent!");
-
-					final boolean hightlighted = true;
-					final NodeHighlightedEvent nodeHighlightedEvent = new NodeHighlightedEvent(this,
-							modelFacade.getModel(), node, node.getX(), node.getY(), hightlighted);
-
-					applicationEventPublisher.publishEvent(nodeHighlightedEvent);
-
-				}
-
-				logger.info("SelectedNodes: " + selectedNodes);
-
-				return;
-
-			} else {
-
-				// remove all nodes from the selected list
-				selectedNodes.clear();
-
-				// remove all highlights
-				final RemoveHighlightsEvent removeHighlightsEvent = new RemoveHighlightsEvent(this);
-				applicationEventPublisher.publishEvent(removeHighlightsEvent);
-
-			}
-
-			switch (currentShapeType) {
-
-			case NONE:
-				// if no shape type is selected, perform a simple click
-				modelFacade.nodeClicked(selectionEvent.getX(), selectionEvent.getY());
-
-				protocolFacade.nodeClicked(selectionEvent.getX(), selectionEvent.getY());
-				break;
-
-			default:
-				// if a shape type is selected, add a node
-
-				// if a node of the same type is here already, return
-				final Optional<Node> currentNode = modelFacade.getNode(selectionEvent.getX(), selectionEvent.getY());
-				if (currentNode.isPresent() && currentNode.get().getShapeType() == currentShapeType) {
-
-					logger.info("Not creating another node!");
-					return;
-				}
-
-				modelFacade.addNode(selectionEvent.getX(), selectionEvent.getY(), currentShapeType);
-
-				modelFacade.storeModel();
-				break;
-			}
+			processSelectedEvent(selectionEvent);
 
 		} else if (event instanceof ShapeTypeChangedEvent) {
 
 			final ShapeTypeChangedEvent shapeTypeChangedEvent = (ShapeTypeChangedEvent) event;
 
-			currentShapeType = shapeTypeChangedEvent.getShapeType();
+			processShapeTypeChangedEvent(shapeTypeChangedEvent);
+		}
+	}
+
+	private void processShapeTypeChangedEvent(final ShapeTypeChangedEvent shapeTypeChangedEvent) {
+		currentShapeType = shapeTypeChangedEvent.getShapeType();
+	}
+
+	private void processSelectedEvent(final SelectionEvent selectionEvent) {
+
+		switch (currentShapeType) {
+
+		case NONE:
+			// if no shape type is selected, perform a simple click
+			modelFacade.nodeClicked(selectionEvent.getX(), selectionEvent.getY(), selectionEvent.isShiftState());
+
+			// the protocol facade is interested about node clicks, because if the node
+			// is a turnout, the protocol facade will send a command to turn the turnout on
+			// the
+			// model railroad
+			protocolFacade.nodeClicked(selectionEvent.getX(), selectionEvent.getY());
+			break;
+
+		default:
+			// if a shape type is selected, add a node
+
+			// if a node of the same type is here already, return
+			final Optional<Node> currentNode = modelFacade.getNode(selectionEvent.getX(), selectionEvent.getY());
+			if (currentNode.isPresent() && currentNode.get().getShapeType() == currentShapeType) {
+
+				logger.info("Not creating another node!");
+				return;
+			}
+
+			modelFacade.addNode(selectionEvent.getX(), selectionEvent.getY(), currentShapeType);
+
+			modelFacade.storeModel();
+			break;
 		}
 	}
 
@@ -137,8 +104,11 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 	 */
 	public void connect() {
 
-		logger.info("connect");
+		logger.trace("connect");
 
+		final List<Node> selectedNodes = modelFacade.getSelectedNodes();
+
+		// tell the user what prevented the operation from succeeding
 		if (CollectionUtils.isEmpty(selectedNodes) || selectedNodes.size() < 2) {
 
 			final Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -160,6 +130,11 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 				final Iterator<Node> iterator = selectedNodes.iterator();
 				final Node nodeA = iterator.next();
 				final Node nodeB = iterator.next();
+
+				connectNodes(nodeA, nodeB);
+			}
+
+			private void connectNodes(final Node nodeA, final Node nodeB) {
 
 				final StringBuffer stringBuffer = new StringBuffer();
 				stringBuffer.append("Do you want to connect the node " + nodeA.getId() + " to " + nodeB.getId() + "?");
@@ -207,10 +182,6 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 
 	public void setShiftState(final boolean shiftState) {
 		this.shiftState = shiftState;
-	}
-
-	public List<Node> getSelectedNodes() {
-		return selectedNodes;
 	}
 
 }

@@ -1,6 +1,6 @@
 package de.wfb.model.node;
 
-public enum EdgeDirection {
+public enum Direction {
 
 	NORTH,
 
@@ -8,6 +8,6 @@ public enum EdgeDirection {
 
 	SOUTH,
 
-	WEST
+	WEST,
 
 }

@@ -16,6 +16,7 @@ import de.wfb.model.node.Node;
 import de.wfb.model.node.RailNode;
 import de.wfb.rail.events.NodeHighlightedEvent;
 import de.wfb.rail.events.RemoveHighlightsEvent;
+import de.wfb.rail.ui.ShapeType;
 
 public class DefaultRoutingService implements RoutingService {
 
@@ -46,7 +47,8 @@ public class DefaultRoutingService implements RoutingService {
 				: start.getGraphNodeTwo();
 		graphNodeEnd = end.getGraphNodeOne().getColor() == Color.BLUE ? end.getGraphNodeOne() : end.getGraphNodeTwo();
 
-		logger.info("BLUE");
+		logger.trace("BLUE");
+
 		return route(graphNodeStart, graphNodeEnd);
 	}
 
@@ -203,7 +205,6 @@ public class DefaultRoutingService implements RoutingService {
 	public void highlightRoute(final List<GraphNode> route) {
 
 		if (CollectionUtils.isEmpty(route)) {
-
 			return;
 		}
 
@@ -214,6 +215,7 @@ public class DefaultRoutingService implements RoutingService {
 		for (final GraphNode graphNode : route) {
 
 			final RailNode railNode = graphNode.getRailNode();
+			railNode.setHighlighted(true);
 
 			logger.trace("Sending NodeHighlightedEvent!");
 
@@ -223,6 +225,49 @@ public class DefaultRoutingService implements RoutingService {
 
 			applicationEventPublisher.publishEvent(nodeHighlightedEvent);
 		}
+	}
+
+	@Override
+	public void switchTurnouts(final List<GraphNode> route) {
+
+		logger.trace("switchTurnouts()");
+
+		if (CollectionUtils.isEmpty(route)) {
+			return;
+		}
+
+		// follow the route
+		int index = 0;
+		for (final GraphNode graphNode : route) {
+
+			if (ShapeType.isTurnout(graphNode.getRailNode().getShapeType())) {
+
+				// if the turnout is NOT traversed in switching direction, continue
+				if (graphNode.getChildren().size() < 2) {
+
+					logger.info("Index = " + index + " Turnout found. Not in switching order!");
+
+					index++;
+					continue;
+				}
+
+				logger.info("Index = " + index + " Turnout found in switching order!");
+				final RailNode turnoutNode = graphNode.getRailNode();
+
+				logger.info("Turnout ShapeType = " + turnoutNode.getShapeType().name());
+
+				final int nextIndex = index + 1;
+				if (nextIndex < route.size()) {
+
+					final GraphNode nextGraphNode = route.get(nextIndex);
+
+					turnoutNode.switchToGraphNode(applicationEventPublisher, modelService.getModel(), nextGraphNode);
+				}
+			}
+
+			index++;
+		}
+
 	}
 
 }

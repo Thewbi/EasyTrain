@@ -6,6 +6,9 @@ public interface ProtocolFacade {
 
 	void throttleLocomotive(short locomotiveAddress, double throttleValue, boolean dirForward);
 
+	/**
+	 * Sends P50XXEventCommand.
+	 */
 	void event();
 
 	void connect() throws Exception;

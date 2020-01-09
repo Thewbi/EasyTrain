@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 
 public class LayoutElementSelectionDialogStage extends Stage {
 
-	@SuppressWarnings("unused")
 	private static final Logger logger = LogManager.getLogger(LayoutElementSelectionDialogStage.class);
 
 	/**

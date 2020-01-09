@@ -17,4 +17,6 @@ public interface RoutingService {
 
 	void highlightRoute(List<GraphNode> route);
 
+	void switchTurnouts(List<GraphNode> route);
+
 }

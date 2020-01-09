@@ -17,7 +17,11 @@ public class ModelChangedEvent extends ApplicationEvent {
 
 	private final Model model;
 
+	private final boolean selected;
+
 	private final boolean highlighted;
+
+	private final boolean blocked;
 
 	/**
 	 * ctor
@@ -29,13 +33,15 @@ public class ModelChangedEvent extends ApplicationEvent {
 	 * @param highlighted
 	 */
 	public ModelChangedEvent(final Object source, final Model model, final int x, final int y,
-			final boolean highlighted) {
+			final boolean highlighted, final boolean blocked, final boolean selected) {
 
 		super(source);
 		this.model = model;
 		this.x = x;
 		this.y = y;
+		this.selected = selected;
 		this.highlighted = highlighted;
+		this.blocked = blocked;
 	}
 
 	public int getX() {
@@ -52,5 +58,13 @@ public class ModelChangedEvent extends ApplicationEvent {
 
 	public boolean isHighlighted() {
 		return highlighted;
+	}
+
+	public boolean isBlocked() {
+		return blocked;
+	}
+
+	public boolean isSelected() {
+		return selected;
 	}
 }

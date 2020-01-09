@@ -52,8 +52,6 @@ public class ScrollPaneDemo extends Application {
 		scrollPane.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(final MouseEvent e) {
-
-//				System.out.println(e.getSource());
 			}
 		});
 
@@ -63,8 +61,6 @@ public class ScrollPaneDemo extends Application {
 		stackPane.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(final MouseEvent e) {
-
-//				System.out.println(e.getSource());
 			}
 		});
 

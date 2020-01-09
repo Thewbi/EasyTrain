@@ -135,7 +135,7 @@ public class ThrottlePane extends GridPane {
 
 	public void clear() {
 
-		logger.info("clear");
+		logger.trace("clear");
 
 		if (textfield != null) {
 			getChildren().remove(textfield);

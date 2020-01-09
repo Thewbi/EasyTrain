@@ -10,4 +10,12 @@ public interface Edge {
 
 	void setOutGraphNode(GraphNode outGraphNode);
 
+	Direction getDirection();
+
+	void setDirection(Direction direction);
+
+	GraphNode getNextOutGraphNode();
+
+	void setNextOutGraphNode(GraphNode nextOutGraphNode);
+
 }

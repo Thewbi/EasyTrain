@@ -37,6 +37,14 @@ public interface Node {
 
 	void setFeedbackBlockUsed(boolean feedbackBlockUsed);
 
+	boolean isSelected();
+
+	void setSelected(boolean selected);
+
+	boolean isHighlighted();
+
+	void setHighlighted(boolean highlighted);
+
 	void toggleTurnout();
 
 	void connect(Model model);

@@ -2,6 +2,8 @@ package de.wfb.model.node;
 
 import java.util.List;
 
+import org.springframework.context.ApplicationEventPublisher;
+
 import de.wfb.model.Model;
 import de.wfb.rail.ui.ShapeType;
 
@@ -67,11 +69,17 @@ public interface RailNode extends Node {
 	@Override
 	void setProtocolTurnoutId(Integer protocolTurnoutId);
 
+	boolean isHighlighted();
+
+	void setHighlighted(boolean highlighted);
+
 	List<RailNode> getManualConnections();
 
 	@Override
 	void connect(Model model);
 
 	void connectTo(RailNode railNode);
+
+	void switchToGraphNode(ApplicationEventPublisher applicationEventPublisher, Model model, GraphNode nextGraphNode);
 
 }

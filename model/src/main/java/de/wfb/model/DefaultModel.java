@@ -9,6 +9,7 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
+import de.wfb.model.node.RailNode;
 
 public class DefaultModel implements Model {
 
@@ -88,7 +89,6 @@ public class DefaultModel implements Model {
 
 			final Node node = entry.getValue();
 
-			// TODO: what about graph node two
 			final GraphNode graphNodeOne = node.getGraphNodeOne();
 
 			final List<GraphNode> children = graphNodeOne.getChildren();
@@ -103,6 +103,20 @@ public class DefaultModel implements Model {
 		}
 
 		return switchingNodes;
+	}
+
+	@Override
+	public List<RailNode> getAllRailNodes() {
+
+		final List<RailNode> result = new ArrayList<>();
+
+		for (final Map.Entry<Integer, Node> entry : idMap.entrySet()) {
+
+			final Node node = entry.getValue();
+			result.add((RailNode) node);
+		}
+
+		return result;
 	}
 
 }

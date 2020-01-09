@@ -20,9 +20,6 @@ public class DefaultDotSerializer {
 		serialize(stringBuffer, graphNode);
 
 		stringBuffer.append("}");
-
-		System.out.println(stringBuffer.toString());
-
 	}
 
 	private void serialize(final StringBuffer stringBuffer, final GraphNode graphNode) {
