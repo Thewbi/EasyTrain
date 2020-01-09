@@ -17,7 +17,7 @@ public interface ModelFacade {
 
 	void storeModel();
 
-	void connect(Node nodeA, Node nodeB);
+	void manualConnectTo(Node nodeA, Node nodeB);
 
 	Model getModel();
 

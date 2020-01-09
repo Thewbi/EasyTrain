@@ -164,11 +164,11 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 				if (alert.getResult().equals(ButtonType.OK)) {
 					System.out.println("Connecting ...");
 
-					modelFacade.connect(nodeA, nodeB);
+					modelFacade.manualConnectTo(nodeA, nodeB);
 				} else if (alert.getResult().equals(ButtonType.YES)) {
 					System.out.println("Connecting ...");
 
-					modelFacade.connect(nodeA, nodeB);
+					modelFacade.manualConnectTo(nodeA, nodeB);
 				} else {
 					System.out.println("Not Connecting ...");
 				}

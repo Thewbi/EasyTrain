@@ -11,7 +11,7 @@ public class GraphNode {
 
 	private final List<GraphNode> children = new ArrayList<>();
 
-	private final List<GraphNode> switchingGraphNodeChildren = new ArrayList<>();
+	private final List<SwitchingNodeEntry> switchingGraphNodeChildren = new ArrayList<>();
 
 	private final Map<Integer, GraphNode> routingTable = new HashMap<>();
 
@@ -35,7 +35,7 @@ public class GraphNode {
 		return routingTable;
 	}
 
-	public List<GraphNode> getSwitchingGraphNodeChildren() {
+	public List<SwitchingNodeEntry> getSwitchingGraphNodeChildren() {
 		return switchingGraphNodeChildren;
 	}
 

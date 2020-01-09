@@ -108,7 +108,7 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 	@Override
 	public void nodeClicked(final int x, final int y, final boolean shiftSelected) {
 
-		logger.info("nodeClicked x = " + x + " y = " + y);
+		logger.trace("nodeClicked x = " + x + " y = " + y);
 
 		final Node node = model.getNode(x, y);
 
@@ -132,6 +132,7 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 			return;
 		}
 
+		logger.info(node.getId() + ") nodeClicked x = " + x + " y = " + y);
 		logger.trace("nodeClicked node id = " + node.getId() + " node = " + node.getClass().getSimpleName());
 
 		// store the currently selected node in the model
@@ -231,7 +232,8 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 		try {
 
 			logger.info("Creating new node!");
-			final Node newNode = nodeFactory.create(x, y, shapeType);
+			final int feedbackBlockNumber = -1;
+			final Node newNode = nodeFactory.create(x, y, shapeType, feedbackBlockNumber);
 
 			// for fast retrieval by id
 			model.getIdMap().put(newNode.getId(), newNode);
@@ -269,12 +271,12 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 	}
 
 	@Override
-	public void connect(final Node nodeA, final Node nodeB) {
+	public void manualConnectTo(final Node nodeA, final Node nodeB) {
 
 		final DefaultRailNode railNodeA = (DefaultRailNode) nodeA;
 		final DefaultRailNode railNodeB = (DefaultRailNode) nodeB;
 
-		railNodeA.connectTo(railNodeB);
+		railNodeA.manualConnectTo(railNodeB);
 	}
 
 	@Override
@@ -356,6 +358,11 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 		}
 
 		return selectedNodes;
+	}
+
+	@Override
+	public List<RailNode> getAllRailNodes() {
+		return model.getAllRailNodes();
 	}
 
 }

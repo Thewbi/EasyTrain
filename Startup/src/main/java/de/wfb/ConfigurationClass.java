@@ -20,6 +20,7 @@ import de.wfb.model.service.DefaultModelPersistenceService;
 import de.wfb.model.service.DefaultModelService;
 import de.wfb.model.service.DefaultRoutingService;
 import de.wfb.model.service.ModelService;
+import de.wfb.model.strategy.StaticGraphColorStrategy;
 import de.wfb.rail.facade.DefaultProtocolFacade;
 import de.wfb.rail.factory.DefaultSVGPathFactory;
 import de.wfb.rail.factory.DefaultSerialPortFactory;
@@ -137,6 +138,12 @@ public class ConfigurationClass {
 	@Bean
 	public DefaultDebugFacade DefaultDebugFacade() {
 		return new DefaultDebugFacade();
+	}
+
+	@Bean
+	public StaticGraphColorStrategy StaticGraphColorStrategy() {
+//		return new DefaultGraphColorStrategy();
+		return new StaticGraphColorStrategy();
 	}
 
 }

@@ -25,7 +25,7 @@ public interface ModelService {
 
 	void sendModelChangedEvent(RailNode railNode);
 
-	void connect(Node nodeA, Node nodeB);
+	void manualConnectTo(Node nodeA, Node nodeB);
 
 	void connectModel();
 
@@ -42,5 +42,7 @@ public interface ModelService {
 	void resetGraphColors();
 
 	List<Node> getSelectedNodes();
+
+	List<RailNode> getAllRailNodes();
 
 }

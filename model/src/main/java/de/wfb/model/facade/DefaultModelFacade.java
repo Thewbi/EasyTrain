@@ -36,8 +36,8 @@ public class DefaultModelFacade implements ModelFacade {
 	}
 
 	@Override
-	public void connect(final Node nodeA, final Node nodeB) {
-		modelService.connect(nodeA, nodeB);
+	public void manualConnectTo(final Node nodeA, final Node nodeB) {
+		modelService.manualConnectTo(nodeA, nodeB);
 	}
 
 	@Override

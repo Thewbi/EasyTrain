@@ -121,7 +121,7 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 	@Override
 	public void onApplicationEvent(final ApplicationEvent event) {
 
-		logger.info("onApplicationEvent " + event.getClass().getSimpleName());
+		logger.trace("onApplicationEvent " + event.getClass().getSimpleName());
 
 		if (event instanceof ModelChangedEvent) {
 
@@ -138,7 +138,7 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 
 	private void processNodeHighlightedEvent(final NodeHighlightedEvent nodeHighlightedEvent) {
 
-		logger.info(nodeHighlightedEvent);
+		logger.trace(nodeHighlightedEvent);
 
 		final SVGPath svgPath = viewModel[nodeHighlightedEvent.getX()][nodeHighlightedEvent.getY()];
 		if (svgPath != null) {
@@ -154,7 +154,7 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 		final Model model = modelChangedEvent.getModel();
 		final Node node = model.getNode(modelChangedEvent.getX(), modelChangedEvent.getY());
 
-		logger.info("onApplicationEvent() node = " + node);
+		logger.trace("onApplicationEvent() node = " + node);
 
 		if (node == null) {
 
@@ -165,7 +165,7 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 			return;
 		}
 
-		logger.info("A");
+		logger.trace("A");
 
 		// if the new ShapeType is none, do not add a new shape but bail here
 		final ShapeType shapeType = node.getShapeType();
@@ -174,7 +174,7 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 			return;
 		}
 
-		logger.info("B");
+		logger.trace("B");
 
 		// TODO: handle case, when only the color changed!
 

@@ -1,9 +1,11 @@
 package de.wfb.dialogs;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -16,9 +18,13 @@ public class RailDetailsPane extends GridPane {
 
 	private static final Logger logger = LogManager.getLogger(RailDetailsPane.class);
 
-	private TextField feedbackBlockNumberTextfield;
+	private final Label idLabel = new Label("ID:");
+
+	private Label idValueLabel;
 
 	private final Label feedbackBlockNumberTextfieldLabel = new Label("FeedbackBlock:");
+
+	private TextField feedbackBlockNumberTextfield;
 
 	private Button savebutton;
 
@@ -30,22 +36,33 @@ public class RailDetailsPane extends GridPane {
 			return;
 		}
 
+		GridPane.setColumnIndex(idLabel, 1);
+		GridPane.setRowIndex(idLabel, 1);
+
+		idValueLabel = new Label();
+		final String idValue = retrieveRailNodeLabel(node);
+		idValueLabel.setText(idValue);
+		GridPane.setColumnIndex(idValueLabel, 2);
+		GridPane.setRowIndex(idValueLabel, 1);
+
+		getChildren().addAll(idLabel, idValueLabel);
+
 		GridPane.setColumnIndex(feedbackBlockNumberTextfieldLabel, 1);
-		GridPane.setRowIndex(feedbackBlockNumberTextfieldLabel, 1);
+		GridPane.setRowIndex(feedbackBlockNumberTextfieldLabel, 2);
 
 		feedbackBlockNumberTextfield = new TextField();
 		if (node.getFeedbackBlockNumber() != -1) {
 			feedbackBlockNumberTextfield.setText(Integer.toString(node.getFeedbackBlockNumber()));
 		}
 		GridPane.setColumnIndex(feedbackBlockNumberTextfield, 2);
-		GridPane.setRowIndex(feedbackBlockNumberTextfield, 1);
+		GridPane.setRowIndex(feedbackBlockNumberTextfield, 2);
 
 		getChildren().addAll(feedbackBlockNumberTextfieldLabel, feedbackBlockNumberTextfield);
 
 		savebutton = new Button();
 		savebutton.setText("Save");
 		GridPane.setColumnIndex(savebutton, 1);
-		GridPane.setRowIndex(savebutton, 2);
+		GridPane.setRowIndex(savebutton, 3);
 		savebutton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -65,9 +82,51 @@ public class RailDetailsPane extends GridPane {
 
 	}
 
+	private String retrieveRailNodeLabel(final Node node) {
+
+		final StringBuffer stringBuffer = new StringBuffer();
+
+		// @formatter:off
+
+		// GraphNode ONE and children
+		stringBuffer.append(node.getId()).append(" [").append(node.getGraphNodeOne().getId()).append(" ").append(node.getGraphNodeOne().getColor().name()).append(" -> ");
+
+		if (CollectionUtils.isNotEmpty(node.getGraphNodeOne().getChildren())) {
+
+			for (final GraphNode graphNode : node.getGraphNodeOne().getChildren()) {
+
+				stringBuffer.append(graphNode.getId()).append(" ").append(graphNode.getColor().name()).append(", ");
+			}
+		}
+		stringBuffer.append("]");
+
+		// GraphNode TWO and children
+		stringBuffer.append(" [").append(node.getGraphNodeTwo().getId()).append(" ").append(node.getGraphNodeTwo().getColor().name()).append(" -> ");
+
+		if (CollectionUtils.isNotEmpty(node.getGraphNodeTwo().getChildren())) {
+
+			for (final GraphNode graphNode : node.getGraphNodeTwo().getChildren()) {
+
+				stringBuffer.append(graphNode.getId()).append(" ").append(graphNode.getColor().name()).append(", ");
+			}
+		}
+		stringBuffer.append("]");
+
+		// @formatter:on
+
+		return stringBuffer.toString();
+	}
+
 	public void clear() {
 
 		logger.trace("clear");
+
+		if (idValueLabel != null) {
+
+			getChildren().remove(idValueLabel);
+			getChildren().remove(idLabel);
+			idValueLabel = null;
+		}
 
 		if (feedbackBlockNumberTextfield != null) {
 

@@ -94,6 +94,10 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 
 				final Node node = nodeFactory.create(jsonNode);
 
+				if (model.getIdMap().containsKey(node.getId())) {
+					throw new IllegalArgumentException("Duplicate Model id = " + node.getId());
+				}
+
 				model.getIdMap().put(node.getId(), node);
 				model.setNode(jsonNode.getX(), jsonNode.getY(), node);
 
@@ -129,7 +133,7 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 						logger.info("Manual Connection resolved");
 						// railNode.getManualConnections().add((RailNode) connectedNode);
 
-						railNode.connectTo((RailNode) connectedNode);
+						railNode.manualConnectTo((RailNode) connectedNode);
 					}
 				}
 			}

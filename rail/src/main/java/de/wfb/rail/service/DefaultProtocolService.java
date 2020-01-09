@@ -67,8 +67,8 @@ public class DefaultProtocolService implements ProtocolService {
 			return;
 		}
 
-		logger.info("nodeClicked " + node.getId() + " (" + node.getX() + ", " + node.getY() + ")");
-		logger.info(node);
+		logger.trace("nodeClicked " + node.getId() + " (" + node.getX() + ", " + node.getY() + ")");
+//		logger.info(node);
 
 		// switch turnouts
 		if (ShapeType.isTurnout(node.getShapeType())) {

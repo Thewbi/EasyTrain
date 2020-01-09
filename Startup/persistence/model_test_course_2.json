@@ -1,0 +1,254 @@
+[
+  {
+    "id": 0,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 13,
+    "y": 16,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 1,
+    "shapeType": "SWITCH_LEFT_0",
+    "x": 14,
+    "y": 16,
+    "leftList": [],
+    "rightList": [],
+    "protocolTurnoutId": 153,
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 2,
+    "shapeType": "TURN_RIGHT_BOTTOM",
+    "x": 14,
+    "y": 15,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 3,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 15,
+    "y": 15,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 4,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 16,
+    "y": 15,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 5,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 17,
+    "y": 15,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 6,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 15,
+    "y": 16,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 7,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 16,
+    "y": 16,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 8,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 17,
+    "y": 16,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 9,
+    "shapeType": "SWITCH_RIGHT_180",
+    "x": 18,
+    "y": 16,
+    "leftList": [],
+    "rightList": [],
+    "protocolTurnoutId": 154,
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 10,
+    "shapeType": "TURN_BOTTOM_LEFT",
+    "x": 18,
+    "y": 15,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 11,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 19,
+    "y": 16,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 12,
+    "shapeType": "TURN_BOTTOM_LEFT",
+    "x": 20,
+    "y": 16,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 13,
+    "shapeType": "TURN_RIGHT_BOTTOM",
+    "x": 12,
+    "y": 16,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 14,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 20,
+    "y": 17,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 15,
+    "shapeType": "STRAIGHT_VERTICAL",
+    "x": 12,
+    "y": 17,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 16,
+    "shapeType": "TURN_TOP_RIGHT",
+    "x": 12,
+    "y": 18,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 17,
+    "shapeType": "TURN_LEFT_TOP",
+    "x": 20,
+    "y": 18,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 18,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 19,
+    "y": 18,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 2
+  },
+  {
+    "id": 19,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 18,
+    "y": 18,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 1
+  },
+  {
+    "id": 20,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 17,
+    "y": 18,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 21,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 16,
+    "y": 18,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 1
+  },
+  {
+    "id": 22,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 15,
+    "y": 18,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 23,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 14,
+    "y": 18,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  },
+  {
+    "id": 24,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 13,
+    "y": 18,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": 0
+  }
+]

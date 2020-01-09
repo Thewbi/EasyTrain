@@ -15,7 +15,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 	@Override
 	public SVGPath create(final Object... args) {
 
-		logger.info("SVG CREATE");
+		logger.trace("SVG CREATE");
 
 		final ShapeType shapeType = (ShapeType) args[0];
 

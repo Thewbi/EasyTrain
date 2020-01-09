@@ -45,6 +45,9 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	private boolean highlighted;
 
+	// private final int debugRailNodeID = 172;
+	private final int debugRailNodeID = -1;
+
 	/**
 	 * ctor
 	 */
@@ -59,7 +62,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	@Override
 	public void toggleTurnout() {
 
-		logger.info("toggle()");
+		logger.trace("toggle()");
 
 		thrown = !thrown;
 	}
@@ -68,7 +71,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	public void switchToGraphNode(final ApplicationEventPublisher applicationEventPublisher, final Model model,
 			final GraphNode nextGraphNode) {
 
-		logger.info("switchToGraphNode()");
+		logger.trace("switchToGraphNode()");
 
 		final Edge outEdge = findOutEdge(nextGraphNode);
 		if (outEdge == null) {
@@ -154,17 +157,19 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 		return null;
 	}
 
+	/**
+	 * If nodes have been connected manually (to cross gaps for example) this
+	 * function will connect the graph nodes.
+	 */
 	@Override
-	public void connectTo(final RailNode railNodeB) {
-
-		logger.info("connectTo()");
+	public void manualConnectTo(final RailNode railNodeB) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
+
 		stringBuffer.append(getId()).append("(").append(getX()).append(", ").append(getY()).append(") ");
 		stringBuffer.append(railNodeB.getId()).append("(").append(railNodeB.getX()).append(", ")
 				.append(railNodeB.getY()).append(") ");
-
-		logger.info(stringBuffer);
+		logger.info(stringBuffer.toString());
 
 		// find orientation
 
@@ -203,113 +208,213 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	@Override
 	public void connect(final Model model) {
 
-		logger.info("connect()");
+		if (getId() == debugRailNodeID) {
+			logger.info("connect() ID = " + getId() + " X: " + getX() + " Y: " + getY());
+		}
 
 		// north
 		final RailNode northNode = (RailNode) model.getNode(getX(), getY() - 1);
 		if (northNode != null) {
 			connectNorth(northNode);
+		} else {
+			if (getId() == debugRailNodeID) {
+				logger.info("connect() NorthNode is null!");
+			}
 		}
 
 		// east
 		final RailNode eastNode = (RailNode) model.getNode(getX() + 1, getY());
 		if (eastNode != null) {
 			connectEast(eastNode);
+		} else {
+			if (getId() == debugRailNodeID) {
+				logger.info("connect() EastNode is null!");
+			}
 		}
 
 		// south
 		final RailNode southNode = (RailNode) model.getNode(getX(), getY() + 1);
 		if (southNode != null) {
 			connectSouth(southNode);
+		} else {
+			if (getId() == debugRailNodeID) {
+				logger.info("connect() SouthNode is null!");
+			}
 		}
 
 		// west
 		final RailNode westNode = (RailNode) model.getNode(getX() - 1, getY());
 		if (westNode != null) {
 			connectWest(westNode);
+		} else {
+			if (getId() == debugRailNodeID) {
+				logger.info("connect() WestNode is null!");
+			}
 		}
 	}
 
 	private void connectWest(final RailNode westNode) {
 
 		final Edge westEdge = getWestEdge();
-		if (westEdge != null) {
-
-			final Edge innerEdge = westNode.getEastEdge();
-			if (innerEdge != null) {
-
-				if (!westEdge.getOutGraphNode().getChildren().contains(innerEdge.getInGraphNode())) {
-					westEdge.getOutGraphNode().getChildren().add(innerEdge.getInGraphNode());
-					westEdge.setNextOutGraphNode(innerEdge.getInGraphNode());
-				}
-
-				if (!innerEdge.getOutGraphNode().getChildren().contains(westEdge.getInGraphNode())) {
-					innerEdge.getOutGraphNode().getChildren().add(westEdge.getInGraphNode());
-					innerEdge.setNextOutGraphNode(westEdge.getInGraphNode());
-				}
+		if (westEdge == null) {
+			if (getId() == debugRailNodeID) {
+				logger.warn("WestEdge is null!");
 			}
+			return;
+		}
+
+		final Edge eastEdge = westNode.getEastEdge();
+		if (eastEdge == null) {
+			if (getId() == debugRailNodeID) {
+				logger.warn("Returning because of eastEdge!");
+			}
+			return;
+		}
+
+		if (!westEdge.getOutGraphNode().getChildren().contains(eastEdge.getInGraphNode())) {
+
+			westEdge.getOutGraphNode().getChildren().add(eastEdge.getInGraphNode());
+			westEdge.setNextOutGraphNode(eastEdge.getInGraphNode());
+
+			if (getId() == debugRailNodeID) {
+
+				logger.warn("Connecting West GN " + westEdge.getOutGraphNode().getId() + " to GN "
+						+ eastEdge.getInGraphNode().getId());
+			}
+		}
+
+		if (!eastEdge.getOutGraphNode().getChildren().contains(westEdge.getInGraphNode())) {
+
+			eastEdge.getOutGraphNode().getChildren().add(westEdge.getInGraphNode());
+			eastEdge.setNextOutGraphNode(westEdge.getInGraphNode());
 		}
 	}
 
 	private void connectSouth(final RailNode southNode) {
 
 		final Edge southEdge = getSouthEdge();
-		if (southEdge != null) {
-
-			final Edge innerEdge = southNode.getNorthEdge();
-			if (innerEdge != null) {
-
-				if (!southEdge.getOutGraphNode().getChildren().contains(innerEdge.getInGraphNode())) {
-					southEdge.getOutGraphNode().getChildren().add(innerEdge.getInGraphNode());
-					southEdge.setNextOutGraphNode(innerEdge.getInGraphNode());
-				}
-
-				if (!innerEdge.getOutGraphNode().getChildren().contains(southEdge.getInGraphNode())) {
-					innerEdge.getOutGraphNode().getChildren().add(southEdge.getInGraphNode());
-					innerEdge.setNextOutGraphNode(southEdge.getInGraphNode());
-				}
+		if (southEdge == null) {
+			if (getId() == debugRailNodeID) {
+				logger.warn("SouthEdge is null!");
 			}
+			return;
+		}
+
+		final Edge northEdge = southNode.getNorthEdge();
+		if (northEdge == null) {
+			if (getId() == debugRailNodeID) {
+				logger.warn("Returning because of northEdge!");
+			}
+			return;
+		}
+
+		if (!southEdge.getOutGraphNode().getChildren().contains(northEdge.getInGraphNode())) {
+
+			southEdge.getOutGraphNode().getChildren().add(northEdge.getInGraphNode());
+			southEdge.setNextOutGraphNode(northEdge.getInGraphNode());
+
+			if (getId() == debugRailNodeID) {
+
+				logger.warn("Connecting South GN " + southEdge.getOutGraphNode().getId() + " to GN "
+						+ northEdge.getInGraphNode().getId());
+			}
+		}
+
+		if (!northEdge.getOutGraphNode().getChildren().contains(southEdge.getInGraphNode())) {
+
+			northEdge.getOutGraphNode().getChildren().add(southEdge.getInGraphNode());
+			northEdge.setNextOutGraphNode(southEdge.getInGraphNode());
 		}
 	}
 
 	private void connectEast(final RailNode eastNode) {
 
 		final Edge eastEdge = getEastEdge();
-		if (eastEdge != null) {
-
-			final Edge innerEdge = eastNode.getWestEdge();
-			if (innerEdge != null) {
-
-				if (!eastEdge.getOutGraphNode().getChildren().contains(innerEdge.getInGraphNode())) {
-					eastEdge.getOutGraphNode().getChildren().add(innerEdge.getInGraphNode());
-					eastEdge.setNextOutGraphNode(innerEdge.getInGraphNode());
-				}
-
-				if (!innerEdge.getOutGraphNode().getChildren().contains(eastEdge.getInGraphNode())) {
-					innerEdge.getOutGraphNode().getChildren().add(eastEdge.getInGraphNode());
-					innerEdge.setNextOutGraphNode(eastEdge.getInGraphNode());
-				}
+		if (eastEdge == null) {
+			if (getId() == debugRailNodeID) {
+				logger.warn("EastEdge is null!");
 			}
+			return;
+		}
+
+		final Edge westEdge = eastNode.getWestEdge();
+		if (westEdge == null) {
+			if (getId() == debugRailNodeID) {
+				logger.warn("Returning because of westEdge!");
+			}
+			return;
+		}
+
+		if (!eastEdge.getOutGraphNode().getChildren().contains(westEdge.getInGraphNode())) {
+
+			eastEdge.getOutGraphNode().getChildren().add(westEdge.getInGraphNode());
+			eastEdge.setNextOutGraphNode(westEdge.getInGraphNode());
+
+			if (getId() == debugRailNodeID) {
+
+				logger.warn("Connecting East GN " + eastEdge.getOutGraphNode().getId() + " to GN "
+						+ westEdge.getInGraphNode().getId());
+			}
+		}
+
+		if (!westEdge.getOutGraphNode().getChildren().contains(eastEdge.getInGraphNode())) {
+
+			westEdge.getOutGraphNode().getChildren().add(eastEdge.getInGraphNode());
+			westEdge.setNextOutGraphNode(eastEdge.getInGraphNode());
 		}
 	}
 
 	private void connectNorth(final RailNode northNode) {
 
 		final Edge northEdge = getNorthEdge();
-		if (northEdge != null) {
+		if (northEdge == null) {
+			if (getId() == debugRailNodeID) {
+				logger.warn("NorthEdge is null!");
+			}
+			return;
+		}
 
-			final Edge innerEdge = northNode.getSouthEdge();
-			if (innerEdge != null) {
+		final Edge southEdge = northNode.getSouthEdge();
+		if (southEdge == null) {
+			if (getId() == debugRailNodeID) {
+				logger.warn("Returning because of southEdge!");
+			}
+			return;
+		}
 
-				if (!northEdge.getOutGraphNode().getChildren().contains(innerEdge.getInGraphNode())) {
-					northEdge.getOutGraphNode().getChildren().add(innerEdge.getInGraphNode());
-					northEdge.setNextOutGraphNode(innerEdge.getInGraphNode());
-				}
+		if (getId() == debugRailNodeID) {
 
-				if (!innerEdge.getOutGraphNode().getChildren().contains(northEdge.getInGraphNode())) {
-					innerEdge.getOutGraphNode().getChildren().add(northEdge.getInGraphNode());
-					innerEdge.setNextOutGraphNode(northEdge.getInGraphNode());
-				}
+			for (final GraphNode graphNode : northEdge.getOutGraphNode().getChildren()) {
+
+				logger.warn(northEdge.getOutGraphNode().getId() + " -> " + graphNode.getId());
+			}
+		}
+
+		if (!northEdge.getOutGraphNode().getChildren().contains(southEdge.getInGraphNode())) {
+
+			northEdge.getOutGraphNode().getChildren().add(southEdge.getInGraphNode());
+			northEdge.setNextOutGraphNode(southEdge.getInGraphNode());
+
+			if (getId() == debugRailNodeID) {
+
+				logger.warn("Connecting North GN " + northEdge.getOutGraphNode().getId() + " to GN "
+						+ southEdge.getInGraphNode().getId());
+			}
+
+		} else {
+			if (getId() == debugRailNodeID) {
+				logger.warn("NorthEdge already connected!");
+			}
+		}
+
+		if (!southEdge.getOutGraphNode().getChildren().contains(northEdge.getInGraphNode())) {
+
+			southEdge.getOutGraphNode().getChildren().add(northEdge.getInGraphNode());
+			southEdge.setNextOutGraphNode(northEdge.getInGraphNode());
+
+		} else {
+			if (getId() == debugRailNodeID) {
+				logger.warn("SouthEdge already connected!");
 			}
 		}
 	}

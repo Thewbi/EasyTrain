@@ -69,8 +69,10 @@ public interface RailNode extends Node {
 	@Override
 	void setProtocolTurnoutId(Integer protocolTurnoutId);
 
+	@Override
 	boolean isHighlighted();
 
+	@Override
 	void setHighlighted(boolean highlighted);
 
 	List<RailNode> getManualConnections();
@@ -78,7 +80,7 @@ public interface RailNode extends Node {
 	@Override
 	void connect(Model model);
 
-	void connectTo(RailNode railNode);
+	void manualConnectTo(RailNode railNode);
 
 	void switchToGraphNode(ApplicationEventPublisher applicationEventPublisher, Model model, GraphNode nextGraphNode);
 
