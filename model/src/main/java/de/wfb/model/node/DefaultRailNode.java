@@ -71,7 +71,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	public void switchToGraphNode(final ApplicationEventPublisher applicationEventPublisher, final Model model,
 			final GraphNode nextGraphNode) {
 
-		logger.trace("switchToGraphNode()");
+		logger.info("switchToGraphNode()");
 
 		final Edge outEdge = findOutEdge(nextGraphNode);
 		if (outEdge == null) {
@@ -80,7 +80,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 			return;
 		}
 
-		logger.info("OUT EDGE: " + outEdge.getDirection().name());
+		logger.trace("OUT EDGE: " + outEdge.getDirection().name());
 
 		updateSwitchState(outEdge);
 
@@ -89,6 +89,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	}
 
 	private void updateSwitchState(final Edge outEdge) {
+
+		logger.info("ShapteType: " + getShapeType().name() + " Direction: " + outEdge.getDirection().name());
 
 		switch (getShapeType()) {
 

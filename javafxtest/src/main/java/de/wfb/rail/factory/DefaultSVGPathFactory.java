@@ -152,8 +152,8 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 
 			// @formatter:off
 			stringBuffer.append("M0,3").append("L")
-			    .append(" ").append(10).append(",").append(3)
-			    .append(" ").append(10).append(",").append(7)
+				.append(" ").append(3).append(",").append(0)
+				.append(" ").append(7).append(",").append(0)
 			    .append(" ").append(0).append(",").append(7)
 			    .append(" ").append(0).append(",").append(3);
 			// @formatter:on
@@ -162,8 +162,8 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 
 			// @formatter:off
 			stringBuffer.append("M0,3").append("L")
-				.append(" ").append(3).append(",").append(0)
-				.append(" ").append(7).append(",").append(0)
+			    .append(" ").append(10).append(",").append(3)
+			    .append(" ").append(10).append(",").append(7)
 			    .append(" ").append(0).append(",").append(7)
 			    .append(" ").append(0).append(",").append(3);
 			// @formatter:on

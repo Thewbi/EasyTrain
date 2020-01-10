@@ -1,0 +1,532 @@
+[
+  {
+    "id": 0,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 13,
+    "y": 17,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 1,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 14,
+    "y": 17,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 2,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 15,
+    "y": 17,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 3,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 16,
+    "y": 17,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 4,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 17,
+    "y": 17,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 5,
+    "shapeType": "SWITCH_RIGHT_180",
+    "x": 18,
+    "y": 17,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 6,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 19,
+    "y": 17,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 7,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 20,
+    "y": 17,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 8,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 21,
+    "y": 17,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 9,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 23,
+    "y": 17,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 10,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 24,
+    "y": 17,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 11,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 22,
+    "y": 17,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 12,
+    "shapeType": "TURN_BOTTOM_LEFT",
+    "x": 18,
+    "y": 16,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 13,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 17,
+    "y": 16,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 14,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 16,
+    "y": 16,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 15,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 15,
+    "y": 16,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 16,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 14,
+    "y": 16,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 17,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 12,
+    "y": 16,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 18,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 13,
+    "y": 16,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 19,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 11,
+    "y": 16,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 20,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 10,
+    "y": 16,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 21,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 9,
+    "y": 29,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 22,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 10,
+    "y": 29,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 23,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 11,
+    "y": 29,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 24,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 12,
+    "y": 29,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 25,
+    "shapeType": "SWITCH_LEFT_0",
+    "x": 13,
+    "y": 29,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 26,
+    "shapeType": "TURN_RIGHT_BOTTOM",
+    "x": 13,
+    "y": 28,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 27,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 14,
+    "y": 28,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 28,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 15,
+    "y": 28,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 29,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 16,
+    "y": 28,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 30,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 14,
+    "y": 29,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 31,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 15,
+    "y": 29,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 32,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 16,
+    "y": 29,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 33,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 17,
+    "y": 29,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 34,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 18,
+    "y": 29,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 35,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 20,
+    "y": 29,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 36,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 19,
+    "y": 29,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 37,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 9,
+    "y": 32,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 38,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 10,
+    "y": 32,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 39,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 11,
+    "y": 32,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 40,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 12,
+    "y": 32,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 41,
+    "shapeType": "SWITCH_RIGHT_0",
+    "x": 13,
+    "y": 32,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 42,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 14,
+    "y": 32,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 43,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 15,
+    "y": 32,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 44,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 16,
+    "y": 32,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 45,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 17,
+    "y": 32,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 46,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 18,
+    "y": 32,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 47,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 19,
+    "y": 32,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 48,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 20,
+    "y": 32,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 49,
+    "shapeType": "TURN_TOP_RIGHT",
+    "x": 13,
+    "y": 33,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 50,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 14,
+    "y": 33,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 51,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 15,
+    "y": 33,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 52,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 16,
+    "y": 33,
+    "leftList": [],
+    "rightList": [],
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  }
+]

@@ -16,6 +16,7 @@ import org.springframework.context.ApplicationListener;
 
 import de.wfb.dot.DefaultDotSerializer;
 import de.wfb.model.Model;
+import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.Color;
 import de.wfb.model.node.DefaultRailNode;
 import de.wfb.model.node.GraphNode;
@@ -23,10 +24,12 @@ import de.wfb.model.node.Node;
 import de.wfb.model.node.RailNode;
 import de.wfb.rail.events.FeedbackBlockEvent;
 import de.wfb.rail.events.FeedbackBlockState;
+import de.wfb.rail.events.LocomotiveModelChangedEvent;
 import de.wfb.rail.events.ModelChangedEvent;
 import de.wfb.rail.events.NodeClickedEvent;
 import de.wfb.rail.events.NodeHighlightedEvent;
 import de.wfb.rail.events.NodeSelectedEvent;
+import de.wfb.rail.events.OperationType;
 import de.wfb.rail.factory.Factory;
 import de.wfb.rail.ui.ShapeType;
 
@@ -250,6 +253,22 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 	}
 
 	@Override
+	public void loadModel() {
+
+		try {
+			modelPersistenceService.loadModel(model, "persistence/model.json");
+		} catch (final IOException e) {
+			logger.error(e.getMessage(), e);
+		}
+
+		try {
+			modelPersistenceService.loadLocomotiveModel(model, "persistence/locomotives.json");
+		} catch (final IOException e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+
+	@Override
 	public void storeModel() {
 
 		logger.trace("storeModel()");
@@ -262,9 +281,9 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 	}
 
 	@Override
-	public void loadModel() {
+	public void storeLocomotiveModel() {
 		try {
-			modelPersistenceService.loadModel(model, "persistence/model.json");
+			modelPersistenceService.storeLocomotiveModel(model, "persistence/locomotives.json");
 		} catch (final IOException e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -363,6 +382,31 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 	@Override
 	public List<RailNode> getAllRailNodes() {
 		return model.getAllRailNodes();
+	}
+
+	@Override
+	public List<DefaultLocomotive> getLocomotives() {
+		return model.getLocomotives();
+	}
+
+	@Override
+	public void addLocomotive(final DefaultLocomotive defaultLocomotive) {
+		model.getLocomotives().add(defaultLocomotive);
+
+		// send event
+		final LocomotiveModelChangedEvent event = new LocomotiveModelChangedEvent(this, defaultLocomotive,
+				OperationType.ADDED);
+		applicationEventPublisher.publishEvent(event);
+	}
+
+	@Override
+	public void deleteLocomotive(final DefaultLocomotive defaultLocomotive) {
+		model.getLocomotives().remove(defaultLocomotive);
+
+		// send event
+		final LocomotiveModelChangedEvent event = new LocomotiveModelChangedEvent(this, defaultLocomotive,
+				OperationType.REMOVED);
+		applicationEventPublisher.publishEvent(event);
 	}
 
 }

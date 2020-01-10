@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import de.wfb.model.Model;
+import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
 import de.wfb.model.node.RailNode;
@@ -18,6 +19,8 @@ public interface ModelService {
 	void addNode(int x, int y, ShapeType shapeType);
 
 	void storeModel();
+
+	void storeLocomotiveModel();
 
 	void loadModel();
 
@@ -44,5 +47,11 @@ public interface ModelService {
 	List<Node> getSelectedNodes();
 
 	List<RailNode> getAllRailNodes();
+
+	List<DefaultLocomotive> getLocomotives();
+
+	void addLocomotive(DefaultLocomotive defaultLocomotive);
+
+	void deleteLocomotive(DefaultLocomotive defaultLocomotive);
 
 }

@@ -5,6 +5,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import de.wfb.dialogs.LayoutElementSelectionPane;
+import de.wfb.dialogs.LocomotiveAddPane;
+import de.wfb.dialogs.LocomotiveListPane;
+import de.wfb.dialogs.LocomotiveListStage;
 import de.wfb.dialogs.RailDetailsPane;
 import de.wfb.dialogs.SidePane;
 import de.wfb.dialogs.ThrottlePane;
@@ -20,7 +23,7 @@ import de.wfb.model.service.DefaultModelPersistenceService;
 import de.wfb.model.service.DefaultModelService;
 import de.wfb.model.service.DefaultRoutingService;
 import de.wfb.model.service.ModelService;
-import de.wfb.model.strategy.StaticGraphColorStrategy;
+import de.wfb.model.strategy.DefaultGraphColorStrategy;
 import de.wfb.rail.facade.DefaultProtocolFacade;
 import de.wfb.rail.factory.DefaultSVGPathFactory;
 import de.wfb.rail.factory.DefaultSerialPortFactory;
@@ -140,10 +143,29 @@ public class ConfigurationClass {
 		return new DefaultDebugFacade();
 	}
 
+//	@Bean
+//	public StaticGraphColorStrategy StaticGraphColorStrategy() {
+//		return new StaticGraphColorStrategy();
+//	}
+
 	@Bean
-	public StaticGraphColorStrategy StaticGraphColorStrategy() {
-//		return new DefaultGraphColorStrategy();
-		return new StaticGraphColorStrategy();
+	public DefaultGraphColorStrategy DefaultGraphColorStrategy() {
+		return new DefaultGraphColorStrategy();
+	}
+
+	@Bean
+	public LocomotiveListPane LocomotiveListPane() {
+		return new LocomotiveListPane();
+	}
+
+	@Bean
+	public LocomotiveListStage LocomotiveListStage() {
+		return new LocomotiveListStage();
+	}
+
+	@Bean
+	public LocomotiveAddPane LocomotiveAddPane() {
+		return new LocomotiveAddPane();
 	}
 
 }

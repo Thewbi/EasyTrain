@@ -26,6 +26,10 @@ import com.google.gson.stream.JsonReader;
 
 import de.wfb.model.Model;
 import de.wfb.model.converter.DefaultJsonNodeConverter;
+import de.wfb.model.locomotive.DefaultJsonLocomotiveConverter;
+import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.DefaultLocomotiveJson;
+import de.wfb.model.locomotive.DefaultLocomotiveJsonConverter;
 import de.wfb.model.node.JsonNode;
 import de.wfb.model.node.Node;
 import de.wfb.model.node.RailNode;
@@ -69,6 +73,61 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 	}
 
 	@Override
+	public void storeLocomotiveModel(final Model model, final String path) throws IOException {
+
+		final List<DefaultLocomotiveJson> jsonNodes = new ArrayList<>();
+
+		final Converter<DefaultLocomotive, DefaultLocomotiveJson> converter = new DefaultLocomotiveJsonConverter();
+
+		for (final DefaultLocomotive defaultLocomotive : model.getLocomotives()) {
+
+			final DefaultLocomotiveJson target = new DefaultLocomotiveJson();
+			converter.convert(defaultLocomotive, target);
+			jsonNodes.add(target);
+		}
+
+		final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+		final String json = gson.toJson(jsonNodes);
+
+		FileUtils.writeStringToFile(new File(path), json, Charset.forName("UTF-8"));
+
+		logger.trace(json);
+	}
+
+	@Override
+	public void loadLocomotiveModel(final Model model, final String pathToModelFile) throws IOException {
+
+		logger.info("Trying to load '" + Paths.get(pathToModelFile).toAbsolutePath() + "'");
+
+		if (!Files.exists(Paths.get(pathToModelFile))) {
+			return;
+		}
+
+		final Collection<DefaultLocomotiveJson> nodeArray = deserializeDefaultLocomotiveJson(pathToModelFile);
+		if (CollectionUtils.isEmpty(nodeArray)) {
+
+			logger.trace("'" + Paths.get(pathToModelFile).toAbsolutePath() + "' contains no data!");
+			return;
+		}
+
+		logger.trace("'" + Paths.get(pathToModelFile).toAbsolutePath() + "' contains " + nodeArray.size() + " nodes!");
+
+		final int maxId = Integer.MIN_VALUE;
+
+		final DefaultJsonLocomotiveConverter defaultJsonLocomotiveConverter = new DefaultJsonLocomotiveConverter();
+
+		for (final DefaultLocomotiveJson defaultLocomotiveJson : nodeArray) {
+
+			final DefaultLocomotive defaulLocomotive = new DefaultLocomotive();
+
+			defaultJsonLocomotiveConverter.convert(defaultLocomotiveJson, defaulLocomotive);
+
+			model.getLocomotives().add(defaulLocomotive);
+		}
+	}
+
+	@Override
 	public void loadModel(final Model model, final String pathToModelFile) throws IOException {
 
 		logger.info("Trying to load '" + Paths.get(pathToModelFile).toAbsolutePath() + "'");
@@ -77,7 +136,7 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 			return;
 		}
 
-		final Collection<JsonNode> nodeArray = deserialize(pathToModelFile);
+		final Collection<JsonNode> nodeArray = deserializeJsonNode(pathToModelFile);
 		if (CollectionUtils.isEmpty(nodeArray)) {
 
 			logger.trace("'" + Paths.get(pathToModelFile).toAbsolutePath() + "' contains no data!");
@@ -98,7 +157,10 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 					throw new IllegalArgumentException("Duplicate Model id = " + node.getId());
 				}
 
+				// insert node into the id map
 				model.getIdMap().put(node.getId(), node);
+
+				// insert node into the node grid array
 				model.setNode(jsonNode.getX(), jsonNode.getY(), node);
 
 				// update max ID for initializing the ID service later
@@ -148,7 +210,7 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 		}
 	}
 
-	private Collection<JsonNode> deserialize(final String path) throws FileNotFoundException {
+	private Collection<JsonNode> deserializeJsonNode(final String path) throws FileNotFoundException {
 
 		final JsonReader reader = new JsonReader(new FileReader(path));
 
@@ -157,6 +219,20 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 
 		final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		final Collection<JsonNode> nodeArray = gson.fromJson(reader, type);
+
+		return nodeArray;
+	}
+
+	private Collection<DefaultLocomotiveJson> deserializeDefaultLocomotiveJson(final String path)
+			throws FileNotFoundException {
+
+		final JsonReader reader = new JsonReader(new FileReader(path));
+
+		final Type type = new TypeToken<Collection<DefaultLocomotiveJson>>() {
+		}.getType();
+
+		final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		final Collection<DefaultLocomotiveJson> nodeArray = gson.fromJson(reader, type);
 
 		return nodeArray;
 	}

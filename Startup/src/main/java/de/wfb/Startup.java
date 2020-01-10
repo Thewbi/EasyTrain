@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import de.wfb.dialogs.LocomotiveListStage;
 import de.wfb.dialogs.SidePane;
 import de.wfb.dialogs.ThrottleStage;
 import de.wfb.javafxtest.controller.LayoutGridController;
@@ -80,6 +81,8 @@ public class Startup extends Application {
 
 	private DefaultDebugFacade defaultDebugFacade;
 
+	private LocomotiveListStage locomotiveListStage;
+
 	private FeedbackBlockState feedbackBlockState = FeedbackBlockState.BLOCKED;
 
 	public static void main(final String[] args) {
@@ -112,7 +115,7 @@ public class Startup extends Application {
 
 						if (alert.getResult().equals(ButtonType.OK)) {
 
-							logger.info("OK");
+							logger.trace("OK");
 							protocolFacade.disconnect();
 							try {
 								Thread.sleep(2000);
@@ -124,7 +127,7 @@ public class Startup extends Application {
 
 						} else if (alert.getResult().equals(ButtonType.YES)) {
 
-							logger.info("OK");
+							logger.trace("OK");
 							protocolFacade.disconnect();
 							try {
 								Thread.sleep(2000);
@@ -136,7 +139,7 @@ public class Startup extends Application {
 
 						} else {
 
-							logger.info("Cancel");
+							logger.trace("Cancel");
 							event.consume();
 
 							// I think, there is no way to prevent the main window from closing.
@@ -157,6 +160,9 @@ public class Startup extends Application {
 		evtSenCommandThread = context.getBean(EvtSenCommandThread.class);
 		routingService = context.getBean(DefaultRoutingService.class);
 		defaultDebugFacade = context.getBean(DefaultDebugFacade.class);
+		locomotiveListStage = context.getBean(LocomotiveListStage.class);
+		locomotiveListStage.initialize();
+		locomotiveListStage.initModality(Modality.WINDOW_MODAL);
 
 		// load the model
 		try {
@@ -412,6 +418,17 @@ public class Startup extends Application {
 		});
 		final MenuItem copyItem = new MenuItem("Copy");
 		final MenuItem pasteItem = new MenuItem("Paste");
+		final MenuItem locomotiveListItem = new MenuItem("Locomotive List");
+		locomotiveListItem.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(final ActionEvent event) {
+
+				locomotiveListStage.synchronizeModel();
+				locomotiveListStage.show();
+			}
+		});
+
 		final MenuItem serialConnectItem = new MenuItem("Serial Connect");
 		serialConnectItem.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -483,7 +500,7 @@ public class Startup extends Application {
 		// add menuItems to the Menus
 		fileMenu.getItems().addAll(newItem, openFileItem, saveItem, exitItem);
 		routingMenu.getItems().addAll(findRouteMenuItem);
-		editMenu.getItems().addAll(connectItem, copyItem, pasteItem);
+		editMenu.getItems().addAll(connectItem, copyItem, pasteItem, locomotiveListItem);
 		serialMenu.getItems().addAll(serialConnectItem, serialDisconnectItem);
 		debugMenu.getItems().addAll(routingNodeMenuItem, feedbackBlockEventMenuItem);
 

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
 import de.wfb.model.node.RailNode;
@@ -19,62 +20,46 @@ public class DefaultModel implements Model {
 
 	private final Map<Integer, Node> idMap = new HashMap<>();
 
-	private final Node[][] viewModel = new Node[rows][columns];
+	private final Node[][] nodeGrid = new Node[rows][columns];
+
+	private final List<DefaultLocomotive> locomotives = new ArrayList<DefaultLocomotive>();
 
 	private Node selectedNode;
 
 	@Override
 	public Node getNode(final int x, final int y) {
+
 		if (0 <= x && x < columns && 0 <= y && y < columns) {
-			return viewModel[x][y];
+			return nodeGrid[x][y];
 		}
+
 		return null;
 	}
 
 	@Override
 	public void setNode(final int x, final int y, final Node node) {
+
 		if (0 <= x && x < columns && 0 <= y && y < columns) {
-			viewModel[x][y] = node;
+			nodeGrid[x][y] = node;
 		}
 	}
 
 	@Override
 	public void removeNode(final int x, final int y) {
-		final Node node = viewModel[x][y];
+
+		final Node node = nodeGrid[x][y];
 		if (node == null) {
 			return;
 		}
 		if (idMap.containsKey(node.getId())) {
 			idMap.remove(node.getId());
 		}
-		viewModel[x][y] = null;
-	}
-
-	public int getColumns() {
-		return columns;
-	}
-
-	public int getRows() {
-		return rows;
-	}
-
-	@Override
-	public Map<Integer, Node> getIdMap() {
-		return idMap;
-	}
-
-	@Override
-	public Node getSelectedNode() {
-		return selectedNode;
-	}
-
-	@Override
-	public void setSelectedNode(final Node selectedNode) {
-		this.selectedNode = selectedNode;
+		nodeGrid[x][y] = null;
 	}
 
 	@Override
 	public void connectModel() {
+
 		for (final Map.Entry<Integer, Node> entry : idMap.entrySet()) {
 			entry.getValue().connect(this);
 		}
@@ -117,6 +102,33 @@ public class DefaultModel implements Model {
 		}
 
 		return result;
+	}
+
+	public int getColumns() {
+		return columns;
+	}
+
+	public int getRows() {
+		return rows;
+	}
+
+	@Override
+	public Map<Integer, Node> getIdMap() {
+		return idMap;
+	}
+
+	@Override
+	public Node getSelectedNode() {
+		return selectedNode;
+	}
+
+	@Override
+	public void setSelectedNode(final Node selectedNode) {
+		this.selectedNode = selectedNode;
+	}
+
+	public List<DefaultLocomotive> getLocomotives() {
+		return locomotives;
 	}
 
 }

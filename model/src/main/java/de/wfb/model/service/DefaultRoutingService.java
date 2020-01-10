@@ -22,6 +22,8 @@ import de.wfb.rail.ui.ShapeType;
 
 public class DefaultRoutingService implements RoutingService {
 
+	private static final int MAX_ROUTE_FINDING_STEPS = 1400;
+
 	private static final Logger logger = LogManager.getLogger(DefaultRoutingService.class);
 
 	@Autowired
@@ -78,8 +80,18 @@ public class DefaultRoutingService implements RoutingService {
 
 		route.add(currentNodeGraphNode);
 
+		int loopBreaker = MAX_ROUTE_FINDING_STEPS;
+
 		// current node is the end node -> done
 		while (currentNodeGraphNode.getId() != graphNodeEnd.getId()) {
+
+			if (loopBreaker <= 0) {
+
+				throw new RuntimeException("Failed to find Route from " + graphNodeStart.getId() + " TO "
+						+ graphNodeEnd.getId() + " after " + MAX_ROUTE_FINDING_STEPS + " steps!");
+			}
+
+			loopBreaker--;
 
 			logger.info("ROUTE: " + currentNodeGraphNode.getId());
 
@@ -263,13 +275,13 @@ public class DefaultRoutingService implements RoutingService {
 				// if the turnout is NOT traversed in switching direction, continue
 				if (graphNode.getChildren().size() < 2) {
 
-					logger.trace("Index = " + index + " Turnout found. Not in switching order!");
+					logger.info("Index = " + index + " Turnout found. Not in switching order!");
 
 					index++;
 					continue;
 				}
 
-				logger.trace("Index = " + index + " Turnout found in switching order!");
+				logger.info("Index = " + index + " Turnout found in switching order!");
 				final RailNode turnoutNode = graphNode.getRailNode();
 
 				logger.trace("Turnout ShapeType = " + turnoutNode.getShapeType().name());

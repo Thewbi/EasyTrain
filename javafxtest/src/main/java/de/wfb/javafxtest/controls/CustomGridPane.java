@@ -183,13 +183,14 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 		getChildren().remove(svgPathOld);
 
 		// create new path
-		final boolean turnoutStraight = turnoutState(node);
+		final boolean turnoutState = turnoutState(node);
+		logger.trace("TurnoutState: " + turnoutState);
 		final boolean highlighted = modelChangedEvent.isHighlighted();
 		final boolean blocked = modelChangedEvent.isBlocked();
 		final boolean selected = modelChangedEvent.isSelected();
 		try {
-			final SVGPath svgPathNew = svgPathFactory.create(shapeType, cell_width, turnoutStraight, highlighted,
-					blocked, selected);
+			final SVGPath svgPathNew = svgPathFactory.create(shapeType, cell_width, turnoutState, highlighted, blocked,
+					selected);
 
 			if (svgPathNew == null) {
 				return;

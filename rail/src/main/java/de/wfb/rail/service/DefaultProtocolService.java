@@ -60,7 +60,7 @@ public class DefaultProtocolService implements ProtocolService {
 
 		if (node == null) {
 
-			logger.info("nodeClicked node is null");
+			logger.trace("nodeClicked node is null");
 
 			// all nodes that are selected have to be unused
 

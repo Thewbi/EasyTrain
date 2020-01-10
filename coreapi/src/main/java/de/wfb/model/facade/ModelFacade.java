@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import de.wfb.model.Model;
+import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.Node;
 import de.wfb.rail.ui.ShapeType;
 
@@ -17,6 +18,8 @@ public interface ModelFacade {
 
 	void storeModel();
 
+	void storeLocomotiveModel();
+
 	void manualConnectTo(Node nodeA, Node nodeB);
 
 	Model getModel();
@@ -28,5 +31,11 @@ public interface ModelFacade {
 	void loadModel();
 
 	void connectModel();
+
+	List<DefaultLocomotive> getLocomotives();
+
+	void addLocomotive(DefaultLocomotive defaultLocomotive);
+
+	void deleteLocomotive(DefaultLocomotive locomotive);
 
 }
