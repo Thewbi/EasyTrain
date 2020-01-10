@@ -7,11 +7,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
 
 import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.rail.events.LocomotiveModelChangedEvent;
+import de.wfb.rail.events.LocomotiveSelectedEvent;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -40,6 +42,9 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 	@Autowired
 	private ModelFacade modelFacade;
 
+	@Autowired
+	ApplicationEventPublisher applicationEventPublisher;
+
 	public void synchronizeModel() {
 
 		data.clear();
@@ -60,6 +65,15 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 		addColumns();
 
 		tableView.setItems(data);
+
+		tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+
+			if (newSelection != null) {
+
+				final LocomotiveSelectedEvent locomotiveSelectedEvent = new LocomotiveSelectedEvent(this, newSelection);
+				applicationEventPublisher.publishEvent(locomotiveSelectedEvent);
+			}
+		});
 
 		setSpacing(5);
 		setPadding(new Insets(10, 10, 10, 10));
@@ -92,13 +106,20 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 
 							@Override
 							public void updateItem(final String item, final boolean empty) {
+
 								super.updateItem(item, empty);
+
 								if (empty) {
+
 									setGraphic(null);
 									setText(null);
+
 								} else {
+
 									btn.setOnAction(event -> {
+
 										final DefaultLocomotive locomotive = getTableView().getItems().get(getIndex());
+
 										logger.info(locomotive.getName() + "   " + locomotive.getAddress());
 
 										final Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -176,6 +197,7 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 			final DefaultLocomotive locomotive = locomotiveModelChangedEvent.getLocomotive();
 
 			switch (locomotiveModelChangedEvent.getOperationType()) {
+
 			case ADDED:
 				data.add(locomotive);
 				break;
@@ -187,9 +209,7 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 			default:
 				break;
 			}
-
 		}
-
 	}
 
 }

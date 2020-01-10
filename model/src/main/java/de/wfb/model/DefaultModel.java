@@ -127,8 +127,42 @@ public class DefaultModel implements Model {
 		this.selectedNode = selectedNode;
 	}
 
+	@Override
 	public List<DefaultLocomotive> getLocomotives() {
 		return locomotives;
+	}
+
+	@Override
+	public int retrieveNextLocomotiveId() {
+
+		if (CollectionUtils.isEmpty(locomotives)) {
+			return 0;
+		}
+
+		int id = 0;
+
+		boolean done = false;
+		while (!done) {
+
+			done = true;
+			if (findLocomotiveId(id)) {
+				done = false;
+				id++;
+			}
+		}
+
+		return id;
+	}
+
+	private boolean findLocomotiveId(final int id) {
+
+		for (final DefaultLocomotive locomotive : locomotives) {
+			if (locomotive.getId() == id) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 }

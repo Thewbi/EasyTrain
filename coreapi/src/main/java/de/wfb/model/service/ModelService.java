@@ -54,4 +54,6 @@ public interface ModelService {
 
 	void deleteLocomotive(DefaultLocomotive defaultLocomotive);
 
+	int retrieveNextLocomotiveId();
+
 }

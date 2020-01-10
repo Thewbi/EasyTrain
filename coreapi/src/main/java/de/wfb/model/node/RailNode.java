@@ -78,6 +78,9 @@ public interface RailNode extends Node {
 	List<RailNode> getManualConnections();
 
 	@Override
+	int getFeedbackBlockNumber();
+
+	@Override
 	void connect(Model model);
 
 	void manualConnectTo(RailNode railNode);

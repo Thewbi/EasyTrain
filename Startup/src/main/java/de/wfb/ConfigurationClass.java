@@ -8,6 +8,8 @@ import de.wfb.dialogs.LayoutElementSelectionPane;
 import de.wfb.dialogs.LocomotiveAddPane;
 import de.wfb.dialogs.LocomotiveListPane;
 import de.wfb.dialogs.LocomotiveListStage;
+import de.wfb.dialogs.PlaceLocomotivePane;
+import de.wfb.dialogs.PlaceLocomotiveStage;
 import de.wfb.dialogs.RailDetailsPane;
 import de.wfb.dialogs.SidePane;
 import de.wfb.dialogs.ThrottlePane;
@@ -18,6 +20,7 @@ import de.wfb.model.DefaultModel;
 import de.wfb.model.Model;
 import de.wfb.model.facade.DefaultModelFacade;
 import de.wfb.model.node.DefaultRailNodeFactory;
+import de.wfb.model.service.DefaultBlockService;
 import de.wfb.model.service.DefaultIdService;
 import de.wfb.model.service.DefaultModelPersistenceService;
 import de.wfb.model.service.DefaultModelService;
@@ -166,6 +169,21 @@ public class ConfigurationClass {
 	@Bean
 	public LocomotiveAddPane LocomotiveAddPane() {
 		return new LocomotiveAddPane();
+	}
+
+	@Bean
+	public DefaultBlockService DefaultBlockService() {
+		return new DefaultBlockService();
+	}
+
+	@Bean
+	public PlaceLocomotiveStage PlaceLocomotiveStage() {
+		return new PlaceLocomotiveStage();
+	}
+
+	@Bean
+	public PlaceLocomotivePane PlaceLocomotivePane() {
+		return new PlaceLocomotivePane();
 	}
 
 }

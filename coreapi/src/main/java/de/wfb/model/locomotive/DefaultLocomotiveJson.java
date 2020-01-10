@@ -2,9 +2,19 @@ package de.wfb.model.locomotive;
 
 public class DefaultLocomotiveJson {
 
+	private int id;
+
 	private int address;
 
 	private String name;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(final int id) {
+		this.id = id;
+	}
 
 	public int getAddress() {
 		return address;

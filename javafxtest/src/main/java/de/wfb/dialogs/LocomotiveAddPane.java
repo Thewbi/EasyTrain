@@ -62,17 +62,18 @@ public class LocomotiveAddPane extends VBox {
 					final Alert alert = new Alert(Alert.AlertType.ERROR);
 					alert.setTitle("Adding Locomotive Failed!");
 					alert.setHeaderText("Adding Locomotive Failed!");
-
 					alert.setContentText(msg);
-
 					alert.showAndWait();
+
 					return;
 				}
 
 				final int address = NumberUtils.createInteger(addressAsString);
 
 				// add the locomotive to the model
-				final DefaultLocomotive defaultLocomotive = new DefaultLocomotive(nameTextField.getText(), address);
+				final int locomotiveId = modelFacade.retrieveNextLocomotiveId();
+				final DefaultLocomotive defaultLocomotive = new DefaultLocomotive(locomotiveId, nameTextField.getText(),
+						address);
 				modelFacade.addLocomotive(defaultLocomotive);
 
 				// write the model to disk

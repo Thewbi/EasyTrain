@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import de.wfb.dialogs.LocomotiveListStage;
+import de.wfb.dialogs.PlaceLocomotiveStage;
 import de.wfb.dialogs.SidePane;
 import de.wfb.dialogs.ThrottleStage;
 import de.wfb.javafxtest.controller.LayoutGridController;
@@ -22,6 +23,7 @@ import de.wfb.rail.events.FeedbackBlockEvent;
 import de.wfb.rail.events.FeedbackBlockState;
 import de.wfb.rail.facade.DefaultProtocolFacade;
 import de.wfb.rail.facade.ProtocolFacade;
+import de.wfb.rail.service.BlockService;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -82,6 +84,10 @@ public class Startup extends Application {
 	private DefaultDebugFacade defaultDebugFacade;
 
 	private LocomotiveListStage locomotiveListStage;
+
+	private PlaceLocomotiveStage placeLocomotiveStage;
+
+	private BlockService blockService;
 
 	private FeedbackBlockState feedbackBlockState = FeedbackBlockState.BLOCKED;
 
@@ -154,15 +160,29 @@ public class Startup extends Application {
 
 		// https://stackoverflow.com/questions/31886204/where-is-javaconfigapplicationcontext-class-nowadays
 		final ApplicationContext context = new AnnotationConfigApplicationContext(ConfigurationClass.class);
+
+		// facades
 		modelFacade = context.getBean(ModelFacade.class);
-		sidePane = context.getBean(SidePane.class);
 		protocolFacade = context.getBean(DefaultProtocolFacade.class);
-		evtSenCommandThread = context.getBean(EvtSenCommandThread.class);
-		routingService = context.getBean(DefaultRoutingService.class);
 		defaultDebugFacade = context.getBean(DefaultDebugFacade.class);
+
+		// services
+		routingService = context.getBean(DefaultRoutingService.class);
+		blockService = context.getBean(BlockService.class);
+
+		// threads
+		evtSenCommandThread = context.getBean(EvtSenCommandThread.class);
+
+		// UI
+		sidePane = context.getBean(SidePane.class);
+
 		locomotiveListStage = context.getBean(LocomotiveListStage.class);
-		locomotiveListStage.initialize();
 		locomotiveListStage.initModality(Modality.WINDOW_MODAL);
+		locomotiveListStage.initialize();
+
+		placeLocomotiveStage = context.getBean(PlaceLocomotiveStage.class);
+		placeLocomotiveStage.initModality(Modality.WINDOW_MODAL);
+		placeLocomotiveStage.initialize();
 
 		// load the model
 		try {
@@ -173,6 +193,9 @@ public class Startup extends Application {
 		} catch (final Exception e) {
 			logger.error(e.getMessage(), e);
 		}
+
+		// build blocks
+		blockService.determineBlocks();
 
 		// build the routing tables
 		routingService.buildRoutingTables();
@@ -424,8 +447,38 @@ public class Startup extends Application {
 			@Override
 			public void handle(final ActionEvent event) {
 
+				locomotiveListStage.initialize();
 				locomotiveListStage.synchronizeModel();
 				locomotiveListStage.show();
+			}
+		});
+
+		final MenuItem placeLocomotiveItem = new MenuItem("Place Locomotive");
+		placeLocomotiveItem.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(final ActionEvent event) {
+
+				if (placeLocomotiveStage.getNode() == null) {
+
+					final Alert alert = new Alert(Alert.AlertType.ERROR);
+					alert.setTitle("No Node Selected!");
+					alert.setHeaderText("No Node Selected!");
+
+					final StringBuffer stringBuffer = new StringBuffer();
+					stringBuffer.append("You have to select a node to place a locomotive!");
+
+					alert.setContentText(stringBuffer.toString());
+
+					alert.showAndWait();
+
+				} else {
+
+					placeLocomotiveStage.initialize();
+					placeLocomotiveStage.synchronizeModel();
+					placeLocomotiveStage.show();
+
+				}
 			}
 		});
 
@@ -500,7 +553,7 @@ public class Startup extends Application {
 		// add menuItems to the Menus
 		fileMenu.getItems().addAll(newItem, openFileItem, saveItem, exitItem);
 		routingMenu.getItems().addAll(findRouteMenuItem);
-		editMenu.getItems().addAll(connectItem, copyItem, pasteItem, locomotiveListItem);
+		editMenu.getItems().addAll(connectItem, copyItem, pasteItem, locomotiveListItem, placeLocomotiveItem);
 		serialMenu.getItems().addAll(serialConnectItem, serialDisconnectItem);
 		debugMenu.getItems().addAll(routingNodeMenuItem, feedbackBlockEventMenuItem);
 

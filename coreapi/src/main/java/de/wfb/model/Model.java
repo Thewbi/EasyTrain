@@ -30,4 +30,6 @@ public interface Model {
 
 	List<DefaultLocomotive> getLocomotives();
 
+	int retrieveNextLocomotiveId();
+
 }

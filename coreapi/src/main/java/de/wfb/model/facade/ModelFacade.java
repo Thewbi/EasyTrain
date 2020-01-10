@@ -38,4 +38,6 @@ public interface ModelFacade {
 
 	void deleteLocomotive(DefaultLocomotive locomotive);
 
+	int retrieveNextLocomotiveId();
+
 }

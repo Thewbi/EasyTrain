@@ -132,6 +132,8 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 		}
 
 		if (node == null) {
+			sendNodeClickedEvent(null);
+
 			return;
 		}
 
@@ -407,6 +409,11 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 		final LocomotiveModelChangedEvent event = new LocomotiveModelChangedEvent(this, defaultLocomotive,
 				OperationType.REMOVED);
 		applicationEventPublisher.publishEvent(event);
+	}
+
+	@Override
+	public int retrieveNextLocomotiveId() {
+		return model.retrieveNextLocomotiveId();
 	}
 
 }

@@ -20,6 +20,7 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Text;
 
 @Component
 public class CustomGridPane extends Pane implements ApplicationListener<ApplicationEvent> {
@@ -188,6 +189,7 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 		final boolean highlighted = modelChangedEvent.isHighlighted();
 		final boolean blocked = modelChangedEvent.isBlocked();
 		final boolean selected = modelChangedEvent.isSelected();
+
 		try {
 			final SVGPath svgPathNew = svgPathFactory.create(shapeType, cell_width, turnoutState, highlighted, blocked,
 					selected);
@@ -198,7 +200,24 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 			svgPathNew.setLayoutX(modelChangedEvent.getX() * cell_width);
 			svgPathNew.setLayoutY(modelChangedEvent.getY() * cell_width);
 
-			getChildren().add(svgPathNew);
+			getChildren().addAll(svgPathNew);
+
+			if (node.getFeedbackBlockNumber() > -1) {
+
+				final Text text = new Text(Integer.toString(node.getFeedbackBlockNumber()));
+				text.setScaleX(0.5);
+				text.setScaleY(0.5);
+
+				if (shapeType == ShapeType.STRAIGHT_HORIZONTAL) {
+					text.setLayoutX((modelChangedEvent.getX() + 0) * cell_width - 0);
+					text.setLayoutY((modelChangedEvent.getY() + 1) * cell_width + 5);
+				} else if (shapeType == ShapeType.STRAIGHT_VERTICAL) {
+					text.setLayoutX((modelChangedEvent.getX() + 0) * cell_width - 4);
+					text.setLayoutY((modelChangedEvent.getY() + 1) * cell_width + 0);
+				}
+
+				getChildren().addAll(text);
+			}
 
 			viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()] = svgPathNew;
 		} catch (final Exception e) {

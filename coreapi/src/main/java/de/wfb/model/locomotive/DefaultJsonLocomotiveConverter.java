@@ -6,7 +6,7 @@ public class DefaultJsonLocomotiveConverter implements Converter<DefaultLocomoti
 
 	@Override
 	public void convert(final DefaultLocomotiveJson source, final DefaultLocomotive target) {
-
+		target.setId(source.getId());
 		target.setAddress(source.getAddress());
 		target.setName(source.getName());
 	}

@@ -86,4 +86,9 @@ public class DefaultModelFacade implements ModelFacade {
 		modelService.deleteLocomotive(defaultLocomotive);
 	}
 
+	@Override
+	public int retrieveNextLocomotiveId() {
+		return modelService.retrieveNextLocomotiveId();
+	}
+
 }
