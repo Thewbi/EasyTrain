@@ -9,14 +9,16 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import de.wfb.dialogs.BlockNavigationPane;
 import de.wfb.dialogs.LocomotiveListStage;
+import de.wfb.dialogs.PlaceLocomotivePane;
 import de.wfb.dialogs.PlaceLocomotiveStage;
 import de.wfb.dialogs.SidePane;
 import de.wfb.dialogs.ThrottleStage;
 import de.wfb.javafxtest.controller.LayoutGridController;
 import de.wfb.javafxtest.controls.CustomGridPane;
 import de.wfb.model.facade.ModelFacade;
-import de.wfb.model.node.GraphNode;
+import de.wfb.model.node.Direction;
 import de.wfb.model.service.DefaultRoutingService;
 import de.wfb.model.service.RoutingService;
 import de.wfb.rail.events.FeedbackBlockEvent;
@@ -24,6 +26,7 @@ import de.wfb.rail.events.FeedbackBlockState;
 import de.wfb.rail.facade.DefaultProtocolFacade;
 import de.wfb.rail.facade.ProtocolFacade;
 import de.wfb.rail.service.BlockService;
+import de.wfb.rail.service.Route;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -88,6 +91,14 @@ public class Startup extends Application {
 	private PlaceLocomotiveStage placeLocomotiveStage;
 
 	private BlockService blockService;
+
+	private LayoutGridController layoutGridController;
+
+	private CustomGridPane customGridPane;
+
+	private BlockNavigationPane blockNavigationPane;
+
+	private CustomThreadPoolScheduler customThreadPoolScheduler;
 
 	private FeedbackBlockState feedbackBlockState = FeedbackBlockState.BLOCKED;
 
@@ -172,17 +183,15 @@ public class Startup extends Application {
 
 		// threads
 		evtSenCommandThread = context.getBean(EvtSenCommandThread.class);
+		customThreadPoolScheduler = context.getBean(CustomThreadPoolScheduler.class);
 
 		// UI
 		sidePane = context.getBean(SidePane.class);
-
+		layoutGridController = context.getBean(LayoutGridController.class);
+		customGridPane = context.getBean(CustomGridPane.class);
+		blockNavigationPane = context.getBean(BlockNavigationPane.class);
 		locomotiveListStage = context.getBean(LocomotiveListStage.class);
-		locomotiveListStage.initModality(Modality.WINDOW_MODAL);
-		locomotiveListStage.initialize();
-
 		placeLocomotiveStage = context.getBean(PlaceLocomotiveStage.class);
-		placeLocomotiveStage.initModality(Modality.WINDOW_MODAL);
-		placeLocomotiveStage.initialize();
 
 		// load the model
 		try {
@@ -201,6 +210,19 @@ public class Startup extends Application {
 		routingService.buildRoutingTables();
 		routingService.colorGraph();
 
+		// UI setup
+		locomotiveListStage.initModality(Modality.WINDOW_MODAL);
+		locomotiveListStage.initialize();
+
+		placeLocomotiveStage.initModality(Modality.WINDOW_MODAL);
+		placeLocomotiveStage.initialize();
+
+		blockNavigationPane.setup();
+
+		// DEBUG - place a locomotive
+		PlaceLocomotivePane.placeLocomotive(blockService.getAllBlocks().get(0).getNodes().get(0),
+				modelFacade.getLocomotives().get(0), Direction.EAST);
+
 		// connect to the intellibox
 		try {
 			protocolFacade.connect();
@@ -217,8 +239,8 @@ public class Startup extends Application {
 
 		throttleStage.show();
 
-		stage.setScene(createScene(stage, closeWindowEventHandler, context));
-		stage.setTitle("ScrollPaneDemo");
+		stage.setScene(createScene(stage, closeWindowEventHandler));
+		stage.setTitle("Easy Train (Beta v0.1)");
 		stage.setWidth(800);
 		stage.setHeight(600);
 
@@ -246,20 +268,18 @@ public class Startup extends Application {
 	@Override
 	public void stop() {
 
+		customThreadPoolScheduler.stop();
+		customThreadPoolScheduler.shutdown();
+
 		logger.trace("Startup.stop()");
 		Platform.exit();
 	}
 
-	private Scene createScene(final Stage stage, final EventHandler<WindowEvent> closeWindowHandler,
-			final ApplicationContext context) {
+	private Scene createScene(final Stage stage, final EventHandler<WindowEvent> closeWindowHandler) {
 
 		logger.trace("createScene");
 
-		final LayoutGridController layoutGridController = context.getBean(LayoutGridController.class);
-
-		final CustomGridPane customGridPane = context.getBean(CustomGridPane.class);
 		customGridPane.Initialize();
-
 		customGridPane.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
 
 		final Group group = new Group(customGridPane);
@@ -290,6 +310,7 @@ public class Startup extends Application {
 		borderPane.setTop(createMenu(stage, layoutGridController));
 		borderPane.setCenter(stackPane);
 		borderPane.setRight(createDetailsView());
+		borderPane.setBottom(blockNavigationPane);
 
 		borderPane.setOnKeyReleased(new EventHandler<KeyEvent>() {
 
@@ -402,8 +423,8 @@ public class Startup extends Application {
 					final de.wfb.model.node.Node nodeA = selectedNodes.get(0);
 					final de.wfb.model.node.Node nodeB = selectedNodes.get(1);
 
-					final List<GraphNode> route = routingService.route(nodeA, nodeB);
-					if (CollectionUtils.isNotEmpty(route)) {
+					final Route route = routingService.route(nodeA, nodeB);
+					if (CollectionUtils.isNotEmpty(route.getGraphNodes())) {
 
 						routingService.highlightRoute(route);
 						routingService.switchTurnouts(route);

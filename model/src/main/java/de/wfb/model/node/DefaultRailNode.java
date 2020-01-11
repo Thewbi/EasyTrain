@@ -10,10 +10,11 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import de.wfb.model.Model;
 import de.wfb.rail.events.ModelChangedEvent;
+import de.wfb.rail.service.Block;
 
 public class DefaultRailNode extends BaseNode implements RailNode {
 
-	private static final Logger logger = LogManager.getLogger(DefaultRailNode.class);
+	private static final int NOT_RESERVED = -1;
 
 	private static final int NORTH_INDEX = 0;
 
@@ -23,6 +24,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	private static final int WEST_INDEX = 3;
 
+	private static final Logger logger = LogManager.getLogger(DefaultRailNode.class);
+
 	private final Edge[] edges = new Edge[4];
 
 	/** for turnouts, One-Nodes exit the rail towards one ends */
@@ -30,6 +33,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	/** for turnouts, Two-Nodes exit the rail towards the two ends */
 	private GraphNode graphNodeTwo;
+
+	private Block block;
 
 	private Integer protocolTurnoutId;
 
@@ -47,6 +52,12 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	// private final int debugRailNodeID = 172;
 	private final int debugRailNodeID = -1;
+
+	/** is this graph node currently reserved by a locomotive */
+	private boolean reserved;
+
+	/** the id of the locomotive that currently reserves this field */
+	private int reservedLocomotiveId = NOT_RESERVED;
 
 	/**
 	 * ctor
@@ -579,7 +590,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	}
 
 	@Override
-	public Edge getEdge(final EdgeDirection edgeDirection) {
+	public Edge getEdge(final Direction edgeDirection) {
 		switch (edgeDirection) {
 
 		case NORTH:
@@ -600,7 +611,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	}
 
 	@Override
-	public void setEdge(final EdgeDirection edgeDirection, final Edge edge) {
+	public void setEdge(final Direction edgeDirection, final Edge edge) {
 		switch (edgeDirection) {
 
 		case NORTH:
@@ -622,6 +633,11 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 		default:
 			throw new IllegalArgumentException("Invalid direction!");
 		}
+	}
+
+	@Override
+	public boolean isReservedExcluding(final int locomotiveId) {
+		return reservedLocomotiveId != NOT_RESERVED && reservedLocomotiveId != locomotiveId;
 	}
 
 	@Override
@@ -707,6 +723,41 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	@Override
 	public void setHighlighted(final boolean highlighted) {
 		this.highlighted = highlighted;
+	}
+
+	@Override
+	public boolean isReserved() {
+		return reserved;
+	}
+
+	@Override
+	public void setReserved(final boolean reserved) {
+		this.reserved = reserved;
+	}
+
+	@Override
+	public int getReservedLocomotiveId() {
+		return reservedLocomotiveId;
+	}
+
+	@Override
+	public void setReservedLocomotiveId(final int reservedLocomotiveId) {
+		this.reservedLocomotiveId = reservedLocomotiveId;
+	}
+
+	@Override
+	public Block getBlock() {
+		return block;
+	}
+
+	@Override
+	public void setBlock(final Block block) {
+		this.block = block;
+	}
+
+	@Override
+	public Edge[] getEdges() {
+		return edges;
 	}
 
 }

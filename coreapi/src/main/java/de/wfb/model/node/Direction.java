@@ -10,4 +10,6 @@ public enum Direction {
 
 	WEST,
 
+	NONE
+
 }

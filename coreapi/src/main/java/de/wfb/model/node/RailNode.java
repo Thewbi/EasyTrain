@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.context.ApplicationEventPublisher;
 
 import de.wfb.model.Model;
+import de.wfb.rail.service.Block;
 import de.wfb.rail.ui.ShapeType;
 
 public interface RailNode extends Node {
@@ -43,9 +44,9 @@ public interface RailNode extends Node {
 
 	void setWestEdge(Edge edge);
 
-	Edge getEdge(EdgeDirection edgeDirection);
+	Edge getEdge(Direction edgeDirection);
 
-	void setEdge(EdgeDirection edgeDirection, Edge edge);
+	void setEdge(Direction edgeDirection, Edge edge);
 
 	@Override
 	ShapeType getShapeType();
@@ -86,5 +87,21 @@ public interface RailNode extends Node {
 	void manualConnectTo(RailNode railNode);
 
 	void switchToGraphNode(ApplicationEventPublisher applicationEventPublisher, Model model, GraphNode nextGraphNode);
+
+	boolean isReserved();
+
+	void setReserved(boolean reserved);
+
+	int getReservedLocomotiveId();
+
+	void setReservedLocomotiveId(int reservedLocomotiveId);
+
+	Block getBlock();
+
+	void setBlock(Block block);
+
+	boolean isReservedExcluding(int id);
+
+	Edge[] getEdges();
 
 }

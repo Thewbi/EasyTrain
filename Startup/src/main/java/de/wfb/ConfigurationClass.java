@@ -3,7 +3,12 @@ package de.wfb;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.SchedulingConfigurer;
+import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
+import de.wfb.dialogs.BlockNavigationPane;
 import de.wfb.dialogs.LayoutElementSelectionPane;
 import de.wfb.dialogs.LocomotiveAddPane;
 import de.wfb.dialogs.LocomotiveListPane;
@@ -30,7 +35,9 @@ import de.wfb.model.strategy.DefaultGraphColorStrategy;
 import de.wfb.rail.facade.DefaultProtocolFacade;
 import de.wfb.rail.factory.DefaultSVGPathFactory;
 import de.wfb.rail.factory.DefaultSerialPortFactory;
+import de.wfb.rail.service.DefaultDrivingService;
 import de.wfb.rail.service.DefaultProtocolService;
+import de.wfb.threads.TimedDrivingThread;
 
 /**
  * https://docs.spring.io/spring-boot/docs/current/reference/html/using-spring-boot.html#using-boot-configuration-classes
@@ -43,8 +50,37 @@ import de.wfb.rail.service.DefaultProtocolService;
  * main method is a good candidate as the primary @Configuration.
  */
 @ComponentScan("de.wfb")
+@EnableScheduling
 @Configuration
-public class ConfigurationClass {
+public class ConfigurationClass implements SchedulingConfigurer {
+
+	/**
+	 * https://stackoverflow.com/questions/39066898/how-to-use-scheduled-annotation-in-non-spring-boot-projects/39072611
+	 *
+	 * @return
+	 */
+	@Bean
+	public CustomThreadPoolScheduler taskScheduler() {
+
+		final CustomThreadPoolScheduler scheduler = new CustomThreadPoolScheduler();
+		scheduler.setPoolSize(10);
+		scheduler.setThreadGroupName("threadgroupname");
+		scheduler.setThreadNamePrefix("threadPrefix");
+		scheduler.setAwaitTerminationSeconds(1);
+
+		return scheduler;
+	}
+
+	/**
+	 * https://stackoverflow.com/questions/39066898/how-to-use-scheduled-annotation-in-non-spring-boot-projects/39072611
+	 */
+	@Override
+	public void configureTasks(final ScheduledTaskRegistrar registrar) {
+
+		final TaskScheduler scheduler = this.taskScheduler();
+
+		registrar.setTaskScheduler(scheduler);
+	}
 
 	@Bean
 	public DefaultSVGPathFactory SVGPathFactory() {
@@ -184,6 +220,21 @@ public class ConfigurationClass {
 	@Bean
 	public PlaceLocomotivePane PlaceLocomotivePane() {
 		return new PlaceLocomotivePane();
+	}
+
+	@Bean
+	public BlockNavigationPane BlockNavigationPane() {
+		return new BlockNavigationPane();
+	}
+
+	@Bean
+	public DefaultDrivingService DefaultDrivingService() {
+		return new DefaultDrivingService();
+	}
+
+	@Bean
+	public TimedDrivingThread TimedDrivingThread() {
+		return new TimedDrivingThread();
 	}
 
 }

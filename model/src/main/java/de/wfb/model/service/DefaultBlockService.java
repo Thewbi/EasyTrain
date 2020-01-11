@@ -1,7 +1,9 @@
 package de.wfb.model.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,7 +59,22 @@ public class DefaultBlockService implements BlockService {
 		final Block block = idBlockMap.get(feedbackBlockNumber);
 
 		logger.info("Inserting node " + railNode.getId() + " into Block " + block.getId());
+
 		block.addNode(railNode);
+		railNode.setBlock(block);
+	}
+
+	@Override
+	public List<Block> getAllBlocks() {
+
+		final List<Block> result = new ArrayList<>();
+
+		for (final Map.Entry<Integer, Block> entry : idBlockMap.entrySet()) {
+
+			result.add(entry.getValue());
+		}
+
+		return result;
 	}
 
 }

@@ -102,14 +102,14 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			// east
 			eastEdge = new DefaultEdge();
 			eastEdge.setDirection(Direction.EAST);
-			railNode.setEdge(EdgeDirection.EAST, eastEdge);
+			railNode.setEdge(Direction.EAST, eastEdge);
 			eastEdge.setInGraphNode(graphNodeTwo);
 			eastEdge.setOutGraphNode(graphNodeOne);
 
 			// west
 			westEdge = new DefaultEdge();
 			westEdge.setDirection(Direction.WEST);
-			railNode.setEdge(EdgeDirection.WEST, westEdge);
+			railNode.setEdge(Direction.WEST, westEdge);
 			westEdge.setInGraphNode(graphNodeOne);
 			westEdge.setOutGraphNode(graphNodeTwo);
 
@@ -133,14 +133,14 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			// north
 			northEdge = new DefaultEdge();
 			northEdge.setDirection(Direction.NORTH);
-			railNode.setEdge(EdgeDirection.NORTH, northEdge);
+			railNode.setEdge(Direction.NORTH, northEdge);
 			northEdge.setInGraphNode(graphNodeTwo);
 			northEdge.setOutGraphNode(graphNodeOne);
 
 			// south
 			southEdge = new DefaultEdge();
 			southEdge.setDirection(Direction.SOUTH);
-			railNode.setEdge(EdgeDirection.SOUTH, southEdge);
+			railNode.setEdge(Direction.SOUTH, southEdge);
 			southEdge.setInGraphNode(graphNodeOne);
 			southEdge.setOutGraphNode(graphNodeTwo);
 
@@ -164,14 +164,14 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			// north
 			northEdge = new DefaultEdge();
 			northEdge.setDirection(Direction.NORTH);
-			railNode.setEdge(EdgeDirection.NORTH, northEdge);
+			railNode.setEdge(Direction.NORTH, northEdge);
 			northEdge.setInGraphNode(graphNodeTwo);
 			northEdge.setOutGraphNode(graphNodeOne);
 
 			// east
 			eastEdge = new DefaultEdge();
 			eastEdge.setDirection(Direction.EAST);
-			railNode.setEdge(EdgeDirection.EAST, eastEdge);
+			railNode.setEdge(Direction.EAST, eastEdge);
 			eastEdge.setInGraphNode(graphNodeOne);
 			eastEdge.setOutGraphNode(graphNodeTwo);
 
@@ -195,14 +195,14 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			// east
 			eastEdge = new DefaultEdge();
 			eastEdge.setDirection(Direction.EAST);
-			railNode.setEdge(EdgeDirection.EAST, eastEdge);
+			railNode.setEdge(Direction.EAST, eastEdge);
 			eastEdge.setInGraphNode(graphNodeOne);
 			eastEdge.setOutGraphNode(graphNodeTwo);
 
 			// south
 			southEdge = new DefaultEdge();
 			southEdge.setDirection(Direction.SOUTH);
-			railNode.setEdge(EdgeDirection.SOUTH, southEdge);
+			railNode.setEdge(Direction.SOUTH, southEdge);
 			southEdge.setInGraphNode(graphNodeTwo);
 			southEdge.setOutGraphNode(graphNodeOne);
 
@@ -226,14 +226,14 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			// west
 			westEdge = new DefaultEdge();
 			westEdge.setDirection(Direction.WEST);
-			railNode.setEdge(EdgeDirection.WEST, westEdge);
+			railNode.setEdge(Direction.WEST, westEdge);
 			westEdge.setInGraphNode(graphNodeOne);
 			westEdge.setOutGraphNode(graphNodeTwo);
 
 			// south
 			southEdge = new DefaultEdge();
 			southEdge.setDirection(Direction.SOUTH);
-			railNode.setEdge(EdgeDirection.SOUTH, southEdge);
+			railNode.setEdge(Direction.SOUTH, southEdge);
 			southEdge.setInGraphNode(graphNodeTwo);
 			southEdge.setOutGraphNode(graphNodeOne);
 
@@ -257,14 +257,14 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			// west
 			westEdge = new DefaultEdge();
 			westEdge.setDirection(Direction.WEST);
-			railNode.setEdge(EdgeDirection.WEST, westEdge);
+			railNode.setEdge(Direction.WEST, westEdge);
 			westEdge.setInGraphNode(graphNodeOne);
 			westEdge.setOutGraphNode(graphNodeTwo);
 
 			// north
 			northEdge = new DefaultEdge();
 			northEdge.setDirection(Direction.NORTH);
-			railNode.setEdge(EdgeDirection.NORTH, northEdge);
+			railNode.setEdge(Direction.NORTH, northEdge);
 			northEdge.setInGraphNode(graphNodeTwo);
 			northEdge.setOutGraphNode(graphNodeOne);
 
@@ -288,21 +288,21 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			// north
 			northEdge = new DefaultEdge();
 			northEdge.setDirection(Direction.NORTH);
-			railNode.setEdge(EdgeDirection.NORTH, northEdge);
+			railNode.setEdge(Direction.NORTH, northEdge);
 			northEdge.setInGraphNode(graphNodeTwo);
 			northEdge.setOutGraphNode(graphNodeOne);
 
 			// east
 			eastEdge = new DefaultEdge();
 			eastEdge.setDirection(Direction.EAST);
-			railNode.setEdge(EdgeDirection.EAST, eastEdge);
+			railNode.setEdge(Direction.EAST, eastEdge);
 			eastEdge.setInGraphNode(graphNodeTwo);
 			eastEdge.setOutGraphNode(graphNodeOne);
 
 			// west
 			westEdge = new DefaultEdge();
 			westEdge.setDirection(Direction.WEST);
-			railNode.setEdge(EdgeDirection.WEST, westEdge);
+			railNode.setEdge(Direction.WEST, westEdge);
 			westEdge.setInGraphNode(graphNodeOne);
 			westEdge.setOutGraphNode(graphNodeTwo);
 
@@ -335,21 +335,21 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			// north
 			northEdge = new DefaultEdge();
 			northEdge.setDirection(Direction.NORTH);
-			railNode.setEdge(EdgeDirection.NORTH, northEdge);
+			railNode.setEdge(Direction.NORTH, northEdge);
 			northEdge.setInGraphNode(graphNodeOne);
 			northEdge.setOutGraphNode(graphNodeTwo);
 
 			// east
 			eastEdge = new DefaultEdge();
 			eastEdge.setDirection(Direction.EAST);
-			railNode.setEdge(EdgeDirection.EAST, eastEdge);
+			railNode.setEdge(Direction.EAST, eastEdge);
 			eastEdge.setInGraphNode(graphNodeTwo);
 			eastEdge.setOutGraphNode(graphNodeOne);
 
 			// south
 			southEdge = new DefaultEdge();
 			southEdge.setDirection(Direction.SOUTH);
-			railNode.setEdge(EdgeDirection.SOUTH, southEdge);
+			railNode.setEdge(Direction.SOUTH, southEdge);
 			southEdge.setInGraphNode(graphNodeTwo);
 			southEdge.setOutGraphNode(graphNodeOne);
 
@@ -382,21 +382,21 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			// east
 			eastEdge = new DefaultEdge();
 			eastEdge.setDirection(Direction.EAST);
-			railNode.setEdge(EdgeDirection.EAST, eastEdge);
+			railNode.setEdge(Direction.EAST, eastEdge);
 			eastEdge.setInGraphNode(graphNodeOne);
 			eastEdge.setOutGraphNode(graphNodeTwo);
 
 			// south
 			southEdge = new DefaultEdge();
 			southEdge.setDirection(Direction.SOUTH);
-			railNode.setEdge(EdgeDirection.SOUTH, southEdge);
+			railNode.setEdge(Direction.SOUTH, southEdge);
 			southEdge.setInGraphNode(graphNodeTwo);
 			southEdge.setOutGraphNode(graphNodeOne);
 
 			// west
 			westEdge = new DefaultEdge();
 			westEdge.setDirection(Direction.WEST);
-			railNode.setEdge(EdgeDirection.WEST, westEdge);
+			railNode.setEdge(Direction.WEST, westEdge);
 			westEdge.setInGraphNode(graphNodeTwo);
 			westEdge.setOutGraphNode(graphNodeOne);
 
@@ -429,21 +429,21 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			// north
 			northEdge = new DefaultEdge();
 			northEdge.setDirection(Direction.NORTH);
-			railNode.setEdge(EdgeDirection.NORTH, northEdge);
+			railNode.setEdge(Direction.NORTH, northEdge);
 			northEdge.setInGraphNode(graphNodeTwo);
 			northEdge.setOutGraphNode(graphNodeOne);
 
 			// south
 			southEdge = new DefaultEdge();
 			southEdge.setDirection(Direction.SOUTH);
-			railNode.setEdge(EdgeDirection.SOUTH, southEdge);
+			railNode.setEdge(Direction.SOUTH, southEdge);
 			southEdge.setInGraphNode(graphNodeOne);
 			southEdge.setOutGraphNode(graphNodeTwo);
 
 			// west
 			westEdge = new DefaultEdge();
 			westEdge.setDirection(Direction.WEST);
-			railNode.setEdge(EdgeDirection.WEST, westEdge);
+			railNode.setEdge(Direction.WEST, westEdge);
 			westEdge.setInGraphNode(graphNodeTwo);
 			westEdge.setOutGraphNode(graphNodeOne);
 

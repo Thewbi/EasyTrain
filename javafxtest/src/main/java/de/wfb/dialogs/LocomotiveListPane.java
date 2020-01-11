@@ -43,7 +43,7 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 	private ModelFacade modelFacade;
 
 	@Autowired
-	ApplicationEventPublisher applicationEventPublisher;
+	private ApplicationEventPublisher applicationEventPublisher;
 
 	public void synchronizeModel() {
 
@@ -77,6 +77,7 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 
 		setSpacing(5);
 		setPadding(new Insets(10, 10, 10, 10));
+
 		getChildren().addAll(tableView);
 	}
 

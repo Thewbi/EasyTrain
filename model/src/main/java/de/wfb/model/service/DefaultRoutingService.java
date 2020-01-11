@@ -13,12 +13,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import de.wfb.model.node.Color;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
-import de.wfb.model.node.RailNode;
 import de.wfb.model.node.SwitchingNodeEntry;
 import de.wfb.model.strategy.GraphColorStrategy;
-import de.wfb.rail.events.NodeHighlightedEvent;
-import de.wfb.rail.events.RemoveHighlightsEvent;
-import de.wfb.rail.ui.ShapeType;
+import de.wfb.rail.service.Route;
 
 public class DefaultRoutingService implements RoutingService {
 
@@ -36,7 +33,7 @@ public class DefaultRoutingService implements RoutingService {
 	private GraphColorStrategy graphColorStrategy;
 
 	@Override
-	public List<GraphNode> route(final Node start, final Node end) {
+	public Route route(final Node start, final Node end) {
 
 		GraphNode graphNodeStart = null;
 		GraphNode graphNodeEnd = null;
@@ -48,10 +45,11 @@ public class DefaultRoutingService implements RoutingService {
 		// @formatter:on
 
 		logger.info("GREEN");
-		List<GraphNode> result = route(graphNodeStart, graphNodeEnd);
 
-		if (CollectionUtils.isNotEmpty(result)) {
-			return result;
+		final Route greenRoute = route(graphNodeStart, graphNodeEnd);
+		if (CollectionUtils.isNotEmpty(greenRoute.getGraphNodes())) {
+
+			return greenRoute;
 		}
 
 		// blue route
@@ -62,23 +60,21 @@ public class DefaultRoutingService implements RoutingService {
 
 		logger.trace("BLUE");
 
-		result = route(graphNodeStart, graphNodeEnd);
-
-		return result;
+		return route(graphNodeStart, graphNodeEnd);
 	}
 
 	@Override
-	public List<GraphNode> route(final GraphNode graphNodeStart, final GraphNode graphNodeEnd) {
+	public Route route(final GraphNode graphNodeStart, final GraphNode graphNodeEnd) {
 
-		logger.info("Start: " + graphNodeStart.getId() + " End: " + graphNodeEnd.getId());
+		logger.trace("Start: " + graphNodeStart.getId() + " End: " + graphNodeEnd.getId());
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
-		final List<GraphNode> route = new ArrayList<>();
+		final List<GraphNode> nodeList = new ArrayList<>();
 
 		GraphNode currentNodeGraphNode = graphNodeStart;
 
-		route.add(currentNodeGraphNode);
+		nodeList.add(currentNodeGraphNode);
 
 		int loopBreaker = MAX_ROUTE_FINDING_STEPS;
 
@@ -93,18 +89,18 @@ public class DefaultRoutingService implements RoutingService {
 
 			loopBreaker--;
 
-			logger.info("ROUTE: " + currentNodeGraphNode.getId());
+			logger.trace("ROUTE: " + currentNodeGraphNode.getId());
 
 			stringBuffer.append(currentNodeGraphNode.getId()).append(", ");
 
 			// current node has only one child -> go to child, current node = child
 			if (currentNodeGraphNode.getChildren().size() == 1) {
 
-				logger.info("FROM " + currentNodeGraphNode.getId() + " TO "
+				logger.trace("FROM " + currentNodeGraphNode.getId() + " TO "
 						+ currentNodeGraphNode.getChildren().get(0).getId());
 
 				currentNodeGraphNode = currentNodeGraphNode.getChildren().get(0);
-				route.add(currentNodeGraphNode);
+				nodeList.add(currentNodeGraphNode);
 
 				continue;
 			}
@@ -116,13 +112,13 @@ public class DefaultRoutingService implements RoutingService {
 			if (currentNodeGraphNode == null) {
 
 				logger.info("No route found!");
-				route.clear();
+				nodeList.clear();
 
-				return new ArrayList<>();
+				return new Route();
 
 			} else {
 
-				logger.info("Routing Table returns: " + currentNodeGraphNode.getId());
+				logger.trace("Routing Table returns: " + currentNodeGraphNode.getId());
 
 				// TODO: throw exception if the routing table returns a node that is not
 				// connected
@@ -132,15 +128,18 @@ public class DefaultRoutingService implements RoutingService {
 //
 //				}
 
-				route.add(currentNodeGraphNode);
+				nodeList.add(currentNodeGraphNode);
 			}
 
 		}
 
 		stringBuffer.append(graphNodeEnd.getId());
-		route.add(graphNodeEnd);
+//		nodeList.add(graphNodeEnd);
 
 		logger.info(stringBuffer.toString());
+
+		final Route route = new Route();
+		route.getGraphNodes().addAll(nodeList);
 
 		return route;
 	}
@@ -229,75 +228,13 @@ public class DefaultRoutingService implements RoutingService {
 	}
 
 	@Override
-	public void highlightRoute(final List<GraphNode> route) {
-
-		if (CollectionUtils.isEmpty(route)) {
-			return;
-		}
-
-		// remove all highlights
-		final RemoveHighlightsEvent removeHighlightsEvent = new RemoveHighlightsEvent(this);
-		applicationEventPublisher.publishEvent(removeHighlightsEvent);
-
-		// highlight each node in the graph
-		for (final GraphNode graphNode : route) {
-
-			logger.trace("Highlighting :" + graphNode.getId());
-
-			final RailNode railNode = graphNode.getRailNode();
-			railNode.setHighlighted(true);
-
-			logger.trace("Sending NodeHighlightedEvent!");
-
-			final boolean hightlighted = true;
-			final NodeHighlightedEvent nodeHighlightedEvent = new NodeHighlightedEvent(this, modelService.getModel(),
-					railNode, railNode.getX(), railNode.getY(), hightlighted);
-
-			applicationEventPublisher.publishEvent(nodeHighlightedEvent);
-		}
+	public void highlightRoute(final Route route) {
+		route.highlightRoute(applicationEventPublisher);
 	}
 
 	@Override
-	public void switchTurnouts(final List<GraphNode> route) {
-
-		logger.trace("switchTurnouts()");
-
-		if (CollectionUtils.isEmpty(route)) {
-			return;
-		}
-
-		// follow the route
-		int index = 0;
-		for (final GraphNode graphNode : route) {
-
-			if (ShapeType.isTurnout(graphNode.getRailNode().getShapeType())) {
-
-				// if the turnout is NOT traversed in switching direction, continue
-				if (graphNode.getChildren().size() < 2) {
-
-					logger.info("Index = " + index + " Turnout found. Not in switching order!");
-
-					index++;
-					continue;
-				}
-
-				logger.info("Index = " + index + " Turnout found in switching order!");
-				final RailNode turnoutNode = graphNode.getRailNode();
-
-				logger.trace("Turnout ShapeType = " + turnoutNode.getShapeType().name());
-
-				final int nextIndex = index + 1;
-				if (nextIndex < route.size()) {
-
-					final GraphNode nextGraphNode = route.get(nextIndex);
-
-					turnoutNode.switchToGraphNode(applicationEventPublisher, modelService.getModel(), nextGraphNode);
-				}
-			}
-
-			index++;
-		}
-
+	public void switchTurnouts(final Route route) {
+		route.switchTurnouts(applicationEventPublisher);
 	}
 
 }

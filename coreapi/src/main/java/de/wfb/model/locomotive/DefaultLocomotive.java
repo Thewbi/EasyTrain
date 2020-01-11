@@ -1,5 +1,9 @@
 package de.wfb.model.locomotive;
 
+import de.wfb.model.node.Direction;
+import de.wfb.model.node.RailNode;
+import de.wfb.rail.service.Route;
+
 public class DefaultLocomotive {
 
 	private int id;
@@ -8,6 +12,12 @@ public class DefaultLocomotive {
 	private int address;
 
 	private String name;
+
+	private Direction edgeDirection = Direction.NONE;
+
+	private RailNode railNode;
+
+	private Route route;
 
 	public DefaultLocomotive() {
 		super();
@@ -18,6 +28,33 @@ public class DefaultLocomotive {
 		this.id = id;
 		this.name = name;
 		this.address = address;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final DefaultLocomotive other = (DefaultLocomotive) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Locomotive " + name + "";
 	}
 
 	public int getAddress() {
@@ -44,26 +81,28 @@ public class DefaultLocomotive {
 		this.id = id;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		return result;
+	public Direction getOrientation() {
+		return edgeDirection;
 	}
 
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final DefaultLocomotive other = (DefaultLocomotive) obj;
-		if (id != other.id)
-			return false;
-		return true;
+	public void setOrientation(final Direction edgeDirection) {
+		this.edgeDirection = edgeDirection;
+	}
+
+	public RailNode getRailNode() {
+		return railNode;
+	}
+
+	public void setRailNode(final RailNode railNode) {
+		this.railNode = railNode;
+	}
+
+	public Route getRoute() {
+		return route;
+	}
+
+	public void setRoute(final Route route) {
+		this.route = route;
 	}
 
 }
