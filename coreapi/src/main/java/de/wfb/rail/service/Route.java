@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.CollectionUtils;
 
+import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.RailNode;
 import de.wfb.rail.events.NodeHighlightedEvent;
@@ -17,6 +18,8 @@ import de.wfb.rail.ui.ShapeType;
 public class Route {
 
 	private static final Logger logger = LogManager.getLogger(Route.class);
+
+	private DefaultLocomotive locomotive;
 
 	private final List<GraphNode> graphNodes = new ArrayList<>();
 
@@ -175,6 +178,36 @@ public class Route {
 		}
 
 		return graphNodes.get(graphNodes.size() - 1);
+	}
+
+	public boolean reservesBlock(final Block block) {
+
+		for (final GraphNode graphNode : getGraphNodes()) {
+
+			final RailNode railNode = graphNode.getRailNode();
+
+			// does the block share rail nodes with the route
+			if (!block.getNodes().contains(railNode)) {
+				continue;
+			}
+
+			// check if the block is reserved for the route's locomotive
+			final RailNode blockRailNode = block.getNodes().get(0);
+			if (blockRailNode.isReserved() && blockRailNode.getReservedLocomotiveId() == getLocomotive().getId()) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public DefaultLocomotive getLocomotive() {
+		return locomotive;
+	}
+
+	public void setLocomotive(final DefaultLocomotive locomotive) {
+		this.locomotive = locomotive;
 	}
 
 }

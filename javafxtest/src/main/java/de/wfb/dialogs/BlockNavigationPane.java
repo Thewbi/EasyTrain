@@ -22,6 +22,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
+/**
+ * This pane allows a user to select a locomotive, a start block, a target block
+ * and a driving direction to move. It will compute a rout and assign the rout
+ * to the locomotive.
+ */
 public class BlockNavigationPane extends HBox {
 
 	private static final Logger logger = LogManager.getLogger(BlockNavigationPane.class);
@@ -105,11 +110,32 @@ public class BlockNavigationPane extends HBox {
 
 				logger.info(stringBuffer.toString());
 
-				// determine the correct graph node
+				// determine the correct graph node based on the direction the user wants the
+				// route to be
+				// traversed by the locomotive.
+				//
+				// The startEdgeDirection is not the direction in which the front part of the
+				// faces!
+				//
+				// If startEdgeDirection and locomotive defaultLocomotive.getOrientation() point
+				// in the same direction, the locomotive will move in forwards direction.
+				//
+				// If they do not point into the same direction, the locomotive will move in
+				// reverse direction.
 				final GraphNode startGraphNode = defaultLocomotive.getRailNode().getEdge(startEdgeDirection)
 						.getOutGraphNode();
 
-				// TODO: create a route
+				if (startEdgeDirection == defaultLocomotive.getOrientation()) {
+
+					logger.info("Locomotive is going forwards!");
+
+				} else {
+
+					logger.info("Locomotive is going backwards (reverse)!");
+
+				}
+
+				// create a route
 				Route route = null;
 
 				try {
@@ -118,25 +144,34 @@ public class BlockNavigationPane extends HBox {
 					;
 				}
 
-				try {
-					route = routingService.route(startGraphNode, endBlock.getNodes().get(0).getGraphNodeTwo());
-				} catch (final Exception e) {
-					;
+				if (route == null) {
+					try {
+						route = routingService.route(startGraphNode, endBlock.getNodes().get(0).getGraphNodeTwo());
+					} catch (final Exception e) {
+						;
+					}
 				}
 
 				if (route == null) {
+
+					logger.info("Route is null!");
+
+				} else {
+
 					logger.info(route);
+
+					// set the route into the locomotive, this causes the TimedDrivingThread to move
+					// the locomotive starting with the next timed iteration
+					defaultLocomotive.setRoute(route);
+					route.setLocomotive(defaultLocomotive);
+
+					// Send an event that a locomotive now has a route
+					final RouteAddedEvent routeAddedEvent = new RouteAddedEvent(this, route, defaultLocomotive);
+					applicationEventPublisher.publishEvent(routeAddedEvent);
+
+					// The DrivingService will catch the event and reserve the route so that the
+					// locomotive can move to the next block
 				}
-
-				// TODO: set the route into the locomotive
-				defaultLocomotive.setRoute(route);
-
-				// TODO: Send an event that a locomotive now has a route
-				final RouteAddedEvent routeAddedEvent = new RouteAddedEvent(this, route, defaultLocomotive);
-				applicationEventPublisher.publishEvent(routeAddedEvent);
-
-				// TODO: The DrivingService has to catch the event or poll for Locomotives with
-				// Routes
 
 			}
 		});

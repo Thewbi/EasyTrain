@@ -9,6 +9,9 @@ import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.RailNode;
 import de.wfb.rail.service.Block;
 
+/**
+ * Implementation of a Feedback Block.
+ */
 public class DefaultBlock implements Block {
 
 	private int id;
@@ -30,7 +33,7 @@ public class DefaultBlock implements Block {
 	}
 
 	@Override
-	public void reserveByLocomotive(final DefaultLocomotive defaultLocomotive) {
+	public void reserveForLocomotive(final DefaultLocomotive defaultLocomotive) {
 
 		if (CollectionUtils.isEmpty(getNodes())) {
 			return;
@@ -39,14 +42,22 @@ public class DefaultBlock implements Block {
 		// reserve all the block's nodes for this locomotive
 		for (final RailNode blockRailNode : getNodes()) {
 
-			if (blockRailNode.isReserved()) {
+			if (defaultLocomotive == null) {
 
-				throw new IllegalArgumentException(
-						"Block is reserved already by Locomotive " + blockRailNode.getReservedLocomotiveId());
+				blockRailNode.setReserved(false);
+				blockRailNode.setReservedLocomotiveId(-1);
+
+			} else {
+
+				if (blockRailNode.isReserved()) {
+
+					throw new IllegalArgumentException(
+							"Block is reserved already by Locomotive " + blockRailNode.getReservedLocomotiveId());
+				}
+
+				blockRailNode.setReserved(true);
+				blockRailNode.setReservedLocomotiveId(defaultLocomotive.getId());
 			}
-
-			blockRailNode.setReserved(true);
-			blockRailNode.setReservedLocomotiveId(defaultLocomotive.getId());
 		}
 	}
 

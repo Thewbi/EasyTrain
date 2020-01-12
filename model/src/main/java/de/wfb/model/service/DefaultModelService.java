@@ -80,11 +80,13 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 
 			for (final Node node : feedbackBlockNodes) {
 
+				// tell the rail node, that the feedback block it belongs to is used
 				node.setFeedbackBlockUsed(feedbackBlockState == FeedbackBlockState.BLOCKED);
 
+				// the model changed because some of the nodes are now used.
+				// Publish an event after model changes
 				final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, node.getX(), node.getY(),
 						node.isHighlighted(), node.isFeedbackBlockUsed(), node.isSelected());
-
 				applicationEventPublisher.publishEvent(modelChangedEvent);
 			}
 		}

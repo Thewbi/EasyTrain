@@ -159,6 +159,22 @@ public class PlaceLocomotivePane extends VBox implements ApplicationListener<App
 		}
 	}
 
+	/**
+	 *
+	 * @param node          the RailNode to put the locomotive on. RailNode !=
+	 *                      GraphNode.
+	 * @param locomotive    the locomotive.
+	 * @param edgeDirection this is the direction where the front facing part of the
+	 *                      locomotive points to. This modelled direction has to
+	 *                      match the direction of the locomotive on the real life
+	 *                      layout so correct P50X commands can be produced for
+	 *                      driving the locomotive forwards or backwards. This
+	 *                      direction it is not necessarily the same direction in
+	 *                      which the locomotive will move! If the direction are
+	 *                      opposite a reverse move P50X command will be produced!
+	 *                      If the orientations align, a forward move P50X command
+	 *                      will be produced!
+	 */
 	public static void placeLocomotive(final Node node, final DefaultLocomotive locomotive,
 			final Direction edgeDirection) {
 
@@ -175,6 +191,7 @@ public class PlaceLocomotivePane extends VBox implements ApplicationListener<App
 		// forwards or reverse direction
 		locomotive.setOrientation(edgeDirection);
 		locomotive.setRailNode((RailNode) node);
+		locomotive.setGraphNode(null);
 
 		final RailNode railNode = (RailNode) node;
 		final Block block = railNode.getBlock();
@@ -191,10 +208,9 @@ public class PlaceLocomotivePane extends VBox implements ApplicationListener<App
 		} else {
 
 			// if the rail node is part of a block, reserve the entire block
-			block.reserveByLocomotive(locomotive);
+			block.reserveForLocomotive(locomotive);
 
 			logger.info("Put Locomotive " + locomotive.getName() + " onto Block " + block.getId());
-
 		}
 
 		// Put the Loco on both Graph nodes of the current RailNode

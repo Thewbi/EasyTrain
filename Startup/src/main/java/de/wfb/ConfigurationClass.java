@@ -24,6 +24,7 @@ import de.wfb.javafxtest.controller.LayoutGridController;
 import de.wfb.model.DefaultModel;
 import de.wfb.model.Model;
 import de.wfb.model.facade.DefaultModelFacade;
+import de.wfb.model.facade.DefaultRoutingFacade;
 import de.wfb.model.node.DefaultRailNodeFactory;
 import de.wfb.model.service.DefaultBlockService;
 import de.wfb.model.service.DefaultIdService;
@@ -235,6 +236,11 @@ public class ConfigurationClass implements SchedulingConfigurer {
 	@Bean
 	public TimedDrivingThread TimedDrivingThread() {
 		return new TimedDrivingThread();
+	}
+
+	@Bean
+	public DefaultRoutingFacade DefaultRoutingFacade() {
+		return new DefaultRoutingFacade();
 	}
 
 }

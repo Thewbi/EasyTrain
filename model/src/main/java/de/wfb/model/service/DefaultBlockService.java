@@ -77,4 +77,13 @@ public class DefaultBlockService implements BlockService {
 		return result;
 	}
 
+	@Override
+	public Block getBlockById(final int feedbackBlockNumber) {
+
+		if (!idBlockMap.containsKey(feedbackBlockNumber)) {
+			return null;
+		}
+		return idBlockMap.get(feedbackBlockNumber);
+	}
+
 }

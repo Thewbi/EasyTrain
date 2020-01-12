@@ -1,6 +1,7 @@
 package de.wfb.model.locomotive;
 
 import de.wfb.model.node.Direction;
+import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.RailNode;
 import de.wfb.rail.service.Route;
 
@@ -16,6 +17,8 @@ public class DefaultLocomotive {
 	private Direction edgeDirection = Direction.NONE;
 
 	private RailNode railNode;
+
+	private GraphNode graphNode;
 
 	private Route route;
 
@@ -103,6 +106,14 @@ public class DefaultLocomotive {
 
 	public void setRoute(final Route route) {
 		this.route = route;
+	}
+
+	public GraphNode getGraphNode() {
+		return graphNode;
+	}
+
+	public void setGraphNode(final GraphNode graphNode) {
+		this.graphNode = graphNode;
 	}
 
 }

@@ -120,21 +120,11 @@ public class DefaultRoutingService implements RoutingService {
 
 				logger.trace("Routing Table returns: " + currentNodeGraphNode.getId());
 
-				// TODO: throw exception if the routing table returns a node that is not
-				// connected
-				// to the current node.
-
-//				for (GraphNode graphNode : getChildren()) {
-//
-//				}
-
 				nodeList.add(currentNodeGraphNode);
 			}
-
 		}
 
 		stringBuffer.append(graphNodeEnd.getId());
-//		nodeList.add(graphNodeEnd);
 
 		logger.info(stringBuffer.toString());
 

@@ -16,6 +16,7 @@ import de.wfb.rail.events.SelectionEvent;
 import de.wfb.rail.factory.Factory;
 import de.wfb.rail.factory.LayoutColors;
 import de.wfb.rail.ui.ShapeType;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -152,77 +153,85 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 
 	private void processModelChangedEvent(final ModelChangedEvent modelChangedEvent) {
 
-		final Model model = modelChangedEvent.getModel();
-		final Node node = model.getNode(modelChangedEvent.getX(), modelChangedEvent.getY());
+		Platform.runLater(new Runnable() {
 
-		logger.trace("onApplicationEvent() node = " + node);
+			@Override
+			public void run() {
 
-		if (node == null) {
+				final Model model = modelChangedEvent.getModel();
+				final Node node = model.getNode(modelChangedEvent.getX(), modelChangedEvent.getY());
 
-			// remove
-			final SVGPath svgPathOld = viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()];
-			getChildren().remove(svgPathOld);
+				logger.trace("onApplicationEvent() node = " + node);
 
-			return;
-		}
+				if (node == null) {
 
-		logger.trace("A");
+					// remove
+					final SVGPath svgPathOld = viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()];
+					getChildren().remove(svgPathOld);
 
-		// if the new ShapeType is none, do not add a new shape but bail here
-		final ShapeType shapeType = node.getShapeType();
-		if (shapeType == ShapeType.NONE) {
-
-			return;
-		}
-
-		logger.trace("B");
-
-		// TODO: handle case, when only the color changed!
-
-		// remove
-		final SVGPath svgPathOld = viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()];
-		getChildren().remove(svgPathOld);
-
-		// create new path
-		final boolean turnoutState = turnoutState(node);
-		logger.trace("TurnoutState: " + turnoutState);
-		final boolean highlighted = modelChangedEvent.isHighlighted();
-		final boolean blocked = modelChangedEvent.isBlocked();
-		final boolean selected = modelChangedEvent.isSelected();
-
-		try {
-			final SVGPath svgPathNew = svgPathFactory.create(shapeType, cell_width, turnoutState, highlighted, blocked,
-					selected);
-
-			if (svgPathNew == null) {
-				return;
-			}
-			svgPathNew.setLayoutX(modelChangedEvent.getX() * cell_width);
-			svgPathNew.setLayoutY(modelChangedEvent.getY() * cell_width);
-
-			getChildren().addAll(svgPathNew);
-
-			if (node.getFeedbackBlockNumber() > -1) {
-
-				final Text text = new Text(Integer.toString(node.getFeedbackBlockNumber()));
-				text.setScaleX(0.5);
-				text.setScaleY(0.5);
-
-				if (shapeType == ShapeType.STRAIGHT_HORIZONTAL) {
-					text.setLayoutX((modelChangedEvent.getX() + 0) * cell_width - 0);
-					text.setLayoutY((modelChangedEvent.getY() + 1) * cell_width + 5);
-				} else if (shapeType == ShapeType.STRAIGHT_VERTICAL) {
-					text.setLayoutX((modelChangedEvent.getX() + 0) * cell_width - 4);
-					text.setLayoutY((modelChangedEvent.getY() + 1) * cell_width + 0);
+					return;
 				}
 
-				getChildren().addAll(text);
-			}
+				logger.trace("A");
 
-			viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()] = svgPathNew;
-		} catch (final Exception e) {
-			logger.error(e.getMessage(), e);
-		}
+				// if the new ShapeType is none, do not add a new shape but bail here
+				final ShapeType shapeType = node.getShapeType();
+				if (shapeType == ShapeType.NONE) {
+
+					return;
+				}
+
+				logger.trace("B");
+
+				// TODO: handle case, when only the color changed!
+
+				// remove
+				final SVGPath svgPathOld = viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()];
+				getChildren().remove(svgPathOld);
+
+				// create new path
+				final boolean turnoutState = turnoutState(node);
+				logger.trace("TurnoutState: " + turnoutState);
+				final boolean highlighted = modelChangedEvent.isHighlighted();
+				final boolean blocked = modelChangedEvent.isBlocked();
+				final boolean selected = modelChangedEvent.isSelected();
+
+				try {
+					final SVGPath svgPathNew = svgPathFactory.create(shapeType, cell_width, turnoutState, highlighted,
+							blocked, selected);
+
+					if (svgPathNew == null) {
+						return;
+					}
+					svgPathNew.setLayoutX(modelChangedEvent.getX() * cell_width);
+					svgPathNew.setLayoutY(modelChangedEvent.getY() * cell_width);
+
+					getChildren().addAll(svgPathNew);
+
+					if (node.getFeedbackBlockNumber() > -1) {
+
+						final Text text = new Text(Integer.toString(node.getFeedbackBlockNumber()));
+						text.setScaleX(0.5);
+						text.setScaleY(0.5);
+
+						if (shapeType == ShapeType.STRAIGHT_HORIZONTAL) {
+							text.setLayoutX((modelChangedEvent.getX() + 0) * cell_width - 0);
+							text.setLayoutY((modelChangedEvent.getY() + 1) * cell_width + 5);
+						} else if (shapeType == ShapeType.STRAIGHT_VERTICAL) {
+							text.setLayoutX((modelChangedEvent.getX() + 0) * cell_width - 4);
+							text.setLayoutY((modelChangedEvent.getY() + 1) * cell_width + 0);
+						}
+
+						getChildren().addAll(text);
+					}
+
+					viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()] = svgPathNew;
+				} catch (final Exception e) {
+					logger.error(e.getMessage(), e);
+				}
+
+			}
+		});
 	}
 
 	private boolean turnoutState(final Node node) {

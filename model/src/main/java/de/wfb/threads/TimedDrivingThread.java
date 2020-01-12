@@ -15,8 +15,8 @@ import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.Edge;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.RailNode;
-import de.wfb.rail.events.BlockEnteredEvent;
-import de.wfb.rail.events.BlockExitedEvent;
+import de.wfb.rail.events.FeedbackBlockEvent;
+import de.wfb.rail.events.FeedbackBlockState;
 import de.wfb.rail.events.RouteFinishedEvent;
 import de.wfb.rail.service.Block;
 import de.wfb.rail.service.Route;
@@ -51,7 +51,7 @@ public class TimedDrivingThread {
 			final Route route = locomotive.getRoute();
 			if (route == null) {
 
-				logger.warn("No route found!");
+				logger.warn("No route found on locomotive ID: " + locomotive.getId());
 				continue;
 			}
 
@@ -61,11 +61,12 @@ public class TimedDrivingThread {
 
 	private void processLocomotive(final DefaultLocomotive locomotive) {
 
-		logger.info("processLocomotive()");
+		logger.info("processLocomotive() locomotive ID: " + locomotive.getId());
 
 		// find the graph node the locomotive is on currently
 		final RailNode currentRailNode = locomotive.getRailNode();
 		final GraphNode currentGraphNode = locomotive.getRoute().findGraphNode(currentRailNode);
+		locomotive.setGraphNode(currentGraphNode);
 
 		final Route route = locomotive.getRoute();
 
@@ -78,11 +79,14 @@ public class TimedDrivingThread {
 		final List<GraphNode> children = currentGraphNode.getChildren();
 		if (CollectionUtils.isEmpty(children)) {
 
-			logger.warn("GraphNode has no children");
-			return;
+			final String msg = "GraphNode has no children";
+			logger.warn(msg);
+
+			throw new IllegalArgumentException(msg);
 		}
 
 		// process all children of the graph node the locomotive is currently on
+		boolean locomotiveWasUsed = false;
 		for (final GraphNode graphNode : children) {
 
 			if (graphNode.getRailNode().getReservedLocomotiveId() != locomotive.getId()) {
@@ -94,40 +98,57 @@ public class TimedDrivingThread {
 
 			final RailNode newRailNode = moveLocomotiveToNextGraphNode(locomotive, currentGraphNode, graphNode);
 
-			final Block oldBlock = currentGraphNode.getRailNode().getBlock();
-			final Block newBlock = newRailNode.getBlock();
+			locomotiveWasUsed = true;
 
-			if ((oldBlock != null) && (newBlock != null)) {
+			processBlocks(currentGraphNode, newRailNode, locomotive);
 
-				if (oldBlock.equals(newBlock)) {
+			// do not visit the next child
+			break;
+		}
 
-					// nop
+		if (!locomotiveWasUsed) {
 
-				} else {
+			logger.info("Locomotive ID: " + locomotive.getId() + " is waiting on GraphNode ID: "
+					+ locomotive.getGraphNode().getId());
 
-					sendLeavingMessage(oldBlock, locomotive);
+			logger.info(locomotive.getRoute());
+		}
+	}
 
-					sendEnteringMessage(newBlock, locomotive);
+	private void processBlocks(final GraphNode currentGraphNode, final RailNode newRailNode,
+			final DefaultLocomotive locomotive) {
 
-				}
+		final Block oldBlock = currentGraphNode.getRailNode().getBlock();
+		final Block newBlock = newRailNode.getBlock();
 
-			} else if (oldBlock != null) {
+		if ((oldBlock != null) && (newBlock != null)) {
+
+			if (oldBlock.equals(newBlock)) {
+
+				// nop
+
+			} else {
 
 				sendLeavingMessage(oldBlock, locomotive);
-
-			} else if (newBlock != null) {
 
 				sendEnteringMessage(newBlock, locomotive);
 
 			}
 
-			// do not visit the next child
-			break;
+		} else if (oldBlock != null) {
+
+			sendLeavingMessage(oldBlock, locomotive);
+
+		} else if (newBlock != null) {
+
+			sendEnteringMessage(newBlock, locomotive);
+
 		}
 	}
 
 	private RailNode moveLocomotiveToNextGraphNode(final DefaultLocomotive locomotive, final GraphNode currentGraphNode,
 			final GraphNode graphNode) {
+
 		logger.info("MOVED FROM GN: " + currentGraphNode.getId() + " TO GN: " + graphNode.getId());
 
 		// move the locomotive to the next graph node
@@ -143,11 +164,14 @@ public class TimedDrivingThread {
 				continue;
 			}
 
+			locomotive.setGraphNode(edge.getOutGraphNode());
+
 			if (edge.getOutGraphNode().equals(graphNode)) {
 
 				locomotive.setOrientation(edge.getDirection());
 			}
 		}
+
 		return newRailNode;
 	}
 
@@ -155,16 +179,24 @@ public class TimedDrivingThread {
 
 		logger.info("Entering block " + block);
 
-		final BlockEnteredEvent blockEnteredEvent = new BlockEnteredEvent(this, block, defaultLocomotive);
-		applicationEventPublisher.publishEvent(blockEnteredEvent);
+		final int feedbackBlockNumber = block.getId();
+		final FeedbackBlockState feedbackBlockState = FeedbackBlockState.BLOCKED;
+
+		final FeedbackBlockEvent feedbackBlockEvent = new FeedbackBlockEvent(this, feedbackBlockNumber,
+				feedbackBlockState);
+		applicationEventPublisher.publishEvent(feedbackBlockEvent);
 	}
 
 	private void sendLeavingMessage(final Block block, final DefaultLocomotive defaultLocomotive) {
 
-		logger.info("Leaving block " + block);
+		logger.info("Leaving block: " + block);
 
-		final BlockExitedEvent blockExitedEvent = new BlockExitedEvent(this, block, defaultLocomotive);
-		applicationEventPublisher.publishEvent(blockExitedEvent);
+		final int feedbackBlockNumber = block.getId();
+		final FeedbackBlockState feedbackBlockState = FeedbackBlockState.FREE;
+
+		final FeedbackBlockEvent feedbackBlockEvent = new FeedbackBlockEvent(this, feedbackBlockNumber,
+				feedbackBlockState);
+		applicationEventPublisher.publishEvent(feedbackBlockEvent);
 	}
 
 }

@@ -18,13 +18,17 @@ import de.wfb.dialogs.ThrottleStage;
 import de.wfb.javafxtest.controller.LayoutGridController;
 import de.wfb.javafxtest.controls.CustomGridPane;
 import de.wfb.model.facade.ModelFacade;
+import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.Direction;
+import de.wfb.model.node.RailNode;
 import de.wfb.model.service.DefaultRoutingService;
 import de.wfb.model.service.RoutingService;
+import de.wfb.rail.events.BlockExitedEvent;
 import de.wfb.rail.events.FeedbackBlockEvent;
 import de.wfb.rail.events.FeedbackBlockState;
 import de.wfb.rail.facade.DefaultProtocolFacade;
 import de.wfb.rail.facade.ProtocolFacade;
+import de.wfb.rail.service.Block;
 import de.wfb.rail.service.BlockService;
 import de.wfb.rail.service.Route;
 import javafx.application.Application;
@@ -219,9 +223,18 @@ public class Startup extends Application {
 
 		blockNavigationPane.setup();
 
-		// DEBUG - place a locomotive
-		PlaceLocomotivePane.placeLocomotive(blockService.getAllBlocks().get(0).getNodes().get(0),
-				modelFacade.getLocomotives().get(0), Direction.EAST);
+		DefaultLocomotive defaultLocomotive = null;
+		RailNode blockRailNode = null;
+
+		// DEBUG - place the first locomotive on the first block
+		defaultLocomotive = modelFacade.getLocomotives().get(0);
+		blockRailNode = blockService.getAllBlocks().get(0).getNodes().get(0);
+		PlaceLocomotivePane.placeLocomotive(blockRailNode, defaultLocomotive, Direction.EAST);
+
+		// DEBUG - place the second locomotive onto the second block
+		defaultLocomotive = modelFacade.getLocomotives().get(1);
+		blockRailNode = blockService.getAllBlocks().get(1).getNodes().get(0);
+		PlaceLocomotivePane.placeLocomotive(blockRailNode, defaultLocomotive, Direction.SOUTH);
 
 		// connect to the intellibox
 		try {
@@ -568,6 +581,31 @@ public class Startup extends Application {
 
 				feedbackBlockState = feedbackBlockState == FeedbackBlockState.BLOCKED ? FeedbackBlockState.FREE
 						: FeedbackBlockState.BLOCKED;
+
+			}
+		});
+
+		final MenuItem removeLocomotiveItem = new MenuItem("Remove Locomotive 2");
+		removeLocomotiveItem.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(final ActionEvent event) {
+
+				logger.info("removeLocomotiveItem");
+
+				final DefaultLocomotive defaultLocomotive = modelFacade.getLocomotives().get(1);
+				final Block block = blockService.getAllBlocks().get(1);
+				block.reserveForLocomotive(null);
+				for (final RailNode railNodes : block.getNodes()) {
+
+					railNodes.setReserved(false);
+					railNodes.setReservedLocomotiveId(-1);
+				}
+				defaultLocomotive.setRailNode(null);
+				defaultLocomotive.setGraphNode(null);
+
+				final BlockExitedEvent blockExitedEvent = new BlockExitedEvent(this, block, defaultLocomotive);
+				defaultDebugFacade.publishEvent(blockExitedEvent);
 			}
 		});
 
@@ -576,7 +614,7 @@ public class Startup extends Application {
 		routingMenu.getItems().addAll(findRouteMenuItem);
 		editMenu.getItems().addAll(connectItem, copyItem, pasteItem, locomotiveListItem, placeLocomotiveItem);
 		serialMenu.getItems().addAll(serialConnectItem, serialDisconnectItem);
-		debugMenu.getItems().addAll(routingNodeMenuItem, feedbackBlockEventMenuItem);
+		debugMenu.getItems().addAll(routingNodeMenuItem, feedbackBlockEventMenuItem, removeLocomotiveItem);
 
 		// add Menus to the MenuBar
 		menuBar.getMenus().addAll(fileMenu, routingMenu, debugMenu, editMenu, serialMenu, helpMenu);

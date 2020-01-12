@@ -8,4 +8,6 @@ public interface BlockService {
 
 	List<Block> getAllBlocks();
 
+	Block getBlockById(int feedbackBlockNumber);
+
 }

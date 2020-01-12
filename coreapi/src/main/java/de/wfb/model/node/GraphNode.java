@@ -19,12 +19,6 @@ public class GraphNode {
 
 	private Color color = Color.NONE;
 
-//	/** is this graph node currently reserved by a locomotive */
-//	private boolean reserved;
-//
-//	/** the id of the locomotive that currently reserves this field */
-//	private int reservedLocomotiveId;
-
 	public int getId() {
 		return id;
 	}
@@ -60,22 +54,6 @@ public class GraphNode {
 	public void setColor(final Color color) {
 		this.color = color;
 	}
-
-//	public boolean isReserved() {
-//		return reserved;
-//	}
-//
-//	public void setReserved(final boolean reserved) {
-//		this.reserved = reserved;
-//	}
-//
-//	public int getReservedLocomotiveId() {
-//		return reservedLocomotiveId;
-//	}
-//
-//	public void setReservedLocomotiveId(final int reservedLocomotiveId) {
-//		this.reservedLocomotiveId = reservedLocomotiveId;
-//	}
 
 	@Override
 	public String toString() {
