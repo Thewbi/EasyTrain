@@ -12067,7 +12067,9 @@
     "y": 25,
     "leftList": [],
     "rightList": [],
-    "manualConnections": [1471],
+    "manualConnections": [
+      1471
+    ],
     "feedbackBlockNumber": -1
   },
   {
@@ -12217,7 +12219,9 @@
     "y": 25,
     "leftList": [],
     "rightList": [],
-    "manualConnections": [1479],
+    "manualConnections": [
+      1479
+    ],
     "feedbackBlockNumber": -1
   },
   {
@@ -12877,7 +12881,9 @@
     "y": 30,
     "leftList": [],
     "rightList": [],
-    "manualConnections": [],
+    "manualConnections": [
+      1382
+    ],
     "feedbackBlockNumber": -1
   },
   {
@@ -12887,7 +12893,7 @@
     "y": 30,
     "leftList": [],
     "rightList": [],
-    "manualConnections": [1382],
+    "manualConnections": [],
     "feedbackBlockNumber": -1
   },
   {
@@ -12947,7 +12953,9 @@
     "y": 30,
     "leftList": [],
     "rightList": [],
-    "manualConnections": [1399],
+    "manualConnections": [
+      1399
+    ],
     "feedbackBlockNumber": -1
   },
   {

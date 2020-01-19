@@ -31,7 +31,7 @@ public class DefaultTurnoutService implements TurnoutService {
 	@Override
 	public void startQueryingFromQueue() {
 
-		logger.info("startQueryingFromQueue()");
+		logger.trace("startQueryingFromQueue()");
 
 		if (turnoutStatusRequestQueue.isEmpty()) {
 			return;
@@ -46,13 +46,13 @@ public class DefaultTurnoutService implements TurnoutService {
 				continue;
 			}
 
-			logger.info("startQueryingFromQueue() Querying Turnout Node Status of RailNode ID: " + node.getId());
+			logger.trace("startQueryingFromQueue() Querying Turnout Node Status of RailNode ID: " + node.getId());
 
 			// request and set the turnout status
 			final boolean isThrown = protocolFacade.turnoutStatus(node.getProtocolTurnoutId().shortValue());
 			node.setThrown(isThrown);
 
-			logger.info("ProtocolTurnoutID: " + node.getProtocolTurnoutId() + " is "
+			logger.trace("ProtocolTurnoutID: " + node.getProtocolTurnoutId() + " is "
 					+ (node.isThrown() ? "THROWN" : "CLOSED"));
 
 			// Or not? update the node in the model, send model changed event so that the ui

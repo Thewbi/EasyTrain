@@ -42,7 +42,7 @@ public class ThrottlePane extends GridPane {
 
 	public void setup() {
 
-		logger.info("setup()");
+		logger.trace("setup()");
 
 		textfield = new TextField();
 		textfield.setText("74");

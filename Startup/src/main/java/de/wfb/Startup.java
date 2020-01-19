@@ -92,7 +92,10 @@ public class Startup extends Application {
 
 		// build the routing tables
 		routingService.buildRoutingTables();
-		routingService.colorGraph();
+
+		// coloring the graph is a worthless as loops will paint all node in a single
+		// color which invalidates the entire idea
+//		routingService.colorGraph();
 
 		// UI setup
 		locomotiveListStage.initModality(Modality.WINDOW_MODAL);
@@ -109,7 +112,8 @@ public class Startup extends Application {
 		// query the turnouts to find out their state on the layout so that the software
 		// can draw them in the correct state and also send the correct commands when
 		// the user of the route service want to switch them
-		turnoutService.startQueryingFromQueue();
+		// TODO: reactivate
+//		turnoutService.startQueryingFromQueue();
 
 		// locomotive throttle
 		createAndShowThrottle(context);

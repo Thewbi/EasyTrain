@@ -86,7 +86,7 @@ public class GraphNode {
 
 	public Direction getExitDirection() {
 
-		logger.info(railNode);
+		logger.trace(railNode);
 
 		final Edge[] edges = railNode.getEdges();
 

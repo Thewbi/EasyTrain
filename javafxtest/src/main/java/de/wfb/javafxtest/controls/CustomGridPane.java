@@ -198,7 +198,7 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 
 				if (node.getProtocolTurnoutId() != null && node.getProtocolTurnoutId() > 0) {
 
-					logger.info("ProtocolTurnoutID: " + node.getProtocolTurnoutId() + " TurnoutState: "
+					logger.trace("ProtocolTurnoutID: " + node.getProtocolTurnoutId() + " TurnoutState: "
 							+ (thrown ? "THROWN" : "CLOSED") + " ShapeType: " + shapeType + " highlighted: "
 							+ highlighted + " blocked: " + blocked + " selected: " + selected);
 				}

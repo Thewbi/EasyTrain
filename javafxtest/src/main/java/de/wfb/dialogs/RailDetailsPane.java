@@ -12,6 +12,7 @@ import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
+import de.wfb.model.node.RailNode;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -93,6 +94,16 @@ public class RailDetailsPane extends GridPane {
 	private String retrieveRailNodeLabel(final Node node) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
+
+		final RailNode railNode = (RailNode) node;
+
+		if (CollectionUtils.isNotEmpty(railNode.getManualConnections())) {
+
+			for (final RailNode manuallyConnectedNode : railNode.getManualConnections()) {
+
+				stringBuffer.append("ManuallyConnected to: " + manuallyConnectedNode.getId() + "\n");
+			}
+		}
 
 		stringBuffer.append("Reserved: ").append(node.isReserved()).append("\n");
 		stringBuffer.append("ReservedByLocomotiveId: ").append(node.getReservedLocomotiveId()).append("\n");

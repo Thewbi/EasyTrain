@@ -31,7 +31,10 @@ public class DefaultJsonNodeConverter implements Converter<Node, JsonNode> {
 		// manual connections
 		final DefaultRailNode defaultRailNode = (DefaultRailNode) source;
 		final List<RailNode> manualConnections = defaultRailNode.getManualConnections();
+
 		if (CollectionUtils.isNotEmpty(manualConnections)) {
+
+			logger.info("manualConnections.size(): " + manualConnections.size());
 
 			logger.trace("ManualConnection found!");
 

@@ -119,9 +119,9 @@ public class DefaultProtocolService implements ProtocolService {
 	@Override
 	public boolean turnoutStatus(final short protocolId) {
 
-		logger.info("turnoutStatus()");
+		logger.trace("turnoutStatus()");
 
-		logger.info("TryLock: " + lock.tryLock());
+		logger.trace("TryLock: " + lock.tryLock());
 
 		lock.lock();
 
@@ -129,15 +129,15 @@ public class DefaultProtocolService implements ProtocolService {
 
 			if (!isConnected()) {
 
-				logger.info("Not connected! Aborting operation!");
+				logger.trace("Not connected! Aborting operation!");
 
 				return false;
 			}
 
 			// check the turnout status
-			logger.info("executing turnoutStatusCommand ...");
+			logger.trace("executing turnoutStatusCommand ...");
 			final P50XXTrntStsCommand command = turnoutStatusCommand(inputStream, outputStream, protocolId);
-			logger.info("executing turnoutStatusCommand done. Thrown: " + command.isThrown());
+			logger.trace("executing turnoutStatusCommand done. Thrown: " + command.isThrown());
 
 			return command.isThrown();
 

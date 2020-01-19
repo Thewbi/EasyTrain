@@ -111,13 +111,13 @@ public class Route {
 				// if the turn out is NOT traversed in switching direction, continue
 				if (graphNode.getChildren().size() < 2) {
 
-					logger.info("Index = " + index + " Turnout found. Not in switching order!");
+					logger.trace("Index = " + index + " Turnout found. Not in switching order!");
 
 					index++;
 					continue;
 				}
 
-				logger.info("Index = " + index + " Turnout found in switching order!");
+				logger.trace("Index = " + index + " Turnout found in switching order!");
 				final RailNode turnoutNode = graphNode.getRailNode();
 
 				logger.trace("Turnout ShapeType = " + turnoutNode.getShapeType().name());

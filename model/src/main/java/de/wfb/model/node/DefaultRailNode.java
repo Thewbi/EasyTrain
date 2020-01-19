@@ -196,34 +196,39 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 		// north
 		if (railNodeB.getY() < getY()) {
+
 			logger.trace("north");
 			connectNorth(railNodeB);
 		}
 
 		// east
 		if (railNodeB.getX() > getX()) {
+
 			logger.trace("east");
 			connectEast(railNodeB);
 		}
 
 		// south
 		if (railNodeB.getY() > getY()) {
+
 			logger.trace("south");
 			connectSouth(railNodeB);
 		}
 
 		// west
 		if (railNodeB.getX() < getX()) {
+
 			logger.trace("west");
 			connectWest(railNodeB);
 		}
 
 		// because the automatic connection only looks into the immediate vincinity of
-		// nodes on the grid, but manually connected nodes can be apart over long
+		// nodes on the grid, but manually connected nodes can be separat over long
 		// distances, there is a manual connection list, which stores all manual
 		// connections
+		logger.info("Add manual Connection!");
 		getManualConnections().add(railNodeB);
-		railNodeB.getManualConnections().add(this);
+//		railNodeB.getManualConnections().add(this);
 	}
 
 	@Override
@@ -389,20 +394,27 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 		final Edge northEdge = getNorthEdge();
 		if (northEdge == null) {
+
+			// DEBUG
 			if (getId() == debugRailNodeID) {
 				logger.warn("NorthEdge is null!");
 			}
+
 			return;
 		}
 
 		final Edge southEdge = northNode.getSouthEdge();
 		if (southEdge == null) {
+
+			// DEBUG
 			if (getId() == debugRailNodeID) {
 				logger.warn("Returning because of southEdge!");
 			}
+
 			return;
 		}
 
+		// DEBUG
 		if (getId() == debugRailNodeID) {
 
 			for (final GraphNode graphNode : northEdge.getOutGraphNode().getChildren()) {
@@ -411,32 +423,38 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 			}
 		}
 
-		if (!northEdge.getOutGraphNode().getChildren().contains(southEdge.getInGraphNode())) {
+		if (northEdge.getOutGraphNode().getChildren().contains(southEdge.getInGraphNode())) {
+
+			// DEBUG
+			if (getId() == debugRailNodeID) {
+				logger.warn("NorthEdge already connected!");
+			}
+
+		} else {
 
 			northEdge.getOutGraphNode().getChildren().add(southEdge.getInGraphNode());
 			northEdge.setNextOutGraphNode(southEdge.getInGraphNode());
 
+			// DEBUG
 			if (getId() == debugRailNodeID) {
 
 				logger.warn("Connecting North GN " + northEdge.getOutGraphNode().getId() + " to GN "
 						+ southEdge.getInGraphNode().getId());
 			}
-
-		} else {
-			if (getId() == debugRailNodeID) {
-				logger.warn("NorthEdge already connected!");
-			}
 		}
 
-		if (!southEdge.getOutGraphNode().getChildren().contains(northEdge.getInGraphNode())) {
+		if (southEdge.getOutGraphNode().getChildren().contains(northEdge.getInGraphNode())) {
+
+			// DEBUG
+			if (getId() == debugRailNodeID) {
+				logger.warn("SouthEdge already connected!");
+			}
+
+		} else {
 
 			southEdge.getOutGraphNode().getChildren().add(northEdge.getInGraphNode());
 			southEdge.setNextOutGraphNode(northEdge.getInGraphNode());
 
-		} else {
-			if (getId() == debugRailNodeID) {
-				logger.warn("SouthEdge already connected!");
-			}
 		}
 	}
 

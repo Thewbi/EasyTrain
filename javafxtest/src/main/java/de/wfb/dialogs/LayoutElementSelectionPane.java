@@ -30,7 +30,7 @@ public class LayoutElementSelectionPane extends GridPane {
 
 	public void setup() throws FileNotFoundException {
 
-		logger.info("setupButtons()");
+		logger.trace("setupButtons()");
 
 		final ToggleGroup toggleGroup = new ToggleGroup();
 
