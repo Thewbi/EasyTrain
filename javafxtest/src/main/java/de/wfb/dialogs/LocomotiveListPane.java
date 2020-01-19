@@ -57,7 +57,7 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 
 	public void setup() {
 
-		logger.info("LocomotiveListPane setup()");
+		logger.trace("LocomotiveListPane setup()");
 
 		tableView = new TableView<DefaultLocomotive>();
 		tableView.setEditable(true);

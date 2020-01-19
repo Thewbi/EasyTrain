@@ -21,9 +21,23 @@ import de.wfb.rail.events.RouteFinishedEvent;
 import de.wfb.rail.service.Block;
 import de.wfb.rail.service.Route;
 
+/**
+ * This Thread is scheduled by the @EnableScheduling annotation on the
+ * configuration class (de.wfb.ConfigurationClass).
+ *
+ * It is simulation locomotive motion. Whenever you use EasyTrain with real
+ * hardware on a real layout, you do not need this Thread.
+ *
+ * Whenever a locomotive has a child graph node that is reserved for this
+ * locomotive, the TimedDrivingThread will move the locomotive onto this
+ * reserved child.
+ */
 public class TimedDrivingThread {
 
 	private static final Logger logger = LogManager.getLogger(TimedDrivingThread.class);
+
+//	private static final boolean ACTIVE = true;
+	private static final boolean ACTIVE = false;
 
 	@Autowired
 	private ModelFacade modelFacade;
@@ -32,6 +46,19 @@ public class TimedDrivingThread {
 	private ApplicationEventPublisher applicationEventPublisher;
 
 	@Scheduled(fixedRate = 1000)
+	public void threadFunc() {
+
+		logger.trace("threadFunc()");
+
+		if (!ACTIVE) {
+
+			logger.trace("threadFunc() is deactivated!");
+			return;
+		}
+
+		moveLocomotives();
+	}
+
 	public void moveLocomotives() {
 
 		final Date date = new Date();

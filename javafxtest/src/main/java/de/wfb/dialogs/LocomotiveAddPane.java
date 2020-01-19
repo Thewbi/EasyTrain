@@ -68,7 +68,7 @@ public class LocomotiveAddPane extends VBox {
 					return;
 				}
 
-				final int address = NumberUtils.createInteger(addressAsString);
+				final short address = NumberUtils.createInteger(addressAsString).shortValue();
 
 				// add the locomotive to the model
 				final int locomotiveId = modelFacade.retrieveNextLocomotiveId();

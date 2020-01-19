@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationListener;
 import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.facade.RoutingFacade;
 import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.node.Direction;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.RailNode;
 import de.wfb.model.service.DrivingService;
@@ -20,6 +21,8 @@ import de.wfb.rail.events.RouteAddedEvent;
 import de.wfb.rail.events.RouteFinishedEvent;
 
 public class DefaultDrivingService implements DrivingService, ApplicationListener<ApplicationEvent> {
+
+	private static final double DRIVING_SPEED = 50.0d;
 
 	private static final Logger logger = LogManager.getLogger(DefaultDrivingService.class);
 
@@ -81,7 +84,8 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 	 */
 	private void processFeedbackBlockEvent(final FeedbackBlockEvent event) {
 
-		logger.info("processFeedbackBlockEvent()");
+		logger.trace("processFeedbackBlockEvent() BlockNumber: " + event.getFeedbackBlockNumber() + " BlockState: "
+				+ event.getFeedbackBlockState());
 
 		switch (event.getFeedbackBlockState()) {
 
@@ -104,19 +108,28 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 		final int feedbackBlockNumber = event.getFeedbackBlockNumber();
 
-		logger.info("feedbackBlockNumber: " + feedbackBlockNumber);
+		logger.trace("feedbackBlockNumber: " + feedbackBlockNumber);
 
-		final Block block = blockService.getBlockById(feedbackBlockNumber);
+		final Block block = blockService.getBlockById(feedbackBlockNumber + 1);
+		if (block == null) {
+			return;
+		}
 
-		logger.info("block: " + block);
+		logger.trace("block: " + block);
 
 		final Route route = routingFacade.getRouteByBlock(block);
+		if (route == null) {
+			return;
+		}
 
-		logger.info("route: " + route);
+		logger.trace("route: " + route);
 
 		final DefaultLocomotive locomotive = route.getLocomotive();
+		if (locomotive == null) {
+			return;
+		}
 
-		logger.info("locomotive: " + locomotive);
+		logger.trace("locomotive: " + locomotive);
 
 		// It will determine which locomotive has exited that block. Because
 		// only a single locomotive can reserve a route to this block.
@@ -126,22 +139,43 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		applicationEventPublisher.publishEvent(blockExitedEvent);
 	}
 
+	/**
+	 * determines which locomotive has entered that block. Because only a single
+	 * locomotive can reserve a route to this block.
+	 *
+	 * based on that knowledge it will send the BlockEnteredEvent
+	 *
+	 * @param event
+	 */
 	private void processFeedbackBlockBlocked(final FeedbackBlockEvent event) {
 
-		logger.info("processFeedbackBlockBlocked()");
+		final int feedbackBlockNumber = event.getFeedbackBlockNumber() + 1;
 
-		final int feedbackBlockNumber = event.getFeedbackBlockNumber();
+		logger.info("processFeedbackBlockBlocked() feedbackBlockNumber: " + feedbackBlockNumber);
 
+		// get block
 		final Block block = blockService.getBlockById(feedbackBlockNumber);
+		if (block == null) {
 
+			logger.info("No Block! feedbackBlockNumber: " + feedbackBlockNumber);
+			return;
+		}
+
+		// get route that currently owns the block
 		final Route route = routingFacade.getRouteByBlock(block);
+		if (route == null) {
 
+			logger.info("No Route! feedbackBlockNumber: " + feedbackBlockNumber);
+			return;
+		}
+
+		// get locomotive that executes the route
 		final DefaultLocomotive locomotive = route.getLocomotive();
+		if (locomotive == null) {
+			logger.info("locomotive is null");
+		}
 
-		// It will determine which locomotive has entered that block. Because
-		// only a single locomotive can reserve a route to this block.
-		//
-		// based on that knowledge it will send the BlockEnteredEvent
+		// send the BlockEnteredEvent
 		final BlockEnteredEvent blockEnteredEvent = new BlockEnteredEvent(this, block, locomotive);
 		applicationEventPublisher.publishEvent(blockEnteredEvent);
 	}
@@ -150,18 +184,25 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 		logger.info("processRouteFinishedEvent()");
 
-		final DefaultLocomotive defaultLocomotive = event.getDefaultLocomotive();
+		final DefaultLocomotive locomotive = event.getDefaultLocomotive();
 
-		logger.info("Removing Route " + defaultLocomotive.getRoute());
+		logger.info("Removing Route " + locomotive.getRoute());
 
-		final Route route = defaultLocomotive.getRoute();
+		final Route route = locomotive.getRoute();
 		route.setLocomotive(null);
-		defaultLocomotive.setRoute(null);
+		locomotive.setRoute(null);
 
-		final RailNode railNode = defaultLocomotive.getRailNode();
-		final GraphNode graphNode = defaultLocomotive.getGraphNode();
+		final RailNode railNode = locomotive.getRailNode();
+		final GraphNode graphNode = locomotive.getGraphNode();
+
 		logger.info("The locomotive is now on the RailNode ID: " + railNode.getId() + " and on GraphNode ID: "
-				+ graphNode.getId() + ". Its orientation is: " + defaultLocomotive.getOrientation().name());
+				+ graphNode.getId() + ". Its orientation is: " + locomotive.getOrientation().name());
+
+		// removing graphNode
+		logger.info("Removing graphNode from locomotive!");
+		locomotive.setGraphNode(null);
+
+		locomotiveStop(locomotive);
 	}
 
 	/**
@@ -184,34 +225,80 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 		logger.info("processBlockExitedEvent()");
 
-		freeRouteExceptUpToBlock(event.getBlock(), event.getLocomotive());
+		// the route subsection is freed when the train arrives at the next block
+		// (processBlockEnteredEvent)
+		// freeRouteExceptUpToBlock(event.getBlock(), event.getLocomotive());
 
-		logger.info(event.getLocomotive().getRoute());
+//		logger.info(event.getLocomotive().getRoute());
 
-		// tell all other locomotives to recompute their routes
-		for (final DefaultLocomotive locomotive : modelFacade.getLocomotives()) {
-
-			if (locomotive == event.getLocomotive()) {
-
-				continue;
-			}
-
-			reserveUpToIncludingNextBlock(locomotive);
-		}
+//		// tell all other locomotives to recompute their routes
+//		for (final DefaultLocomotive locomotive : modelFacade.getLocomotives()) {
+//
+//			if (locomotive == event.getLocomotive()) {
+//				continue;
+//			}
+//
+//			if (reserveUpToIncludingNextBlock(locomotive)) {
+//				locomotiveGo(locomotive);
+//			}
+//		}
 	}
 
 	private void processBlockEnteredEvent(final BlockEnteredEvent event) {
 
 		logger.info("processBlockEnteredEvent()");
 
-		if (!reserveUpToIncludingNextBlock(event.getLocomotive())) {
+		final DefaultLocomotive locomotive = event.getLocomotive();
+		final Block enteredBlock = event.getBlock();
+		final Route route = locomotive.getRoute();
 
-			logger.info("Could not reserve up to next block");
-			return;
+		logger.info("Locomotive: " + locomotive + " EnteredBlock: " + enteredBlock + " Route: " + route);
+
+		if (locomotive != null && enteredBlock != null) {
+
+			final RailNode blockRailNode = enteredBlock.getNodes().get(0);
+
+			// put the locomotive onto that block
+			logger.info("Putting locomotive onto RailNode: " + blockRailNode);
+			locomotive.setRailNode(blockRailNode);
+
+			if (route != null) {
+
+				// if route did finish, stop the locomotive
+				if (route.endsWith(enteredBlock)) {
+
+					logger.info("Locomotive is on the last block of it's route!");
+
+					// free the last section
+					freeRouteExceptUpToBlock(enteredBlock, locomotive);
+
+					final RouteFinishedEvent routeFinishedEvent = new RouteFinishedEvent(this, route, locomotive);
+					applicationEventPublisher.publishEvent(routeFinishedEvent);
+
+					return;
+				}
+			}
+		}
+
+		// free the last section
+		freeRouteExceptUpToBlock(enteredBlock, locomotive);
+
+		// try to reserve the next section
+		final boolean nextSectionIsReserved = reserveUpToIncludingNextBlock(locomotive);
+		if (nextSectionIsReserved) {
+
+			logger.info("Could reserve up to next block");
+
+		} else {
+
+			logger.info("Could NOT reserve up to next block");
+
 		}
 	}
 
 	private void processRouteAddedEvent(final RouteAddedEvent event) {
+
+		logger.info("processRouteAddedEvent()");
 
 		final Route route = event.getRoute();
 		final DefaultLocomotive locomotive = event.getDefaultLocomotive();
@@ -221,72 +308,159 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		if (!reserveUpToIncludingNextBlock(locomotive)) {
 
 			logger.info("Could not reserve up to next block");
+
+			locomotiveStop(locomotive);
+
 			return;
 		}
 
 		logger.info(route);
+
+		locomotiveGo(locomotive);
 	}
 
-	/**
-	 * Free all nodes including the block that was just left
-	 *
-	 * @param oldBlock
-	 * @param locomotive
-	 */
-	private void freeRouteExceptUpToBlock(final Block oldBlock, final DefaultLocomotive locomotive) {
+	private void locomotiveGo(final DefaultLocomotive locomotive) {
 
-		logger.info("freeRouteExceptUpToBlock()");
+		logger.info(">>>>>>>>>> GO Locomotive GO! locomotive ID: " + locomotive.getId());
 
-		final Block currentBlock = oldBlock;
-		final Block nextBlock = findNextBlock(locomotive.getRoute(), locomotive);
+		final Direction locomotiveOrientation = locomotive.getOrientation();
+		final GraphNode graphNode = locomotive.getGraphNode();
 
-		logger.info("freeRouteExceptBlock() currentBlock = " + currentBlock + " nextBlock = " + nextBlock);
+		if (graphNode == null) {
 
-		if (currentBlock == null || nextBlock == null) {
+			logger.info("no graph node! Cannot make locomotive go!");
 			return;
 		}
 
-		// if a RailNode is reserved for this locomotive, free it
-		for (final GraphNode graphNode : locomotive.getRoute().getGraphNodes()) {
+		final Direction graphNodeExitDirection = graphNode.getExitDirection();
 
-			logger.info("Freeing GraphNode: " + graphNode);
+		final boolean forward = locomotiveOrientation == graphNodeExitDirection;
+		final short address = locomotive.getAddress();
+
+		logger.info("Locomotive GO forward: " + forward);
+		logger.info("Locomotive GO Address: " + address);
+
+		locomotive.setDirection(forward);
+		locomotive.start(DRIVING_SPEED);
+	}
+
+	private void locomotiveStop(final DefaultLocomotive locomotive) {
+
+		logger.info("<<<<<<<<<<< STOP Locomotive STOP!");
+
+		final short address = locomotive.getAddress();
+
+		logger.info("Locomotive STOP Address: " + address);
+
+		locomotive.stop();
+	}
+
+	/**
+	 * Free all nodes on the route up to block
+	 *
+	 * @param block      free all nodes up to this block
+	 * @param locomotive
+	 */
+	private void freeRouteExceptUpToBlock(final Block block, final DefaultLocomotive locomotive) {
+
+		logger.info("freeRouteExceptUpToBlock()");
+
+//		final Block nextBlock = findNextBlock(locomotive);
+//
+//		logger.info("freeRouteExceptBlock() block = " + block + " nextBlock = " + nextBlock);
+//
+//		if (block == null || nextBlock == null) {
+//
+//			logger.info("oldBlock or nextBlock is null. Aborting! block = " + block + " nextBlock = " + nextBlock);
+//			return;
+//		}
+
+		// go through the entire route.
+		// If a RailNode and/or a Block is reserved for this locomotive, free it
+		for (final GraphNode graphNode : locomotive.getRoute().getGraphNodes()) {
 
 			final RailNode railNode = graphNode.getRailNode();
 
-			logger.info("Freeing railNode: ID: " + railNode.getId() + " Reserved: " + railNode.isReserved()
-					+ " ReservedLocomotiveID: " + railNode.getReservedLocomotiveId());
+			logger.trace("Freeing GraphNode: " + graphNode + " RailNode: ID: " + railNode.getId() + " Reserved: "
+					+ railNode.isReserved() + " ReservedLocomotiveID: " + railNode.getReservedLocomotiveId());
 
 			final Block nodeBlock = railNode.getBlock();
 
-			// arrived at the block
-			if (nodeBlock != null && nodeBlock.equals(nextBlock)) {
+			// arrived at the block, stop the for loop because the relevant subset of the
+			// route was processed
+			if (nodeBlock != null && nodeBlock.equals(block)) {
 
-				return;
+				// free nodeBlock
+
+				logger.info("Done!");
+
+			} else {
+
+				if (railNode.isReserved()) {
+
+					if (railNode.getReservedLocomotiveId() == locomotive.getId()) {
+
+						// either free a single node or if the node is part of a block, free the entire
+						// block
+						final Block railNodeBlock = railNode.getBlock();
+
+						logger.info("RailNode ID: " + railNode.getId() + " Block: " + railNodeBlock);
+
+						if (railNodeBlock == null) {
+
+							logger.info("FREE RAILNODE ID: " + railNode.getId() + " ReservedLocomotiveID: "
+									+ railNode.getReservedLocomotiveId());
+
+							railNode.setReserved(false);
+							railNode.setReservedLocomotiveId(-1);
+
+						} else {
+
+							logger.info("block.getNodes().size: " + railNodeBlock.getNodes().size());
+
+							railNodeBlock.getNodes().stream().filter(node -> node.isReserved()).forEach(node -> {
+
+								logger.info("Resetting block!");
+
+								node.setReserved(false);
+								node.setReservedLocomotiveId(-1);
+							});
+
+						}
+					}
+				}
+			}
+		}
+
+		// tell all other locomotives to recompute their routes
+		for (final DefaultLocomotive tempLocomotive : modelFacade.getLocomotives()) {
+
+			// skip the current locomotive
+			if (tempLocomotive == locomotive) {
+				continue;
 			}
 
-			if (railNode.isReserved()) {
+			// make this locomotive reserve it's path and start it
+			if (reserveUpToIncludingNextBlock(tempLocomotive)) {
 
-				if (railNode.getReservedLocomotiveId() == locomotive.getId()) {
-
-					logger.info("FREE RAILNODE ID: " + railNode.getId() + " ReservedLocomotiveID: "
-							+ railNode.getReservedLocomotiveId());
-
-					railNode.setReserved(false);
-					railNode.setReservedLocomotiveId(-1);
-				}
+				locomotiveGo(tempLocomotive);
 			}
 		}
 	}
 
 	private boolean reserveUpToIncludingNextBlock(final DefaultLocomotive locomotive) {
 
+		if (locomotive.getRoute() == null) {
+			return false;
+		}
+
 		// find the next block on the route
-		final Block nextBlock = findNextBlock(locomotive.getRoute(), locomotive);
+		final Block nextBlock = findNextBlock(locomotive);
 
 		if (nextBlock == null) {
 
 			logger.info("No next node!");
-			return true;
+			return false;
 		}
 
 		logger.info("Next Block: " + nextBlock);
@@ -331,10 +505,11 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		return locomotive.getRailNode().getBlock();
 	}
 
-	private Block findNextBlock(final Route route, final DefaultLocomotive locomotive) {
+	private Block findNextBlock(final DefaultLocomotive locomotive) {
 
 		logger.info("Find next Block for locomotive ID: " + locomotive.getId());
 
+		final Route route = locomotive.getRoute();
 		final Block currentBlock = findCurrentBlock(route, locomotive);
 
 		logger.info("currentBlock = " + currentBlock);

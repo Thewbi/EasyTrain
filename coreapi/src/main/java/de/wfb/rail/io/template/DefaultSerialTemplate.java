@@ -37,6 +37,10 @@ public class DefaultSerialTemplate implements SerialTemplate {
 	@Override
 	public void execute() {
 
+		if (outputStream == null) {
+			return;
+		}
+
 		final byte[] byteArray = command.getByteArray();
 
 		logger.trace("REQUEST: " + Hex.encodeHexString(byteArray));
@@ -64,6 +68,7 @@ public class DefaultSerialTemplate implements SerialTemplate {
 
 	private void processVariableLengthResponse() throws IOException {
 
+		@SuppressWarnings("unused")
 		int consumedLength = 0;
 
 		int mode = -1;
@@ -74,7 +79,7 @@ public class DefaultSerialTemplate implements SerialTemplate {
 			final byte[] tempBuffer = new byte[1024];
 			final int bytesRead = inputStream.read(tempBuffer);
 
-			// logger.info("bytesRead: " + bytesRead);
+			logger.trace("bytesRead: " + bytesRead);
 
 			if (bytesRead == -1) {
 
@@ -83,11 +88,14 @@ public class DefaultSerialTemplate implements SerialTemplate {
 				throw new IOException(msg);
 			}
 
-			byteBuffer.put(tempBuffer, consumedLength, bytesRead);
+			byteBuffer.put(tempBuffer, 0, bytesRead);
 
 			consumedLength += bytesRead;
 
+			// put the data read so far into the command
 			command.result(byteBuffer);
+
+			// ask the command to read more or to stop reading
 			mode = command.getResponseLength();
 		}
 
@@ -104,8 +112,10 @@ public class DefaultSerialTemplate implements SerialTemplate {
 		do {
 
 			final int bytesRead = inputStream.read(tempBuffer);
-
 			logger.trace("bytesRead: " + bytesRead);
+
+			final String allDataAsHex = Hex.encodeHexString(tempBuffer);
+			logger.trace("allDataAsHex: " + allDataAsHex);
 
 			if (bytesRead == -1) {
 
@@ -114,7 +124,7 @@ public class DefaultSerialTemplate implements SerialTemplate {
 				throw new IOException(msg);
 			}
 
-			byteBuffer.put(tempBuffer, consumedLength, bytesRead);
+			byteBuffer.put(tempBuffer, 0, bytesRead);
 
 			consumedLength += bytesRead;
 

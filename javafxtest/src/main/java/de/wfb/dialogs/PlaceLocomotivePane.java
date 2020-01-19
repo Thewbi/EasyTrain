@@ -186,14 +186,17 @@ public class PlaceLocomotivePane extends VBox implements ApplicationListener<App
 			throw new IllegalArgumentException(msg);
 		}
 
-		// set the direction into the locomotive so later when the locomotive
-		// starts moving, the P50X protocol knows weather to make the locomotive move in
-		// forwards or reverse direction
-		locomotive.setOrientation(edgeDirection);
-		locomotive.setRailNode((RailNode) node);
-		locomotive.setGraphNode(null);
-
 		final RailNode railNode = (RailNode) node;
+
+		// the orientation in which the locomotive points forward (this is not
+		// necessarily the same direction in which
+		// the locomotive will move once the route starts!)
+		locomotive.setOrientation(edgeDirection);
+		locomotive.setRailNode(railNode);
+
+		locomotive.setGraphNode(null);
+		// locomotive.setGraphNode(railNode.getEdge(edgeDirection).getOutGraphNode());
+
 		final Block block = railNode.getBlock();
 		if (block == null) {
 
@@ -212,22 +215,6 @@ public class PlaceLocomotivePane extends VBox implements ApplicationListener<App
 
 			logger.info("Put Locomotive " + locomotive.getName() + " onto Block " + block.getId());
 		}
-
-		// Put the Loco on both Graph nodes of the current RailNode
-//		final Edge edge = railNode.getEdge(edgeDirection);
-//
-//		GraphNode graphNode = null;
-//
-//		graphNode = edge.getOutGraphNode();
-//		graphNode.setReserved(true);
-//		graphNode.setReservedLocomotiveId(defaultLocomotive.getId());
-//
-//		graphNode = edge.getInGraphNode();
-//		graphNode.setReserved(true);
-//		graphNode.setReservedLocomotiveId(defaultLocomotive.getId());
-
-//		logger.info("Put Locomotive " + defaultLocomotive.getId() + " " + defaultLocomotive.getName() + " "
-//				+ defaultLocomotive.getAddress() + " onto node " + node.getId());
 
 		logger.info("Put Locomotive " + locomotive.getName() + " onto node " + node.getId());
 	}

@@ -67,28 +67,33 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 
 	private void processFeedbackBlockEvent(final FeedbackBlockEvent feedbackBlockEvent) {
 
-		// update the state of all railnodes that are part of the block to used
+		// update the state of all rail nodes that are part of the block to used
 		//
-		// Send a model change event to update the frontend
+		// Send a model change event to update the front-end
 
 		final int feedbackBlockNumber = feedbackBlockEvent.getFeedbackBlockNumber();
 		final FeedbackBlockState feedbackBlockState = feedbackBlockEvent.getFeedbackBlockState();
 
-		final List<Node> feedbackBlockNodes = retrieveNodesOfFeedbackBlock(feedbackBlockNumber);
+		logger.trace("processFeedbackBlockEvent() feedbackBlockNumber: " + feedbackBlockNumber + 1
+				+ " feedbackBlockState: " + feedbackBlockState);
 
-		if (CollectionUtils.isNotEmpty(feedbackBlockNodes)) {
+		final List<Node> feedbackBlockNodes = retrieveNodesOfFeedbackBlock(feedbackBlockNumber + 1);
+		if (CollectionUtils.isEmpty(feedbackBlockNodes)) {
+			logger.trace("FeedbackBlockNodes are empty! Aborting!");
+			return;
+		}
 
-			for (final Node node : feedbackBlockNodes) {
+		for (final Node node : feedbackBlockNodes) {
 
-				// tell the rail node, that the feedback block it belongs to is used
-				node.setFeedbackBlockUsed(feedbackBlockState == FeedbackBlockState.BLOCKED);
+			// tell the rail node, that the feedback block it belongs to is used
+			node.setFeedbackBlockUsed(feedbackBlockState == FeedbackBlockState.BLOCKED);
 
-				// the model changed because some of the nodes are now used.
-				// Publish an event after model changes
-				final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, node.getX(), node.getY(),
-						node.isHighlighted(), node.isFeedbackBlockUsed(), node.isSelected());
-				applicationEventPublisher.publishEvent(modelChangedEvent);
-			}
+			// the model changed because some of the nodes are now used.
+			// Publish an event after model changes
+			final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, node.getX(), node.getY(),
+					node.isHighlighted(), node.isFeedbackBlockUsed(), node.isSelected());
+
+			applicationEventPublisher.publishEvent(modelChangedEvent);
 		}
 	}
 
@@ -117,29 +122,30 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 
 		final Node node = model.getNode(x, y);
 
+		// remove selection from all selected nodes
 		if (!shiftSelected) {
 
-			// all selected nodes have to be unselected
-			final List<RailNode> allRailNodes = model.getAllRailNodes();
-			if (CollectionUtils.isNotEmpty(allRailNodes)) {
+			// @formatter:off
 
-				for (final RailNode railNode : allRailNodes) {
+			model.getAllRailNodes().stream()
+	            .filter(railNode -> railNode.isSelected()).forEach(railNode -> {
 
-					railNode.setSelected(false);
+	            	railNode.setSelected(false);
 					railNode.setHighlighted(false);
 
 					sendModelChangedEvent(railNode);
-				}
-			}
+	            });
+
+			// @formatter:on
 		}
 
 		if (node == null) {
-			sendNodeClickedEvent(null);
 
+			sendNodeClickedEvent(null);
 			return;
 		}
 
-		logger.info(node.getId() + ") nodeClicked x = " + x + " y = " + y);
+		logger.trace(node.getId() + ") nodeClicked x = " + x + " y = " + y);
 		logger.trace("nodeClicked node id = " + node.getId() + " node = " + node.getClass().getSimpleName());
 
 		// store the currently selected node in the model
@@ -169,6 +175,8 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 
 	private void sendNodeClickedEvent(final Node node) {
 
+		logger.trace("sendNodeClickedEvent");
+
 		final NodeClickedEvent nodeClickedEvent = new NodeClickedEvent(this, node);
 		applicationEventPublisher.publishEvent(nodeClickedEvent);
 	}
@@ -176,7 +184,7 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 	@SuppressWarnings("unused")
 	private void sendNodeSelectedEvent(final Node node) {
 
-		logger.info("sendNodeSelectedEvent() node: " + node);
+		logger.trace("sendNodeSelectedEvent() node: " + node);
 
 		final NodeSelectedEvent nodeSelectedEvent = new NodeSelectedEvent(this, model, node);
 		applicationEventPublisher.publishEvent(nodeSelectedEvent);
@@ -196,6 +204,7 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, x, y, hightlighted, blocked,
 				selected);
 
+		logger.trace("Sending ModelChangedEvent ...");
 		applicationEventPublisher.publishEvent(modelChangedEvent);
 	}
 
@@ -205,6 +214,7 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, railNode.getX(), railNode.getY(),
 				railNode.isHighlighted(), railNode.isFeedbackBlockUsed(), railNode.isSelected());
 
+		logger.trace("Sending ModelChangedEvent ...");
 		applicationEventPublisher.publishEvent(modelChangedEvent);
 	}
 

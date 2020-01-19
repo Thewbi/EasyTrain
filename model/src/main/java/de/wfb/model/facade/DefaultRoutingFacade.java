@@ -20,9 +20,13 @@ public class DefaultRoutingFacade implements RoutingFacade {
 	@Override
 	public Route getRouteByBlock(final Block block) {
 
+		if (block == null) {
+			return null;
+		}
+
 		for (final RailNode railNode : block.getNodes()) {
 
-			logger.info("RailNode: ID " + railNode.getId() + " Reserved: " + railNode.isReserved()
+			logger.trace("RailNode: ID " + railNode.getId() + " Reserved: " + railNode.isReserved()
 					+ " ReservedLocomotiveID: " + railNode.getReservedLocomotiveId());
 		}
 
@@ -34,11 +38,11 @@ public class DefaultRoutingFacade implements RoutingFacade {
 
 			final Route route = locomotive.getRoute();
 
-			logger.info("RRoute: " + route);
+			logger.info("Route: " + route);
 
 			final boolean reservesBlock = route.reservesBlock(block);
 
-			logger.info("BBlock reserves RRoute: " + reservesBlock);
+			logger.info("Block reserves RRoute: " + reservesBlock);
 
 			if (reservesBlock) {
 				return route;

@@ -5,17 +5,20 @@ import java.nio.ByteBuffer;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-
-import de.wfb.rail.events.FeedbackBlockState;
-import de.wfb.rail.events.FeedbackBlockUpdateEvent;
 
 /**
  * https://tams-online.de/WebRoot/Store11/Shops/642f1858-c39b-4b7d-af86-f6a1feaca0e4/MediaGallery/15_Download/Sonstiges/interface.txt
  * https://www.opendcc.de/elektronik/opendcc/opendcc_doc_ib.html
+ *
+ * The thread EvtSenCommandThread sends the P50XXEventCommand periodically. When
+ * the P50XXEventCommand determines that a change has occurred, this
+ * P50XXEvtSenCommand command is executed to retrieve detailed information about
+ * the event change.
+ *
+ * This command is executed in
+ * de.wfb.rail.service.DefaultProtocolService.event()
  */
-public class P50XXEvtSenCommand implements Command {
+public class P50XXEvtSenCommand extends BaseEventCommand {
 
 	private static Logger logger = LogManager.getLogger(P50XXEvtSenCommand.class);
 
@@ -24,17 +27,6 @@ public class P50XXEvtSenCommand implements Command {
 	 * returned
 	 */
 	private int responseLength = -1;
-
-	private int index = 0;
-
-	private int s88ID;
-
-	private byte inputDescriptor1;
-
-	private byte inputDescriptor2;
-
-	@Autowired
-	private ApplicationEventPublisher applicationEventPublisher;
 
 	@Override
 	public int getResponseLength() {
@@ -45,6 +37,10 @@ public class P50XXEvtSenCommand implements Command {
 	public void result(final ByteBuffer byteBuffer) {
 
 		final byte[] array = byteBuffer.array();
+
+		final String allDataAsHex = Hex.encodeHexString(array);
+		logger.trace("index = " + index + " byteBuffer.position(): " + byteBuffer.position() + " allDataAsHex = "
+				+ allDataAsHex);
 
 		for (int i = 0; i < byteBuffer.position(); i++) {
 
@@ -58,6 +54,7 @@ public class P50XXEvtSenCommand implements Command {
 
 				// end of data stream
 				if (data == 0) {
+
 					responseLength = 0;
 					return;
 				}
@@ -70,7 +67,7 @@ public class P50XXEvtSenCommand implements Command {
 
 			case 2:
 				inputDescriptor2 = data;
-				retrieveConnectionIds(s88ID, inputDescriptor1, inputDescriptor2);
+				sendFeedbackBlockUpdateEvents(s88ID, inputDescriptor1, inputDescriptor2);
 				break;
 			}
 
@@ -81,55 +78,6 @@ public class P50XXEvtSenCommand implements Command {
 		}
 	}
 
-	/**
-	 * Outputs all contacts that are signaled in use by this state change event!
-	 *
-	 * @param s88id
-	 * @param inputDescriptor1
-	 * @param inputDescriptor2
-	 */
-	private void retrieveConnectionIds(final int s88id, final byte inputDescriptor1, final byte inputDescriptor2) {
-
-		final FeedbackBlockUpdateEvent feedbackBlockUpdateEvent = new FeedbackBlockUpdateEvent(this);
-
-		final int base = 16 * (s88id - 1);
-
-		int currentOffset = 1;
-
-		// ausgaenge 1 - 8 am modul (laut
-		// https://tams-online.de/WebRoot/Store11/Shops/642f1858-c39b-4b7d-af86-f6a1feaca0e4/MediaGallery/15_Download/Sonstiges/interface.txt)
-		for (byte i = 7; i >= 0; i--) {
-
-			final int value = ((inputDescriptor1 >> i) & 1);
-			final int offset = base + currentOffset;
-
-			logger.info("Contact " + offset + (value == 0 ? ") UNUSED" : ") USED"));
-
-			feedbackBlockUpdateEvent.getFeedbackBlockState()[offset - 1] = value == 0 ? FeedbackBlockState.FREE
-					: FeedbackBlockState.BLOCKED;
-
-			currentOffset++;
-		}
-
-		// ausgaenge 9 - 16 am modul (laut
-		// https://tams-online.de/WebRoot/Store11/Shops/642f1858-c39b-4b7d-af86-f6a1feaca0e4/MediaGallery/15_Download/Sonstiges/interface.txt)
-		for (byte i = 7; i >= 0; i--) {
-
-			final int value = ((inputDescriptor2 >> i) & 1);
-			final int offset = base + currentOffset;
-
-			logger.info("Contact " + offset + (value == 0 ? ") UNUSED" : ") USED"));
-
-			feedbackBlockUpdateEvent.getFeedbackBlockState()[offset - 1] = value == 0 ? FeedbackBlockState.FREE
-					: FeedbackBlockState.BLOCKED;
-
-			currentOffset++;
-		}
-
-		// send event
-		applicationEventPublisher.publishEvent(feedbackBlockUpdateEvent);
-	}
-
 	@Override
 	public byte[] getByteArray() {
 
@@ -138,14 +86,6 @@ public class P50XXEvtSenCommand implements Command {
 		byteArray[1] = (byte) 0xCB;
 
 		return byteArray;
-	}
-
-	public ApplicationEventPublisher getApplicationEventPublisher() {
-		return applicationEventPublisher;
-	}
-
-	public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
-		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
 }

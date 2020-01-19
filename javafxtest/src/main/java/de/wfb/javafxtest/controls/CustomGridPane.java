@@ -90,6 +90,7 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 				final SelectionEvent selectionEvent = new SelectionEvent(this, sceneX + " - " + sceneY, xIndex, yIndex,
 						shiftState);
 
+				logger.trace("Sending SelectionEvent ...");
 				applicationEventPublisher.publishEvent(selectionEvent);
 			}
 		});
@@ -165,6 +166,8 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 
 				if (node == null) {
 
+					logger.trace("Node is null!");
+
 					// remove
 					final SVGPath svgPathOld = viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()];
 					getChildren().remove(svgPathOld);
@@ -191,36 +194,75 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 
 				// create new path
 				final boolean turnoutState = turnoutState(node);
-				logger.trace("TurnoutState: " + turnoutState);
 				final boolean highlighted = modelChangedEvent.isHighlighted();
 				final boolean blocked = modelChangedEvent.isBlocked();
 				final boolean selected = modelChangedEvent.isSelected();
+
+				logger.trace("TurnoutState: " + turnoutState + " highlighted: " + highlighted + " blocked: " + blocked
+						+ " selected: " + selected);
 
 				try {
 					final SVGPath svgPathNew = svgPathFactory.create(shapeType, cell_width, turnoutState, highlighted,
 							blocked, selected);
 
 					if (svgPathNew == null) {
+
+						logger.trace("svgPathNew is null!");
 						return;
 					}
+
 					svgPathNew.setLayoutX(modelChangedEvent.getX() * cell_width);
 					svgPathNew.setLayoutY(modelChangedEvent.getY() * cell_width);
 
 					getChildren().addAll(svgPathNew);
 
+					// render the feedback block number onto the layout
 					if (node.getFeedbackBlockNumber() > -1) {
 
 						final Text text = new Text(Integer.toString(node.getFeedbackBlockNumber()));
 						text.setScaleX(0.5);
 						text.setScaleY(0.5);
 
+						double x = 0;
+						double y = 0;
+
 						if (shapeType == ShapeType.STRAIGHT_HORIZONTAL) {
-							text.setLayoutX((modelChangedEvent.getX() + 0) * cell_width - 0);
-							text.setLayoutY((modelChangedEvent.getY() + 1) * cell_width + 5);
+
+							x = (modelChangedEvent.getX() + 0) * cell_width - 3;
+							y = (modelChangedEvent.getY() + 1) * cell_width + 5;
+
 						} else if (shapeType == ShapeType.STRAIGHT_VERTICAL) {
-							text.setLayoutX((modelChangedEvent.getX() + 0) * cell_width - 4);
-							text.setLayoutY((modelChangedEvent.getY() + 1) * cell_width + 0);
+
+							x = (modelChangedEvent.getX() + 0) * cell_width + 4;
+							y = (modelChangedEvent.getY() + 1) * cell_width + 0;
+
+						} else if (shapeType == ShapeType.TURN_TOP_RIGHT) {
+
+							x = (modelChangedEvent.getX() + 0) * cell_width - 0;
+							y = (modelChangedEvent.getY() + 1) * cell_width + 5;
+
+						} else if (shapeType == ShapeType.TURN_RIGHT_BOTTOM) {
+
+							x = (modelChangedEvent.getX() + 0) * cell_width - 0;
+							y = (modelChangedEvent.getY() + 1) * cell_width + 5;
+
+						} else if (shapeType == ShapeType.TURN_BOTTOM_LEFT) {
+
+							x = (modelChangedEvent.getX() + 0) * cell_width - 0;
+							y = (modelChangedEvent.getY() + 1) * cell_width + 5;
+
+						} else if (shapeType == ShapeType.TURN_LEFT_TOP) {
+
+							x = (modelChangedEvent.getX() + 0) * cell_width - 0;
+							y = (modelChangedEvent.getY() + 1) * cell_width + 5;
+
 						}
+
+						logger.trace("X: " + y + " Y: " + y + " shapeType: " + shapeType
+								+ " node.getFeedbackBlockNumber() " + node.getFeedbackBlockNumber());
+
+						text.setLayoutX(x);
+						text.setLayoutY(y);
 
 						getChildren().addAll(text);
 					}

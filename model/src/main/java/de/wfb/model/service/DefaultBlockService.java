@@ -51,14 +51,14 @@ public class DefaultBlockService implements BlockService {
 			final DefaultBlock defaultBlock = new DefaultBlock();
 			defaultBlock.setId(feedbackBlockNumber);
 
-			logger.info("Adding Block " + feedbackBlockNumber);
+			logger.trace("Adding Block " + feedbackBlockNumber);
 
 			idBlockMap.put(feedbackBlockNumber, defaultBlock);
 		}
 
 		final Block block = idBlockMap.get(feedbackBlockNumber);
 
-		logger.info("Inserting node " + railNode.getId() + " into Block " + block.getId());
+		logger.trace("Inserting node " + railNode.getId() + " into Block " + block.getId());
 
 		block.addNode(railNode);
 		railNode.setBlock(block);

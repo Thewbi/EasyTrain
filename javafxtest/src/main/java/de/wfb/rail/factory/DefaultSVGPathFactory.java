@@ -124,7 +124,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 
 		final SVGPath svgPath = new SVGPath();
 		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected));
-		svgPath.setStroke(LayoutColors.STANDARD_STROKE_COLOR);
+		svgPath.setStroke(LayoutColors.TURNOUT_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
 		// Creating the rotation transformation
@@ -172,7 +172,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 
 		final SVGPath svgPath = new SVGPath();
 		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected));
-		svgPath.setStroke(LayoutColors.STANDARD_STROKE_COLOR);
+		svgPath.setStroke(LayoutColors.TURNOUT_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
 		// Creating the rotation transformation

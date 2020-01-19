@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
-public class DefaultDebugFacade {
+import de.web.facade.DebugFacade;
+
+public class DefaultDebugFacade implements DebugFacade {
 
 	@Autowired
 	private ApplicationEventPublisher applicationEventPublisher;

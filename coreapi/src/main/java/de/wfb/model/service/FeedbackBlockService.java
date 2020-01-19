@@ -2,7 +2,7 @@ package de.wfb.model.service;
 
 public interface FeedbackBlockService {
 
-	static final int S88_COUNT = 4;
+	static final int S88_COUNT = 7;
 
 	static final int CONTACTS_PER_S88_COUNT = 16;
 

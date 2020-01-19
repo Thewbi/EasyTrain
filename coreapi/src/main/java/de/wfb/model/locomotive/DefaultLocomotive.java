@@ -3,14 +3,17 @@ package de.wfb.model.locomotive;
 import de.wfb.model.node.Direction;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.RailNode;
+import de.wfb.rail.facade.ProtocolFacade;
 import de.wfb.rail.service.Route;
 
 public class DefaultLocomotive {
 
+	private static final boolean FORWARD_DEFAULT_VALUE = true;
+
 	private int id;
 
 	/** the protocol address by which the locomotive can be controlled */
-	private int address;
+	private short address;
 
 	private String name;
 
@@ -22,11 +25,17 @@ public class DefaultLocomotive {
 
 	private Route route;
 
+	private double speed;
+
+	private boolean direction = FORWARD_DEFAULT_VALUE;
+
+	private ProtocolFacade protocolFacade;
+
 	public DefaultLocomotive() {
 		super();
 	}
 
-	public DefaultLocomotive(final int id, final String name, final int address) {
+	public DefaultLocomotive(final int id, final String name, final short address) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -60,11 +69,11 @@ public class DefaultLocomotive {
 		return "Locomotive " + name + "";
 	}
 
-	public int getAddress() {
+	public short getAddress() {
 		return address;
 	}
 
-	public void setAddress(final int address) {
+	public void setAddress(final short address) {
 		this.address = address;
 	}
 
@@ -114,6 +123,59 @@ public class DefaultLocomotive {
 
 	public void setGraphNode(final GraphNode graphNode) {
 		this.graphNode = graphNode;
+	}
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(final double speed) {
+		this.speed = speed;
+	}
+
+	public ProtocolFacade getProtocolFacade() {
+		return protocolFacade;
+	}
+
+	public void setProtocolFacade(final ProtocolFacade protocolFacade) {
+		this.protocolFacade = protocolFacade;
+	}
+
+	public void start(final double speed) {
+
+		this.speed = speed;
+
+		protocolFacade.throttleLocomotive(address, speed, direction);
+	}
+
+	public void stop() {
+
+		speed = 0.0d;
+		protocolFacade.throttleLocomotive(address, speed, direction);
+
+//		while (speed > 0.0d) {
+//
+//			speed -= 3.0d;
+//			if (speed < 0.0d) {
+//				speed = 0.0d;
+//			}
+//
+//			protocolFacade.throttleLocomotive(address, speed, direction);
+//			try {
+//				Thread.sleep(300);
+//			} catch (final InterruptedException e) {
+//				// nop
+//			}
+//		}
+
+	}
+
+	public boolean isDirection() {
+		return direction;
+	}
+
+	public void setDirection(final boolean direction) {
+		this.direction = direction;
 	}
 
 }

@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import de.wfb.model.node.RailNode;
 import de.wfb.rail.service.ProtocolService;
 
 public class DefaultProtocolFacade implements ProtocolFacade {
@@ -52,6 +53,30 @@ public class DefaultProtocolFacade implements ProtocolFacade {
 		logger.trace("disconnect()");
 
 		protocolService.disconnect();
+	}
+
+	@Override
+	public void sense(final int feebackContactId) {
+
+		logger.trace("sense()");
+
+		protocolService.sense(feebackContactId);
+	}
+
+	@Override
+	public void xSenseOff() {
+
+		logger.trace("xSenseOff()");
+
+		protocolService.xSensOff();
+	}
+
+	@Override
+	public void turnoutStatus(final RailNode node) {
+
+		logger.trace("xSenseOff()");
+
+		protocolService.turnoutStatus(node);
 	}
 
 }

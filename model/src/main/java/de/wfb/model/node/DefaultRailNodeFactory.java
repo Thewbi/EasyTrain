@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import de.wfb.model.service.IdService;
 import de.wfb.rail.factory.Factory;
+import de.wfb.rail.service.TurnoutService;
 import de.wfb.rail.ui.ShapeType;
 
 public class DefaultRailNodeFactory implements Factory<Node> {
@@ -17,6 +18,9 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 
 	@Autowired
 	private IdService idService;
+
+	@Autowired
+	private TurnoutService turnoutService;
 
 	@Override
 	public Node create(final Object... args) throws Exception {
@@ -51,7 +55,11 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 		if (ShapeType.isTurnout(shapeType)) {
 
 			if (jsonNode.getProtocolTurnoutId() != null) {
+
 				node.setProtocolTurnoutId(jsonNode.getProtocolTurnoutId());
+
+				// queue initial status query for this turn out
+				turnoutService.queueStateRequest(node);
 			}
 		}
 

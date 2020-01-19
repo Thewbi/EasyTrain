@@ -108,7 +108,7 @@ public class Route {
 
 			if (ShapeType.isTurnout(graphNode.getRailNode().getShapeType())) {
 
-				// if the turnout is NOT traversed in switching direction, continue
+				// if the turn out is NOT traversed in switching direction, continue
 				if (graphNode.getChildren().size() < 2) {
 
 					logger.info("Index = " + index + " Turnout found. Not in switching order!");
@@ -208,6 +208,40 @@ public class Route {
 
 	public void setLocomotive(final DefaultLocomotive locomotive) {
 		this.locomotive = locomotive;
+	}
+
+	public boolean containsBlock(final Block block) {
+
+		for (int i = graphNodes.size() - 1; i >= 0; i--) {
+
+			final GraphNode graphNode = graphNodes.get(i);
+
+			if (block.getNodes().contains(graphNode.getRailNode())) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public boolean endsWith(final Block block) {
+
+		// the first block from the back has to be the specified block
+		for (int i = graphNodes.size() - 1; i >= 0; i--) {
+
+			final GraphNode graphNode = graphNodes.get(i);
+			final Block routeBlock = graphNode.getRailNode().getBlock();
+
+			logger.trace("Testing against block: " + routeBlock);
+
+			if (routeBlock != null) {
+
+				return routeBlock == block;
+			}
+		}
+
+		return false;
 	}
 
 }

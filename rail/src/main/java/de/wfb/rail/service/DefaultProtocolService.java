@@ -14,12 +14,15 @@ import org.springframework.context.ApplicationEventPublisher;
 import de.wfb.model.Model;
 import de.wfb.model.node.Node;
 import de.wfb.rail.commands.Command;
+import de.wfb.rail.commands.P50XSensorCommand;
 import de.wfb.rail.commands.P50XTurnoutCommand;
 import de.wfb.rail.commands.P50XVersionCommand;
 import de.wfb.rail.commands.P50XXEventCommand;
 import de.wfb.rail.commands.P50XXEvtSenCommand;
 import de.wfb.rail.commands.P50XXLokCommand;
 import de.wfb.rail.commands.P50XXNOPCommand;
+import de.wfb.rail.commands.P50XXSensOffCommand;
+import de.wfb.rail.commands.P50XXTrntStsCommand;
 import de.wfb.rail.factory.Factory;
 import de.wfb.rail.io.template.DefaultSerialTemplate;
 import de.wfb.rail.io.template.SerialTemplate;
@@ -62,13 +65,10 @@ public class DefaultProtocolService implements ProtocolService {
 
 			logger.trace("nodeClicked node is null");
 
-			// all nodes that are selected have to be unused
-
 			return;
 		}
 
 		logger.trace("nodeClicked " + node.getId() + " (" + node.getX() + ", " + node.getY() + ")");
-//		logger.info(node);
 
 		// switch turnouts
 		if (ShapeType.isTurnout(node.getShapeType())) {
@@ -77,7 +77,6 @@ public class DefaultProtocolService implements ProtocolService {
 		}
 	}
 
-	// private void turnTurnout(final TurnoutNode turnoutNode) {
 	private void turnTurnout(final Node node) {
 
 		lock.lock();
@@ -105,6 +104,39 @@ public class DefaultProtocolService implements ProtocolService {
 				logger.error(e.getMessage(), e);
 			}
 			turnoutCommandSecond(inputStream, outputStream, node.getProtocolTurnoutId(), node.isThrown());
+
+		} catch (final Exception e) {
+
+			logger.error(e.getMessage(), e);
+
+		} finally {
+
+			lock.unlock();
+
+		}
+	}
+
+	@Override
+	public void turnoutStatus(final Node node) {
+
+		logger.info("turnoutStatus()");
+
+		lock.lock();
+
+		try {
+
+			if (!isConnected()) {
+
+				logger.trace("Not connected! Aborting operation!");
+
+				return;
+			}
+
+			// check the turnout status
+			final P50XXTrntStsCommand command = turnoutStatusCommand(inputStream, outputStream, node);
+
+			// set the status into the node
+			node.setThrown(command.isThrown());
 
 		} catch (final Exception e) {
 
@@ -164,7 +196,7 @@ public class DefaultProtocolService implements ProtocolService {
 
 			if (!isConnected()) {
 
-				logger.info("Not connected! Aborting operation!");
+				logger.trace("Not connected! Aborting operation!");
 
 				return;
 			}
@@ -177,7 +209,56 @@ public class DefaultProtocolService implements ProtocolService {
 		} finally {
 
 			lock.unlock();
+		}
+	}
 
+	@Override
+	public void sense(final int feedbackContactId) {
+
+		lock.lock();
+
+		try {
+
+			if (!isConnected()) {
+
+				logger.trace("Not connected! Aborting operation!");
+
+				return;
+			}
+			sensorCommand(inputStream, outputStream, feedbackContactId);
+
+		} catch (final Exception e) {
+
+			logger.error(e.getMessage(), e);
+
+		} finally {
+
+			lock.unlock();
+		}
+	}
+
+	@Override
+	public void xSensOff() {
+
+		lock.lock();
+
+		try {
+
+			if (!isConnected()) {
+
+				logger.trace("Not connected! Aborting operation!");
+				return;
+			}
+
+			xSensOffCommand(inputStream, outputStream);
+
+		} catch (final Exception e) {
+
+			logger.error(e.getMessage(), e);
+
+		} finally {
+
+			lock.unlock();
 		}
 	}
 
@@ -238,6 +319,35 @@ public class DefaultProtocolService implements ProtocolService {
 		// update. To send events, it gets a reference to a ApplicationEventPublisher
 		command.setApplicationEventPublisher(applicationEventPublisher);
 
+		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
+		serialTemplate.execute();
+
+		return command;
+	}
+
+	private P50XSensorCommand sensorCommand(final InputStream inputStream, final OutputStream outputStream,
+			final int feedbackBlockId) {
+
+		final P50XSensorCommand command = new P50XSensorCommand(feedbackBlockId);
+		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
+		serialTemplate.execute();
+
+		return command;
+	}
+
+	private P50XXSensOffCommand xSensOffCommand(final InputStream inputStream, final OutputStream outputStream) {
+
+		final P50XXSensOffCommand command = new P50XXSensOffCommand();
+		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
+		serialTemplate.execute();
+
+		return command;
+	}
+
+	private P50XXTrntStsCommand turnoutStatusCommand(final InputStream inputStream, final OutputStream outputStream,
+			final Node node) {
+
+		final P50XXTrntStsCommand command = new P50XXTrntStsCommand(node);
 		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
 		serialTemplate.execute();
 

@@ -34,6 +34,7 @@ import de.wfb.model.node.JsonNode;
 import de.wfb.model.node.Node;
 import de.wfb.model.node.RailNode;
 import de.wfb.rail.converter.Converter;
+import de.wfb.rail.facade.ProtocolFacade;
 import de.wfb.rail.factory.Factory;
 
 public class DefaultModelPersistenceService implements ModelPersistenceService {
@@ -48,6 +49,9 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 
 	@Autowired
 	private Factory<Node> nodeFactory;
+
+	@Autowired
+	private ProtocolFacade protocolFacade;
 
 	@Override
 	public void storeModel(final Model model, final String path) throws IOException {
@@ -113,7 +117,7 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 
 		logger.trace("'" + Paths.get(pathToModelFile).toAbsolutePath() + "' contains " + nodeArray.size() + " nodes!");
 
-		final int maxId = Integer.MIN_VALUE;
+//		final int maxId = Integer.MIN_VALUE;
 
 		final DefaultJsonLocomotiveConverter defaultJsonLocomotiveConverter = new DefaultJsonLocomotiveConverter();
 
@@ -124,6 +128,7 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 			defaultJsonLocomotiveConverter.convert(defaultLocomotiveJson, defaulLocomotive);
 
 			model.getLocomotives().add(defaulLocomotive);
+			defaulLocomotive.setProtocolFacade(protocolFacade);
 		}
 	}
 
@@ -184,16 +189,15 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 
 				for (final Integer nodeId : jsonNode.getManualConnections()) {
 
-					logger.info("Manual connection to node: " + nodeId);
+					logger.trace("Manual connection to node: " + nodeId);
 
 					final Node connectedNode = modelService.getNodeById(nodeId.intValue());
 
-					logger.info(railNode.getId() + " manual connection to connectedNode: " + connectedNode.getId());
+					logger.trace(railNode.getId() + " manual connection to connectedNode: " + connectedNode.getId());
 
 					if (connectedNode != null) {
 
-						logger.info("Manual Connection resolved");
-						// railNode.getManualConnections().add((RailNode) connectedNode);
+						logger.trace("Manual Connection resolved");
 
 						railNode.manualConnectTo((RailNode) connectedNode);
 					}

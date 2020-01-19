@@ -20,6 +20,8 @@ import de.wfb.dialogs.SidePane;
 import de.wfb.dialogs.ThrottlePane;
 import de.wfb.dialogs.ThrottleStage;
 import de.wfb.dialogs.TurnoutDetailsPane;
+import de.wfb.factory.DefaultMenuBarFactory;
+import de.wfb.factory.DefaultSceneFactory;
 import de.wfb.javafxtest.controller.LayoutGridController;
 import de.wfb.model.DefaultModel;
 import de.wfb.model.Model;
@@ -27,6 +29,7 @@ import de.wfb.model.facade.DefaultModelFacade;
 import de.wfb.model.facade.DefaultRoutingFacade;
 import de.wfb.model.node.DefaultRailNodeFactory;
 import de.wfb.model.service.DefaultBlockService;
+import de.wfb.model.service.DefaultFeedbackBlockService;
 import de.wfb.model.service.DefaultIdService;
 import de.wfb.model.service.DefaultModelPersistenceService;
 import de.wfb.model.service.DefaultModelService;
@@ -38,6 +41,7 @@ import de.wfb.rail.factory.DefaultSVGPathFactory;
 import de.wfb.rail.factory.DefaultSerialPortFactory;
 import de.wfb.rail.service.DefaultDrivingService;
 import de.wfb.rail.service.DefaultProtocolService;
+import de.wfb.rail.service.DefaultTurnoutService;
 import de.wfb.threads.TimedDrivingThread;
 
 /**
@@ -169,6 +173,11 @@ public class ConfigurationClass implements SchedulingConfigurer {
 	}
 
 	@Bean
+	public TimedDrivingThread TimedDrivingThread() {
+		return new TimedDrivingThread();
+	}
+
+	@Bean
 	public DefaultRoutingService DefaultRoutingService() {
 		return new DefaultRoutingService();
 	}
@@ -234,13 +243,28 @@ public class ConfigurationClass implements SchedulingConfigurer {
 	}
 
 	@Bean
-	public TimedDrivingThread TimedDrivingThread() {
-		return new TimedDrivingThread();
+	public DefaultRoutingFacade DefaultRoutingFacade() {
+		return new DefaultRoutingFacade();
 	}
 
 	@Bean
-	public DefaultRoutingFacade DefaultRoutingFacade() {
-		return new DefaultRoutingFacade();
+	public DefaultFeedbackBlockService DefaultFeedbackBlockService() {
+		return new DefaultFeedbackBlockService();
+	}
+
+	@Bean
+	public DefaultMenuBarFactory DefaultMenuBarFactory() {
+		return new DefaultMenuBarFactory();
+	}
+
+	@Bean
+	public DefaultSceneFactory DefaultSceneFactory() {
+		return new DefaultSceneFactory();
+	}
+
+	@Bean
+	public DefaultTurnoutService DefaultTurnoutService() {
+		return new DefaultTurnoutService();
 	}
 
 }

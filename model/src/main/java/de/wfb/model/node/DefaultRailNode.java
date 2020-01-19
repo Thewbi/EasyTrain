@@ -38,12 +38,17 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	private Integer protocolTurnoutId;
 
+	/** thrown = true ==> */
 	private boolean thrown;
 
 	private final List<RailNode> manualConnections = new ArrayList<>();
 
 	private int feedbackBlockNumber = -1;
 
+	/**
+	 * This field is used to communicate with the UI. It will draw nodes with a
+	 * different color when they are blocked!
+	 */
 	private boolean feedbackBlockUsed;
 
 	private boolean selected;
@@ -145,6 +150,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	public void sendModelChangedEvent(final ApplicationEventPublisher applicationEventPublisher, final Model model,
 			final RailNode railNode) {
 
+		logger.info("sendModelChangedEvent()");
+
 		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, railNode.getX(), railNode.getY(),
 				railNode.isHighlighted(), railNode.isFeedbackBlockUsed(), railNode.isSelected());
 
@@ -182,31 +189,32 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 		stringBuffer.append(getId()).append("(").append(getX()).append(", ").append(getY()).append(") ");
 		stringBuffer.append(railNodeB.getId()).append("(").append(railNodeB.getX()).append(", ")
 				.append(railNodeB.getY()).append(") ");
-		logger.info(stringBuffer.toString());
+
+		logger.trace(stringBuffer.toString());
 
 		// find orientation
 
 		// north
 		if (railNodeB.getY() < getY()) {
-			logger.info("north");
+			logger.trace("north");
 			connectNorth(railNodeB);
 		}
 
 		// east
 		if (railNodeB.getX() > getX()) {
-			logger.info("east");
+			logger.trace("east");
 			connectEast(railNodeB);
 		}
 
 		// south
 		if (railNodeB.getY() > getY()) {
-			logger.info("south");
+			logger.trace("south");
 			connectSouth(railNodeB);
 		}
 
 		// west
 		if (railNodeB.getX() < getX()) {
-			logger.info("west");
+			logger.trace("west");
 			connectWest(railNodeB);
 		}
 
@@ -518,6 +526,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 		final StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append("\n");
 
+		stringBuffer.append("ID: ").append(getId()).append("\n");
+
 		stringBuffer.append(graphNodeOne.getId()).append(" -> ");
 		if (CollectionUtils.isNotEmpty(graphNodeOne.getChildren())) {
 
@@ -591,6 +601,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	@Override
 	public Edge getEdge(final Direction edgeDirection) {
+
 		switch (edgeDirection) {
 
 		case NORTH:
@@ -612,6 +623,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	@Override
 	public void setEdge(final Direction edgeDirection, final Edge edge) {
+
 		switch (edgeDirection) {
 
 		case NORTH:
@@ -742,6 +754,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	@Override
 	public void setReservedLocomotiveId(final int reservedLocomotiveId) {
+		logger.trace("LocomotiveId: " + reservedLocomotiveId);
 		this.reservedLocomotiveId = reservedLocomotiveId;
 	}
 

@@ -1,12 +1,15 @@
 package de.wfb.dialogs;
 
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import de.wfb.rail.facade.ProtocolFacade;
+import de.wfb.model.facade.ModelFacade;
+import de.wfb.model.locomotive.DefaultLocomotive;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -35,7 +38,7 @@ public class ThrottlePane extends GridPane {
 	private boolean dirForward = true;
 
 	@Autowired
-	private ProtocolFacade protocolFacade;
+	private ModelFacade modelFacade;
 
 	public void setup() {
 
@@ -71,7 +74,7 @@ public class ThrottlePane extends GridPane {
 		getChildren().add(slider);
 
 		changeDirectionButton = new Button();
-		changeDirectionButton.setText("<->");
+		changeDirectionButton.setText("->");
 		GridPane.setColumnIndex(changeDirectionButton, 1);
 		GridPane.setRowIndex(changeDirectionButton, 3);
 		changeDirectionButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -89,12 +92,19 @@ public class ThrottlePane extends GridPane {
 
 	protected void processChangeDirectionEvent() {
 
+		// change the direction
+		dirForward = !dirForward;
+
+		changeDirectionButton.setText(dirForward ? "->" : "<-");
+
+		final DefaultLocomotive locomotive = retrieveLocomotive();
+		if (locomotive != null) {
+			locomotive.setDirection(dirForward);
+		}
+
 		// stop the train
 		final double newThrottleValue = 0;
 		processEventThrottle(newThrottleValue);
-
-		// change the direction
-		dirForward = !dirForward;
 	}
 
 	private void processEventThrottle(final double newThrottleValue) {
@@ -109,12 +119,9 @@ public class ThrottlePane extends GridPane {
 
 		logger.trace("newValue = " + throttleValue);
 
-		final String textFieldContent = textfield.getText();
-
-		final short locomotiveAddress = getLocomotiveAddress(textFieldContent);
-
-		if (locomotiveAddress >= 0) {
-			protocolFacade.throttleLocomotive(locomotiveAddress, throttleValue, dirForward);
+		final DefaultLocomotive locomotive = retrieveLocomotive();
+		if (locomotive != null) {
+			locomotive.start(throttleValue);
 		}
 	}
 
@@ -131,6 +138,28 @@ public class ThrottlePane extends GridPane {
 		final Integer addressAsInteger = NumberUtils.createInteger(locomotiveAddressAsString);
 
 		return addressAsInteger.shortValue();
+	}
+
+	private DefaultLocomotive retrieveLocomotive() {
+
+		final String textFieldContent = textfield.getText();
+
+		final short locomotiveAddress = getLocomotiveAddress(textFieldContent);
+
+		if (locomotiveAddress >= 0) {
+
+			final Optional<DefaultLocomotive> locomotiveOptional = modelFacade
+					.getLocomotiveByAddress(locomotiveAddress);
+
+			if (locomotiveOptional.isPresent()) {
+
+				final DefaultLocomotive locomotive = locomotiveOptional.get();
+
+				return locomotive;
+			}
+		}
+
+		return null;
 	}
 
 	public void clear() {

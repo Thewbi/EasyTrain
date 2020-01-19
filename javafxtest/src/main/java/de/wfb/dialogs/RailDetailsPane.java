@@ -1,10 +1,15 @@
 package de.wfb.dialogs;
 
+import java.util.Optional;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import de.wfb.model.facade.ModelFacade;
+import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
 import javafx.event.ActionEvent;
@@ -27,6 +32,9 @@ public class RailDetailsPane extends GridPane {
 	private TextField feedbackBlockNumberTextfield;
 
 	private Button savebutton;
+
+	@Autowired
+	private ModelFacade modelFacade;
 
 	public void setup(final Node node) {
 
@@ -86,10 +94,18 @@ public class RailDetailsPane extends GridPane {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
+		stringBuffer.append("Reserved: ").append(node.isReserved()).append("\n");
+		stringBuffer.append("ReservedByLocomotiveId: ").append(node.getReservedLocomotiveId()).append("\n");
+
+		final Optional<DefaultLocomotive> locomotive = modelFacade.getLocomotiveById(node.getReservedLocomotiveId());
+		if (locomotive.isPresent()) {
+			stringBuffer.append("Locomotive Address: ").append(locomotive.get().getAddress()).append("\n");
+		}
+
 		// @formatter:off
 
 		// GraphNode ONE and children
-		stringBuffer.append(node.getId()).append(" [").append(node.getGraphNodeOne().getId()).append(" ").append(node.getGraphNodeOne().getColor().name()).append(" -> ");
+		stringBuffer.append(node.getId()).append(" [").append(node.getGraphNodeOne().getId()).append(" ").append(node.getGraphNodeOne().getColor().name()).append(" -> \n");
 
 		if (CollectionUtils.isNotEmpty(node.getGraphNodeOne().getChildren())) {
 
@@ -101,7 +117,7 @@ public class RailDetailsPane extends GridPane {
 		stringBuffer.append("]");
 
 		// GraphNode TWO and children
-		stringBuffer.append(" [").append(node.getGraphNodeTwo().getId()).append(" ").append(node.getGraphNodeTwo().getColor().name()).append(" -> ");
+		stringBuffer.append(" [").append(node.getGraphNodeTwo().getId()).append(" ").append(node.getGraphNodeTwo().getColor().name()).append(" -> \n");
 
 		if (CollectionUtils.isNotEmpty(node.getGraphNodeTwo().getChildren())) {
 

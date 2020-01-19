@@ -24,16 +24,7 @@ public class DefaultBlock implements Block {
 	}
 
 	@Override
-	public int getId() {
-		return id;
-	}
-
-	public void setId(final int id) {
-		this.id = id;
-	}
-
-	@Override
-	public void reserveForLocomotive(final DefaultLocomotive defaultLocomotive) {
+	public void reserveForLocomotive(final DefaultLocomotive locomotive) {
 
 		if (CollectionUtils.isEmpty(getNodes())) {
 			return;
@@ -42,7 +33,7 @@ public class DefaultBlock implements Block {
 		// reserve all the block's nodes for this locomotive
 		for (final RailNode blockRailNode : getNodes()) {
 
-			if (defaultLocomotive == null) {
+			if (locomotive == null) {
 
 				blockRailNode.setReserved(false);
 				blockRailNode.setReservedLocomotiveId(-1);
@@ -56,7 +47,7 @@ public class DefaultBlock implements Block {
 				}
 
 				blockRailNode.setReserved(true);
-				blockRailNode.setReservedLocomotiveId(defaultLocomotive.getId());
+				blockRailNode.setReservedLocomotiveId(locomotive.getId());
 			}
 		}
 	}
@@ -103,6 +94,15 @@ public class DefaultBlock implements Block {
 	@Override
 	public List<RailNode> getNodes() {
 		return nodes;
+	}
+
+	@Override
+	public int getId() {
+		return id;
+	}
+
+	public void setId(final int id) {
+		this.id = id;
 	}
 
 	@Override

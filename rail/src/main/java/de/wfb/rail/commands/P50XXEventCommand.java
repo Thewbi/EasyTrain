@@ -68,7 +68,6 @@ public class P50XXEventCommand implements Command {
 			if ((data >> 7 & 1) <= 0) {
 				responseLength = 0;
 			}
-
 		}
 	}
 
@@ -104,7 +103,7 @@ public class P50XXEventCommand implements Command {
 
 		final boolean lok = (data & 0x01 << 0) > 0;
 		if (lok) {
-			logger.info("there has been at least one non-PC Lok cmd");
+			logger.trace("there has been at least one non-PC Lok cmd");
 		}
 		final boolean ir = (data & 0x01 << 1) > 0;
 		if (ir) {
@@ -200,7 +199,7 @@ public class P50XXEventCommand implements Command {
 		}
 		final boolean sts = (data & 0x01 << 6) > 0;
 		if (sts) {
-			logger.info("an XStatus cmd should be issued");
+			logger.trace("an XStatus cmd should be issued");
 			xStatusShouldBeCalled = true;
 		}
 		final boolean ev3 = (data & 0x01 << 7) > 0;

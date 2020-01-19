@@ -40,4 +40,8 @@ public interface ModelFacade {
 
 	int retrieveNextLocomotiveId();
 
+	Optional<DefaultLocomotive> getLocomotiveById(int reservedLocomotiveId);
+
+	Optional<DefaultLocomotive> getLocomotiveByAddress(short locomotiveAddress);
+
 }

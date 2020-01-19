@@ -55,4 +55,12 @@ public interface Node {
 
 	GraphNode getGraphNodeTwo();
 
+	boolean isReserved();
+
+	void setReserved(boolean reserved);
+
+	int getReservedLocomotiveId();
+
+	void setReservedLocomotiveId(int reservedLocomotiveId);
+
 }

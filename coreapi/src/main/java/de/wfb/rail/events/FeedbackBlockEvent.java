@@ -3,11 +3,14 @@ package de.wfb.rail.events;
 import org.springframework.context.ApplicationEvent;
 
 /**
- * After a XEvtSen command was executed, system learns about the states of
- * blocks from the response of the command.
+ * After a P50XXEvtSenCommand command was executed, system learns about the
+ * states of blocks from the response of the command.
+ *
+ * The state change is send into the system using a FeedbackBlockUpdateEvent.
+ * That FeedbackBlockUpdateEvent is handled by
  *
  * For every block signaled as free or blocked, the system will publish a
- * seperate FeedbackBlockEvent.
+ * separate FeedbackBlockEvent.
  */
 public class FeedbackBlockEvent extends ApplicationEvent {
 

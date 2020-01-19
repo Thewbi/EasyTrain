@@ -4,7 +4,7 @@ public class DefaultLocomotiveJson {
 
 	private int id;
 
-	private int address;
+	private short address;
 
 	private String name;
 
@@ -16,11 +16,11 @@ public class DefaultLocomotiveJson {
 		this.id = id;
 	}
 
-	public int getAddress() {
+	public short getAddress() {
 		return address;
 	}
 
-	public void setAddress(final int address) {
+	public void setAddress(final short address) {
 		this.address = address;
 	}
 

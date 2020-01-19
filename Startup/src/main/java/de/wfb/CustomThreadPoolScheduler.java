@@ -19,7 +19,7 @@ public class CustomThreadPoolScheduler extends ThreadPoolTaskScheduler {
 	@Override
 	public ScheduledFuture<?> scheduleAtFixedRate(final Runnable task, final long period) {
 
-		logger.info("scheduleAtFixedRate()");
+		logger.trace("scheduleAtFixedRate()");
 
 		final ScheduledFuture<?> future = super.scheduleAtFixedRate(task, period);
 
@@ -32,7 +32,7 @@ public class CustomThreadPoolScheduler extends ThreadPoolTaskScheduler {
 	@Override
 	public ScheduledFuture<?> scheduleAtFixedRate(final Runnable task, final Date startTime, final long period) {
 
-		logger.info("scheduleAtFixedRate()");
+		logger.trace("scheduleAtFixedRate()");
 
 		final ScheduledFuture<?> future = super.scheduleAtFixedRate(task, startTime, period);
 

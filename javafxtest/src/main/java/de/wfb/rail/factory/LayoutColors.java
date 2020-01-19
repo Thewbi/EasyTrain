@@ -14,4 +14,6 @@ public interface LayoutColors {
 
 	public static final Color SELECTED_FILL_COLOR = Color.GREEN;
 
+	public static final Color TURNOUT_STROKE_COLOR = Color.BROWN;
+
 }

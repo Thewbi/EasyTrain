@@ -91,4 +91,15 @@ public class DefaultModelFacade implements ModelFacade {
 		return modelService.retrieveNextLocomotiveId();
 	}
 
+	@Override
+	public Optional<DefaultLocomotive> getLocomotiveById(final int id) {
+		return modelService.getLocomotives().stream().filter(locomotive -> locomotive.getId() == id).findFirst();
+	}
+
+	@Override
+	public Optional<DefaultLocomotive> getLocomotiveByAddress(final short locomotiveAddress) {
+		return modelService.getLocomotives().stream().filter(locomotive -> locomotive.getAddress() == locomotiveAddress)
+				.findFirst();
+	}
+
 }
