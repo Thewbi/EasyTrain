@@ -64,6 +64,9 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 	@Autowired
 	private PlaceLocomotiveStage placeLocomotiveStage;
 
+	@Autowired
+	private XTrntStatusMenuItem xTrntStatusMenuItem;
+
 	@Override
 	public MenuBar create(final Object... args) throws Exception {
 
@@ -263,7 +266,6 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 
 				feedbackBlockState = feedbackBlockState == FeedbackBlockState.BLOCKED ? FeedbackBlockState.FREE
 						: FeedbackBlockState.BLOCKED;
-
 			}
 		});
 
@@ -317,13 +319,27 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 
 		});
 
+//		final MenuItem xTrntStatusMenuItem = new XTrnStatusMenuItem("XTrntStatus Command");
+//		xTrntStatusMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+//
+//			@Override
+//			public void handle(final ActionEvent event) {
+//
+//				logger.info("xTrntStatusMenuItem");
+//
+//				final boolean isThrown = protocolFacade.turnoutStatus((short) 28);
+//				logger.info("Result: " + isThrown);
+//			}
+//
+//		});
+
 		// add menuItems to the Menus
 		fileMenu.getItems().addAll(newItem, openFileItem, saveItem, exitItem);
 		routingMenu.getItems().addAll(findRouteMenuItem);
 		editMenu.getItems().addAll(connectItem, copyItem, pasteItem, locomotiveListItem, placeLocomotiveItem);
 		serialMenu.getItems().addAll(serialConnectItem, serialDisconnectItem);
 		debugMenu.getItems().addAll(routingNodeMenuItem, feedbackBlockEventMenuItem, removeLocomotiveItem,
-				sensorCommandMenuItem, xSensOffMenuItem);
+				sensorCommandMenuItem, xSensOffMenuItem, xTrntStatusMenuItem);
 
 		// add Menus to the MenuBar
 		menuBar.getMenus().addAll(fileMenu, routingMenu, debugMenu, editMenu, serialMenu, helpMenu);

@@ -22,6 +22,7 @@ import de.wfb.dialogs.ThrottleStage;
 import de.wfb.dialogs.TurnoutDetailsPane;
 import de.wfb.factory.DefaultMenuBarFactory;
 import de.wfb.factory.DefaultSceneFactory;
+import de.wfb.factory.XTrntStatusMenuItem;
 import de.wfb.javafxtest.controller.LayoutGridController;
 import de.wfb.model.DefaultModel;
 import de.wfb.model.Model;
@@ -265,6 +266,11 @@ public class ConfigurationClass implements SchedulingConfigurer {
 	@Bean
 	public DefaultTurnoutService DefaultTurnoutService() {
 		return new DefaultTurnoutService();
+	}
+
+	@Bean
+	public XTrntStatusMenuItem XTrntStatusMenuItem() {
+		return new XTrntStatusMenuItem("XTrntStatus Command");
 	}
 
 }

@@ -29,6 +29,7 @@ public class DefaultSerialTemplate implements SerialTemplate {
 	 */
 	public DefaultSerialTemplate(final OutputStream outputStream, final InputStream inputStream,
 			final Command command) {
+
 		this.outputStream = outputStream;
 		this.inputStream = inputStream;
 		this.command = command;
@@ -43,7 +44,7 @@ public class DefaultSerialTemplate implements SerialTemplate {
 
 		final byte[] byteArray = command.getByteArray();
 
-		logger.trace("REQUEST: " + Hex.encodeHexString(byteArray));
+		logger.info("REQUEST: " + Hex.encodeHexString(byteArray));
 
 		try {
 			outputStream.write(byteArray, 0, byteArray.length);
@@ -75,11 +76,12 @@ public class DefaultSerialTemplate implements SerialTemplate {
 
 		while (mode == -1) {
 
-			final ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
 			final byte[] tempBuffer = new byte[1024];
+
+			// read into the buffer
 			final int bytesRead = inputStream.read(tempBuffer);
 
-			logger.trace("bytesRead: " + bytesRead);
+			logger.info("bytesRead: " + bytesRead);
 
 			if (bytesRead == -1) {
 
@@ -88,6 +90,7 @@ public class DefaultSerialTemplate implements SerialTemplate {
 				throw new IOException(msg);
 			}
 
+			final ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
 			byteBuffer.put(tempBuffer, 0, bytesRead);
 
 			consumedLength += bytesRead;
@@ -103,6 +106,8 @@ public class DefaultSerialTemplate implements SerialTemplate {
 
 	private void processFixedLengthResponse(final int responseLength) throws IOException {
 
+		logger.info("processFixedLengthResponse(): " + responseLength);
+
 		final ByteBuffer byteBuffer = ByteBuffer.allocate(responseLength + 10);
 
 		final byte[] tempBuffer = new byte[1024];
@@ -111,11 +116,12 @@ public class DefaultSerialTemplate implements SerialTemplate {
 		// read bytes until the command says that enough bytes have been read
 		do {
 
+			logger.info("reading ...");
 			final int bytesRead = inputStream.read(tempBuffer);
-			logger.trace("bytesRead: " + bytesRead);
+			logger.info("bytesRead: " + bytesRead);
 
 			final String allDataAsHex = Hex.encodeHexString(tempBuffer);
-			logger.trace("allDataAsHex: " + allDataAsHex);
+			logger.info("allDataAsHex: " + allDataAsHex);
 
 			if (bytesRead == -1) {
 
@@ -130,7 +136,7 @@ public class DefaultSerialTemplate implements SerialTemplate {
 
 		} while (consumedLength < command.getResponseLength());
 
-		logger.trace("RESPONSE: " + byteBuffer.toString());
+		logger.info("RESPONSE: " + byteBuffer.toString());
 
 		command.result(byteBuffer);
 	}

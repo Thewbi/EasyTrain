@@ -117,9 +117,11 @@ public class DefaultProtocolService implements ProtocolService {
 	}
 
 	@Override
-	public void turnoutStatus(final Node node) {
+	public boolean turnoutStatus(final short protocolId) {
 
 		logger.info("turnoutStatus()");
+
+		logger.info("TryLock: " + lock.tryLock());
 
 		lock.lock();
 
@@ -127,16 +129,17 @@ public class DefaultProtocolService implements ProtocolService {
 
 			if (!isConnected()) {
 
-				logger.trace("Not connected! Aborting operation!");
+				logger.info("Not connected! Aborting operation!");
 
-				return;
+				return false;
 			}
 
 			// check the turnout status
-			final P50XXTrntStsCommand command = turnoutStatusCommand(inputStream, outputStream, node);
+			logger.info("executing turnoutStatusCommand ...");
+			final P50XXTrntStsCommand command = turnoutStatusCommand(inputStream, outputStream, protocolId);
+			logger.info("executing turnoutStatusCommand done. Thrown: " + command.isThrown());
 
-			// set the status into the node
-			node.setThrown(command.isThrown());
+			return command.isThrown();
 
 		} catch (final Exception e) {
 
@@ -147,6 +150,8 @@ public class DefaultProtocolService implements ProtocolService {
 			lock.unlock();
 
 		}
+
+		return false;
 	}
 
 	@Override
@@ -279,17 +284,17 @@ public class DefaultProtocolService implements ProtocolService {
 	}
 
 	private void turnoutCommandFirst(final InputStream inputStream, final OutputStream outputStream,
-			final int protocolTurnoutId, final boolean straight) {
+			final int protocolTurnoutId, final boolean thrown) {
 
-		final Command command = new P50XTurnoutCommand((short) protocolTurnoutId, straight, true);
+		final Command command = new P50XTurnoutCommand((short) protocolTurnoutId, thrown, true);
 		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
 		serialTemplate.execute();
 	}
 
 	private void turnoutCommandSecond(final InputStream inputStream, final OutputStream outputStream,
-			final int protocolTurnoutId, final boolean straight) {
+			final int protocolTurnoutId, final boolean thrown) {
 
-		final Command command = new P50XTurnoutCommand((short) protocolTurnoutId, straight, false);
+		final Command command = new P50XTurnoutCommand((short) protocolTurnoutId, thrown, false);
 		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
 		serialTemplate.execute();
 	}
@@ -345,9 +350,11 @@ public class DefaultProtocolService implements ProtocolService {
 	}
 
 	private P50XXTrntStsCommand turnoutStatusCommand(final InputStream inputStream, final OutputStream outputStream,
-			final Node node) {
+			final short protocolId) {
 
-		final P50XXTrntStsCommand command = new P50XXTrntStsCommand(node);
+		logger.info("turnoutStatusCommand()");
+
+		final P50XXTrntStsCommand command = new P50XXTrntStsCommand(protocolId);
 		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
 		serialTemplate.execute();
 

@@ -165,11 +165,13 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 				// final TurnoutNode turnoutNode = (TurnoutNode) node;
 
 				// change the node in the UI for visual feedback
+				logger.info("toggleTurnout()");
 				node.toggleTurnout();
 			}
 		}
 
 		// tell the UI
+		logger.info("sendModelChangedEvent()");
 		sendModelChangedEvent(x, y, node.isHighlighted(), node.isFeedbackBlockUsed(), node.isSelected());
 	}
 

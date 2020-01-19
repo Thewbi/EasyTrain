@@ -186,27 +186,28 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 
 				logger.trace("B");
 
-				// TODO: handle case, when only the color changed!
-
 				// remove
 				final SVGPath svgPathOld = viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()];
 				getChildren().remove(svgPathOld);
 
 				// create new path
-				final boolean turnoutState = turnoutState(node);
+				final boolean thrown = turnoutState(node);
 				final boolean highlighted = modelChangedEvent.isHighlighted();
 				final boolean blocked = modelChangedEvent.isBlocked();
 				final boolean selected = modelChangedEvent.isSelected();
 
-				logger.trace("TurnoutState: " + turnoutState + " highlighted: " + highlighted + " blocked: " + blocked
-						+ " selected: " + selected);
+				if (node.getProtocolTurnoutId() != null && node.getProtocolTurnoutId() > 0) {
+
+					logger.info("ProtocolTurnoutID: " + node.getProtocolTurnoutId() + " TurnoutState: "
+							+ (thrown ? "THROWN" : "CLOSED") + " ShapeType: " + shapeType + " highlighted: "
+							+ highlighted + " blocked: " + blocked + " selected: " + selected);
+				}
 
 				try {
-					final SVGPath svgPathNew = svgPathFactory.create(shapeType, cell_width, turnoutState, highlighted,
+
+					final SVGPath svgPathNew = svgPathFactory.create(shapeType, cell_width, thrown, highlighted,
 							blocked, selected);
-
 					if (svgPathNew == null) {
-
 						logger.trace("svgPathNew is null!");
 						return;
 					}

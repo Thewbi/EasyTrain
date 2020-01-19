@@ -43,7 +43,6 @@ public class P50XXLokCommand implements Command {
 
 	@Override
 	public void result(final ByteBuffer byteBuffer) {
-		// TODO Auto-generated method stub
 
 	}
 

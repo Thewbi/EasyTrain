@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import de.wfb.model.node.RailNode;
 import de.wfb.rail.service.ProtocolService;
 
 public class DefaultProtocolFacade implements ProtocolFacade {
@@ -72,11 +71,11 @@ public class DefaultProtocolFacade implements ProtocolFacade {
 	}
 
 	@Override
-	public void turnoutStatus(final RailNode node) {
+	public boolean turnoutStatus(final short protocolId) {
 
-		logger.trace("xSenseOff()");
+		logger.trace("turnoutStatus()");
 
-		protocolService.turnoutStatus(node);
+		return protocolService.turnoutStatus(protocolId);
 	}
 
 }

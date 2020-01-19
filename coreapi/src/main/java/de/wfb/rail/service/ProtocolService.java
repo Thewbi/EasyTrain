@@ -1,7 +1,5 @@
 package de.wfb.rail.service;
 
-import de.wfb.model.node.Node;
-
 public interface ProtocolService {
 
 	void nodeClicked(int x, int y);
@@ -18,6 +16,6 @@ public interface ProtocolService {
 
 	void xSensOff();
 
-	void turnoutStatus(Node node);
+	boolean turnoutStatus(short protocolId);
 
 }

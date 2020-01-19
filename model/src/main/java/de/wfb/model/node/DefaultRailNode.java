@@ -78,7 +78,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	@Override
 	public void toggleTurnout() {
 
-		logger.trace("toggle()");
+		logger.info("toggle()");
 
 		thrown = !thrown;
 	}

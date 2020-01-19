@@ -47,8 +47,6 @@ public class Startup extends Application {
 
 	private EventHandler<WindowEvent> closeWindowEventHandler;
 
-//	private SidePane sidePane;
-
 	private ModelFacade modelFacade;
 
 	private ProtocolFacade protocolFacade;
@@ -56,8 +54,6 @@ public class Startup extends Application {
 	private EvtSenCommandThread evtSenCommandThread;
 
 	private RoutingService routingService;
-
-//	private DefaultDebugFacade defaultDebugFacade;
 
 	private LocomotiveListStage locomotiveListStage;
 
@@ -67,15 +63,9 @@ public class Startup extends Application {
 
 	private TurnoutService turnoutService;
 
-//	private LayoutGridController layoutGridController;
-
-//	private CustomGridPane customGridPane;
-
 	private BlockNavigationPane blockNavigationPane;
 
 	private CustomThreadPoolScheduler customThreadPoolScheduler;
-
-//	private Factory<MenuBar> menuBarFactory;
 
 	private Factory<Scene> sceneFactory;
 
@@ -113,26 +103,13 @@ public class Startup extends Application {
 
 		blockNavigationPane.setup();
 
-//		final DefaultLocomotive defaultLocomotive = null;
-//		final RailNode blockRailNode = null;
-
-//		// DEBUG - place the first locomotive on the first block
-//		defaultLocomotive = modelFacade.getLocomotives().get(0);
-//		blockRailNode = blockService.getAllBlocks().get(0).getNodes().get(0);
-//		PlaceLocomotivePane.placeLocomotive(blockRailNode, defaultLocomotive, Direction.EAST);
-
-//		// DEBUG - place the second locomotive onto the second block
-//		defaultLocomotive = modelFacade.getLocomotives().get(1);
-//		blockRailNode = blockService.getAllBlocks().get(1).getNodes().get(0);
-//		PlaceLocomotivePane.placeLocomotive(blockRailNode, defaultLocomotive, Direction.SOUTH);
-
 		// connect to the intellibox
 		connectToIntellibox();
 
 		// query the turnouts to find out their state on the layout so that the software
 		// can draw them in the correct state and also send the correct commands when
 		// the user of the route service want to switch them
-		turnoutService.startQueryingFromQueue();
+//		turnoutService.startQueryingFromQueue();
 
 		// locomotive throttle
 		createAndShowThrottle(context);
@@ -146,7 +123,9 @@ public class Startup extends Application {
 	}
 
 	private void createAndShowScene(final Stage stage) throws Exception {
+
 		stage.setScene(sceneFactory.create(stage, closeWindowEventHandler));
+
 		// https://stackoverflow.com/questions/26619566/javafx-stage-close-handler
 		stage.setOnCloseRequest(closeWindowEventHandler);
 
@@ -158,16 +137,17 @@ public class Startup extends Application {
 	}
 
 	private void createAndShowThrottle(final ApplicationContext context) {
+
 		final ThrottleStage throttleStage = context.getBean(ThrottleStage.class);
 		throttleStage.initialize();
 		throttleStage.initModality(Modality.WINDOW_MODAL);
 		throttleStage.setX(0);
 		throttleStage.setY(0);
-
 		throttleStage.show();
 	}
 
 	private void connectToIntellibox() {
+
 		try {
 			protocolFacade.connect();
 		} catch (final Exception e) {
@@ -195,7 +175,6 @@ public class Startup extends Application {
 		// facades
 		modelFacade = context.getBean(ModelFacade.class);
 		protocolFacade = context.getBean(DefaultProtocolFacade.class);
-//		defaultDebugFacade = context.getBean(DefaultDebugFacade.class);
 
 		// services
 		routingService = context.getBean(DefaultRoutingService.class);
@@ -207,16 +186,13 @@ public class Startup extends Application {
 		customThreadPoolScheduler = context.getBean(CustomThreadPoolScheduler.class);
 
 		// UI
-//		sidePane = context.getBean(SidePane.class);
-//		layoutGridController = context.getBean(LayoutGridController.class);
-//		customGridPane = context.getBean(CustomGridPane.class);
 		blockNavigationPane = context.getBean(BlockNavigationPane.class);
 		locomotiveListStage = context.getBean(LocomotiveListStage.class);
 		placeLocomotiveStage = context.getBean(PlaceLocomotiveStage.class);
 
 		// factories
-//		menuBarFactory = context.getBean(DefaultMenuBarFactory.class);
 		sceneFactory = context.getBean(DefaultSceneFactory.class);
+
 		return context;
 	}
 

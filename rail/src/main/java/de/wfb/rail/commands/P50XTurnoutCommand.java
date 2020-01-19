@@ -1,13 +1,9 @@
 package de.wfb.rail.commands;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import de.wfb.rail.commands.Command;
 
 /**
  * <PROTOCOL_SWITCH> 0x90 <LOW BYTE OF TURNOUT ADDRESS (A7..A0)> <HIGH BYTE OF
@@ -27,7 +23,7 @@ public class P50XTurnoutCommand implements Command {
 
 	private final short turnoutId;
 
-	private boolean straight;
+	private final boolean thrown;
 
 	private final boolean first;
 
@@ -37,76 +33,88 @@ public class P50XTurnoutCommand implements Command {
 	 * @param turnoutId
 	 * @param straight
 	 */
-	public P50XTurnoutCommand(final short turnoutId, final boolean straight, final boolean first) {
+	public P50XTurnoutCommand(final short turnoutId, final boolean thrown, final boolean first) {
+
 		this.turnoutId = turnoutId;
-		this.straight = straight;
+		this.thrown = thrown;
 		this.first = first;
 	}
 
-	public void execute(final OutputStream outputStream) {
+//	public void execute(final OutputStream outputStream) {
+//
+//		final byte[] byteArray = new byte[4];
+//		byteArray[0] = (byte) 0x78;
+//		byteArray[1] = (byte) 0x90;
+//
+//		// little endian
+//		byteArray[2] = (byte) (turnoutId & 0xff);
+//		byteArray[3] = (byte) ((turnoutId >> 8) & 0xff);
+//
+////		// big endian
+////		byteArray[2] = (byte) ((turnoutId >> 8) & 0xFF);
+////		byteArray[3] = (byte) (turnoutId & 0xFF);
+//
+//		if (first) {
+//
+//			if (thrown) {
+//
+//				// 0100 0000
+//				byteArray[3] |= 0x40;
+//
+//			} else {
+//
+//				// 1100 0000
+//				byteArray[3] |= 0xC0;
+//
+//			}
+//
+//			try {
+//				outputStream.write(byteArray, 0, byteArray.length);
+//			} catch (final IOException e) {
+//				logger.error(e.getMessage(), e);
+//			}
+//
+//		} else {
+//
+//			if (thrown) {
+//
+//				// 0000 0000
+//				byteArray[3] |= 0x00;
+//
+//			} else {
+//
+//				// 1000 0000
+//				byteArray[3] |= 0x80;
+//
+//			}
+//
+//			try {
+//				outputStream.write(byteArray, 0, byteArray.length);
+//			} catch (final IOException e) {
+//				logger.error(e.getMessage(), e);
+//			}
+//		}
+//	}
 
-		final byte[] byteArray = new byte[4];
-		byteArray[0] = (byte) 0x78;
-		byteArray[1] = (byte) 0x90;
-
-		// little endian
-		byteArray[2] = (byte) (turnoutId & 0xff);
-		byteArray[3] = (byte) ((turnoutId >> 8) & 0xff);
-
-//		// big endian
-//		byteArray[2] = (byte) ((turnoutId >> 8) & 0xFF);
-//		byteArray[3] = (byte) (turnoutId & 0xFF);
-
-		if (first) {
-
-			if (straight) {
-				// 1100 0000
-				byteArray[3] |= 0xC0;
-			} else {
-				// 0100 0000
-				byteArray[3] |= 0x40;
-			}
-
-			try {
-				outputStream.write(byteArray, 0, byteArray.length);
-			} catch (final IOException e) {
-				logger.error(e.getMessage(), e);
-			}
-
-		} else {
-
-			if (straight) {
-				// 1000 0000
-				byteArray[3] |= 0x80;
-			} else {
-				// 0000 0000
-				byteArray[3] |= 0x00;
-			}
-
-			try {
-				outputStream.write(byteArray, 0, byteArray.length);
-			} catch (final IOException e) {
-				logger.error(e.getMessage(), e);
-			}
-		}
-	}
-
+	@Override
 	public int getResponseLength() {
 		return 1;
 	}
 
+	@Override
 	public void result(final ByteBuffer byteBuffer) {
 
 	}
 
-	public boolean isStraight() {
-		return straight;
-	}
+//	public boolean isStraight() {
+//		return straight;
+//	}
+//
+//	public void setStraight(final boolean straight) {
+//		this.straight = straight;
+//	}
 
-	public void setStraight(final boolean straight) {
-		this.straight = straight;
-	}
-
+	@Override
 	public byte[] getByteArray() {
 
 		final byte[] byteArray = new byte[4];
@@ -123,24 +131,31 @@ public class P50XTurnoutCommand implements Command {
 
 		if (first) {
 
-			if (straight) {
-				// 0xC0 = 1100 0000
-				byteArray[3] |= 0xC0;
-			} else {
+			if (thrown) {
+
 				// 0x40 = 0100 0000
 				byteArray[3] |= 0x40;
+
+			} else {
+
+				// 0xC0 = 1100 0000
+				byteArray[3] |= 0xC0;
+
 			}
 
 		} else {
 
-			if (straight) {
-				// 0x80 = 1000 0000
-				byteArray[3] |= 0x80;
-			} else {
+			if (thrown) {
+
 				// 0x00 = 0000 0000
 				byteArray[3] |= 0x00;
-			}
 
+			} else {
+
+				// 0x80 = 1000 0000
+				byteArray[3] |= 0x80;
+
+			}
 		}
 
 		return byteArray;

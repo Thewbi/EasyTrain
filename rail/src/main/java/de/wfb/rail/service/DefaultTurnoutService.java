@@ -1,5 +1,7 @@
 package de.wfb.rail.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -35,6 +37,8 @@ public class DefaultTurnoutService implements TurnoutService {
 			return;
 		}
 
+		final List<RailNode> deleteList = new ArrayList<RailNode>();
+
 		for (final RailNode node : turnoutStatusRequestQueue) {
 
 			// make sure this is a turnout
@@ -45,7 +49,11 @@ public class DefaultTurnoutService implements TurnoutService {
 			logger.info("startQueryingFromQueue() Querying Turnout Node Status of RailNode ID: " + node.getId());
 
 			// request and set the turnout status
-			protocolFacade.turnoutStatus(node);
+			final boolean isThrown = protocolFacade.turnoutStatus(node.getProtocolTurnoutId().shortValue());
+			node.setThrown(isThrown);
+
+			logger.info("ProtocolTurnoutID: " + node.getProtocolTurnoutId() + " is "
+					+ (node.isThrown() ? "THROWN" : "CLOSED"));
 
 			// Or not? update the node in the model, send model changed event so that the ui
 			// changes.
@@ -53,7 +61,10 @@ public class DefaultTurnoutService implements TurnoutService {
 			// the UI
 			// already draws the turnouts correctly initially.
 
+			deleteList.add(node);
 		}
+
+		turnoutStatusRequestQueue.removeAll(deleteList);
 	}
 
 }

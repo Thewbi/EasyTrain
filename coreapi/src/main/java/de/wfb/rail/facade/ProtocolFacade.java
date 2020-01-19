@@ -1,7 +1,5 @@
 package de.wfb.rail.facade;
 
-import de.wfb.model.node.RailNode;
-
 public interface ProtocolFacade {
 
 	void nodeClicked(int x, int y);
@@ -24,6 +22,6 @@ public interface ProtocolFacade {
 	 */
 	void xSenseOff();
 
-	void turnoutStatus(RailNode node);
+	boolean turnoutStatus(short protocolId);
 
 }

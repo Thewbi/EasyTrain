@@ -103,21 +103,27 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		if (thrown) {
 
 			// @formatter:off
+
+			// gebogen (left to bottom)
 			stringBuffer.append("M0,3").append("L")
 				.append(" ").append(7).append(",").append(10)
 			    .append(" ").append(3).append(",").append(10)
 			    .append(" ").append(0).append(",").append(7)
 			    .append(" ").append(0).append(",").append(3);
+
 			// @formatter:on
 
 		} else {
 
 			// @formatter:off
+
+			// gerade (left to right)
 			stringBuffer.append("M0,3").append("L")
 				.append(" ").append(10).append(",").append(3)
 				.append(" ").append(10).append(",").append(7)
 				.append(" ").append(0).append(",").append(7)
 				.append(" ").append(0).append(",").append(3);
+
 			// @formatter:on
 
 		}
@@ -148,24 +154,41 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
+		// Eine Weiche kann entweder die Form eines geraden Gleis annehmen
+		// oder die Form eines gebogenen.
+
+		// Die gerade Form heißt closed oder Grün
+		// Die gebogene Form heißt thrown oder Rot
+
+		// Red-Thrown == gebogen
+		// Green-Closed == gerade (G wie gerade)
+
 		if (thrown) {
 
 			// @formatter:off
-			stringBuffer.append("M0,3").append("L")
-				.append(" ").append(3).append(",").append(0)
-				.append(" ").append(7).append(",").append(0)
-			    .append(" ").append(0).append(",").append(7)
-			    .append(" ").append(0).append(",").append(3);
+
+			// gebogen (left - top)
+						stringBuffer.append("M0,3").append("L")
+							.append(" ").append(3).append(",").append(0)
+							.append(" ").append(7).append(",").append(0)
+						    .append(" ").append(0).append(",").append(7)
+						    .append(" ").append(0).append(",").append(3);
+
+
+
 			// @formatter:on
 
 		} else {
 
 			// @formatter:off
-			stringBuffer.append("M0,3").append("L")
-			    .append(" ").append(10).append(",").append(3)
-			    .append(" ").append(10).append(",").append(7)
-			    .append(" ").append(0).append(",").append(7)
-			    .append(" ").append(0).append(",").append(3);
+
+			// gerade (left to right)
+						stringBuffer.append("M0,3").append("L")
+						    .append(" ").append(10).append(",").append(3)
+						    .append(" ").append(10).append(",").append(7)
+						    .append(" ").append(0).append(",").append(7)
+						    .append(" ").append(0).append(",").append(3);
+
 			// @formatter:on
 
 		}
