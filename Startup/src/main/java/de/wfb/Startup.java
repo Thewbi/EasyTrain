@@ -109,7 +109,7 @@ public class Startup extends Application {
 		// query the turnouts to find out their state on the layout so that the software
 		// can draw them in the correct state and also send the correct commands when
 		// the user of the route service want to switch them
-//		turnoutService.startQueryingFromQueue();
+		turnoutService.startQueryingFromQueue();
 
 		// locomotive throttle
 		createAndShowThrottle(context);
@@ -124,7 +124,7 @@ public class Startup extends Application {
 
 	private void createAndShowScene(final Stage stage) throws Exception {
 
-		stage.setScene(sceneFactory.create(stage, closeWindowEventHandler));
+		stage.setScene(sceneFactory.create(stage));
 
 		// https://stackoverflow.com/questions/26619566/javafx-stage-close-handler
 		stage.setOnCloseRequest(closeWindowEventHandler);

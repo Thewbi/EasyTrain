@@ -28,7 +28,6 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 public class DefaultSceneFactory implements Factory<Scene> {
 
@@ -53,7 +52,6 @@ public class DefaultSceneFactory implements Factory<Scene> {
 	public Scene create(final Object... args) throws Exception {
 
 		final Stage stage = (Stage) args[0];
-		final EventHandler<WindowEvent> closeWindowHandler = (EventHandler<WindowEvent>) args[1];
 
 		logger.trace("createScene");
 

@@ -57,10 +57,6 @@ public class P50XXLokCommand implements Command {
 		byteArray[2] = (byte) (locomotiveAddress & 0xff);
 		byteArray[3] = (byte) ((locomotiveAddress >> 8) & 0xff);
 
-		// big endian
-//		byteArray[2] = (byte) ((locomotiveAddress >> 8) & 0xFF);
-//		byteArray[3] = (byte) (locomotiveAddress & 0xFF);
-
 		final Double throttleValueAsDouble = Double.valueOf(throttleValue);
 
 		byteArray[4] = throttleValueAsDouble.byteValue();

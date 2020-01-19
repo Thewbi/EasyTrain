@@ -2684,8 +2684,6 @@
     "leftList": [],
     "rightList": [],
     "manualConnections": [
-      776,
-      776,
       776
     ],
     "feedbackBlockNumber": -1
@@ -6178,8 +6176,6 @@
     "leftList": [],
     "rightList": [],
     "manualConnections": [
-      795,
-      795,
       795
     ],
     "feedbackBlockNumber": -1
@@ -6192,8 +6188,6 @@
     "leftList": [],
     "rightList": [],
     "manualConnections": [
-      800,
-      800,
       800
     ],
     "feedbackBlockNumber": 80
@@ -6396,8 +6390,6 @@
     "leftList": [],
     "rightList": [],
     "manualConnections": [
-      373,
-      373,
       373
     ],
     "feedbackBlockNumber": -1
@@ -6440,7 +6432,6 @@
     "leftList": [],
     "rightList": [],
     "manualConnections": [
-      781,
       781
     ],
     "feedbackBlockNumber": -1
@@ -6453,7 +6444,6 @@
     "leftList": [],
     "rightList": [],
     "manualConnections": [
-      780,
       780
     ],
     "feedbackBlockNumber": -1
@@ -6486,8 +6476,6 @@
     "leftList": [],
     "rightList": [],
     "manualConnections": [
-      807,
-      807,
       807
     ],
     "feedbackBlockNumber": -1
@@ -6500,8 +6488,6 @@
     "leftList": [],
     "rightList": [],
     "manualConnections": [
-      810,
-      810,
       810
     ],
     "feedbackBlockNumber": -1
@@ -6618,8 +6604,6 @@
     "leftList": [],
     "rightList": [],
     "manualConnections": [
-      756,
-      756,
       756
     ],
     "feedbackBlockNumber": 80
@@ -6692,8 +6676,6 @@
     "leftList": [],
     "rightList": [],
     "manualConnections": [
-      784,
-      784,
       784
     ],
     "feedbackBlockNumber": -1
@@ -6716,9 +6698,6 @@
     "leftList": [],
     "rightList": [],
     "manualConnections": [
-      840,
-      840,
-      840,
       840
     ],
     "feedbackBlockNumber": -1
@@ -6731,8 +6710,6 @@
     "leftList": [],
     "rightList": [],
     "manualConnections": [
-      785,
-      785,
       785
     ],
     "feedbackBlockNumber": -1
@@ -6755,9 +6732,6 @@
     "leftList": [],
     "rightList": [],
     "manualConnections": [
-      841,
-      841,
-      841,
       841
     ],
     "feedbackBlockNumber": -1
@@ -7031,9 +7005,6 @@
     "leftList": [],
     "rightList": [],
     "manualConnections": [
-      809,
-      809,
-      809,
       809
     ],
     "feedbackBlockNumber": -1
@@ -7046,9 +7017,6 @@
     "leftList": [],
     "rightList": [],
     "manualConnections": [
-      812,
-      812,
-      812,
       812
     ],
     "feedbackBlockNumber": -1
@@ -12101,7 +12069,7 @@
     "y": 25,
     "leftList": [],
     "rightList": [],
-    "manualConnections": [],
+    "manualConnections": [1471],
     "feedbackBlockNumber": -1
   },
   {
@@ -12251,7 +12219,7 @@
     "y": 25,
     "leftList": [],
     "rightList": [],
-    "manualConnections": [],
+    "manualConnections": [1479],
     "feedbackBlockNumber": -1
   },
   {
@@ -12921,7 +12889,7 @@
     "y": 30,
     "leftList": [],
     "rightList": [],
-    "manualConnections": [],
+    "manualConnections": [1382],
     "feedbackBlockNumber": -1
   },
   {
@@ -12981,7 +12949,7 @@
     "y": 30,
     "leftList": [],
     "rightList": [],
-    "manualConnections": [],
+    "manualConnections": [1399],
     "feedbackBlockNumber": -1
   },
   {

@@ -11,7 +11,15 @@ public class RouteAddedEvent extends ApplicationEvent {
 
 	private final DefaultLocomotive defaultLocomotive;
 
+	/**
+	 * ctor
+	 *
+	 * @param source
+	 * @param route
+	 * @param defaultLocomotive
+	 */
 	public RouteAddedEvent(final Object source, final Route route, final DefaultLocomotive defaultLocomotive) {
+
 		super(source);
 		this.route = route;
 		this.defaultLocomotive = defaultLocomotive;

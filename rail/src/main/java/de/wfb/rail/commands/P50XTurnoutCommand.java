@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class P50XTurnoutCommand implements Command {
 
+	@SuppressWarnings("unused")
 	private static Logger logger = LogManager.getLogger(P50XTurnoutCommand.class);
 
 	private final short turnoutId;
@@ -40,62 +41,6 @@ public class P50XTurnoutCommand implements Command {
 		this.first = first;
 	}
 
-//	public void execute(final OutputStream outputStream) {
-//
-//		final byte[] byteArray = new byte[4];
-//		byteArray[0] = (byte) 0x78;
-//		byteArray[1] = (byte) 0x90;
-//
-//		// little endian
-//		byteArray[2] = (byte) (turnoutId & 0xff);
-//		byteArray[3] = (byte) ((turnoutId >> 8) & 0xff);
-//
-////		// big endian
-////		byteArray[2] = (byte) ((turnoutId >> 8) & 0xFF);
-////		byteArray[3] = (byte) (turnoutId & 0xFF);
-//
-//		if (first) {
-//
-//			if (thrown) {
-//
-//				// 0100 0000
-//				byteArray[3] |= 0x40;
-//
-//			} else {
-//
-//				// 1100 0000
-//				byteArray[3] |= 0xC0;
-//
-//			}
-//
-//			try {
-//				outputStream.write(byteArray, 0, byteArray.length);
-//			} catch (final IOException e) {
-//				logger.error(e.getMessage(), e);
-//			}
-//
-//		} else {
-//
-//			if (thrown) {
-//
-//				// 0000 0000
-//				byteArray[3] |= 0x00;
-//
-//			} else {
-//
-//				// 1000 0000
-//				byteArray[3] |= 0x80;
-//
-//			}
-//
-//			try {
-//				outputStream.write(byteArray, 0, byteArray.length);
-//			} catch (final IOException e) {
-//				logger.error(e.getMessage(), e);
-//			}
-//		}
-//	}
-
 	@Override
 	public int getResponseLength() {
 		return 1;
@@ -105,14 +50,6 @@ public class P50XTurnoutCommand implements Command {
 	public void result(final ByteBuffer byteBuffer) {
 
 	}
-
-//	public boolean isStraight() {
-//		return straight;
-//	}
-//
-//	public void setStraight(final boolean straight) {
-//		this.straight = straight;
-//	}
 
 	@Override
 	public byte[] getByteArray() {
@@ -124,10 +61,6 @@ public class P50XTurnoutCommand implements Command {
 		// little endian
 		byteArray[2] = (byte) (turnoutId & 0xFF);
 		byteArray[3] = (byte) ((turnoutId >> 8) & 0xFF);
-
-//		// big endian
-//		byteArray[2] = (byte) ((turnoutId >> 8) & 0xFF);
-//		byteArray[3] = (byte) (turnoutId & 0xFF);
 
 		if (first) {
 

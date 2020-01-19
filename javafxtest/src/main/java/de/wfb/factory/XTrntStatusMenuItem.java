@@ -20,6 +20,7 @@ public class XTrntStatusMenuItem extends MenuItem implements ApplicationListener
 	/**
 	 *
 	 */
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 
 	@Autowired

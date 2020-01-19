@@ -152,7 +152,7 @@ public class P50XXTrntStsCommand implements Command {
 				stringBuffer.append("ProtocolTurnoutID: ").append(turnoutId).append("\n");
 				stringBuffer.append("Reserved: ").append(reserved).append("\n");
 				stringBuffer.append("Color: ").append(color ? "green (closed)" : "red (thrown)").append("\n");
-				stringBuffer.append("thrown: ").append(thrown ? "true" : "false").append("\n");
+				stringBuffer.append("Thrown: ").append(thrown ? "true" : "false").append("\n");
 				stringBuffer.append("Configuration: ").append(configuration.name()).append("\n");
 
 				logger.info(stringBuffer.toString());
@@ -178,17 +178,11 @@ public class P50XXTrntStsCommand implements Command {
 		byteArray[0] = (byte) 0x78;
 		byteArray[1] = (byte) 0x94;
 
-//		final short turnoutId = node.getProtocolTurnoutId().shortValue();
-
 		logger.info("Turnout ID: " + turnoutId);
 
 		// little endian
 		byteArray[2] = (byte) (turnoutId & 0xff);
 		byteArray[3] = (byte) ((turnoutId >> 8) & 0xff);
-
-//		// big endian
-//		byteArray[2] = (byte) ((turnoutId >> 8) & 0xFF);
-//		byteArray[3] = (byte) (turnoutId & 0xFF);
 
 		return byteArray;
 	}
