@@ -3,7 +3,7 @@ package de.wfb.rail.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.concurrent.locks.Lock;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.logging.log4j.LogManager;
@@ -43,7 +43,7 @@ public class DefaultProtocolService implements ProtocolService {
 
 	private OutputStream outputStream;
 
-	private final Lock lock = new ReentrantLock(true);
+	private final ReentrantLock lock = new ReentrantLock(true);
 
 	@Autowired
 	private Model model;
@@ -79,7 +79,7 @@ public class DefaultProtocolService implements ProtocolService {
 
 	private void turnTurnout(final Node node) {
 
-		lock.lock();
+		lockLock();
 
 		try {
 
@@ -111,7 +111,7 @@ public class DefaultProtocolService implements ProtocolService {
 
 		} finally {
 
-			lock.unlock();
+			unlockLock();
 
 		}
 	}
@@ -119,11 +119,9 @@ public class DefaultProtocolService implements ProtocolService {
 	@Override
 	public boolean turnoutStatus(final short protocolId) {
 
-		logger.trace("turnoutStatus()");
+		logger.info("turnoutStatus()");
 
-		logger.trace("TryLock: " + lock.tryLock());
-
-		lock.lock();
+		lockLock();
 
 		try {
 
@@ -147,7 +145,7 @@ public class DefaultProtocolService implements ProtocolService {
 
 		} finally {
 
-			lock.unlock();
+			unlockLock();
 
 		}
 
@@ -157,7 +155,26 @@ public class DefaultProtocolService implements ProtocolService {
 	@Override
 	public void event() {
 
-		lock.lock();
+		logger.trace("E - event()");
+
+		logger.trace("E - Lock HoldCount: " + lock.getHoldCount() + " QueueLength: " + lock.getQueueLength()
+				+ " hasQueuedThreads: " + lock.hasQueuedThreads());
+
+		logger.trace("E - Aquiring lock ...");
+		try {
+			final boolean tryLockResult = lock.tryLock(10, TimeUnit.SECONDS);
+			if (tryLockResult) {
+				logger.trace("E - Aquiring Lock done.");
+			} else {
+				logger.info("E - Aquiring Lock failed!");
+				return;
+			}
+		} catch (final InterruptedException e) {
+			logger.trace(e.getMessage(), e);
+
+			logger.info("E - Aquiring Lock failed!");
+			return;
+		}
 
 		try {
 
@@ -186,7 +203,7 @@ public class DefaultProtocolService implements ProtocolService {
 
 		} finally {
 
-			lock.unlock();
+			unlockLock();
 
 		}
 	}
@@ -195,7 +212,7 @@ public class DefaultProtocolService implements ProtocolService {
 	public void throttleLocomotive(final short locomotiveAddress, final double throttleValue,
 			final boolean dirForward) {
 
-		lock.lock();
+		lockLock();
 
 		try {
 
@@ -213,14 +230,14 @@ public class DefaultProtocolService implements ProtocolService {
 
 		} finally {
 
-			lock.unlock();
+			unlockLock();
 		}
 	}
 
 	@Override
 	public void sense(final int feedbackContactId) {
 
-		lock.lock();
+		lockLock();
 
 		try {
 
@@ -238,14 +255,14 @@ public class DefaultProtocolService implements ProtocolService {
 
 		} finally {
 
-			lock.unlock();
+			unlockLock();
 		}
 	}
 
 	@Override
 	public void xSensOff() {
 
-		lock.lock();
+		lockLock();
 
 		try {
 
@@ -263,8 +280,25 @@ public class DefaultProtocolService implements ProtocolService {
 
 		} finally {
 
-			lock.unlock();
+			unlockLock();
 		}
+	}
+
+	private void lockLock() {
+
+		logger.trace("Aquiring lock ...");
+		lock.lock();
+		logger.trace("Aquiring Lock done.");
+	}
+
+	private void unlockLock() {
+
+		logger.trace("Releasing lock ...");
+		lock.unlock();
+		logger.trace("Releasing lock done.");
+
+		logger.trace("Lock HoldCount: " + lock.getHoldCount() + " QueueLength: " + lock.getQueueLength()
+				+ " hasQueuedThreads: " + lock.hasQueuedThreads());
 	}
 
 	@SuppressWarnings("unused")

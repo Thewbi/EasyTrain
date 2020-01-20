@@ -49,11 +49,13 @@ public class CustomThreadPoolScheduler extends ThreadPoolTaskScheduler {
 		for (final Map.Entry<Object, ScheduledFuture<?>> entry : scheduledTasks.entrySet()) {
 
 			logger.info("stopping future!");
+
 			final ScheduledFuture<?> future = entry.getValue();
-			if (!future.cancel(true)) {
-				logger.info("Cancel failed!");
-			}
-			logger.info(future.isDone());
+
+			final boolean cancelResult = future.cancel(true);
+			logger.info("Cancel succeeded: " + cancelResult);
+
+			logger.info("future.isDone(): " + future.isDone());
 		}
 	}
 

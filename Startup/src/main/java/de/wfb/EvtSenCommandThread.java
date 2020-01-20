@@ -22,7 +22,7 @@ public class EvtSenCommandThread {
 	@Scheduled(fixedRate = 1000)
 	public void threadFunc() {
 
-		logger.trace("EvtSenCommandThread - threadFunc()");
+		logger.trace("EvtSenCommandThread - threadFunc() ACTIVE = " + ACTIVE);
 
 		if (!ACTIVE) {
 

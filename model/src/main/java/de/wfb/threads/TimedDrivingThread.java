@@ -48,7 +48,7 @@ public class TimedDrivingThread {
 	@Scheduled(fixedRate = 1000)
 	public void threadFunc() {
 
-		logger.trace("threadFunc()");
+		logger.trace("threadFunc() ACTIVE = " + ACTIVE);
 
 		if (!ACTIVE) {
 

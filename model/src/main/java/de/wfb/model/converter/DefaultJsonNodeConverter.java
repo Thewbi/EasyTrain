@@ -34,7 +34,7 @@ public class DefaultJsonNodeConverter implements Converter<Node, JsonNode> {
 
 		if (CollectionUtils.isNotEmpty(manualConnections)) {
 
-			logger.info("manualConnections.size(): " + manualConnections.size());
+			logger.trace("manualConnections.size(): " + manualConnections.size());
 
 			logger.trace("ManualConnection found!");
 

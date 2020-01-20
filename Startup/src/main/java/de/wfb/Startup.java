@@ -113,7 +113,7 @@ public class Startup extends Application {
 		// can draw them in the correct state and also send the correct commands when
 		// the user of the route service want to switch them
 		// TODO: reactivate
-//		turnoutService.startQueryingFromQueue();
+		turnoutService.startQueryingFromQueue();
 
 		// locomotive throttle
 		createAndShowThrottle(context);
@@ -262,10 +262,27 @@ public class Startup extends Application {
 	@Override
 	public void stop() {
 
+		logger.info("Startup.stop() - Shutting down scheduler! Active Count: "
+				+ customThreadPoolScheduler.getActiveCount());
+
 		customThreadPoolScheduler.stop();
 		customThreadPoolScheduler.shutdown();
 
-		logger.trace("Startup.stop()");
+		int activeCount = 0;
+		do {
+
+			try {
+				Thread.sleep(1000);
+			} catch (final InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			activeCount = customThreadPoolScheduler.getActiveCount();
+			logger.info("activeCount = " + activeCount + ". Sleeping ...");
+
+		} while (activeCount > 0);
+
+		logger.info("Platform exit!");
 		Platform.exit();
 	}
 
