@@ -77,10 +77,11 @@ public class BlockNavigationPane extends HBox {
 		locomotiveComboBox.getSelectionModel().selectFirst();
 
 		startBlockComboBox.getItems().addAll(blockService.getAllBlocks());
-		startBlockComboBox.getSelectionModel().selectFirst();
+//		startBlockComboBox.getSelectionModel().selectFirst();
+		startBlockComboBox.getSelectionModel().select(19);
 
 		endBlockComboBox.getItems().addAll(blockService.getAllBlocks());
-		endBlockComboBox.getSelectionModel().select(2);
+		endBlockComboBox.getSelectionModel().select(40);
 
 		startDirectionComboBox.getItems().add(Direction.NORTH);
 		startDirectionComboBox.getItems().add(Direction.EAST);

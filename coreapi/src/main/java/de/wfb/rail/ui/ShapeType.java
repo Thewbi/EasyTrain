@@ -59,4 +59,9 @@ public enum ShapeType {
 		}
 	}
 
+	public static boolean isNotTurnout(final ShapeType shapeType) {
+
+		return !isTurnout(shapeType);
+	}
+
 }

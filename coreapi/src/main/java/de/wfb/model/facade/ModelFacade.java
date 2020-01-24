@@ -6,6 +6,7 @@ import java.util.Optional;
 import de.wfb.model.Model;
 import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.Node;
+import de.wfb.model.node.RailNode;
 import de.wfb.rail.ui.ShapeType;
 
 public interface ModelFacade {
@@ -43,5 +44,9 @@ public interface ModelFacade {
 	Optional<DefaultLocomotive> getLocomotiveById(int reservedLocomotiveId);
 
 	Optional<DefaultLocomotive> getLocomotiveByAddress(short locomotiveAddress);
+
+	void sendModelChangedEvent(int x, int y, boolean hightlighted, boolean blocked, boolean selected);
+
+	void sendModelChangedEvent(RailNode railNode);
 
 }

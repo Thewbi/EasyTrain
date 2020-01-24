@@ -3,7 +3,7 @@ package de.wfb.rail.events;
 import org.springframework.context.ApplicationEvent;
 
 /**
- * After a P50XXEvtSenCommand command was executed, system learns about the
+ * After a P50XXEvtSenCommand command was executed, the system learns about the
  * states of blocks from the response of the command.
  *
  * The state change is send into the system using a FeedbackBlockUpdateEvent.
@@ -21,8 +21,13 @@ public class FeedbackBlockEvent extends ApplicationEvent {
 	/**
 	 * ctor
 	 *
+	 * FeedbackBlockUpdateEvents is sent after the Intellibox sends the state of a
+	 * S88 feedback module.
+	 *
+	 * FeedbackBlockUpdateEvents are broken down into individual FeedbackBlockEvent.
+	 *
 	 * @param source
-	 * @param feedbackBlockNumber
+	 * @param feedbackBlockNumber the address of one of the s88 feedback modules.
 	 * @param feedbackBlockState
 	 */
 	public FeedbackBlockEvent(final Object source, final int feedbackBlockNumber,

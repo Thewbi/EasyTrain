@@ -119,7 +119,7 @@ public class DefaultProtocolService implements ProtocolService {
 	@Override
 	public boolean turnoutStatus(final short protocolId) {
 
-		logger.info("turnoutStatus()");
+		logger.trace("turnoutStatus()");
 
 		lockLock();
 

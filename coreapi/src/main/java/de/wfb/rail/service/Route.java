@@ -96,9 +96,19 @@ public class Route {
 
 	public void switchTurnouts(final ApplicationEventPublisher applicationEventPublisher) {
 
-		logger.trace("switchTurnouts()");
+		logger.info("switchTurnouts()");
+
+		switchTurnouts(graphNodes, applicationEventPublisher);
+	}
+
+	public static void switchTurnouts(final List<GraphNode> graphNodes,
+			final ApplicationEventPublisher applicationEventPublisher) {
+
+		logger.info("switchTurnouts()");
 
 		if (CollectionUtils.isEmpty(graphNodes)) {
+
+			logger.info("switchTurnouts() no nodes!");
 			return;
 		}
 
@@ -106,37 +116,49 @@ public class Route {
 		int index = 0;
 		for (final GraphNode graphNode : graphNodes) {
 
-			if (ShapeType.isTurnout(graphNode.getRailNode().getShapeType())) {
+			if (ShapeType.isNotTurnout(graphNode.getRailNode().getShapeType())) {
 
-				// if the turn out is NOT traversed in switching direction, continue
-				if (graphNode.getChildren().size() < 2) {
+				index++;
+				continue;
+			}
 
-					logger.trace("Index = " + index + " Turnout found. Not in switching order!");
+			// if the turnout is NOT traversed in switching direction, continue
+			if (graphNode.getChildren().size() < 2) {
 
-					index++;
-					continue;
-				}
+				logger.info("Index = " + index + " Turnout found. Not in switching order!");
 
-				logger.trace("Index = " + index + " Turnout found in switching order!");
-				final RailNode turnoutNode = graphNode.getRailNode();
+				index++;
+				continue;
+			}
 
-				logger.trace("Turnout ShapeType = " + turnoutNode.getShapeType().name());
+			logger.info("Index = " + index + " Turnout found in switching order!");
+			final RailNode turnoutRailNode = graphNode.getRailNode();
 
-				final int nextIndex = index + 1;
-				if (nextIndex < graphNodes.size()) {
+			logger.info("Turnout ShapeType = " + turnoutRailNode.getShapeType().name());
 
-					final GraphNode nextGraphNode = graphNodes.get(nextIndex);
+			final int nextIndex = index + 1;
+			if (nextIndex < graphNodes.size()) {
 
-					turnoutNode.switchToGraphNode(applicationEventPublisher, null, nextGraphNode);
-				}
+				final GraphNode nextGraphNode = graphNodes.get(nextIndex);
+
+				logger.info("Switching RailNode.ID: " + turnoutRailNode.getId() + " to GraphNode.ID: "
+						+ nextGraphNode.getId());
+
+				turnoutRailNode.switchToGraphNode(applicationEventPublisher, null, nextGraphNode);
 			}
 
 			index++;
 		}
-
 	}
 
-	public List<GraphNode> getSubList(final RailNode railNode) {
+	/**
+	 * Return all nodes starting from to the specified railNode up until the end of
+	 * the Rout
+	 *
+	 * @param railNode
+	 * @return
+	 */
+	public List<GraphNode> getSubListStartingFromRailNode(final RailNode railNode) {
 
 		if (CollectionUtils.isEmpty(graphNodes)) {
 			return new ArrayList<>();
@@ -153,6 +175,30 @@ public class Route {
 			if (found) {
 				result.add(graphNode);
 			}
+		}
+
+		return result;
+	}
+
+	public List<GraphNode> getSubListUpToRailNode(final RailNode railNode) {
+
+		if (CollectionUtils.isEmpty(graphNodes)) {
+			return new ArrayList<>();
+		}
+
+		final List<GraphNode> result = new ArrayList<>();
+
+		boolean found = false;
+		for (final GraphNode graphNode : graphNodes) {
+
+			found = found | graphNode.equals(railNode.getGraphNodeOne());
+			found = found | graphNode.equals(railNode.getGraphNodeTwo());
+
+			if (found) {
+				return result;
+			}
+
+			result.add(graphNode);
 		}
 
 		return result;

@@ -1,5 +1,7 @@
 package de.wfb.javafxtest.controls;
 
+import java.util.Optional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +10,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-import de.wfb.model.Model;
+import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.node.Node;
 import de.wfb.rail.events.ModelChangedEvent;
 import de.wfb.rail.events.NodeHighlightedEvent;
@@ -42,6 +44,9 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 	/** https://www.baeldung.com/spring-events */
 	@Autowired
 	private ApplicationEventPublisher applicationEventPublisher;
+
+	@Autowired
+	private ModelFacade modelFacade;
 
 	private final SVGPath[][] viewModel = new SVGPath[rows][columns];
 
@@ -154,19 +159,19 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 
 	private void processModelChangedEvent(final ModelChangedEvent modelChangedEvent) {
 
+		logger.trace("processModelChangedEvent()");
+
 		Platform.runLater(new Runnable() {
 
 			@Override
 			public void run() {
 
-				final Model model = modelChangedEvent.getModel();
-				final Node node = model.getNode(modelChangedEvent.getX(), modelChangedEvent.getY());
+				final Optional<Node> nodeOptional = modelFacade.getNode(modelChangedEvent.getX(),
+						modelChangedEvent.getY());
 
-				logger.trace("onApplicationEvent() node = " + node);
+				if (nodeOptional.isEmpty()) {
 
-				if (node == null) {
-
-					logger.trace("Node is null!");
+					logger.info("Node is null!");
 
 					// remove
 					final SVGPath svgPathOld = viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()];
@@ -175,7 +180,7 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 					return;
 				}
 
-				logger.trace("A");
+				final Node node = nodeOptional.get();
 
 				// if the new ShapeType is none, do not add a new shape but bail here
 				final ShapeType shapeType = node.getShapeType();
@@ -183,8 +188,6 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 
 					return;
 				}
-
-				logger.trace("B");
 
 				// remove
 				final SVGPath svgPathOld = viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()];
@@ -196,18 +199,16 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 				final boolean blocked = modelChangedEvent.isBlocked();
 				final boolean selected = modelChangedEvent.isSelected();
 
-				if (node.getProtocolTurnoutId() != null && node.getProtocolTurnoutId() > 0) {
+				try {
 
 					logger.trace("ProtocolTurnoutID: " + node.getProtocolTurnoutId() + " TurnoutState: "
 							+ (thrown ? "THROWN" : "CLOSED") + " ShapeType: " + shapeType + " highlighted: "
 							+ highlighted + " blocked: " + blocked + " selected: " + selected);
-				}
-
-				try {
 
 					final SVGPath svgPathNew = svgPathFactory.create(shapeType, cell_width, thrown, highlighted,
 							blocked, selected);
 					if (svgPathNew == null) {
+
 						logger.trace("svgPathNew is null!");
 						return;
 					}
@@ -269,10 +270,10 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 					}
 
 					viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()] = svgPathNew;
+
 				} catch (final Exception e) {
 					logger.error(e.getMessage(), e);
 				}
-
 			}
 		});
 	}

@@ -7,8 +7,8 @@ import org.springframework.context.ApplicationEvent;
 import de.wfb.model.service.FeedbackBlockService;
 
 /**
- * Event sent after receiving the response from a P50XXEvtSenCommand. Causes
- * FeedbackBlockEvents.
+ * Event sent after receiving the response from a P50XXEvtSenCommand. Is broken
+ * down into individual FeedbackBlockEvents.
  *
  * It describes the state of the contacts of the S88 that signaled a change.
  *

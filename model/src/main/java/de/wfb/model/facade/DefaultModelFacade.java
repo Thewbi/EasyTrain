@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import de.wfb.model.Model;
 import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.Node;
+import de.wfb.model.node.RailNode;
 import de.wfb.model.service.ModelService;
 import de.wfb.rail.ui.ShapeType;
 
@@ -100,6 +101,17 @@ public class DefaultModelFacade implements ModelFacade {
 	public Optional<DefaultLocomotive> getLocomotiveByAddress(final short locomotiveAddress) {
 		return modelService.getLocomotives().stream().filter(locomotive -> locomotive.getAddress() == locomotiveAddress)
 				.findFirst();
+	}
+
+	@Override
+	public void sendModelChangedEvent(final int x, final int y, final boolean hightlighted, final boolean blocked,
+			final boolean selected) {
+		modelService.sendModelChangedEvent(x, y, hightlighted, blocked, selected);
+	}
+
+	@Override
+	public void sendModelChangedEvent(final RailNode railNode) {
+		modelService.sendModelChangedEvent(railNode);
 	}
 
 }

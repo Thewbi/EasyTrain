@@ -96,7 +96,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 			return;
 		}
 
-		logger.trace("OUT EDGE: " + outEdge.getDirection().name());
+		logger.info("OUT EDGE: " + outEdge.getDirection().name());
 
 		updateSwitchState(outEdge);
 
@@ -106,40 +106,40 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	private void updateSwitchState(final Edge outEdge) {
 
-		logger.info("ShapteType: " + getShapeType().name() + " Direction: " + outEdge.getDirection().name());
+		logger.info("ShapeType: " + getShapeType().name() + " Direction: " + outEdge.getDirection().name());
 
 		switch (getShapeType()) {
 
 		case SWITCH_LEFT_0:
-			this.setThrown(outEdge.getDirection() == Direction.NORTH);
+			setThrown(outEdge.getDirection() == Direction.NORTH);
 			break;
 
 		case SWITCH_RIGHT_0:
-			this.setThrown(outEdge.getDirection() == Direction.SOUTH);
+			setThrown(outEdge.getDirection() == Direction.SOUTH);
 			break;
 
 		case SWITCH_LEFT_90:
-			this.setThrown(outEdge.getDirection() == Direction.EAST);
+			setThrown(outEdge.getDirection() == Direction.EAST);
 			break;
 
 		case SWITCH_RIGHT_90:
-			this.setThrown(outEdge.getDirection() == Direction.WEST);
+			setThrown(outEdge.getDirection() == Direction.WEST);
 			break;
 
 		case SWITCH_LEFT_180:
-			this.setThrown(outEdge.getDirection() == Direction.SOUTH);
+			setThrown(outEdge.getDirection() == Direction.SOUTH);
 			break;
 
 		case SWITCH_RIGHT_180:
-			this.setThrown(outEdge.getDirection() == Direction.NORTH);
+			setThrown(outEdge.getDirection() == Direction.NORTH);
 			break;
 
 		case SWITCH_LEFT_270:
-			this.setThrown(outEdge.getDirection() == Direction.WEST);
+			setThrown(outEdge.getDirection() == Direction.WEST);
 			break;
 
 		case SWITCH_RIGHT_270:
-			this.setThrown(outEdge.getDirection() == Direction.EAST);
+			setThrown(outEdge.getDirection() == Direction.EAST);
 			break;
 
 		default:
@@ -226,9 +226,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 		// nodes on the grid, but manually connected nodes can be separat over long
 		// distances, there is a manual connection list, which stores all manual
 		// connections
-		logger.info("Add manual Connection!");
+		logger.trace("Add manual Connection!");
 		getManualConnections().add(railNodeB);
-//		railNodeB.getManualConnections().add(this);
 	}
 
 	@Override
@@ -762,6 +761,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	@Override
 	public void setReserved(final boolean reserved) {
+		logger.trace("RailNodeID: " + getId() + " Reserved: " + reserved);
 		this.reserved = reserved;
 	}
 

@@ -97,20 +97,13 @@ public class RailDetailsPane extends GridPane {
 
 		final RailNode railNode = (RailNode) node;
 
+		// manual connections
 		if (CollectionUtils.isNotEmpty(railNode.getManualConnections())) {
 
 			for (final RailNode manuallyConnectedNode : railNode.getManualConnections()) {
 
 				stringBuffer.append("ManuallyConnected to: " + manuallyConnectedNode.getId() + "\n");
 			}
-		}
-
-		stringBuffer.append("Reserved: ").append(node.isReserved()).append("\n");
-		stringBuffer.append("ReservedByLocomotiveId: ").append(node.getReservedLocomotiveId()).append("\n");
-
-		final Optional<DefaultLocomotive> locomotive = modelFacade.getLocomotiveById(node.getReservedLocomotiveId());
-		if (locomotive.isPresent()) {
-			stringBuffer.append("Locomotive Address: ").append(locomotive.get().getAddress()).append("\n");
 		}
 
 		// @formatter:off
@@ -125,7 +118,7 @@ public class RailDetailsPane extends GridPane {
 				stringBuffer.append(graphNode.getId()).append(" ").append(graphNode.getColor().name()).append(", ");
 			}
 		}
-		stringBuffer.append("]");
+		stringBuffer.append("]\n");
 
 		// GraphNode TWO and children
 		stringBuffer.append(" [").append(node.getGraphNodeTwo().getId()).append(" ").append(node.getGraphNodeTwo().getColor().name()).append(" -> \n");
@@ -137,9 +130,20 @@ public class RailDetailsPane extends GridPane {
 				stringBuffer.append(graphNode.getId()).append(" ").append(graphNode.getColor().name()).append(", ");
 			}
 		}
-		stringBuffer.append("]");
+		stringBuffer.append("]\n");
 
 		// @formatter:on
+
+		stringBuffer.append("Highlighted: ").append(node.isHighlighted()).append("\n");
+
+		// locomotive data
+		stringBuffer.append("Reserved: ").append(node.isReserved()).append("\n");
+		stringBuffer.append("ReservedByLocomotiveId: ").append(node.getReservedLocomotiveId()).append("\n");
+
+		final Optional<DefaultLocomotive> locomotive = modelFacade.getLocomotiveById(node.getReservedLocomotiveId());
+		if (locomotive.isPresent()) {
+			stringBuffer.append("Locomotive Address: ").append(locomotive.get().getAddress()).append("\n");
+		}
 
 		return stringBuffer.toString();
 	}

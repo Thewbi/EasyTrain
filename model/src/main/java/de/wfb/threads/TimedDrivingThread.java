@@ -78,7 +78,7 @@ public class TimedDrivingThread {
 			final Route route = locomotive.getRoute();
 			if (route == null) {
 
-				logger.warn("No route found on locomotive ID: " + locomotive.getId());
+				logger.trace("No route found on locomotive ID: " + locomotive.getId());
 				continue;
 			}
 
@@ -88,7 +88,7 @@ public class TimedDrivingThread {
 
 	private void processLocomotive(final DefaultLocomotive locomotive) {
 
-		logger.info("processLocomotive() locomotive ID: " + locomotive.getId());
+		logger.trace("processLocomotive() locomotive ID: " + locomotive.getId());
 
 		// find the graph node the locomotive is on currently
 		final RailNode currentRailNode = locomotive.getRailNode();
@@ -99,7 +99,7 @@ public class TimedDrivingThread {
 
 		if (currentGraphNode.equals(route.getLastGraphNode())) {
 
-			logger.info("Locomotive is on the last graph node of it's route!");
+			logger.trace("Locomotive is on the last graph node of it's route!");
 			applicationEventPublisher.publishEvent(new RouteFinishedEvent(this, route, locomotive));
 		}
 
@@ -204,9 +204,9 @@ public class TimedDrivingThread {
 
 	private void sendEnteringMessage(final Block block, final DefaultLocomotive defaultLocomotive) {
 
-		logger.info("Entering block " + block);
+		logger.trace("Entering block " + block);
 
-		final int feedbackBlockNumber = block.getId();
+		final int feedbackBlockNumber = block.getId() - 1;
 		final FeedbackBlockState feedbackBlockState = FeedbackBlockState.BLOCKED;
 
 		final FeedbackBlockEvent feedbackBlockEvent = new FeedbackBlockEvent(this, feedbackBlockNumber,
@@ -216,7 +216,7 @@ public class TimedDrivingThread {
 
 	private void sendLeavingMessage(final Block block, final DefaultLocomotive defaultLocomotive) {
 
-		logger.info("Leaving block: " + block);
+		logger.trace("Leaving block: " + block);
 
 		final int feedbackBlockNumber = block.getId();
 		final FeedbackBlockState feedbackBlockState = FeedbackBlockState.FREE;
