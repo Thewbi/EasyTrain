@@ -68,6 +68,8 @@ public class Route {
 
 	public void highlightRoute(final ApplicationEventPublisher applicationEventPublisher) {
 
+		logger.info("highlighting route");
+
 		if (CollectionUtils.isEmpty(graphNodes)) {
 			return;
 		}

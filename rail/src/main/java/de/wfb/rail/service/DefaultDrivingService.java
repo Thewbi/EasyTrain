@@ -70,21 +70,26 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 	/**
 	 * After a XEvtSen command was executed, system learns about the states of
-	 * blocks from the response of the command.
+	 * blocks from the response of the command.<br />
+	 * <br />
 	 *
 	 * For every block signaled as free or blocked, the system will publish a
-	 * separate FeedbackBlockEvent.
+	 * separate FeedbackBlockEvent.<br />
+	 * <br />
 	 *
 	 * This method will react to the events. When a block is free or used, it will
-	 * determine the locomotive that is on the block using a heuristic:
+	 * determine the locomotive that is on the block using a heuristic:<br />
+	 * <br />
 	 *
 	 * The heuristic is: A block is reserved by at most one route. The route belongs
 	 * to at most one locomotive. So when a block is used or freed the corresponding
-	 * locomotive must be the locomotive that owns the route.
+	 * locomotive must be the locomotive that owns the route.<br />
+	 * <br />
 	 *
 	 * If someone manually moves a locomotive onto a block, this heuristic does not
 	 * hold any more and the software fails. That is why manual and automatic
-	 * operation do not go together well.
+	 * operation do not go together well.<br />
+	 * <br />
 	 */
 	private void processFeedbackBlockEvent(final FeedbackBlockEvent event) {
 
@@ -119,8 +124,8 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 		// determine the block
 		final int feedbackBlockNumber = event.getFeedbackBlockNumber();
-		logger.trace("feedbackBlockNumber: " + feedbackBlockNumber);
-		final Block block = blockService.getBlockById(feedbackBlockNumber + 1);
+		logger.info("feedbackBlockNumber: " + feedbackBlockNumber);
+		final Block block = blockService.getBlockById(feedbackBlockNumber);
 		if (block == null) {
 			return;
 		}
@@ -158,7 +163,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 	 */
 	private void processFeedbackBlockBlocked(final FeedbackBlockEvent event) {
 
-		final int feedbackBlockNumber = event.getFeedbackBlockNumber() + 1;
+		final int feedbackBlockNumber = event.getFeedbackBlockNumber();
 
 		logger.info("processFeedbackBlockBlocked() feedbackBlockNumber: " + feedbackBlockNumber);
 
@@ -372,14 +377,18 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 	 */
 	private void freeRouteExceptUpToBlock(final Block block, final DefaultLocomotive locomotive) {
 
+		// DEBUG
 		logger.info("freeRouteExceptUpToBlock() blockID: " + block.getId());
+
+		final Route route = locomotive.getRoute();
 
 		// go through the entire route.
 		// If a RailNode and/or a Block is reserved for this locomotive, free it
-		for (final GraphNode graphNode : locomotive.getRoute().getGraphNodes()) {
+		for (final GraphNode graphNode : route.getGraphNodes()) {
 
 			final RailNode railNode = graphNode.getRailNode();
 
+			// DEBUG
 			logger.info("Freeing GraphNode: " + graphNode + " RailNode: ID: " + railNode.getId() + " Reserved: "
 					+ railNode.isReserved() + " ReservedLocomotiveID: " + railNode.getReservedLocomotiveId());
 
@@ -393,6 +402,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 				nodeBlock.getNodes().stream().filter(node -> node.isReserved()).forEach(node -> {
 
 					railNode.setHighlighted(false);
+
 					// send model changed event
 					modelFacade.sendModelChangedEvent(railNode);
 
@@ -428,7 +438,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 							railNodeBlock.getNodes().stream().filter(node -> node.isReserved()).forEach(node -> {
 
-								logger.info("Resetting node in block!");
+								logger.info("Resetting node ID = " + node.getId() + " in block!");
 
 								freeNode(node);
 							});
@@ -515,7 +525,8 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		for (final GraphNode graphNode : locomotive.getRoute()
 				.getSubListStartingFromRailNode(locomotive.getRailNode())) {
 
-			final Block nodeBlock = graphNode.getRailNode().getBlock();
+			final RailNode railNode = graphNode.getRailNode();
+			final Block nodeBlock = railNode.getBlock();
 
 			// walk until the next block is reached
 			if (nodeBlock != null && nodeBlock.equals(nextBlock)) {
@@ -523,8 +534,12 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 			}
 
 			// reserve this node for the locomotive
-			graphNode.getRailNode().setReserved(true);
-			graphNode.getRailNode().setReservedLocomotiveId(locomotive.getId());
+			railNode.setReserved(true);
+			railNode.setReservedLocomotiveId(locomotive.getId());
+
+			// draw the blocked not in the blocked color in the ui
+			logger.info("Drawing the node in the blocked color in the UI!");
+			modelFacade.sendModelChangedEvent(railNode);
 		}
 
 		// reserve the nextBlock for the locomotive

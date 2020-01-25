@@ -167,6 +167,8 @@ public class BlockNavigationPane extends HBox {
 					locomotive.setRoute(route);
 					route.setLocomotive(locomotive);
 
+					// highlight the entire route
+					logger.info("highlighting the route!");
 					route.highlightRoute(applicationEventPublisher);
 
 					// Send an event that a locomotive now has a route

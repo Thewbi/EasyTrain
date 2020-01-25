@@ -45,7 +45,7 @@ public interface ModelFacade {
 
 	Optional<DefaultLocomotive> getLocomotiveByAddress(short locomotiveAddress);
 
-	void sendModelChangedEvent(int x, int y, boolean hightlighted, boolean blocked, boolean selected);
+	void sendModelChangedEvent(int x, int y, boolean hightlighted, boolean blocked, boolean selected, boolean reserved);
 
 	void sendModelChangedEvent(RailNode railNode);
 

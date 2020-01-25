@@ -65,25 +65,44 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 		}
 	}
 
+	/**
+	 * FeedbackBlockUpdateEvent is broken down into several FeedbackBlockEvents.
+	 * <br />
+	 * <br />
+	 * This handler will change the FeedbackBlockUsed-State on all blocks of the
+	 * node.<br />
+	 * <br />
+	 *
+	 * The new FeedbackBlockUsed-State dependes on wether the block is BLOCKED or
+	 * not.
+	 *
+	 * @param feedbackBlockEvent
+	 */
 	private void processFeedbackBlockEvent(final FeedbackBlockEvent feedbackBlockEvent) {
 
 		// update the state of all rail nodes that are part of the block to used
-		//
 		// Send a model change event to update the front-end
 
 		final int feedbackBlockNumber = feedbackBlockEvent.getFeedbackBlockNumber();
+
+		// convert array index to feedback block id
+		// feedbackBlockNumber = feedbackBlockNumber + 1;
+
 		final FeedbackBlockState feedbackBlockState = feedbackBlockEvent.getFeedbackBlockState();
 
-		logger.trace("processFeedbackBlockEvent() feedbackBlockNumber: " + feedbackBlockNumber + 1
-				+ " feedbackBlockState: " + feedbackBlockState);
+		logger.info("processFeedbackBlockEvent() feedbackBlockNumber: " + feedbackBlockNumber + " feedbackBlockState: "
+				+ feedbackBlockState);
 
-		final List<Node> feedbackBlockNodes = retrieveNodesOfFeedbackBlock(feedbackBlockNumber + 1);
+		final List<Node> feedbackBlockNodes = retrieveNodesOfFeedbackBlock(feedbackBlockNumber);
 		if (CollectionUtils.isEmpty(feedbackBlockNodes)) {
-			logger.trace("FeedbackBlockNodes are empty! Aborting!");
+
+			logger.info("FeedbackBlockNodes are empty! Aborting!");
 			return;
 		}
 
 		for (final Node node : feedbackBlockNodes) {
+
+			logger.info("Block-Node ID: " + node.getId() + " feedbackBlockState: " + feedbackBlockState);
 
 			// tell the rail node, that the feedback block it belongs to is used
 			node.setFeedbackBlockUsed(feedbackBlockState == FeedbackBlockState.BLOCKED);
@@ -91,7 +110,7 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 			// the model changed because some of the nodes are now used.
 			// Publish an event after model changes
 			final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, node.getX(), node.getY(),
-					node.isHighlighted(), node.isFeedbackBlockUsed(), node.isSelected());
+					node.isHighlighted(), node.isFeedbackBlockUsed(), node.isSelected(), node.isReserved());
 
 			applicationEventPublisher.publishEvent(modelChangedEvent);
 		}
@@ -105,6 +124,10 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 			final RailNode railNode = (RailNode) entry.getValue();
 
 			if (railNode.getFeedbackBlockNumber() == feedbackBlockNumber) {
+
+				logger.info("RailNode ID: " + railNode.getId() + " FeedbackBlockNumber ID: "
+						+ railNode.getFeedbackBlockNumber());
+
 				result.add(railNode);
 			}
 		}
@@ -172,7 +195,8 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 
 		// tell the UI
 		logger.info("sendModelChangedEvent()");
-		sendModelChangedEvent(x, y, node.isHighlighted(), node.isFeedbackBlockUsed(), node.isSelected());
+		sendModelChangedEvent(x, y, node.isHighlighted(), node.isFeedbackBlockUsed(), node.isSelected(),
+				node.isReserved());
 	}
 
 	private void sendNodeClickedEvent(final Node node) {
@@ -199,12 +223,12 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 
 	@Override
 	public void sendModelChangedEvent(final int x, final int y, final boolean hightlighted, final boolean blocked,
-			final boolean selected) {
+			final boolean selected, final boolean reserved) {
 
 		logger.trace("sendModelChangedEvent() x: " + x + " y: " + y);
 
 		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, x, y, hightlighted, blocked,
-				selected);
+				selected, reserved);
 
 		logger.trace("Sending ModelChangedEvent ...");
 		applicationEventPublisher.publishEvent(modelChangedEvent);
@@ -213,10 +237,33 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 	@Override
 	public void sendModelChangedEvent(final RailNode railNode) {
 
-		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, railNode.getX(), railNode.getY(),
-				railNode.isHighlighted(), railNode.isFeedbackBlockUsed(), railNode.isSelected());
+		final Object sender = this;
+		final int x = railNode.getX();
+		final int y = railNode.getY();
+		final boolean highlighted = railNode.isHighlighted();
+
+		final boolean blocked = railNode.isFeedbackBlockUsed();
+
+		final boolean reserved = railNode.isReserved();
+
+		final boolean selected = railNode.isSelected();
+
+		// @formatter:off
+
+		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(
+				sender,
+				model,
+				x,
+				y,
+				highlighted,
+				blocked,
+				selected,
+				reserved);
+
+		// @formatter:on
 
 		logger.trace("Sending ModelChangedEvent ...");
+
 		applicationEventPublisher.publishEvent(modelChangedEvent);
 	}
 
@@ -241,7 +288,7 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 			return;
 
 		case REMOVE:
-			sendModelChangedEvent(x, y, false, false, false);
+			sendModelChangedEvent(x, y, false, false, false, false);
 			return;
 
 		default:
@@ -261,7 +308,8 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 
 			logger.info("addNode() New node id = " + newNode.getId() + " added!");
 
-			sendModelChangedEvent(x, y, newNode.isHighlighted(), newNode.isFeedbackBlockUsed(), newNode.isSelected());
+			sendModelChangedEvent(x, y, newNode.isHighlighted(), newNode.isFeedbackBlockUsed(), newNode.isSelected(),
+					newNode.isReserved());
 
 		} catch (final Exception e) {
 			logger.error(e.getMessage(), e);

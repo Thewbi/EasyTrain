@@ -107,7 +107,7 @@ public class DefaultBlock implements Block {
 
 	@Override
 	public String toString() {
-		return "Block " + id + "";
+		return "Block ID: " + id + "";
 	}
 
 }

@@ -105,8 +105,8 @@ public class DefaultModelFacade implements ModelFacade {
 
 	@Override
 	public void sendModelChangedEvent(final int x, final int y, final boolean hightlighted, final boolean blocked,
-			final boolean selected) {
-		modelService.sendModelChangedEvent(x, y, hightlighted, blocked, selected);
+			final boolean selected, final boolean reserved) {
+		modelService.sendModelChangedEvent(x, y, hightlighted, blocked, selected, reserved);
 	}
 
 	@Override

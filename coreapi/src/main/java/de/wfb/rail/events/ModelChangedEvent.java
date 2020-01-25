@@ -23,6 +23,8 @@ public class ModelChangedEvent extends ApplicationEvent {
 
 	private final boolean blocked;
 
+	private final boolean reserved;
+
 	/**
 	 * ctor
 	 *
@@ -33,7 +35,7 @@ public class ModelChangedEvent extends ApplicationEvent {
 	 * @param highlighted
 	 */
 	public ModelChangedEvent(final Object source, final Model model, final int x, final int y,
-			final boolean highlighted, final boolean blocked, final boolean selected) {
+			final boolean highlighted, final boolean blocked, final boolean selected, final boolean reserved) {
 
 		super(source);
 		this.model = model;
@@ -42,6 +44,7 @@ public class ModelChangedEvent extends ApplicationEvent {
 		this.selected = selected;
 		this.highlighted = highlighted;
 		this.blocked = blocked;
+		this.reserved = reserved;
 	}
 
 	public int getX() {
@@ -66,5 +69,9 @@ public class ModelChangedEvent extends ApplicationEvent {
 
 	public boolean isSelected() {
 		return selected;
+	}
+
+	public boolean isReserved() {
+		return reserved;
 	}
 }

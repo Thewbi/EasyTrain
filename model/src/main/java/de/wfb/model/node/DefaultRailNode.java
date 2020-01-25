@@ -152,8 +152,27 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 		logger.info("sendModelChangedEvent()");
 
-		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, railNode.getX(), railNode.getY(),
-				railNode.isHighlighted(), railNode.isFeedbackBlockUsed(), railNode.isSelected());
+		final Object sender = this;
+		final int x = railNode.getX();
+		final int y = railNode.getY();
+		final boolean highlighted = railNode.isHighlighted();
+		final boolean feedbackBlockUsed = railNode.isFeedbackBlockUsed();
+		final boolean selected = railNode.isSelected();
+		final boolean reserved = railNode.isReserved();
+
+		// @formatter:off
+
+		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(
+				sender,
+				model,
+				x,
+				y,
+				highlighted,
+				feedbackBlockUsed,
+				selected,
+				reserved);
+
+		// @formatter:on
 
 		applicationEventPublisher.publishEvent(modelChangedEvent);
 	}

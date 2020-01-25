@@ -82,8 +82,10 @@ public class DefaultSceneFactory implements Factory<Scene> {
 			}
 		});
 
+		final MenuBar menuBar = menuBarFactory.create(stage, layoutGridController);
+
 		final BorderPane borderPane = new BorderPane();
-		borderPane.setTop(menuBarFactory.create(stage, layoutGridController));
+		borderPane.setTop(menuBar);
 		borderPane.setCenter(stackPane);
 		borderPane.setRight(createDetailsView());
 		borderPane.setBottom(blockNavigationPane);

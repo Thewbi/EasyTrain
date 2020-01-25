@@ -210,7 +210,7 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 
 		for (final JsonNode jsonNode : nodeArray) {
 
-			modelService.sendModelChangedEvent(jsonNode.getX(), jsonNode.getY(), false, false, false);
+			modelService.sendModelChangedEvent(jsonNode.getX(), jsonNode.getY(), false, false, false, false);
 		}
 	}
 

@@ -24,7 +24,7 @@ public interface ModelService {
 
 	void loadModel();
 
-	void sendModelChangedEvent(int x, int y, boolean hightlighted, boolean blocked, boolean selected);
+	void sendModelChangedEvent(int x, int y, boolean hightlighted, boolean blocked, boolean selected, boolean reserved);
 
 	void sendModelChangedEvent(RailNode railNode);
 

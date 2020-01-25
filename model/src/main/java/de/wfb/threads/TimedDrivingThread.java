@@ -36,8 +36,8 @@ public class TimedDrivingThread {
 
 	private static final Logger logger = LogManager.getLogger(TimedDrivingThread.class);
 
-//	private static final boolean ACTIVE = true;
-	private static final boolean ACTIVE = false;
+	private static final boolean ACTIVE = true;
+//	private static final boolean ACTIVE = false;
 
 	@Autowired
 	private ModelFacade modelFacade;
@@ -45,7 +45,7 @@ public class TimedDrivingThread {
 	@Autowired
 	private ApplicationEventPublisher applicationEventPublisher;
 
-	@Scheduled(fixedRate = 1000)
+	@Scheduled(fixedRate = 500)
 	public void threadFunc() {
 
 		logger.trace("threadFunc() ACTIVE = " + ACTIVE);
@@ -118,8 +118,10 @@ public class TimedDrivingThread {
 
 			if (graphNode.getRailNode().getReservedLocomotiveId() != locomotive.getId()) {
 
-				logger.warn("Child GraphNode ID: " + graphNode.getId() + " Not reserved for locomotive! Reserved for: "
-						+ graphNode.getRailNode().getReservedLocomotiveId() + " Locomotive ID: " + locomotive.getId());
+				logger.warn("Child GraphNode ID: " + graphNode.getId()
+						+ " Not reserved for locomotive! Reserved for LocomotiveID: "
+						+ graphNode.getRailNode().getReservedLocomotiveId()
+						+ " The Locomotive ID of the blocked Locomotive is: " + locomotive.getId());
 				continue;
 			}
 
@@ -206,7 +208,7 @@ public class TimedDrivingThread {
 
 		logger.trace("Entering block " + block);
 
-		final int feedbackBlockNumber = block.getId() - 1;
+		final int feedbackBlockNumber = block.getId();
 		final FeedbackBlockState feedbackBlockState = FeedbackBlockState.BLOCKED;
 
 		final FeedbackBlockEvent feedbackBlockEvent = new FeedbackBlockEvent(this, feedbackBlockNumber,
@@ -216,7 +218,7 @@ public class TimedDrivingThread {
 
 	private void sendLeavingMessage(final Block block, final DefaultLocomotive defaultLocomotive) {
 
-		logger.trace("Leaving block: " + block);
+		logger.info("Leaving block: " + block);
 
 		final int feedbackBlockNumber = block.getId();
 		final FeedbackBlockState feedbackBlockState = FeedbackBlockState.FREE;

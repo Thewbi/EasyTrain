@@ -159,7 +159,7 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 
 	private void processModelChangedEvent(final ModelChangedEvent modelChangedEvent) {
 
-		logger.trace("processModelChangedEvent()");
+		logger.info("processModelChangedEvent()");
 
 		Platform.runLater(new Runnable() {
 
@@ -186,6 +186,8 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 				final ShapeType shapeType = node.getShapeType();
 				if (shapeType == ShapeType.NONE) {
 
+					logger.info("shapeType is none!");
+
 					return;
 				}
 
@@ -198,18 +200,21 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 				final boolean highlighted = modelChangedEvent.isHighlighted();
 				final boolean blocked = modelChangedEvent.isBlocked();
 				final boolean selected = modelChangedEvent.isSelected();
+				final boolean reserved = modelChangedEvent.isReserved();
 
 				try {
 
-					logger.trace("ProtocolTurnoutID: " + node.getProtocolTurnoutId() + " TurnoutState: "
+					// DEBUG
+					logger.info("ProtocolTurnoutID: " + node.getProtocolTurnoutId() + " TurnoutState: "
 							+ (thrown ? "THROWN" : "CLOSED") + " ShapeType: " + shapeType + " highlighted: "
-							+ highlighted + " blocked: " + blocked + " selected: " + selected);
+							+ highlighted + " blocked: " + blocked + " selected: " + selected + " reserved: "
+							+ reserved);
 
 					final SVGPath svgPathNew = svgPathFactory.create(shapeType, cell_width, thrown, highlighted,
-							blocked, selected);
+							blocked, selected, reserved);
 					if (svgPathNew == null) {
 
-						logger.trace("svgPathNew is null!");
+						logger.info("svgPathNew is null!");
 						return;
 					}
 
@@ -217,6 +222,10 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 					svgPathNew.setLayoutY(modelChangedEvent.getY() * cell_width);
 
 					getChildren().addAll(svgPathNew);
+
+					// TODO: 1. move this into the factory
+					// TODO: 2. Enhance the viewModel to contain a data object that store a SVGPath
+					// and a Text!
 
 					// render the feedback block number onto the layout
 					if (node.getFeedbackBlockNumber() > -1) {
@@ -266,6 +275,7 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 						text.setLayoutX(x);
 						text.setLayoutY(y);
 
+						// ERROR! Text is not removed before adding a new text!
 						getChildren().addAll(text);
 					}
 

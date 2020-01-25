@@ -16,4 +16,6 @@ public interface LayoutColors {
 
 	public static final Color TURNOUT_STROKE_COLOR = Color.BROWN;
 
+	public static final Color RESERVED_FILL_COLOR = Color.DARKMAGENTA;
+
 }
