@@ -15,6 +15,7 @@ import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
 import de.wfb.model.node.SwitchingNodeEntry;
 import de.wfb.model.strategy.GraphColorStrategy;
+import de.wfb.rail.facade.ProtocolFacade;
 import de.wfb.rail.service.Route;
 
 public class DefaultRoutingService implements RoutingService {
@@ -31,6 +32,9 @@ public class DefaultRoutingService implements RoutingService {
 
 	@Autowired
 	private GraphColorStrategy graphColorStrategy;
+
+	@Autowired
+	private ProtocolFacade protocolFacade;
 
 	@Override
 	public Route route(final Node start, final Node end) {
@@ -169,7 +173,7 @@ public class DefaultRoutingService implements RoutingService {
 				switchingNodeEntry.setConnectingGraphNode(child);
 				switchingNodeEntry.setSwitchingGraphNode(currentGraphNode);
 
-				// TODO: remember the node via this switching child can be reached!
+				// remember the node via which this switching child can be reached!
 				switchingGraphNode.getSwitchingGraphNodeChildren().add(switchingNodeEntry);
 			}
 		}
@@ -224,7 +228,7 @@ public class DefaultRoutingService implements RoutingService {
 
 	@Override
 	public void switchTurnouts(final Route route) {
-		route.switchTurnouts(applicationEventPublisher);
+		route.switchTurnouts(applicationEventPublisher, protocolFacade);
 	}
 
 }

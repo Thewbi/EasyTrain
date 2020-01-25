@@ -16888,6 +16888,7 @@
     "y": 40,
     "leftList": [],
     "rightList": [],
+    "protocolTurnoutId": 30,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -16898,6 +16899,7 @@
     "y": 41,
     "leftList": [],
     "rightList": [],
+    "protocolTurnoutId": 29,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -17078,6 +17080,7 @@
     "y": 40,
     "leftList": [],
     "rightList": [],
+    "protocolTurnoutId": 31,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -18038,6 +18041,7 @@
     "y": 28,
     "leftList": [],
     "rightList": [],
+    "protocolTurnoutId": 21,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },

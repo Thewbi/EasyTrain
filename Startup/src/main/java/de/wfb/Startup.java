@@ -109,10 +109,13 @@ public class Startup extends Application {
 		// connect to the intellibox
 		connectToIntellibox();
 
+		logger.info("xSensOff ...");
+		protocolFacade.xSenseOff();
+		logger.info("xSensOff done.");
+
 		// query the turnouts to find out their state on the layout so that the software
 		// can draw them in the correct state and also send the correct commands when
 		// the user of the route service want to switch them
-		// TODO: reactivate
 		turnoutService.startQueryingFromQueue();
 
 		// locomotive throttle

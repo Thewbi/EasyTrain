@@ -36,8 +36,8 @@ public class TimedDrivingThread {
 
 	private static final Logger logger = LogManager.getLogger(TimedDrivingThread.class);
 
-	private static final boolean ACTIVE = true;
-//	private static final boolean ACTIVE = false;
+//	private static final boolean ACTIVE = true;
+	private static final boolean ACTIVE = false;
 
 	@Autowired
 	private ModelFacade modelFacade;

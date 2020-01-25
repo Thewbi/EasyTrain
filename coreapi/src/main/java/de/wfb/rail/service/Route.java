@@ -13,6 +13,7 @@ import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.RailNode;
 import de.wfb.rail.events.NodeHighlightedEvent;
 import de.wfb.rail.events.RemoveHighlightsEvent;
+import de.wfb.rail.facade.ProtocolFacade;
 import de.wfb.rail.ui.ShapeType;
 
 public class Route {
@@ -96,17 +97,18 @@ public class Route {
 		}
 	}
 
-	public void switchTurnouts(final ApplicationEventPublisher applicationEventPublisher) {
+	public void switchTurnouts(final ApplicationEventPublisher applicationEventPublisher,
+			final ProtocolFacade protocolFacade) {
 
 		logger.info("switchTurnouts()");
 
-		switchTurnouts(graphNodes, applicationEventPublisher);
+		switchTurnouts(graphNodes, applicationEventPublisher, protocolFacade);
 	}
 
 	public static void switchTurnouts(final List<GraphNode> graphNodes,
-			final ApplicationEventPublisher applicationEventPublisher) {
+			final ApplicationEventPublisher applicationEventPublisher, final ProtocolFacade protocolFacade) {
 
-		logger.info("switchTurnouts()");
+		logger.info("switchTurnouts() - static");
 
 		if (CollectionUtils.isEmpty(graphNodes)) {
 
@@ -118,6 +120,8 @@ public class Route {
 		int index = 0;
 		for (final GraphNode graphNode : graphNodes) {
 
+			logger.info("RailNode.ID: " + graphNode.getRailNode().getId() + " GraphNode.ID: " + graphNode.getId());
+
 			if (ShapeType.isNotTurnout(graphNode.getRailNode().getShapeType())) {
 
 				index++;
@@ -127,7 +131,8 @@ public class Route {
 			// if the turnout is NOT traversed in switching direction, continue
 			if (graphNode.getChildren().size() < 2) {
 
-				logger.info("Index = " + index + " Turnout found. Not in switching order!");
+				logger.info("RailNode.ID: " + graphNode.getRailNode().getId() + " Index = " + index
+						+ " Turnout found. Not in switching order!");
 
 				index++;
 				continue;
@@ -146,7 +151,7 @@ public class Route {
 				logger.info("Switching RailNode.ID: " + turnoutRailNode.getId() + " to GraphNode.ID: "
 						+ nextGraphNode.getId());
 
-				turnoutRailNode.switchToGraphNode(applicationEventPublisher, null, nextGraphNode);
+				turnoutRailNode.switchToGraphNode(applicationEventPublisher, protocolFacade, null, nextGraphNode);
 			}
 
 			index++;

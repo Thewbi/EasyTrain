@@ -81,7 +81,7 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 		getChildren().addAll(tableView);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void addColumns() {
 
 		// column for the name

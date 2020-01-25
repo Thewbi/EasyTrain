@@ -82,7 +82,7 @@ public class ThrottlePane extends GridPane {
 			@Override
 			public void handle(final ActionEvent e) {
 
-				logger.info("ChangeDirectionButton");
+				logger.trace("ChangeDirectionButton");
 				processChangeDirectionEvent();
 
 			}

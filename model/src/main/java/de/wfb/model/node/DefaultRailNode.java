@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import de.wfb.model.Model;
 import de.wfb.rail.events.ModelChangedEvent;
+import de.wfb.rail.facade.ProtocolFacade;
 import de.wfb.rail.service.Block;
 
 public class DefaultRailNode extends BaseNode implements RailNode {
@@ -78,16 +79,16 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	@Override
 	public void toggleTurnout() {
 
-		logger.info("toggle()");
+		logger.trace("toggle()");
 
 		thrown = !thrown;
 	}
 
 	@Override
-	public void switchToGraphNode(final ApplicationEventPublisher applicationEventPublisher, final Model model,
-			final GraphNode nextGraphNode) {
+	public void switchToGraphNode(final ApplicationEventPublisher applicationEventPublisher,
+			final ProtocolFacade protocolFacade, final Model model, final GraphNode nextGraphNode) {
 
-		logger.info("switchToGraphNode()");
+		logger.info("switchToGraphNode() RailNode.ID: " + getId());
 
 		final Edge outEdge = findOutEdge(nextGraphNode);
 		if (outEdge == null) {
@@ -98,52 +99,67 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 		logger.info("OUT EDGE: " + outEdge.getDirection().name());
 
-		updateSwitchState(outEdge);
+		updateSwitchState(outEdge, protocolFacade);
 
 		// tell the UI
 		sendModelChangedEvent(applicationEventPublisher, model, this);
 	}
 
-	private void updateSwitchState(final Edge outEdge) {
+	private void updateSwitchState(final Edge outEdge, final ProtocolFacade protocolFacade) {
 
 		logger.info("ShapeType: " + getShapeType().name() + " Direction: " + outEdge.getDirection().name());
 
 		switch (getShapeType()) {
 
 		case SWITCH_LEFT_0:
-			setThrown(outEdge.getDirection() == Direction.NORTH);
+			process(protocolFacade, outEdge.getDirection() == Direction.NORTH);
 			break;
 
 		case SWITCH_RIGHT_0:
-			setThrown(outEdge.getDirection() == Direction.SOUTH);
+			process(protocolFacade, outEdge.getDirection() == Direction.SOUTH);
 			break;
 
 		case SWITCH_LEFT_90:
-			setThrown(outEdge.getDirection() == Direction.EAST);
+			process(protocolFacade, outEdge.getDirection() == Direction.EAST);
 			break;
 
 		case SWITCH_RIGHT_90:
-			setThrown(outEdge.getDirection() == Direction.WEST);
+			process(protocolFacade, outEdge.getDirection() == Direction.WEST);
 			break;
 
 		case SWITCH_LEFT_180:
-			setThrown(outEdge.getDirection() == Direction.SOUTH);
+			process(protocolFacade, outEdge.getDirection() == Direction.SOUTH);
 			break;
 
 		case SWITCH_RIGHT_180:
-			setThrown(outEdge.getDirection() == Direction.NORTH);
+			process(protocolFacade, outEdge.getDirection() == Direction.NORTH);
 			break;
 
 		case SWITCH_LEFT_270:
-			setThrown(outEdge.getDirection() == Direction.WEST);
+			process(protocolFacade, outEdge.getDirection() == Direction.WEST);
 			break;
 
 		case SWITCH_RIGHT_270:
-			setThrown(outEdge.getDirection() == Direction.EAST);
+			process(protocolFacade, outEdge.getDirection() == Direction.EAST);
 			break;
 
 		default:
 			break;
+		}
+	}
+
+	private void process(final ProtocolFacade protocolFacade, final boolean newThrown) {
+
+		final boolean oldThrown = isThrown();
+
+		logger.info("OldThrown: " + oldThrown + " NewThrown: " + newThrown);
+
+		if (newThrown != oldThrown) {
+
+			logger.info("Switch Turnout. RailNode.ID: " + getId());
+
+			setThrown(newThrown);
+			protocolFacade.turnTurnout(this);
 		}
 	}
 

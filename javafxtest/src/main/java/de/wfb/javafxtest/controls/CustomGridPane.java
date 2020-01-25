@@ -30,16 +30,16 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 
 	private static final Logger logger = LogManager.getLogger(CustomGridPane.class);
 
-	private final int columns = 100;
+	private final int COLUMNS = 100;
 
-	private final int rows = 100;
+	private final int ROWS = 100;
 
-	private final int cell_width = 10;
+	private final int CELL_WIDTH = 10;
 
 	double scale = 1.0d;
 
 	@Autowired
-	private Factory<SVGPath> svgPathFactory;
+	private Factory<GridElement> gridElementFactory;
 
 	/** https://www.baeldung.com/spring-events */
 	@Autowired
@@ -48,13 +48,14 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 	@Autowired
 	private ModelFacade modelFacade;
 
-	private final SVGPath[][] viewModel = new SVGPath[rows][columns];
+//	private final SVGPath[][] viewModel = new SVGPath[rows][columns];
+	private final GridElement[][] viewModel = new GridElement[ROWS][COLUMNS];
 
 	private boolean shiftState;
 
 	public void Initialize() {
 
-		setMinSize(rows * cell_width, columns * cell_width);
+		setMinSize(ROWS * CELL_WIDTH, COLUMNS * CELL_WIDTH);
 
 		final double scaleX = scale;
 		final double scaleY = scale;
@@ -89,8 +90,8 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 				logger.trace("      X: " + x + "       Y: " + y + "       Z: " + z);
 				logger.trace("screenX: " + screenX + " screenY: " + screenY);
 
-				final int xIndex = (int) x / cell_width;
-				final int yIndex = (int) y / cell_width;
+				final int xIndex = (int) x / CELL_WIDTH;
+				final int yIndex = (int) y / CELL_WIDTH;
 
 				final SelectionEvent selectionEvent = new SelectionEvent(this, sceneX + " - " + sceneY, xIndex, yIndex,
 						shiftState);
@@ -148,7 +149,9 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 
 		logger.trace(nodeHighlightedEvent);
 
-		final SVGPath svgPath = viewModel[nodeHighlightedEvent.getX()][nodeHighlightedEvent.getY()];
+		final GridElement gridElement = viewModel[nodeHighlightedEvent.getX()][nodeHighlightedEvent.getY()];
+
+		final SVGPath svgPath = gridElement.getSvgPath();
 		if (svgPath != null) {
 
 			logger.trace("changing fill color!");
@@ -159,7 +162,7 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 
 	private void processModelChangedEvent(final ModelChangedEvent modelChangedEvent) {
 
-		logger.info("processModelChangedEvent()");
+		logger.trace("processModelChangedEvent()");
 
 		Platform.runLater(new Runnable() {
 
@@ -174,7 +177,8 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 					logger.info("Node is null!");
 
 					// remove
-					final SVGPath svgPathOld = viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()];
+					final GridElement gridElement = viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()];
+					final SVGPath svgPathOld = gridElement.getSvgPath();
 					getChildren().remove(svgPathOld);
 
 					return;
@@ -192,104 +196,44 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 				}
 
 				// remove
-				final SVGPath svgPathOld = viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()];
-				getChildren().remove(svgPathOld);
+				final GridElement tempGridElement = viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()];
+				if (tempGridElement != null) {
 
-				// create new path
-				final boolean thrown = turnoutState(node);
-				final boolean highlighted = modelChangedEvent.isHighlighted();
-				final boolean blocked = modelChangedEvent.isBlocked();
-				final boolean selected = modelChangedEvent.isSelected();
-				final boolean reserved = modelChangedEvent.isReserved();
+					// remove SVGPath
+					final SVGPath svgPathOld = tempGridElement.getSvgPath();
+					if (svgPathOld != null) {
+						getChildren().remove(svgPathOld);
+					}
+
+					// remove Text
+					final Text oldText = tempGridElement.getText();
+					if (oldText != null) {
+						getChildren().remove(oldText);
+					}
+				}
 
 				try {
 
-					// DEBUG
-					logger.info("ProtocolTurnoutID: " + node.getProtocolTurnoutId() + " TurnoutState: "
-							+ (thrown ? "THROWN" : "CLOSED") + " ShapeType: " + shapeType + " highlighted: "
-							+ highlighted + " blocked: " + blocked + " selected: " + selected + " reserved: "
-							+ reserved);
+					final GridElement gridElement = gridElementFactory.create(node, modelChangedEvent, shapeType,
+							CELL_WIDTH);
+					if (gridElement != null) {
 
-					final SVGPath svgPathNew = svgPathFactory.create(shapeType, cell_width, thrown, highlighted,
-							blocked, selected, reserved);
-					if (svgPathNew == null) {
-
-						logger.info("svgPathNew is null!");
-						return;
-					}
-
-					svgPathNew.setLayoutX(modelChangedEvent.getX() * cell_width);
-					svgPathNew.setLayoutY(modelChangedEvent.getY() * cell_width);
-
-					getChildren().addAll(svgPathNew);
-
-					// TODO: 1. move this into the factory
-					// TODO: 2. Enhance the viewModel to contain a data object that store a SVGPath
-					// and a Text!
-
-					// render the feedback block number onto the layout
-					if (node.getFeedbackBlockNumber() > -1) {
-
-						final Text text = new Text(Integer.toString(node.getFeedbackBlockNumber()));
-						text.setScaleX(0.5);
-						text.setScaleY(0.5);
-
-						double x = 0;
-						double y = 0;
-
-						if (shapeType == ShapeType.STRAIGHT_HORIZONTAL) {
-
-							x = (modelChangedEvent.getX() + 0) * cell_width - 3;
-							y = (modelChangedEvent.getY() + 1) * cell_width + 5;
-
-						} else if (shapeType == ShapeType.STRAIGHT_VERTICAL) {
-
-							x = (modelChangedEvent.getX() + 0) * cell_width + 4;
-							y = (modelChangedEvent.getY() + 1) * cell_width + 0;
-
-						} else if (shapeType == ShapeType.TURN_TOP_RIGHT) {
-
-							x = (modelChangedEvent.getX() + 0) * cell_width - 0;
-							y = (modelChangedEvent.getY() + 1) * cell_width + 5;
-
-						} else if (shapeType == ShapeType.TURN_RIGHT_BOTTOM) {
-
-							x = (modelChangedEvent.getX() + 0) * cell_width - 0;
-							y = (modelChangedEvent.getY() + 1) * cell_width + 5;
-
-						} else if (shapeType == ShapeType.TURN_BOTTOM_LEFT) {
-
-							x = (modelChangedEvent.getX() + 0) * cell_width - 0;
-							y = (modelChangedEvent.getY() + 1) * cell_width + 5;
-
-						} else if (shapeType == ShapeType.TURN_LEFT_TOP) {
-
-							x = (modelChangedEvent.getX() + 0) * cell_width - 0;
-							y = (modelChangedEvent.getY() + 1) * cell_width + 5;
-
+						if (gridElement.getSvgPath() != null) {
+							getChildren().addAll(gridElement.getSvgPath());
 						}
 
-						logger.trace("X: " + y + " Y: " + y + " shapeType: " + shapeType
-								+ " node.getFeedbackBlockNumber() " + node.getFeedbackBlockNumber());
+						if (gridElement.getText() != null) {
+							getChildren().addAll(gridElement.getText());
+						}
 
-						text.setLayoutX(x);
-						text.setLayoutY(y);
-
-						// ERROR! Text is not removed before adding a new text!
-						getChildren().addAll(text);
+						viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()] = gridElement;
 					}
-
-					viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()] = svgPathNew;
 
 				} catch (final Exception e) {
 					logger.error(e.getMessage(), e);
 				}
 			}
 		});
-	}
-
-	private boolean turnoutState(final Node node) {
-		return node.isThrown();
 	}
 
 	public boolean isShiftState() {

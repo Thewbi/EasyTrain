@@ -48,7 +48,7 @@ public class FeedbackBlockEvent extends ApplicationEvent {
 		this.feedbackBlockNumber = feedbackBlockNumber;
 		this.feedbackBlockState = feedbackBlockState;
 
-		logger.info("ctor feedbackBlockNumber: " + feedbackBlockNumber + " feedbackBlockState: " + feedbackBlockState);
+		logger.trace("ctor feedbackBlockNumber: " + feedbackBlockNumber + " feedbackBlockState: " + feedbackBlockState);
 	}
 
 	public int getFeedbackBlockNumber() {

@@ -60,11 +60,8 @@ public class DefaultProtocolService implements ProtocolService {
 		logger.trace("nodeClicked x = " + x + " y = " + y);
 
 		final Node node = model.getNode(x, y);
-
 		if (node == null) {
-
 			logger.trace("nodeClicked node is null");
-
 			return;
 		}
 
@@ -77,7 +74,15 @@ public class DefaultProtocolService implements ProtocolService {
 		}
 	}
 
-	private void turnTurnout(final Node node) {
+	@Override
+	public void turnTurnout(final Node node) {
+
+		logger.trace("turnTurnout()");
+
+		if (ShapeType.isNotTurnout(node.getShapeType())) {
+
+			return;
+		}
 
 		lockLock();
 
@@ -386,7 +391,7 @@ public class DefaultProtocolService implements ProtocolService {
 	private P50XXTrntStsCommand turnoutStatusCommand(final InputStream inputStream, final OutputStream outputStream,
 			final short protocolId) {
 
-		logger.info("turnoutStatusCommand()");
+		logger.trace("turnoutStatusCommand()");
 
 		final P50XXTrntStsCommand command = new P50XXTrntStsCommand(protocolId);
 		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);

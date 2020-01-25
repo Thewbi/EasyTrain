@@ -33,7 +33,7 @@ public abstract class BaseEventCommand implements Command {
 	protected void sendFeedbackBlockUpdateEvents(final int s88id, final byte inputDescriptor1,
 			final byte inputDescriptor2) {
 
-		logger.info("retrieveConnectionIds()");
+		logger.trace("sendFeedbackBlockUpdateEvents()");
 
 		final FeedbackBlockUpdateEvent feedbackBlockUpdateEvent = new FeedbackBlockUpdateEvent(this);
 
@@ -48,7 +48,7 @@ public abstract class BaseEventCommand implements Command {
 			final int value = ((inputDescriptor1 >> i) & 1);
 			final int offset = base + currentOffset;
 
-			logger.info("Contact " + offset + (value == 0 ? ") UNUSED" : ") USED"));
+			logger.trace("Contact " + offset + (value == 0 ? ") UNUSED" : ") USED"));
 
 			feedbackBlockUpdateEvent.getFeedbackBlockState()[offset - 1] = value == 0 ? FeedbackBlockState.FREE
 					: FeedbackBlockState.BLOCKED;
@@ -63,7 +63,7 @@ public abstract class BaseEventCommand implements Command {
 			final int value = ((inputDescriptor2 >> i) & 1);
 			final int offset = base + currentOffset;
 
-			logger.info("Contact " + offset + (value == 0 ? ") UNUSED" : ") USED"));
+			logger.trace("Contact " + offset + (value == 0 ? ") UNUSED" : ") USED"));
 
 			feedbackBlockUpdateEvent.getFeedbackBlockState()[offset - 1] = value == 0 ? FeedbackBlockState.FREE
 					: FeedbackBlockState.BLOCKED;

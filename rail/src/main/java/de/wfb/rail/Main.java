@@ -10,10 +10,9 @@ import de.wfb.rail.commands.Command;
 import de.wfb.rail.commands.P50XTurnoutCommand;
 import de.wfb.rail.commands.P50XVersionCommand;
 import de.wfb.rail.commands.P50XXNOPCommand;
+import de.wfb.rail.factory.DefaultSerialPortFactory;
 import de.wfb.rail.io.template.DefaultSerialTemplate;
 import de.wfb.rail.io.template.SerialTemplate;
-import gnu.io.CommPort;
-import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
 import gnu.io.SerialPort;
 
@@ -202,19 +201,8 @@ import gnu.io.SerialPort;
  */
 public class Main {
 
-	private static final int BAUD_RATE = 19200;
-
-	private static final int DATA_BITS = SerialPort.DATABITS_8;
-
-	private static final int STOP_BITS = SerialPort.STOPBITS_2;
-
-	private static final int PARITY = SerialPort.PARITY_NONE;
-
 	// private static final String SERIAL_PORT_IDENTIFIER = "COM3";
 	private static final String SERIAL_PORT_IDENTIFIER = "/dev/cu.usbserial-AO007Q6Q";
-
-	/** the name of the application requesting the port */
-	private static final String APPLICATION_NAME = "Eisenbahn";
 
 	private static Logger logger = LogManager.getLogger(Main.class);
 
@@ -230,8 +218,11 @@ public class Main {
 
 		try {
 
-			final Main main = new Main();
-			serialPort = main.connect(SERIAL_PORT_IDENTIFIER);
+//			final Main main = new Main();
+//			serialPort = main.connect(SERIAL_PORT_IDENTIFIER);
+
+			final DefaultSerialPortFactory defaultSerialPortFactory = new DefaultSerialPortFactory();
+			serialPort = defaultSerialPortFactory.create(SERIAL_PORT_IDENTIFIER);
 
 			final InputStream inputStream = serialPort.getInputStream();
 			final OutputStream outputStream = serialPort.getOutputStream();
@@ -289,6 +280,7 @@ public class Main {
 		logger.info("Application terminated!");
 	}
 
+	@SuppressWarnings("unused")
 	private static void nopCommand(final InputStream inputStream, final OutputStream outputStream) {
 
 		final Command command = new P50XXNOPCommand();
@@ -296,6 +288,7 @@ public class Main {
 		serialTemplate.execute();
 	}
 
+	@SuppressWarnings("unused")
 	private static void versionCommand(final InputStream inputStream, final OutputStream outputStream) {
 
 		final Command command = new P50XVersionCommand();
@@ -318,32 +311,4 @@ public class Main {
 		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
 		serialTemplate.execute();
 	}
-
-	// TODO: move to factory
-	SerialPort connect(final String portName) throws Exception {
-
-		final CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
-
-		if (portIdentifier.isCurrentlyOwned()) {
-
-			System.out.println("Error: Port is currently in use");
-			return null;
-		}
-
-		// number of milliseconds to wait for the port to open
-		final int connectionTimeoutInMillis = 2000;
-
-		final CommPort commPort = portIdentifier.open(APPLICATION_NAME, connectionTimeoutInMillis);
-
-		if (!(commPort instanceof SerialPort)) {
-			System.out.println("Error: Only serial ports are handled by this example.");
-			return null;
-		}
-
-		final SerialPort serialPort = (SerialPort) commPort;
-		serialPort.setSerialPortParams(BAUD_RATE, DATA_BITS, STOP_BITS, PARITY);
-
-		return serialPort;
-	}
-
 }

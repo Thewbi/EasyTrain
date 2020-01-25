@@ -21,6 +21,7 @@ import de.wfb.rail.events.BlockExitedEvent;
 import de.wfb.rail.events.FeedbackBlockEvent;
 import de.wfb.rail.events.RouteAddedEvent;
 import de.wfb.rail.events.RouteFinishedEvent;
+import de.wfb.rail.facade.ProtocolFacade;
 
 public class DefaultDrivingService implements DrivingService, ApplicationListener<ApplicationEvent> {
 
@@ -40,6 +41,9 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 	@Autowired
 	private ApplicationEventPublisher applicationEventPublisher;
 
+	@Autowired
+	private ProtocolFacade protocolFacade;
+
 	@Override
 	public void onApplicationEvent(final ApplicationEvent event) {
 
@@ -51,13 +55,11 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 			processBlockEnteredEvent((BlockEnteredEvent) event);
 
-		}
-//		else if (event instanceof BlockExitedEvent) {
-//
-//			processBlockExitedEvent((BlockExitedEvent) event);
-//
-//		}
-		else if (event instanceof RouteFinishedEvent) {
+		} else if (event instanceof BlockExitedEvent) {
+
+			processBlockExitedEvent((BlockExitedEvent) event);
+
+		} else if (event instanceof RouteFinishedEvent) {
 
 			processRouteFinishedEvent((RouteFinishedEvent) event);
 
@@ -120,11 +122,11 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 	 */
 	private void processFeedbackBlockFree(final FeedbackBlockEvent event) {
 
-		logger.info("processFeedbackBlockFree()");
+		logger.trace("processFeedbackBlockFree()");
 
 		// determine the block
 		final int feedbackBlockNumber = event.getFeedbackBlockNumber();
-		logger.info("feedbackBlockNumber: " + feedbackBlockNumber);
+		logger.trace("feedbackBlockNumber: " + feedbackBlockNumber);
 		final Block block = blockService.getBlockById(feedbackBlockNumber);
 		if (block == null) {
 			return;
@@ -165,7 +167,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 		final int feedbackBlockNumber = event.getFeedbackBlockNumber();
 
-		logger.info("processFeedbackBlockBlocked() feedbackBlockNumber: " + feedbackBlockNumber);
+		logger.trace("processFeedbackBlockBlocked() feedbackBlockNumber: " + feedbackBlockNumber);
 
 		// get block
 		final Block block = blockService.getBlockById(feedbackBlockNumber);
@@ -219,44 +221,27 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		locomotiveStop(locomotive);
 	}
 
-//	/**
-//	 * Internal Block Exited Event. (Not caused by P50X XEvtSen command).
-//	 *
-//	 * After a XEvtSen returns, the system will publish FeedbackBlockEventS. Also
-//	 * the simulator (TimedDrivingThread) will publish fake FeedbackBlockEventS so
-//	 * that the system can be tested without sending P50X XEvtSen commands.
-//	 *
-//	 * Those FeedbackBlockEventS are handled by the DefaultDrivingService (this
-//	 * class). It will determine which locomotive did cause the FeedbackBlockEvent
-//	 * and it will publish a BlockExitedEvent.
-//	 *
-//	 * The BlockExitedEvent is handled by the DefaultDrivingService (this class) It
-//	 * will compute new routes.
-//	 *
-//	 * @param event
-//	 */
-//	private void processBlockExitedEvent(final BlockExitedEvent event) {
-//
-//		logger.info("processBlockExitedEvent()");
-//
-//		// the route subsection is freed when the train arrives at the next block
-//		// (processBlockEnteredEvent)
-//		// freeRouteExceptUpToBlock(event.getBlock(), event.getLocomotive());
-//
-////		logger.info(event.getLocomotive().getRoute());
-//
-////		// tell all other locomotives to recompute their routes
-////		for (final DefaultLocomotive locomotive : modelFacade.getLocomotives()) {
-////
-////			if (locomotive == event.getLocomotive()) {
-////				continue;
-////			}
-////
-////			if (reserveUpToIncludingNextBlock(locomotive)) {
-////				locomotiveGo(locomotive);
-////			}
-////		}
-//	}
+	/**
+	 * Internal Block Exited Event. (Not caused by P50X XEvtSen command).
+	 *
+	 * After a XEvtSen returns, the system will publish FeedbackBlockEventS. Also
+	 * the simulator (TimedDrivingThread) will publish fake FeedbackBlockEventS so
+	 * that the system can be tested without sending P50X XEvtSen commands.
+	 *
+	 * Those FeedbackBlockEventS are handled by the DefaultDrivingService (this
+	 * class). It will determine which locomotive did cause the FeedbackBlockEvent
+	 * and it will publish a BlockExitedEvent.
+	 *
+	 * The BlockExitedEvent is handled by the DefaultDrivingService (this class) It
+	 * will compute new routes.
+	 *
+	 * @param event
+	 */
+	private void processBlockExitedEvent(final BlockExitedEvent event) {
+
+		// nop
+		logger.trace("processBlockExitedEvent()");
+	}
 
 	private void processBlockEnteredEvent(final BlockEnteredEvent event) {
 
@@ -389,7 +374,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 			final RailNode railNode = graphNode.getRailNode();
 
 			// DEBUG
-			logger.info("Freeing GraphNode: " + graphNode + " RailNode: ID: " + railNode.getId() + " Reserved: "
+			logger.trace("Freeing GraphNode: " + graphNode + " RailNode: ID: " + railNode.getId() + " Reserved: "
 					+ railNode.isReserved() + " ReservedLocomotiveID: " + railNode.getReservedLocomotiveId());
 
 			final Block nodeBlock = railNode.getBlock();
@@ -475,6 +460,17 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		modelFacade.sendModelChangedEvent(railNode);
 	}
 
+	/**
+	 * Processes a subsection of a route.<br />
+	 * <br />
+	 * <ul>
+	 * <li />Reserve nodes on the subsection of the route.
+	 * <li />Switch turnouts on the subsection of the route.
+	 * </ul>
+	 *
+	 * @param locomotive
+	 * @return
+	 */
 	private boolean reserveUpToIncludingNextBlock(final DefaultLocomotive locomotive) {
 
 		logger.info("reserveUpToIncludingNextBlock()");
@@ -490,7 +486,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 			logger.info("No next node!");
 			return false;
 		}
-		logger.info("Next Block: " + nextBlock);
+		logger.info("Next Block.ID: " + nextBlock.getId());
 
 		// check if the nodes are free
 		if (!checkNodes(locomotive, nextBlock)) {
@@ -500,6 +496,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		// reserve the nodes
 		reserveNodes(locomotive, nextBlock);
 
+		// switch the turnouts on this section of the route
 		switchTurnouts(locomotive, nextBlock);
 
 		return true;
@@ -507,16 +504,17 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 	private void switchTurnouts(final DefaultLocomotive locomotive, final Block nextBlock) {
 
-		logger.info("Switch turnouts");
+		logger.info("Switch turnouts up to Block.ID: " + nextBlock.getId());
 
 		final Route route = locomotive.getRoute();
 		final List<GraphNode> subList = route.getSubListUpToRailNode(nextBlock.getNodes().get(0));
 
+		// DEBUG: output the sublist
 		for (final GraphNode graphNode : subList) {
 			logger.info("SubList RailNode.ID: " + graphNode.getRailNode().getId());
 		}
 
-		Route.switchTurnouts(subList, applicationEventPublisher);
+		Route.switchTurnouts(subList, applicationEventPublisher, protocolFacade);
 	}
 
 	private void reserveNodes(final DefaultLocomotive locomotive, final Block nextBlock) {
@@ -538,7 +536,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 			railNode.setReservedLocomotiveId(locomotive.getId());
 
 			// draw the blocked not in the blocked color in the ui
-			logger.info("Drawing the node in the blocked color in the UI!");
+			logger.trace("Drawing the node in the blocked color in the UI!");
 			modelFacade.sendModelChangedEvent(railNode);
 		}
 

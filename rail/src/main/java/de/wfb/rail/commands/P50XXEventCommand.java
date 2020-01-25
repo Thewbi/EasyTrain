@@ -111,7 +111,7 @@ public class P50XXEventCommand implements Command {
 		}
 		final boolean sen = (data & 0x01 << 2) > 0;
 		if (sen) {
-			logger.info("there has been at least one sensor event (s88 or LocoNet)");
+			logger.trace("there has been at least one sensor event (s88 or LocoNet)");
 			xStatusShouldBeCalled = true;
 		}
 		final boolean pwoff = (data & 0x01 << 3) > 0;
@@ -124,7 +124,7 @@ public class P50XXEventCommand implements Command {
 		}
 		final boolean trnt = (data & 0x01 << 5) > 0;
 		if (trnt) {
-			logger.info("there has been at least one non-PC Lok cmd");
+			logger.trace("there has been at least one non-PC Lok cmd");
 		}
 		final boolean x = (data & 0x01 << 6) > 0;
 		if (x) {

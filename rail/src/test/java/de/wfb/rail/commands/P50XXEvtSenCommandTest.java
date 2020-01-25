@@ -40,6 +40,7 @@ public class P50XXEvtSenCommandTest {
 			byteArray = fillByteArray2();
 		}
 
+		@SuppressWarnings("unused")
 		private byte[] fillByteArray1() {
 
 			final int length = 7 * 3 + 1;

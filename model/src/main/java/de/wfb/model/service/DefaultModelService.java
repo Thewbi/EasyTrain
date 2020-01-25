@@ -85,24 +85,21 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 
 		final int feedbackBlockNumber = feedbackBlockEvent.getFeedbackBlockNumber();
 
-		// convert array index to feedback block id
-		// feedbackBlockNumber = feedbackBlockNumber + 1;
-
 		final FeedbackBlockState feedbackBlockState = feedbackBlockEvent.getFeedbackBlockState();
 
-		logger.info("processFeedbackBlockEvent() feedbackBlockNumber: " + feedbackBlockNumber + " feedbackBlockState: "
+		logger.trace("processFeedbackBlockEvent() feedbackBlockNumber: " + feedbackBlockNumber + " feedbackBlockState: "
 				+ feedbackBlockState);
 
 		final List<Node> feedbackBlockNodes = retrieveNodesOfFeedbackBlock(feedbackBlockNumber);
 		if (CollectionUtils.isEmpty(feedbackBlockNodes)) {
 
-			logger.info("FeedbackBlockNodes are empty! Aborting!");
+			logger.trace("FeedbackBlockNodes are empty! Aborting!");
 			return;
 		}
 
 		for (final Node node : feedbackBlockNodes) {
 
-			logger.info("Block-Node ID: " + node.getId() + " feedbackBlockState: " + feedbackBlockState);
+			logger.trace("Block-Node ID: " + node.getId() + " feedbackBlockState: " + feedbackBlockState);
 
 			// tell the rail node, that the feedback block it belongs to is used
 			node.setFeedbackBlockUsed(feedbackBlockState == FeedbackBlockState.BLOCKED);
@@ -125,7 +122,7 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 
 			if (railNode.getFeedbackBlockNumber() == feedbackBlockNumber) {
 
-				logger.info("RailNode ID: " + railNode.getId() + " FeedbackBlockNumber ID: "
+				logger.trace("RailNode ID: " + railNode.getId() + " FeedbackBlockNumber ID: "
 						+ railNode.getFeedbackBlockNumber());
 
 				result.add(railNode);
@@ -150,8 +147,10 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 
 			// @formatter:off
 
-			model.getAllRailNodes().stream()
-	            .filter(railNode -> railNode.isSelected()).forEach(railNode -> {
+			model.getAllRailNodes()
+			    .stream()
+	            .filter(railNode -> railNode.isSelected())
+	            .forEach(railNode -> {
 
 	            	railNode.setSelected(false);
 					railNode.setHighlighted(false);
@@ -185,18 +184,24 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 			// if (node instanceof TurnoutNode) {
 			if (ShapeType.isTurnout(node.getShapeType())) {
 
-				// final TurnoutNode turnoutNode = (TurnoutNode) node;
-
-				// change the node in the UI for visual feedback
-				logger.info("toggleTurnout()");
+				// change thrown status of the node
+				logger.trace("toggleTurnout()");
 				node.toggleTurnout();
 			}
 		}
 
+		// @formatter:off
+
 		// tell the UI
-		logger.info("sendModelChangedEvent()");
-		sendModelChangedEvent(x, y, node.isHighlighted(), node.isFeedbackBlockUsed(), node.isSelected(),
+		sendModelChangedEvent(
+				x,
+				y,
+				node.isHighlighted(),
+				node.isFeedbackBlockUsed(),
+				node.isSelected(),
 				node.isReserved());
+
+		// @formatter:on
 	}
 
 	private void sendNodeClickedEvent(final Node node) {

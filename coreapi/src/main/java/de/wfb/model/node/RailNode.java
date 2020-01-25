@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.context.ApplicationEventPublisher;
 
 import de.wfb.model.Model;
+import de.wfb.rail.facade.ProtocolFacade;
 import de.wfb.rail.service.Block;
 import de.wfb.rail.ui.ShapeType;
 
@@ -86,14 +87,19 @@ public interface RailNode extends Node {
 
 	void manualConnectTo(RailNode railNode);
 
-	void switchToGraphNode(ApplicationEventPublisher applicationEventPublisher, Model model, GraphNode nextGraphNode);
+	void switchToGraphNode(ApplicationEventPublisher applicationEventPublisher, ProtocolFacade protocolFacade,
+			Model model, GraphNode nextGraphNode);
 
+	@Override
 	boolean isReserved();
 
+	@Override
 	void setReserved(boolean reserved);
 
+	@Override
 	int getReservedLocomotiveId();
 
+	@Override
 	void setReservedLocomotiveId(int reservedLocomotiveId);
 
 	Block getBlock();

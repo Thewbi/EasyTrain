@@ -57,5 +57,4 @@ public class DefaultSerialPortFactory implements Factory<SerialPort> {
 
 		return serialPort;
 	}
-
 }

@@ -60,14 +60,19 @@ public class DefaultFeedbackBlockService implements FeedbackBlockService, Applic
 
 		for (int i = 0; i < FeedbackBlockService.BLOCKSTATE_COUNT; i++) {
 
-			// if the new state is not unknown and the state changed, remember the change
+			final FeedbackBlockState tempFeedbackBlockState = feedbackBlockUpdateEvent.getFeedbackBlockState()[i];
+
+			// if the new state is NOT unknown and the state changed, remember the change
 			// and send an event
-			if (feedbackBlockState[i] != feedbackBlockUpdateEvent.getFeedbackBlockState()[i]
-					&& feedbackBlockUpdateEvent.getFeedbackBlockState()[i] != FeedbackBlockState.UNKNOWN) {
+			if (feedbackBlockState[i] != tempFeedbackBlockState
+					&& tempFeedbackBlockState != FeedbackBlockState.UNKNOWN) {
 
-				feedbackBlockState[i] = feedbackBlockUpdateEvent.getFeedbackBlockState()[i];
+				feedbackBlockState[i] = tempFeedbackBlockState;
 
-				sendFeedbackBlockEvent(i, feedbackBlockState[i]);
+				// convert index to block id
+				final int feedbackBlockId = i + 1;
+
+				sendFeedbackBlockEvent(feedbackBlockId, feedbackBlockState[i]);
 			}
 		}
 	}

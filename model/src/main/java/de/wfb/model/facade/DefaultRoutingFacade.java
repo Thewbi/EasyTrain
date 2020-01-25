@@ -38,11 +38,11 @@ public class DefaultRoutingFacade implements RoutingFacade {
 
 			final Route route = locomotive.getRoute();
 
-			logger.info("Route: " + route);
+			logger.trace("Route: " + route);
 
 			final boolean reservesBlock = route.reservesBlock(block);
 
-			logger.info("Block reserves RRoute: " + reservesBlock);
+			logger.trace("Block reserves RRoute: " + reservesBlock);
 
 			if (reservesBlock) {
 				return route;

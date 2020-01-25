@@ -78,13 +78,13 @@ public class P50XXTrntStsCommand implements Command {
 	@Override
 	public void result(final ByteBuffer byteBuffer) {
 
-		logger.info(getClass().getSimpleName() + " ByteBuffer Position: " + byteBuffer.position() + " data: "
+		logger.trace(getClass().getSimpleName() + " ByteBuffer Position: " + byteBuffer.position() + " data: "
 				+ byteBuffer.toString());
 
 		final byte[] array = byteBuffer.array();
 		final String allDataAsHex = Hex.encodeHexString(array);
 
-		logger.info(allDataAsHex);
+		logger.trace(allDataAsHex);
 
 		for (int i = 0; i < byteBuffer.position(); i++) {
 
@@ -130,14 +130,14 @@ public class P50XXTrntStsCommand implements Command {
 
 				final byte byte1 = byteBuffer.get(i);
 
-				logger.info("byte1: " + byte1);
+				logger.trace("byte1: " + byte1);
 
 				final int byte1bit0 = ((byte1 >> 0) & 0x01);
 				final int byte1bit1 = ((byte1 >> 1) & 0x01);
 				final int byte1bit2 = ((byte1 >> 2) & 0x01);
 				final int byte1bit3 = ((byte1 >> 3) & 0x01);
 
-				logger.info("byte1bit0: " + byte1bit0 + " byte1bit1: " + byte1bit1 + " byte1bit2: " + byte1bit2
+				logger.trace("byte1bit0: " + byte1bit0 + " byte1bit1: " + byte1bit1 + " byte1bit2: " + byte1bit2
 						+ " byte1bit3: " + byte1bit3);
 
 				final boolean reserved = byte1bit1 == 1;
@@ -155,7 +155,7 @@ public class P50XXTrntStsCommand implements Command {
 				stringBuffer.append("Thrown: ").append(thrown ? "true" : "false").append("\n");
 				stringBuffer.append("Configuration: ").append(configuration.name()).append("\n");
 
-				logger.info(stringBuffer.toString());
+				logger.trace(stringBuffer.toString());
 
 				// all two bytes read
 				responseLength = 0;
@@ -172,13 +172,13 @@ public class P50XXTrntStsCommand implements Command {
 	@Override
 	public byte[] getByteArray() {
 
-		logger.info("getByteArray()");
+		logger.trace("getByteArray()");
 
 		final byte[] byteArray = new byte[4];
 		byteArray[0] = (byte) 0x78;
 		byteArray[1] = (byte) 0x94;
 
-		logger.info("Turnout ID: " + turnoutId);
+		logger.trace("Turnout ID: " + turnoutId);
 
 		// little endian
 		byteArray[2] = (byte) (turnoutId & 0xff);

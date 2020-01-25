@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import de.wfb.model.node.Node;
 import de.wfb.rail.service.ProtocolService;
 
 public class DefaultProtocolFacade implements ProtocolFacade {
@@ -76,6 +77,14 @@ public class DefaultProtocolFacade implements ProtocolFacade {
 		logger.trace("turnoutStatus()");
 
 		return protocolService.turnoutStatus(protocolId);
+	}
+
+	@Override
+	public void turnTurnout(final Node node) {
+
+		logger.info("turnTurnout()");
+
+		protocolService.turnTurnout(node);
 	}
 
 }

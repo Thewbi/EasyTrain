@@ -24,6 +24,7 @@ import de.wfb.factory.DefaultMenuBarFactory;
 import de.wfb.factory.DefaultSceneFactory;
 import de.wfb.factory.XTrntStatusMenuItem;
 import de.wfb.javafxtest.controller.LayoutGridController;
+import de.wfb.javafxtest.controls.GridElementFactory;
 import de.wfb.model.DefaultModel;
 import de.wfb.model.Model;
 import de.wfb.model.facade.DefaultModelFacade;
@@ -271,6 +272,11 @@ public class ConfigurationClass implements SchedulingConfigurer {
 	@Bean
 	public XTrntStatusMenuItem XTrntStatusMenuItem() {
 		return new XTrntStatusMenuItem("XTrntStatus Command");
+	}
+
+	@Bean
+	public GridElementFactory GridElementFactory() {
+		return new GridElementFactory();
 	}
 
 }
