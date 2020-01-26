@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -117,8 +118,6 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 
 		logger.trace("'" + Paths.get(pathToModelFile).toAbsolutePath() + "' contains " + nodeArray.size() + " nodes!");
 
-//		final int maxId = Integer.MIN_VALUE;
-
 		final DefaultJsonLocomotiveConverter defaultJsonLocomotiveConverter = new DefaultJsonLocomotiveConverter();
 
 		for (final DefaultLocomotiveJson defaultLocomotiveJson : nodeArray) {
@@ -135,7 +134,9 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 	@Override
 	public void loadModel(final Model model, final String pathToModelFile) throws IOException {
 
-		logger.info("Trying to load '" + Paths.get(pathToModelFile).toAbsolutePath() + "'");
+		final Path absolutePathToModel = Paths.get(pathToModelFile).toAbsolutePath();
+
+		logger.info("Trying to load '" + absolutePathToModel + "'");
 
 		if (!Files.exists(Paths.get(pathToModelFile))) {
 			return;
@@ -149,6 +150,23 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 		}
 
 		logger.trace("'" + Paths.get(pathToModelFile).toAbsolutePath() + "' contains " + nodeArray.size() + " nodes!");
+
+		// convert Json nodes to model nodes
+		final int maxId = populateModel(model, nodeArray);
+
+		// connect nodes that are manually connected
+		processManualConnections(model, nodeArray);
+
+		// initialize the ID-Service so it will only return non-used IDs
+		idService.setCurrentId(maxId);
+
+		for (final JsonNode jsonNode : nodeArray) {
+
+			modelService.sendModelChangedEvent(jsonNode.getX(), jsonNode.getY(), false, false, false, false);
+		}
+	}
+
+	private int populateModel(final Model model, final Collection<JsonNode> nodeArray) {
 
 		int maxId = Integer.MIN_VALUE;
 
@@ -177,6 +195,11 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 			}
 		}
 
+		return maxId;
+	}
+
+	private void processManualConnections(final Model model, final Collection<JsonNode> nodeArray) {
+
 		for (final JsonNode jsonNode : nodeArray) {
 
 			logger.trace("Looking for manual CONNECTION");
@@ -185,6 +208,7 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 
 			// resolve manual connections
 			logger.trace("Factoring manual connections ...");
+
 			if (CollectionUtils.isNotEmpty(jsonNode.getManualConnections())) {
 
 				for (final Integer nodeId : jsonNode.getManualConnections()) {
@@ -193,9 +217,10 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 
 					final Node connectedNode = modelService.getNodeById(nodeId.intValue());
 
-					logger.trace(railNode.getId() + " manual connection to connectedNode: " + connectedNode.getId());
-
 					if (connectedNode != null) {
+
+						logger.trace(
+								railNode.getId() + " manual connection to connectedNode: " + connectedNode.getId());
 
 						logger.trace("Manual Connection resolved");
 
@@ -203,14 +228,6 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 					}
 				}
 			}
-		}
-
-		// initialize the ID-Service so it will only return non-used IDs
-		idService.setCurrentId(maxId);
-
-		for (final JsonNode jsonNode : nodeArray) {
-
-			modelService.sendModelChangedEvent(jsonNode.getX(), jsonNode.getY(), false, false, false, false);
 		}
 	}
 
@@ -239,6 +256,42 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 		final Collection<DefaultLocomotiveJson> nodeArray = gson.fromJson(reader, type);
 
 		return nodeArray;
+	}
+
+	/**
+	 * For testing
+	 *
+	 * @param modelService
+	 */
+	public void setModelService(final ModelService modelService) {
+		this.modelService = modelService;
+	}
+
+	/**
+	 * For testing
+	 *
+	 * @param idService
+	 */
+	public void setIdService(final IdService idService) {
+		this.idService = idService;
+	}
+
+	/**
+	 * For testing
+	 *
+	 * @param nodeFactory
+	 */
+	public void setNodeFactory(final Factory<Node> nodeFactory) {
+		this.nodeFactory = nodeFactory;
+	}
+
+	/**
+	 * For testing
+	 *
+	 * @param protocolFacade
+	 */
+	public void setProtocolFacade(final ProtocolFacade protocolFacade) {
+		this.protocolFacade = protocolFacade;
 	}
 
 }

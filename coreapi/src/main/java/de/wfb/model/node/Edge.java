@@ -2,6 +2,10 @@ package de.wfb.model.node;
 
 public interface Edge {
 
+	Direction getDirection();
+
+	void setDirection(Direction direction);
+
 	GraphNode getInGraphNode();
 
 	void setInGraphNode(GraphNode inGraphNode);
@@ -9,10 +13,6 @@ public interface Edge {
 	GraphNode getOutGraphNode();
 
 	void setOutGraphNode(GraphNode outGraphNode);
-
-	Direction getDirection();
-
-	void setDirection(Direction direction);
 
 	GraphNode getNextOutGraphNode();
 

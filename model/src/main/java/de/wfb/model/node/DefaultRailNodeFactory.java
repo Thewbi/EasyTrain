@@ -481,4 +481,13 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 		this.idService = idService;
 	}
 
+	/**
+	 * For testing.
+	 *
+	 * @param turnoutService
+	 */
+	public void setTurnoutService(final TurnoutService turnoutService) {
+		this.turnoutService = turnoutService;
+	}
+
 }

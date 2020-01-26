@@ -16,6 +16,10 @@ public class GraphNode {
 
 	private int id;
 
+	private int x;
+
+	private int y;
+
 	private final List<GraphNode> children = new ArrayList<>();
 
 	private final List<SwitchingNodeEntry> switchingGraphNodeChildren = new ArrayList<>();
@@ -132,6 +136,22 @@ public class GraphNode {
 		if (id != other.id)
 			return false;
 		return true;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public void setX(final int x) {
+		this.x = x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setY(final int y) {
+		this.y = y;
 	}
 
 }

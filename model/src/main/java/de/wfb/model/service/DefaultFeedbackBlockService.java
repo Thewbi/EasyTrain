@@ -56,7 +56,7 @@ public class DefaultFeedbackBlockService implements FeedbackBlockService, Applic
 
 	private void processFeedbackBlockUpdateEvent(final FeedbackBlockUpdateEvent feedbackBlockUpdateEvent) {
 
-		logger.info("processFeedbackBlockUpdateEvent()");
+		logger.trace("processFeedbackBlockUpdateEvent()");
 
 		for (int i = 0; i < FeedbackBlockService.BLOCKSTATE_COUNT; i++) {
 

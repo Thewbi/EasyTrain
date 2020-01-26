@@ -1353,7 +1353,6 @@
     "y": 2,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 153,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -1364,7 +1363,6 @@
     "y": 1,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 156,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -1725,7 +1723,6 @@
     "y": 3,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 2,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -1736,7 +1733,6 @@
     "y": 4,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 3,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -1857,7 +1853,6 @@
     "y": 5,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 36,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -1918,7 +1913,6 @@
     "y": 5,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 32,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -2149,7 +2143,6 @@
     "y": 6,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 65,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -2180,7 +2173,16 @@
     "y": 8,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 66,
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 310,
+    "shapeType": "SWITCH_LEFT_180",
+    "x": 27,
+    "y": 8,
+    "leftList": [],
+    "rightList": [],
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -2331,7 +2333,6 @@
     "y": 6,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 67,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -6881,7 +6882,6 @@
     "y": 21,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 14,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -6892,7 +6892,6 @@
     "y": 20,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 13,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -8897,7 +8896,6 @@
     "y": 7,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 12,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -8988,7 +8986,6 @@
     "y": 7,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 11,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -8999,7 +8996,6 @@
     "y": 8,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 10,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -11721,7 +11717,6 @@
     "y": 37,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 131,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -13100,7 +13095,6 @@
     "y": 37,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 85,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -13221,7 +13215,6 @@
     "y": 29,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 97,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -13262,7 +13255,6 @@
     "y": 28,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 98,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -13283,7 +13275,6 @@
     "y": 27,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 100,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -13374,7 +13365,6 @@
     "y": 27,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 112,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -13395,7 +13385,6 @@
     "y": 28,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 111,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -13406,7 +13395,6 @@
     "y": 27,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 112,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -13437,7 +13425,6 @@
     "y": 29,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 88,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -13448,7 +13435,6 @@
     "y": 26,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 99,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -18446,7 +18432,6 @@
     "y": 26,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 22,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -20127,7 +20112,6 @@
     "y": 42,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 94,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -20138,7 +20122,6 @@
     "y": 40,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 93,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -20149,7 +20132,6 @@
     "y": 41,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 95,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -20160,7 +20142,6 @@
     "y": 42,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 96,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -20171,7 +20152,6 @@
     "y": 47,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 83,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -20232,7 +20212,6 @@
     "y": 51,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 84,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -20423,7 +20402,6 @@
     "y": 53,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 82,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -20434,7 +20412,6 @@
     "y": 55,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 81,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -22025,7 +22002,6 @@
     "y": 56,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 86,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -22046,7 +22022,6 @@
     "y": 55,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 87,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -22157,7 +22132,6 @@
     "y": 54,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 91,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -22178,7 +22152,6 @@
     "y": 53,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 89,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -22249,7 +22222,6 @@
     "y": 52,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 90,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -22260,7 +22232,16 @@
     "y": 51,
     "leftList": [],
     "rightList": [],
-    "protocolTurnoutId": 92,
+    "manualConnections": [],
+    "feedbackBlockNumber": -1
+  },
+  {
+    "id": 2507,
+    "shapeType": "SWITCH_LEFT_0",
+    "x": 19,
+    "y": 50,
+    "leftList": [],
+    "rightList": [],
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -23100,26 +23081,6 @@
     "shapeType": "STRAIGHT_VERTICAL",
     "x": 84,
     "y": 57,
-    "leftList": [],
-    "rightList": [],
-    "manualConnections": [],
-    "feedbackBlockNumber": -1
-  },
-  {
-    "id": 2595,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 19,
-    "y": 50,
-    "leftList": [],
-    "rightList": [],
-    "manualConnections": [],
-    "feedbackBlockNumber": -1
-  },
-  {
-    "id": 2596,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 27,
-    "y": 8,
     "leftList": [],
     "rightList": [],
     "manualConnections": [],

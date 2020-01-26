@@ -576,6 +576,37 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	public String toString() {
 
 		final StringBuffer stringBuffer = new StringBuffer();
+
+		final String idFormatted = String.format("% 4d", getId());
+		final String shapeTypeFormatted = String.format("%20s", getShapeType());
+
+		final String graphNodeOneIdFormatted = String.format("% 4d", graphNodeOne.getId());
+		final String graphNodeTwoIdFormatted = String.format("% 4d", graphNodeTwo.getId());
+		final String xFormatted = String.format("% 4d", getX());
+		final String yFormatted = String.format("% 4d", getY());
+
+		final String coordinatesFormatted = "(" + xFormatted + ", " + yFormatted + ")";
+
+		// @formatter:off
+
+		stringBuffer
+			.append("ID: ").append(idFormatted)
+			.append("    (x, y): ").append(coordinatesFormatted)
+			.append("    ST: ").append(shapeTypeFormatted)
+			.append("    GN-1: ").append(graphNodeOneIdFormatted)
+			.append("    GN-2: ").append(graphNodeTwoIdFormatted);
+
+		// @formatter:on
+
+		return stringBuffer.toString();
+
+//		return toStringLineBreaks();
+	}
+
+	@SuppressWarnings("unused")
+	private String toStringLineBreaks() {
+
+		final StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append("\n");
 
 		stringBuffer.append("ID: ").append(getId()).append("\n");

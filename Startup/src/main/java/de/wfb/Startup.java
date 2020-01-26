@@ -10,6 +10,7 @@ import de.wfb.dialogs.LocomotiveListStage;
 import de.wfb.dialogs.PlaceLocomotiveStage;
 import de.wfb.dialogs.ThrottleStage;
 import de.wfb.factory.DefaultSceneFactory;
+import de.wfb.factory.GraphNodeSVGMenuItem;
 import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.service.DefaultRoutingService;
 import de.wfb.model.service.RoutingService;
@@ -82,7 +83,7 @@ public class Startup extends Application {
 
 		closeWindowEventHandler = createCloseWindowEventHandler(stage);
 
-		final ApplicationContext context = loadApplicationContext();
+		final ApplicationContext context = loadApplicationContext(stage);
 
 		// load the model
 		loadModel();
@@ -174,7 +175,7 @@ public class Startup extends Application {
 		}
 	}
 
-	private ApplicationContext loadApplicationContext() {
+	private ApplicationContext loadApplicationContext(final Stage stage) {
 
 		// https://stackoverflow.com/questions/31886204/where-is-javaconfigapplicationcontext-class-nowadays
 		final ApplicationContext context = new AnnotationConfigApplicationContext(ConfigurationClass.class);
@@ -196,6 +197,8 @@ public class Startup extends Application {
 		blockNavigationPane = context.getBean(BlockNavigationPane.class);
 		locomotiveListStage = context.getBean(LocomotiveListStage.class);
 		placeLocomotiveStage = context.getBean(PlaceLocomotiveStage.class);
+		final GraphNodeSVGMenuItem graphNodeSVGMenuItem = context.getBean(GraphNodeSVGMenuItem.class);
+		graphNodeSVGMenuItem.setStage(stage);
 
 		// factories
 		sceneFactory = context.getBean(DefaultSceneFactory.class);

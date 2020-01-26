@@ -1,0 +1,4 @@
+Kreuzweichen kaputt
+vor letztem Block extra langsam
+Pfadfindung, über eine Weiche in Schaltrichtung ohne motor nicht möglich
+Pfadfindung, über geblockte Blocks verhindern! 49 nach 79 berechnet eine Route über 53, welcher definitiv geblockt ist

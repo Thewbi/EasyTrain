@@ -116,12 +116,14 @@ public class Route {
 			return;
 		}
 
-		// follow the route
+		// follow the route, find all turnouts, switch them
 		int index = 0;
 		for (final GraphNode graphNode : graphNodes) {
 
-			logger.info("RailNode.ID: " + graphNode.getRailNode().getId() + " GraphNode.ID: " + graphNode.getId());
+			logger.trace("Index: " + index + " RailNode.ID: " + graphNode.getRailNode().getId() + " GraphNode.ID: "
+					+ graphNode.getId());
 
+			// ignore all nodes that are no turnouts
 			if (ShapeType.isNotTurnout(graphNode.getRailNode().getShapeType())) {
 
 				index++;
@@ -138,12 +140,17 @@ public class Route {
 				continue;
 			}
 
-			logger.info("Index = " + index + " Turnout found in switching order!");
 			final RailNode turnoutRailNode = graphNode.getRailNode();
 
-			logger.info("Turnout ShapeType = " + turnoutRailNode.getShapeType().name());
+			logger.trace("Index = " + index + " RN.ID: " + turnoutRailNode.getId() + " GN.ID: " + graphNode.getId()
+					+ " Turnout found in switching order!");
+
+			logger.trace("Turnout ShapeType = " + turnoutRailNode.getShapeType().name());
 
 			final int nextIndex = index + 1;
+
+			logger.trace("nextIndex = " + nextIndex + " graphNodes.size(): " + graphNodes.size());
+
 			if (nextIndex < graphNodes.size()) {
 
 				final GraphNode nextGraphNode = graphNodes.get(nextIndex);

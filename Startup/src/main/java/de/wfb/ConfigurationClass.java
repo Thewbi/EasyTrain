@@ -22,6 +22,7 @@ import de.wfb.dialogs.ThrottleStage;
 import de.wfb.dialogs.TurnoutDetailsPane;
 import de.wfb.factory.DefaultMenuBarFactory;
 import de.wfb.factory.DefaultSceneFactory;
+import de.wfb.factory.GraphNodeSVGMenuItem;
 import de.wfb.factory.XTrntStatusMenuItem;
 import de.wfb.javafxtest.controller.LayoutGridController;
 import de.wfb.javafxtest.controls.GridElementFactory;
@@ -277,6 +278,16 @@ public class ConfigurationClass implements SchedulingConfigurer {
 	@Bean
 	public GridElementFactory GridElementFactory() {
 		return new GridElementFactory();
+	}
+
+	@Bean
+	public GraphNodeSVGMenuItem GraphNodeSVGMenuItem() {
+		return new GraphNodeSVGMenuItem("Export Layout-Nodes to SVG");
+	}
+
+	@Bean
+	public LayoutSVGConverter LayoutSVGConverter() {
+		return new LayoutSVGConverter();
 	}
 
 }

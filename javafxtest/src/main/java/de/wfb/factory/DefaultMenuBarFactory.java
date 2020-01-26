@@ -67,6 +67,9 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 	@Autowired
 	private XTrntStatusMenuItem xTrntStatusMenuItem;
 
+	@Autowired
+	private GraphNodeSVGMenuItem graphNodeSVGMenuItem;
+
 	@Override
 	public MenuBar create(final Object... args) throws Exception {
 
@@ -339,7 +342,7 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 		editMenu.getItems().addAll(connectItem, copyItem, pasteItem, locomotiveListItem, placeLocomotiveItem);
 		serialMenu.getItems().addAll(serialConnectItem, serialDisconnectItem);
 		debugMenu.getItems().addAll(routingNodeMenuItem, feedbackBlockEventMenuItem, removeLocomotiveItem,
-				sensorCommandMenuItem, xSensOffMenuItem, xTrntStatusMenuItem);
+				sensorCommandMenuItem, xSensOffMenuItem, xTrntStatusMenuItem, graphNodeSVGMenuItem);
 
 		// add Menus to the MenuBar
 		menuBar.getMenus().addAll(fileMenu, routingMenu, debugMenu, editMenu, serialMenu, helpMenu);

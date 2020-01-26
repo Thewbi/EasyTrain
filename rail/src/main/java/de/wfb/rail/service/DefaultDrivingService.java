@@ -1,7 +1,9 @@
 package de.wfb.rail.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -181,7 +183,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		final Route route = routingFacade.getRouteByBlock(block);
 		if (route == null) {
 
-			logger.info("No Route! feedbackBlockNumber: " + feedbackBlockNumber);
+			logger.trace("No Route! feedbackBlockNumber: " + feedbackBlockNumber);
 			return;
 		}
 
@@ -367,6 +369,8 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 		final Route route = locomotive.getRoute();
 
+		final List<GraphNode> deleteList = new ArrayList<>();
+
 		// go through the entire route.
 		// If a RailNode and/or a Block is reserved for this locomotive, free it
 		for (final GraphNode graphNode : route.getGraphNodes()) {
@@ -393,9 +397,14 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 				});
 
-				logger.info("Done!");
+				logger.trace("Done!");
+
+				break;
 
 			} else {
+
+				// remove this node from the route
+				deleteList.add(graphNode);
 
 				if (railNode.isReserved()) {
 
@@ -405,12 +414,12 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 						// block
 						final Block railNodeBlock = railNode.getBlock();
 
-						logger.info("RailNode ID: " + railNode.getId() + " Block: " + railNodeBlock);
+						logger.trace("RailNode ID: " + railNode.getId() + " Block: " + railNodeBlock);
 
 						// if the node is not part of a block, only free the node
 						if (railNodeBlock == null) {
 
-							logger.info("FREE RAILNODE ID: " + railNode.getId() + " ReservedLocomotiveID: "
+							logger.trace("FREE RAILNODE ID: " + railNode.getId() + " ReservedLocomotiveID: "
 									+ railNode.getReservedLocomotiveId());
 
 							freeNode(railNode);
@@ -419,11 +428,11 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 							// if the node is attached to a block, free the entire block
 
-							logger.info("block.getNodes().size: " + railNodeBlock.getNodes().size());
+							logger.trace("block.getNodes().size: " + railNodeBlock.getNodes().size());
 
 							railNodeBlock.getNodes().stream().filter(node -> node.isReserved()).forEach(node -> {
 
-								logger.info("Resetting node ID = " + node.getId() + " in block!");
+								logger.trace("Resetting node ID = " + node.getId() + " in block!");
 
 								freeNode(node);
 							});
@@ -431,6 +440,24 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 						}
 					}
 				}
+			}
+		}
+
+		// from the start of the route remove all nodes that the train did pass by
+		if (CollectionUtils.isNotEmpty(deleteList)) {
+
+			for (final GraphNode graphNode : deleteList) {
+
+				final GraphNode firstGraphNode = route.getGraphNodes().get(0);
+
+				if (firstGraphNode.getId() != graphNode.getId()) {
+					throw new IllegalArgumentException("Removing wrong node!");
+				}
+
+				logger.trace("Removing node GN.ID: " + firstGraphNode.getId() + " RN.ID: "
+						+ firstGraphNode.getRailNode().getId() + " from the route!");
+
+				route.getGraphNodes().remove(0);
 			}
 		}
 
@@ -475,7 +502,8 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 		logger.info("reserveUpToIncludingNextBlock()");
 
-		if (locomotive.getRoute() == null) {
+		final Route route = locomotive.getRoute();
+		if (route == null) {
 			return false;
 		}
 
@@ -488,6 +516,8 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		}
 		logger.info("Next Block.ID: " + nextBlock.getId());
 
+		final Block currentBlock = findCurrentBlock(route, locomotive);
+
 		// check if the nodes are free
 		if (!checkNodes(locomotive, nextBlock)) {
 			return false;
@@ -497,21 +527,24 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		reserveNodes(locomotive, nextBlock);
 
 		// switch the turnouts on this section of the route
-		switchTurnouts(locomotive, nextBlock);
+		switchTurnouts(locomotive, currentBlock, nextBlock);
 
 		return true;
 	}
 
-	private void switchTurnouts(final DefaultLocomotive locomotive, final Block nextBlock) {
+	private void switchTurnouts(final DefaultLocomotive locomotive, final Block currentBlock, final Block nextBlock) {
 
 		logger.info("Switch turnouts up to Block.ID: " + nextBlock.getId());
 
 		final Route route = locomotive.getRoute();
-		final List<GraphNode> subList = route.getSubListUpToRailNode(nextBlock.getNodes().get(0));
+		final RailNode railNode = nextBlock.getNodes().get(0);
+
+		final List<GraphNode> subList = route.getSubListUpToRailNode(railNode);
 
 		// DEBUG: output the sublist
 		for (final GraphNode graphNode : subList) {
-			logger.info("SubList RailNode.ID: " + graphNode.getRailNode().getId());
+
+			logger.trace("SubList RailNode.ID: " + graphNode.getRailNode().getId());
 		}
 
 		Route.switchTurnouts(subList, applicationEventPublisher, protocolFacade);

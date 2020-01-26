@@ -137,6 +137,12 @@ public class BlockNavigationPane extends HBox {
 				}
 
 				final Edge edge = railNode.getEdge(startEdgeDirection);
+
+				if (edge == null) {
+					logger.error("The direction startEdgeDirection: " + startEdgeDirection + " does not exist!");
+					return;
+				}
+
 				final GraphNode startGraphNode = edge.getOutGraphNode();
 
 				logger.info("Assign GraphNode " + startGraphNode.getId() + " to locomotive!");

@@ -11,12 +11,12 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.target>13</maven.compiler.target>
 		<maven.compiler.source>13</maven.compiler.source>
-		
+
 		<org.springframework.version>5.2.2.RELEASE</org.springframework.version>
 	</properties>
 
 	<dependencies>
-	
+
 		<!-- rail -->
 		<dependency>
 			<groupId>de.wfb.rail</groupId>
@@ -43,7 +43,7 @@
 			<artifactId>model</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-controls</artifactId>
@@ -54,33 +54,33 @@
 			<artifactId>javafx-web</artifactId>
 			<version>13</version>
 		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/org.rxtx/rxtx-->
+
+		<!-- https://mvnrepository.com/artifact/org.rxtx/rxtx -->
 		<dependency>
 			<groupId>org.rxtx</groupId>
 			<artifactId>rxtx</artifactId>
 			<version>2.1.7</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
 		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-core</artifactId>
-		    <version>${org.springframework.version}</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${org.springframework.version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-beans -->
 		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-beans</artifactId>
-		    <version>${org.springframework.version}</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${org.springframework.version}</version>
 		</dependency>
 		<dependency>
-    		<groupId>org.springframework</groupId>
-    		<artifactId>spring-context</artifactId>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
 			<version>${org.springframework.version}</version>
-    	</dependency>
-    	
-    	<dependency>
+		</dependency>
+
+		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
 			<version>2.13.0</version>
@@ -90,7 +90,34 @@
 			<artifactId>log4j-core</artifactId>
 			<version>2.13.0</version>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13-rc-2</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.10.19</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/batik/batik-svggen 
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik-svggen</artifactId>
+			<version>1.6-1</version>
+		</dependency>-->
+
+		<dependency>
+		    <groupId>org.jfree</groupId>
+		    <artifactId>jfreesvg</artifactId>
+		    <version>3.4</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -102,8 +129,8 @@
 				<artifactId>javafx-maven-plugin</artifactId>
 				<version>0.0.3</version>
 				<configuration>
-					<!-- <mainClass>javafxtest.SVGTest</mainClass>-->
-					<!-- <mainClass>javafxtest.ScalingDemo</mainClass>-->
+					<!-- <mainClass>javafxtest.SVGTest</mainClass> -->
+					<!-- <mainClass>javafxtest.ScalingDemo</mainClass> -->
 					<!--<mainClass>javafxtest.ScrollPaneDemo</mainClass> -->
 					<!--<mainClass>javafxtest.GraphicsScalingApp</mainClass> -->
 					<mainClass>de.wfb.Startup</mainClass>
