@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,7 +25,7 @@ public class GraphNode {
 
 	private final List<SwitchingNodeEntry> switchingGraphNodeChildren = new ArrayList<>();
 
-	private final Map<Integer, GraphNode> routingTable = new HashMap<>();
+	private final Map<Integer, Set<GraphNode>> routingTable = new HashMap<>();
 
 	private RailNode railNode;
 
@@ -42,7 +43,7 @@ public class GraphNode {
 		return children;
 	}
 
-	public Map<Integer, GraphNode> getRoutingTable() {
+	public Map<Integer, Set<GraphNode>> getRoutingTable() {
 		return routingTable;
 	}
 
@@ -73,15 +74,47 @@ public class GraphNode {
 
 		stringBuffer.append("ID: ").append(getId());
 
-		if (DUMP_ROUTING_TABLE) {
+//		if (DUMP_ROUTING_TABLE) {
+//
+//			if (!routingTable.entrySet().isEmpty()) {
+//
+//				for (final Map.Entry<Integer, Set<GraphNode>> entry : routingTable.entrySet()) {
+//
+//					stringBuffer.append("\n").append("Reach ").append(entry.getKey()).append(" via ")
+//							.append(entry.getValue().getId());
+//				}
+//			}
+//		}
 
-			if (!routingTable.entrySet().isEmpty()) {
+		return stringBuffer.toString();
+	}
 
-				for (final Map.Entry<Integer, GraphNode> entry : routingTable.entrySet()) {
+	public String dumpRoutingTable() {
 
-					stringBuffer.append("\n").append("Reach ").append(entry.getKey()).append(" via ")
-							.append(entry.getValue().getId());
-				}
+		final StringBuffer stringBuffer = new StringBuffer();
+
+		if (!routingTable.entrySet().isEmpty()) {
+
+			for (final Map.Entry<Integer, Set<GraphNode>> entry : routingTable.entrySet()) {
+
+				stringBuffer.append("\n").append("Reach ").append(entry.getKey()).append(" via ")
+						.append(entry.getValue().toString());
+			}
+		}
+
+		return stringBuffer.toString();
+	}
+
+	public String dumpSwitchingTable() {
+
+		final StringBuffer stringBuffer = new StringBuffer();
+
+		if (!switchingGraphNodeChildren.isEmpty()) {
+
+			for (final SwitchingNodeEntry entry : switchingGraphNodeChildren) {
+
+				stringBuffer.append("\n").append("Reach Switch ").append(entry.getSwitchingGraphNode().getId())
+						.append(" via ").append(entry.getConnectingGraphNode().getId());
 			}
 		}
 

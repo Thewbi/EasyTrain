@@ -17,9 +17,9 @@ public interface ModelFacade {
 
 	void addNode(int x, int y, ShapeType shapeType);
 
-	void storeModel();
+	void storeModel(String modelFile);
 
-	void storeLocomotiveModel();
+	void storeLocomotiveModel(String locomotivesModelFile);
 
 	void manualConnectTo(Node nodeA, Node nodeB);
 
@@ -29,7 +29,7 @@ public interface ModelFacade {
 
 	void debugRoute();
 
-	void loadModel();
+	void loadModel(String modelFile, String locomotivesModelFile);
 
 	void connectModel();
 
@@ -48,5 +48,9 @@ public interface ModelFacade {
 	void sendModelChangedEvent(int x, int y, boolean hightlighted, boolean blocked, boolean selected, boolean reserved);
 
 	void sendModelChangedEvent(RailNode railNode);
+
+	String getCurrentLocomotivesModel();
+
+	String getCurrentModel();
 
 }

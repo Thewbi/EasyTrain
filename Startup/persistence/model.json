@@ -1635,6 +1635,7 @@
     "y": 5,
     "leftList": [],
     "rightList": [],
+    "protocolTurnoutId": 1,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -1645,6 +1646,7 @@
     "y": 5,
     "leftList": [],
     "rightList": [],
+    "protocolTurnoutId": 35,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -2642,6 +2644,7 @@
     "y": 17,
     "leftList": [],
     "rightList": [],
+    "protocolTurnoutId": 256,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -18867,6 +18870,7 @@
     "y": 39,
     "leftList": [],
     "rightList": [],
+    "protocolTurnoutId": 120,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -18877,6 +18881,7 @@
     "y": 40,
     "leftList": [],
     "rightList": [],
+    "protocolTurnoutId": 119,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -18887,6 +18892,7 @@
     "y": 41,
     "leftList": [],
     "rightList": [],
+    "protocolTurnoutId": 118,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },
@@ -19467,6 +19473,7 @@
     "y": 42,
     "leftList": [],
     "rightList": [],
+    "protocolTurnoutId": 117,
     "manualConnections": [],
     "feedbackBlockNumber": -1
   },

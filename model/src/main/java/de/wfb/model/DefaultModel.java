@@ -26,6 +26,10 @@ public class DefaultModel implements Model {
 
 	private Node selectedNode;
 
+	private String currentModelFile;
+
+	private String currentLocomotiveModelFile;
+
 	@Override
 	public Node getNode(final int x, final int y) {
 
@@ -163,6 +167,22 @@ public class DefaultModel implements Model {
 		}
 
 		return false;
+	}
+
+	public String getCurrentModelFile() {
+		return currentModelFile;
+	}
+
+	public void setCurrentModelFile(final String currentModelFile) {
+		this.currentModelFile = currentModelFile;
+	}
+
+	public String getCurrentLocomotiveModelFile() {
+		return currentLocomotiveModelFile;
+	}
+
+	public void setCurrentLocomotiveModelFile(final String currentLocomotiveModelFile) {
+		this.currentLocomotiveModelFile = currentLocomotiveModelFile;
 	}
 
 }

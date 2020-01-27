@@ -322,37 +322,39 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 	}
 
 	@Override
-	public void loadModel() {
+	public void loadModel(final String modelFile, final String locomotivesModelFile) {
 
 		try {
-			modelPersistenceService.loadModel(model, "persistence/model.json");
+			model.setCurrentModelFile(modelFile);
+			modelPersistenceService.loadModel(model, modelFile);
 		} catch (final IOException e) {
 			logger.error(e.getMessage(), e);
 		}
 
 		try {
-			modelPersistenceService.loadLocomotiveModel(model, "persistence/locomotives.json");
+			model.setCurrentLocomotiveModelFile(locomotivesModelFile);
+			modelPersistenceService.loadLocomotiveModel(model, locomotivesModelFile);
 		} catch (final IOException e) {
 			logger.error(e.getMessage(), e);
 		}
 	}
 
 	@Override
-	public void storeModel() {
+	public void storeModel(final String modelFile) {
 
 		logger.trace("storeModel()");
 
 		try {
-			modelPersistenceService.storeModel(model, "persistence/model.json");
+			modelPersistenceService.storeModel(model, modelFile);
 		} catch (final IOException e) {
 			logger.error(e.getMessage(), e);
 		}
 	}
 
 	@Override
-	public void storeLocomotiveModel() {
+	public void storeLocomotiveModel(final String locomotivesModelFile) {
 		try {
-			modelPersistenceService.storeLocomotiveModel(model, "persistence/locomotives.json");
+			modelPersistenceService.storeLocomotiveModel(model, locomotivesModelFile);
 		} catch (final IOException e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -481,6 +483,34 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 	@Override
 	public int retrieveNextLocomotiveId() {
 		return model.retrieveNextLocomotiveId();
+	}
+
+	@Override
+	public String getCurrentLocomotivesModel() {
+		return model.getCurrentLocomotiveModelFile();
+	}
+
+	@Override
+	public String getCurrentModel() {
+		return model.getCurrentModelFile();
+	}
+
+	/**
+	 * For testing
+	 *
+	 * @param applicationEventPublisher
+	 */
+	public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
+		this.applicationEventPublisher = applicationEventPublisher;
+	}
+
+	/**
+	 * For Testing
+	 * 
+	 * @param model
+	 */
+	public void setModel(final Model model) {
+		this.model = model;
 	}
 
 }

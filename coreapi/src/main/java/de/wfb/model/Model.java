@@ -32,4 +32,12 @@ public interface Model {
 
 	int retrieveNextLocomotiveId();
 
+	String getCurrentModelFile();
+
+	void setCurrentModelFile(final String currentModelFile);
+
+	String getCurrentLocomotiveModelFile();
+
+	void setCurrentLocomotiveModelFile(final String currentLocomotiveModelFile);
+
 }

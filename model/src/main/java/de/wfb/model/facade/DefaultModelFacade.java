@@ -33,13 +33,13 @@ public class DefaultModelFacade implements ModelFacade {
 	}
 
 	@Override
-	public void storeModel() {
-		modelService.storeModel();
+	public void storeModel(final String modelFile) {
+		modelService.storeModel(modelFile);
 	}
 
 	@Override
-	public void storeLocomotiveModel() {
-		modelService.storeLocomotiveModel();
+	public void storeLocomotiveModel(final String locomotivesModelFile) {
+		modelService.storeLocomotiveModel(locomotivesModelFile);
 	}
 
 	@Override
@@ -63,8 +63,8 @@ public class DefaultModelFacade implements ModelFacade {
 	}
 
 	@Override
-	public void loadModel() {
-		modelService.loadModel();
+	public void loadModel(final String modelFile, final String locomotivesModelFile) {
+		modelService.loadModel(modelFile, locomotivesModelFile);
 	}
 
 	@Override
@@ -112,6 +112,16 @@ public class DefaultModelFacade implements ModelFacade {
 	@Override
 	public void sendModelChangedEvent(final RailNode railNode) {
 		modelService.sendModelChangedEvent(railNode);
+	}
+
+	@Override
+	public String getCurrentLocomotivesModel() {
+		return modelService.getCurrentLocomotivesModel();
+	}
+
+	@Override
+	public String getCurrentModel() {
+		return modelService.getCurrentModel();
 	}
 
 }

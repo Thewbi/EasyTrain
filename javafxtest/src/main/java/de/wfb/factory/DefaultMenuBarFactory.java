@@ -147,7 +147,7 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 
 				logger.info("Save Menu clicked!");
 
-				modelFacade.storeModel();
+				modelFacade.storeModel(modelFacade.getCurrentModel());
 			}
 		});
 

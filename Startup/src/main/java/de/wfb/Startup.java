@@ -86,7 +86,9 @@ public class Startup extends Application {
 		final ApplicationContext context = loadApplicationContext(stage);
 
 		// load the model
-		loadModel();
+		loadModel("persistence/model.json", "persistence/locomotives.json");
+
+//		loadModel("../model/src/test/resources/DefaultRoutingServiceTest/model.json", "persistence/locomotives.json");
 
 		// build blocks
 		blockService.determineBlocks();
@@ -94,7 +96,7 @@ public class Startup extends Application {
 		// build the routing tables
 		routingService.buildRoutingTables();
 
-		// coloring the graph is a worthless as loops will paint all node in a single
+		// coloring the graph is worthless as loops will paint all node in a single
 		// color which invalidates the entire idea
 //		routingService.colorGraph();
 
@@ -163,11 +165,11 @@ public class Startup extends Application {
 		}
 	}
 
-	private void loadModel() {
+	private void loadModel(final String modelFile, final String locomotivesModelFile) {
 
 		try {
 			logger.info("Loading model ...");
-			modelFacade.loadModel();
+			modelFacade.loadModel(modelFile, locomotivesModelFile);
 			modelFacade.connectModel();
 			logger.info("Loading model done.");
 		} catch (final Exception e) {

@@ -73,7 +73,7 @@ public class LocomotiveAddPane extends VBox {
 				modelFacade.addLocomotive(defaultLocomotive);
 
 				// write the model to disk
-				modelFacade.storeLocomotiveModel();
+				modelFacade.storeLocomotiveModel(modelFacade.getCurrentLocomotivesModel());
 
 				// reset
 				nameTextField.clear();

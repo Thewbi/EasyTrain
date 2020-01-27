@@ -147,21 +147,27 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 										});
 
 										if (alert.getResult().equals(ButtonType.OK)) {
+
 											System.out.println("Deleting ...");
 
 											modelFacade.deleteLocomotive(locomotive);
 
 											// write the model to disk
-											modelFacade.storeLocomotiveModel();
+											modelFacade.storeLocomotiveModel(modelFacade.getCurrentLocomotivesModel());
+
 										} else if (alert.getResult().equals(ButtonType.YES)) {
+
 											System.out.println("Deleting ...");
 
 											modelFacade.deleteLocomotive(locomotive);
 
 											// write the model to disk
-											modelFacade.storeLocomotiveModel();
+											modelFacade.storeLocomotiveModel(modelFacade.getCurrentLocomotivesModel());
+
 										} else {
+
 											System.out.println("Not Deleting ...");
+
 										}
 
 									});

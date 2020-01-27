@@ -1,8 +1,10 @@
 package de.wfb.model.service;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -70,70 +72,70 @@ public class DefaultRoutingService implements RoutingService {
 	@Override
 	public Route route(final GraphNode graphNodeStart, final GraphNode graphNodeEnd) {
 
-		logger.trace("Start: " + graphNodeStart.getId() + " End: " + graphNodeEnd.getId());
-
-		final StringBuffer stringBuffer = new StringBuffer();
-
-		final List<GraphNode> nodeList = new ArrayList<>();
-
-		GraphNode currentNodeGraphNode = graphNodeStart;
-
-		nodeList.add(currentNodeGraphNode);
-
-		int loopBreaker = MAX_ROUTE_FINDING_STEPS;
-
-		// current node is the end node -> done
-		while (currentNodeGraphNode.getId() != graphNodeEnd.getId()) {
-
-			if (loopBreaker <= 0) {
-
-				throw new RuntimeException("Failed to find Route from " + graphNodeStart.getId() + " TO "
-						+ graphNodeEnd.getId() + " after " + MAX_ROUTE_FINDING_STEPS + " steps!");
-			}
-
-			loopBreaker--;
-
-			logger.trace("ROUTE: " + currentNodeGraphNode.getId());
-
-			stringBuffer.append(currentNodeGraphNode.getId()).append(", ");
-
-			// current node has only one child -> go to child, current node = child
-			if (currentNodeGraphNode.getChildren().size() == 1) {
-
-				logger.trace("FROM " + currentNodeGraphNode.getId() + " TO "
-						+ currentNodeGraphNode.getChildren().get(0).getId());
-
-				currentNodeGraphNode = currentNodeGraphNode.getChildren().get(0);
-				nodeList.add(currentNodeGraphNode);
-
-				continue;
-			}
-
-			// current node has more than one child -> look at routing map, go to node that
-			// leads to the end node
-			currentNodeGraphNode = currentNodeGraphNode.getRoutingTable().get(graphNodeEnd.getId());
-
-			if (currentNodeGraphNode == null) {
-
-				logger.info("No route found!");
-				nodeList.clear();
-
-				return new Route();
-
-			} else {
-
-				logger.trace("Routing Table returns: " + currentNodeGraphNode.getId());
-
-				nodeList.add(currentNodeGraphNode);
-			}
-		}
-
-		stringBuffer.append(graphNodeEnd.getId());
-
-		logger.info(stringBuffer.toString());
+//		logger.trace("Start: " + graphNodeStart.getId() + " End: " + graphNodeEnd.getId());
+//
+//		final StringBuffer stringBuffer = new StringBuffer();
+//
+//		final List<GraphNode> nodeList = new ArrayList<>();
+//
+//		GraphNode currentNodeGraphNode = graphNodeStart;
+//
+//		nodeList.add(currentNodeGraphNode);
+//
+//		int loopBreaker = MAX_ROUTE_FINDING_STEPS;
+//
+//		// current node is the end node -> done
+//		while (currentNodeGraphNode.getId() != graphNodeEnd.getId()) {
+//
+//			if (loopBreaker <= 0) {
+//
+//				throw new RuntimeException("Failed to find Route from " + graphNodeStart.getId() + " TO "
+//						+ graphNodeEnd.getId() + " after " + MAX_ROUTE_FINDING_STEPS + " steps!");
+//			}
+//
+//			loopBreaker--;
+//
+//			logger.trace("ROUTE: " + currentNodeGraphNode.getId());
+//
+//			stringBuffer.append(currentNodeGraphNode.getId()).append(", ");
+//
+//			// current node has only one child -> go to child, current node = child
+//			if (currentNodeGraphNode.getChildren().size() == 1) {
+//
+//				logger.trace("FROM " + currentNodeGraphNode.getId() + " TO "
+//						+ currentNodeGraphNode.getChildren().get(0).getId());
+//
+//				currentNodeGraphNode = currentNodeGraphNode.getChildren().get(0);
+//				nodeList.add(currentNodeGraphNode);
+//
+//				continue;
+//			}
+//
+//			// current node has more than one child -> look at routing map, go to node that
+//			// leads to the end node
+//			currentNodeGraphNode = currentNodeGraphNode.getRoutingTable().get(graphNodeEnd.getId());
+//
+//			if (currentNodeGraphNode == null) {
+//
+//				logger.info("No route found!");
+//				nodeList.clear();
+//
+//				return new Route();
+//
+//			} else {
+//
+//				logger.trace("Routing Table returns: " + currentNodeGraphNode.getId());
+//
+//				nodeList.add(currentNodeGraphNode);
+//			}
+//		}
+//
+//		stringBuffer.append(graphNodeEnd.getId());
+//
+//		logger.info(stringBuffer.toString());
 
 		final Route route = new Route();
-		route.getGraphNodes().addAll(nodeList);
+//		route.getGraphNodes().addAll(nodeList);
 
 		return route;
 	}
@@ -153,34 +155,64 @@ public class DefaultRoutingService implements RoutingService {
 
 		for (final GraphNode switchingGraphNode : switchingNodes) {
 
+//			System.out.println(switchingGraphNode.getId());
+
 			// over all children of the switching graph node
 			for (final GraphNode child : switchingGraphNode.getChildren()) {
 
 				// walk until the next switching node was found
 				GraphNode currentGraphNode = child;
+
+//				System.out.println(" > " + currentGraphNode.getId());
+
+				// loop up to the next switch
 				while (CollectionUtils.isNotEmpty(currentGraphNode.getChildren())
 						&& currentGraphNode.getChildren().size() < 2) {
 
+					// prepare a set if none exists, yet
+					if (!switchingGraphNode.getRoutingTable().containsKey(currentGraphNode.getId())) {
+						switchingGraphNode.getRoutingTable().put(currentGraphNode.getId(), new HashSet<GraphNode>());
+					}
+
 					// insert immediate child into the routing table
-					switchingGraphNode.getRoutingTable().put(currentGraphNode.getId(), child);
+					switchingGraphNode.getRoutingTable().get(currentGraphNode.getId()).add(child);
 
 					currentGraphNode = currentGraphNode.getChildren().get(0);
+
+//					System.out.println(" > " + currentGraphNode.getId());
 				}
 
-				// currentGraphNode is a switching node. Connect switching nodes together
+				// prepare a set if none exists, yet
+				if (!switchingGraphNode.getRoutingTable().containsKey(currentGraphNode.getId())) {
+					switchingGraphNode.getRoutingTable().put(currentGraphNode.getId(), new HashSet<GraphNode>());
+				}
 
-				final SwitchingNodeEntry switchingNodeEntry = new SwitchingNodeEntry();
-				switchingNodeEntry.setConnectingGraphNode(child);
-				switchingNodeEntry.setSwitchingGraphNode(currentGraphNode);
+				// insert immediate child into the routing table
+				switchingGraphNode.getRoutingTable().get(currentGraphNode.getId()).add(child);
 
-				// remember the node via which this switching child can be reached!
-				switchingGraphNode.getSwitchingGraphNodeChildren().add(switchingNodeEntry);
+				if (CollectionUtils.isNotEmpty(currentGraphNode.getChildren())
+						&& currentGraphNode.getChildren().size() >= 2) {
+
+					// currentGraphNode is a switching node. Connect switching nodes together.
+					// remember the node via which this switching child can be reached!
+					// This infrastructure is needed for the second phase of the routing table
+					// algorithm
+
+					// the entry stores the GraphNode over which the switching node can be reached
+					// and the switching node itself
+					final SwitchingNodeEntry switchingNodeEntry = new SwitchingNodeEntry();
+					switchingNodeEntry.setConnectingGraphNode(child);
+					switchingNodeEntry.setSwitchingGraphNode(currentGraphNode);
+
+					// set the entry into the source switching node
+					switchingGraphNode.getSwitchingGraphNodeChildren().add(switchingNodeEntry);
+				}
 			}
 		}
 
 		// start the iterative learning
 
-		// iterating learning, unless there is no more change
+		// iterative learning, unless there is no more change
 		boolean change = true;
 		while (change) {
 
@@ -193,23 +225,35 @@ public class DefaultRoutingService implements RoutingService {
 				for (final SwitchingNodeEntry switchingNodeEntry : switchingGraphNode.getSwitchingGraphNodeChildren()) {
 
 					// over the switching children's routing table
-					for (final Map.Entry<Integer, GraphNode> entry : switchingNodeEntry.getSwitchingGraphNode()
-							.getRoutingTable().entrySet()) {
+					final Set<Entry<Integer, Set<GraphNode>>> entrySet = switchingNodeEntry.getSwitchingGraphNode()
+							.getRoutingTable().entrySet();
 
+					for (final Map.Entry<Integer, Set<GraphNode>> entry : entrySet) {
+
+						// in order for the algorithm to stop, check if any new information can be
+						// learned or not
 						if (switchingGraphNode.getRoutingTable().containsKey(entry.getKey())) {
-							continue;
+
+							final Set<GraphNode> set = switchingGraphNode.getRoutingTable().get(entry.getKey());
+
+							if (set.contains(switchingNodeEntry.getConnectingGraphNode())) {
+								continue;
+							}
 						}
 
 						// new info learned
 						change = true;
 
-						// BUG: the value of the routing table entry has to be the graph node
-						// immediately
-						// connected to this graph node
+						// prepare a set if none exists, yet
+						if (!switchingGraphNode.getRoutingTable().containsKey(entry.getKey())) {
+							switchingGraphNode.getRoutingTable().put(entry.getKey(), new HashSet<GraphNode>());
+						}
 
-						// switchingGraphNode.getRoutingTable().put(entry.getKey(), entry.getValue());
-						switchingGraphNode.getRoutingTable().put(entry.getKey(),
-								switchingNodeEntry.getConnectingGraphNode());
+						final Set<GraphNode> set = switchingGraphNode.getRoutingTable().get(entry.getKey());
+						set.add(switchingNodeEntry.getConnectingGraphNode());
+
+//						switchingGraphNode.getRoutingTable().put(entry.getKey(),
+//								switchingNodeEntry.getConnectingGraphNode());
 					}
 				}
 			}
@@ -229,6 +273,15 @@ public class DefaultRoutingService implements RoutingService {
 	@Override
 	public void switchTurnouts(final Route route) {
 		route.switchTurnouts(applicationEventPublisher, protocolFacade);
+	}
+
+	/**
+	 * For testing
+	 *
+	 * @param modelService
+	 */
+	public void setModelService(final ModelService modelService) {
+		this.modelService = modelService;
 	}
 
 }

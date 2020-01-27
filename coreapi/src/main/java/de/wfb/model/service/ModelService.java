@@ -18,11 +18,11 @@ public interface ModelService {
 
 	void addNode(int x, int y, ShapeType shapeType);
 
-	void storeModel();
+	void storeModel(String modelFile);
 
-	void storeLocomotiveModel();
+	void storeLocomotiveModel(String locomotivesModelFile);
 
-	void loadModel();
+	void loadModel(String modelFile, String locomotivesModelFile);
 
 	void sendModelChangedEvent(int x, int y, boolean hightlighted, boolean blocked, boolean selected, boolean reserved);
 
@@ -55,5 +55,9 @@ public interface ModelService {
 	void deleteLocomotive(DefaultLocomotive defaultLocomotive);
 
 	int retrieveNextLocomotiveId();
+
+	String getCurrentLocomotivesModel();
+
+	String getCurrentModel();
 
 }
