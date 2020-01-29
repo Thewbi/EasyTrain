@@ -22,7 +22,9 @@ public interface ModelService {
 
 	void storeLocomotiveModel(String locomotivesModelFile);
 
-	void loadModel(String modelFile, String locomotivesModelFile);
+	void loadModel(String modelFile);
+
+	void loadLocomotivesModel(String locomotivesModelFile);
 
 	void sendModelChangedEvent(int x, int y, boolean hightlighted, boolean blocked, boolean selected, boolean reserved);
 
@@ -59,5 +61,7 @@ public interface ModelService {
 	String getCurrentLocomotivesModel();
 
 	String getCurrentModel();
+
+	void clear();
 
 }

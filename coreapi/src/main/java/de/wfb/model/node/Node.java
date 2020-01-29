@@ -63,4 +63,8 @@ public interface Node {
 
 	void setReservedLocomotiveId(int reservedLocomotiveId);
 
+	Direction getTraverse();
+
+	void setTraverse(Direction traverse);
+
 }

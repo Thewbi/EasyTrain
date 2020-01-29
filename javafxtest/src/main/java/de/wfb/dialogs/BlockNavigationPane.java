@@ -189,18 +189,22 @@ public class BlockNavigationPane extends HBox {
 
 			private Route createRoute(final Block endBlock, final GraphNode startGraphNode) {
 
+				final boolean routeOverReservedNodes = false;
+
 				final RailNode endRailNode = endBlock.getNodes().get(0);
 
 				Route routeA = null;
 				try {
-					routeA = routingService.route(startGraphNode, endRailNode.getGraphNodeOne());
+					routeA = routingService.route(startGraphNode, endRailNode.getGraphNodeOne(),
+							routeOverReservedNodes);
 				} catch (final Exception e) {
 					;
 				}
 
 				Route routeB = null;
 				try {
-					routeB = routingService.route(startGraphNode, endRailNode.getGraphNodeTwo());
+					routeB = routingService.route(startGraphNode, endRailNode.getGraphNodeTwo(),
+							routeOverReservedNodes);
 				} catch (final Exception e) {
 					;
 				}

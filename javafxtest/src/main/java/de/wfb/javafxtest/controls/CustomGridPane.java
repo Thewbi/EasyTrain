@@ -10,6 +10,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
+import de.wfb.model.GridElement;
+import de.wfb.model.ViewModel;
 import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.node.Node;
 import de.wfb.rail.events.ModelChangedEvent;
@@ -30,16 +32,12 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 
 	private static final Logger logger = LogManager.getLogger(CustomGridPane.class);
 
-	private final int COLUMNS = 100;
-
-	private final int ROWS = 100;
-
 	private final int CELL_WIDTH = 10;
 
 	double scale = 1.0d;
 
 	@Autowired
-	private Factory<GridElement> gridElementFactory;
+	private Factory<GridElement<SVGPath, Text>> gridElementFactory;
 
 	/** https://www.baeldung.com/spring-events */
 	@Autowired
@@ -48,14 +46,14 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 	@Autowired
 	private ModelFacade modelFacade;
 
-//	private final SVGPath[][] viewModel = new SVGPath[rows][columns];
-	private final GridElement[][] viewModel = new GridElement[ROWS][COLUMNS];
+	@Autowired
+	private ViewModel<SVGPath, Text> viewModel;
 
 	private boolean shiftState;
 
 	public void Initialize() {
 
-		setMinSize(ROWS * CELL_WIDTH, COLUMNS * CELL_WIDTH);
+		setMinSize(ViewModel.ROWS * CELL_WIDTH, ViewModel.COLUMNS * CELL_WIDTH);
 
 		final double scaleX = scale;
 		final double scaleY = scale;
@@ -149,9 +147,10 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 
 		logger.trace(nodeHighlightedEvent);
 
-		final GridElement gridElement = viewModel[nodeHighlightedEvent.getX()][nodeHighlightedEvent.getY()];
+		final GridElement<SVGPath, Text> gridElement = viewModel.getViewModel()[nodeHighlightedEvent
+				.getX()][nodeHighlightedEvent.getY()];
 
-		final SVGPath svgPath = gridElement.getSvgPath();
+		final SVGPath svgPath = gridElement.getPath();
 		if (svgPath != null) {
 
 			logger.trace("changing fill color!");
@@ -177,9 +176,26 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 					logger.info("Node is null!");
 
 					// remove
-					final GridElement gridElement = viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()];
-					final SVGPath svgPathOld = gridElement.getSvgPath();
-					getChildren().remove(svgPathOld);
+					final GridElement<SVGPath, Text> gridElement = viewModel.getViewModel()[modelChangedEvent
+							.getX()][modelChangedEvent.getY()];
+
+					if (gridElement == null) {
+						return;
+					}
+
+					logger.trace("gridElement = " + gridElement);
+
+					final SVGPath svgPathOld = gridElement.getPath();
+					if (svgPathOld != null) {
+						logger.info("Removeing");
+						getChildren().remove(svgPathOld);
+					}
+
+					final Text text = gridElement.getText();
+					if (text != null) {
+						logger.info("Removeing");
+						getChildren().remove(text);
+					}
 
 					return;
 				}
@@ -196,11 +212,12 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 				}
 
 				// remove
-				final GridElement tempGridElement = viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()];
+				final GridElement<SVGPath, Text> tempGridElement = viewModel.getViewModel()[modelChangedEvent
+						.getX()][modelChangedEvent.getY()];
 				if (tempGridElement != null) {
 
 					// remove SVGPath
-					final SVGPath svgPathOld = tempGridElement.getSvgPath();
+					final SVGPath svgPathOld = tempGridElement.getPath();
 					if (svgPathOld != null) {
 						getChildren().remove(svgPathOld);
 					}
@@ -214,19 +231,19 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 
 				try {
 
-					final GridElement gridElement = gridElementFactory.create(node, modelChangedEvent, shapeType,
-							CELL_WIDTH);
+					final GridElement<SVGPath, Text> gridElement = gridElementFactory.create(node, modelChangedEvent,
+							shapeType, CELL_WIDTH);
 					if (gridElement != null) {
 
-						if (gridElement.getSvgPath() != null) {
-							getChildren().addAll(gridElement.getSvgPath());
+						if (gridElement.getPath() != null) {
+							getChildren().addAll(gridElement.getPath());
 						}
 
 						if (gridElement.getText() != null) {
 							getChildren().addAll(gridElement.getText());
 						}
 
-						viewModel[modelChangedEvent.getX()][modelChangedEvent.getY()] = gridElement;
+						viewModel.getViewModel()[modelChangedEvent.getX()][modelChangedEvent.getY()] = gridElement;
 					}
 
 				} catch (final Exception e) {

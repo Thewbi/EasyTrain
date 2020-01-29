@@ -18,9 +18,9 @@ public class DefaultModel implements Model {
 
 	private final int rows = 100;
 
-	private final Map<Integer, Node> idMap = new HashMap<>();
+	private Map<Integer, Node> idMap = new HashMap<>();
 
-	private final Node[][] nodeGrid = new Node[rows][columns];
+	private Node[][] nodeGrid = new Node[rows][columns];
 
 	private final List<DefaultLocomotive> locomotives = new ArrayList<DefaultLocomotive>();
 
@@ -169,20 +169,31 @@ public class DefaultModel implements Model {
 		return false;
 	}
 
+	@Override
 	public String getCurrentModelFile() {
 		return currentModelFile;
 	}
 
+	@Override
 	public void setCurrentModelFile(final String currentModelFile) {
 		this.currentModelFile = currentModelFile;
 	}
 
+	@Override
 	public String getCurrentLocomotiveModelFile() {
 		return currentLocomotiveModelFile;
 	}
 
+	@Override
 	public void setCurrentLocomotiveModelFile(final String currentLocomotiveModelFile) {
 		this.currentLocomotiveModelFile = currentLocomotiveModelFile;
+	}
+
+	@Override
+	public void clear() {
+		idMap = new HashMap<>();
+		nodeGrid = new Node[rows][columns];
+		selectedNode = null;
 	}
 
 }

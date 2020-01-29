@@ -168,8 +168,12 @@ public class Startup extends Application {
 	private void loadModel(final String modelFile, final String locomotivesModelFile) {
 
 		try {
+			logger.info("Loading locomotives model ...");
+			modelFacade.loadLocomotivesModel(locomotivesModelFile);
+			logger.info("Loading locomotives model done.");
+
 			logger.info("Loading model ...");
-			modelFacade.loadModel(modelFile, locomotivesModelFile);
+			modelFacade.loadModel(modelFile);
 			modelFacade.connectModel();
 			logger.info("Loading model done.");
 		} catch (final Exception e) {

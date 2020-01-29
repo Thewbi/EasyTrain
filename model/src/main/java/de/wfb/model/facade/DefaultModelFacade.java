@@ -63,8 +63,13 @@ public class DefaultModelFacade implements ModelFacade {
 	}
 
 	@Override
-	public void loadModel(final String modelFile, final String locomotivesModelFile) {
-		modelService.loadModel(modelFile, locomotivesModelFile);
+	public void loadModel(final String modelFile) {
+		modelService.loadModel(modelFile);
+	}
+
+	@Override
+	public void loadLocomotivesModel(final String locomotivesModelFile) {
+		modelService.loadModel(locomotivesModelFile);
 	}
 
 	@Override
@@ -122,6 +127,11 @@ public class DefaultModelFacade implements ModelFacade {
 	@Override
 	public String getCurrentModel() {
 		return modelService.getCurrentModel();
+	}
+
+	@Override
+	public void clear() {
+		modelService.clear();
 	}
 
 }

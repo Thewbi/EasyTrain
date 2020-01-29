@@ -24,6 +24,14 @@ public class Route {
 
 	private final List<GraphNode> graphNodes = new ArrayList<>();
 
+	public Route() {
+
+	}
+
+	public Route(final List<GraphNode> nodeList) {
+		graphNodes.addAll(nodeList);
+	}
+
 	public List<GraphNode> getGraphNodes() {
 		return graphNodes;
 	}

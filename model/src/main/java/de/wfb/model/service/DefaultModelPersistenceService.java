@@ -57,6 +57,8 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 	@Override
 	public void storeModel(final Model model, final String path) throws IOException {
 
+		logger.info("StoreModel");
+
 		final List<JsonNode> jsonNodes = new ArrayList<>();
 
 		final Converter<Node, JsonNode> jsonNodeConverter = new DefaultJsonNodeConverter();
@@ -139,17 +141,19 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 		logger.info("Trying to load '" + absolutePathToModel + "'");
 
 		if (!Files.exists(Paths.get(pathToModelFile))) {
+
+			logger.info("File '" + absolutePathToModel + "' does not exist!");
 			return;
 		}
 
 		final Collection<JsonNode> nodeArray = deserializeJsonNode(pathToModelFile);
 		if (CollectionUtils.isEmpty(nodeArray)) {
 
-			logger.trace("'" + Paths.get(pathToModelFile).toAbsolutePath() + "' contains no data!");
+			logger.info("'" + Paths.get(pathToModelFile).toAbsolutePath() + "' contains no data!");
 			return;
 		}
 
-		logger.trace("'" + Paths.get(pathToModelFile).toAbsolutePath() + "' contains " + nodeArray.size() + " nodes!");
+		logger.info("'" + Paths.get(pathToModelFile).toAbsolutePath() + "' contains " + nodeArray.size() + " nodes!");
 
 		// convert Json nodes to model nodes
 		final int maxId = populateModel(model, nodeArray);
@@ -157,12 +161,22 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 		// connect nodes that are manually connected
 		processManualConnections(model, nodeArray);
 
+		processDirection(model, nodeArray);
+
 		// initialize the ID-Service so it will only return non-used IDs
 		idService.setCurrentId(maxId);
 
 		for (final JsonNode jsonNode : nodeArray) {
 
 			modelService.sendModelChangedEvent(jsonNode.getX(), jsonNode.getY(), false, false, false, false);
+		}
+	}
+
+	private void processDirection(final Model model, final Collection<JsonNode> nodeArray) {
+
+		for (final RailNode railNode : model.getAllRailNodes()) {
+
+			railNode.updateBlockedGraphNode();
 		}
 	}
 

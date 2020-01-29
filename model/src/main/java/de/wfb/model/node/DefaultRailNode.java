@@ -65,6 +65,9 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	/** the id of the locomotive that currently reserves this field */
 	private int reservedLocomotiveId = NOT_RESERVED;
 
+	/** null means that the rail node is traversable in all directions */
+	private Direction traverse = null;
+
 	/**
 	 * ctor
 	 */
@@ -731,6 +734,39 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	}
 
 	@Override
+	public void updateBlockedGraphNode() {
+
+		logger.trace("updateBlockedGraphNode()");
+
+		if (getGraphNodeOne() != null) {
+			getGraphNodeOne().setBlocked(false);
+		}
+		if (getGraphNodeTwo() != null) {
+			getGraphNodeTwo().setBlocked(false);
+		}
+
+		final Direction traverse = getTraverse();
+
+		if (traverse == null) {
+
+			return;
+		}
+
+		final Edge edge = getEdge(traverse);
+		if (edge != null) {
+
+			final GraphNode inGraphNode = edge.getInGraphNode();
+
+			logger.trace("inGraphNode = " + inGraphNode.getId());
+
+			if (inGraphNode != null) {
+
+				inGraphNode.setBlocked(true);
+			}
+		}
+	}
+
+	@Override
 	public boolean isReservedExcluding(final int locomotiveId) {
 		return reservedLocomotiveId != NOT_RESERVED && reservedLocomotiveId != locomotiveId;
 	}
@@ -855,6 +891,16 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	@Override
 	public Edge[] getEdges() {
 		return edges;
+	}
+
+	@Override
+	public Direction getTraverse() {
+		return traverse;
+	}
+
+	@Override
+	public void setTraverse(final Direction traverse) {
+		this.traverse = traverse;
 	}
 
 }

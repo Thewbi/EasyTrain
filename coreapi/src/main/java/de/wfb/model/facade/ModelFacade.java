@@ -29,7 +29,9 @@ public interface ModelFacade {
 
 	void debugRoute();
 
-	void loadModel(String modelFile, String locomotivesModelFile);
+	void loadModel(String modelFile);
+
+	void loadLocomotivesModel(String locomotivesModelFile);
 
 	void connectModel();
 
@@ -52,5 +54,7 @@ public interface ModelFacade {
 	String getCurrentLocomotivesModel();
 
 	String getCurrentModel();
+
+	void clear();
 
 }

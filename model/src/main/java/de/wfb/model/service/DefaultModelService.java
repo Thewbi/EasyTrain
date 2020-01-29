@@ -302,7 +302,7 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 
 		try {
 
-			logger.info("Creating new node!");
+			logger.trace("Creating new node!");
 			final int feedbackBlockNumber = -1;
 			final Node newNode = nodeFactory.create(x, y, shapeType, feedbackBlockNumber);
 
@@ -311,7 +311,7 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 			model.setNode(x, y, newNode);
 			newNode.connect(model);
 
-			logger.info("addNode() New node id = " + newNode.getId() + " added!");
+			logger.trace("addNode() New node id = " + newNode.getId() + " added!");
 
 			sendModelChangedEvent(x, y, newNode.isHighlighted(), newNode.isFeedbackBlockUsed(), newNode.isSelected(),
 					newNode.isReserved());
@@ -322,7 +322,7 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 	}
 
 	@Override
-	public void loadModel(final String modelFile, final String locomotivesModelFile) {
+	public void loadModel(final String modelFile) {
 
 		try {
 			model.setCurrentModelFile(modelFile);
@@ -330,6 +330,10 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 		} catch (final IOException e) {
 			logger.error(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public void loadLocomotivesModel(final String locomotivesModelFile) {
 
 		try {
 			model.setCurrentLocomotiveModelFile(locomotivesModelFile);
@@ -342,7 +346,7 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 	@Override
 	public void storeModel(final String modelFile) {
 
-		logger.trace("storeModel()");
+		logger.info("storeModel()");
 
 		try {
 			modelPersistenceService.storeModel(model, modelFile);
@@ -506,11 +510,16 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 
 	/**
 	 * For Testing
-	 * 
+	 *
 	 * @param model
 	 */
 	public void setModel(final Model model) {
 		this.model = model;
+	}
+
+	@Override
+	public void clear() {
+		model.clear();
 	}
 
 }

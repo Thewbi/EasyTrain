@@ -40,4 +40,6 @@ public interface Model {
 
 	void setCurrentLocomotiveModelFile(final String currentLocomotiveModelFile);
 
+	void clear();
+
 }

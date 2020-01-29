@@ -6,9 +6,9 @@ import de.wfb.rail.service.Route;
 
 public interface RoutingService {
 
-	Route route(GraphNode graphNodeStart, GraphNode graphNodeEnd);
+	Route route(GraphNode graphNodeStart, GraphNode graphNodeEnd, boolean routeOverReservedGraphNodes);
 
-	Route route(Node nodeStart, Node nodeEnd);
+	Route route(Node nodeStart, Node nodeEnd, boolean routeOverReservedGraphNodes);
 
 	void buildRoutingTables();
 

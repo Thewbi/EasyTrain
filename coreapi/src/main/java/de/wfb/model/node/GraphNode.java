@@ -31,6 +31,12 @@ public class GraphNode {
 
 	private Color color = Color.NONE;
 
+	/**
+	 * blocking a graph node, means to make a rail node non-traversable in this
+	 * direction
+	 */
+	private boolean blocked;
+
 	public int getId() {
 		return id;
 	}
@@ -185,6 +191,14 @@ public class GraphNode {
 
 	public void setY(final int y) {
 		this.y = y;
+	}
+
+	public boolean isBlocked() {
+		return blocked;
+	}
+
+	public void setBlocked(final boolean blocked) {
+		this.blocked = blocked;
 	}
 
 }

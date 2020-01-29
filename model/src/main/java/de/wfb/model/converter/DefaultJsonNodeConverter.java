@@ -27,6 +27,7 @@ public class DefaultJsonNodeConverter implements Converter<Node, JsonNode> {
 		target.setY(source.getY());
 		target.setProtocolTurnoutId(source.getProtocolTurnoutId());
 		target.setFeedbackBlockNumber(source.getFeedbackBlockNumber());
+		target.setTraverse(source.getTraverse());
 
 		// manual connections
 		final DefaultRailNode defaultRailNode = (DefaultRailNode) source;

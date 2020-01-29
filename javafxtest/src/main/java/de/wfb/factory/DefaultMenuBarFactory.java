@@ -1,5 +1,6 @@
 package de.wfb.factory;
 
+import java.io.File;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -11,6 +12,8 @@ import de.web.facade.DebugFacade;
 import de.wfb.dialogs.LocomotiveListStage;
 import de.wfb.dialogs.PlaceLocomotiveStage;
 import de.wfb.javafxtest.controller.LayoutGridController;
+import de.wfb.javafxtest.controls.CustomGridPane;
+import de.wfb.model.ViewModel;
 import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.RailNode;
@@ -29,6 +32,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
@@ -57,6 +61,12 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 
 	@Autowired
 	private BlockService blockService;
+
+	@Autowired
+	private ViewModel viewModel;
+
+	@Autowired
+	private CustomGridPane customGridPane;
 
 	@Autowired
 	private LocomotiveListStage locomotiveListStage;
@@ -90,6 +100,35 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 		// create MenuItems
 		final MenuItem newItem = new MenuItem("New");
 		final MenuItem openFileItem = new MenuItem("Open File");
+		openFileItem.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(final ActionEvent event) {
+
+				logger.info("Open File Menu clicked!");
+
+				final FileChooser fileChooser = new FileChooser();
+
+				// set extension filter for text files
+				final FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Json files (*.json)",
+						"*.json");
+				fileChooser.getExtensionFilters().add(extFilter);
+
+				// show save file dialog
+				final File file = fileChooser.showOpenDialog(stage);
+				if (file != null) {
+
+					modelFacade.clear();
+					customGridPane.getChildren().clear();
+
+					viewModel.clear();
+
+					modelFacade.loadModel(file.getAbsolutePath());
+					modelFacade.connectModel();
+				}
+			}
+		});
+
 		final MenuItem exitItem = new MenuItem("Exit");
 		exitItem.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -113,7 +152,7 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 
 				// build the routing tables
 				routingService.buildRoutingTables();
-				routingService.colorGraph();
+//				routingService.colorGraph();
 
 				final List<de.wfb.model.node.Node> selectedNodes = modelFacade.getSelectedNodes();
 
@@ -124,7 +163,11 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 					final de.wfb.model.node.Node nodeA = selectedNodes.get(0);
 					final de.wfb.model.node.Node nodeB = selectedNodes.get(1);
 
-					final Route route = routingService.route(nodeA, nodeB);
+					final boolean routeOverReservedNodes = false;
+					final Route route = routingService.route(nodeA, nodeB, routeOverReservedNodes);
+
+					logger.info(route);
+
 					if (CollectionUtils.isNotEmpty(route.getGraphNodes())) {
 
 						routingService.highlightRoute(route);

@@ -91,8 +91,6 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 			}
 
 			modelFacade.addNode(selectionEvent.getX(), selectionEvent.getY(), currentShapeType);
-
-			modelFacade.storeModel(modelFacade.getCurrentModel());
 			break;
 		}
 	}

@@ -17,6 +17,7 @@ import de.wfb.model.DefaultModel;
 import de.wfb.model.Model;
 import de.wfb.model.node.DefaultRailNodeFactory;
 import de.wfb.model.node.RailNode;
+import de.wfb.rail.service.Route;
 import de.wfb.rail.service.TurnoutService;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,16 +37,9 @@ public class DefaultRoutingServiceTest {
 
 		final Model model = new DefaultModel();
 
-//		Mockito.doNothing().when(modelService).sendModelChangedEvent(any(RailNode.class));
-//		when(modelService.sendModelChangedEvent(any(RailNode.class))).doNothing();
-
 		doNothing().when(modelService).sendModelChangedEvent(any(RailNode.class));
 		modelService.setApplicationEventPublisher(applicationEventPublisher);
 		modelService.setModel(model);
-
-//		when(modelService)
-
-//				Mockito.doNothing().when(turnoutService).queueStateRequest(any(RailNode.class));
 
 		final DefaultRailNodeFactory nodePathFactory = new DefaultRailNodeFactory();
 		nodePathFactory.setTurnoutService(turnoutService);
@@ -81,6 +75,15 @@ public class DefaultRoutingServiceTest {
 		System.out.println(routingTableAsString4);
 		System.out.println("");
 		System.out.println(railNode4.getGraphNodeOne().dumpSwitchingTable());
+
+		final RailNode railNodeStart = (RailNode) modelService.getNodeById(0);
+		final RailNode railNodeEnd = (RailNode) modelService.getNodeById(8);
+
+		final boolean routeOverReservedNodes = false;
+		final Route route = defaultRoutingService.route(railNodeStart.getGraphNodeOne(), railNodeEnd.getGraphNodeOne(),
+				routeOverReservedNodes);
+
+		System.out.println(route);
 	}
 
 }

@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import de.wfb.model.GridElement;
 import de.wfb.model.node.Node;
 import de.wfb.rail.events.ModelChangedEvent;
 import de.wfb.rail.factory.Factory;
@@ -11,7 +12,7 @@ import de.wfb.rail.ui.ShapeType;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 
-public class GridElementFactory implements Factory<GridElement> {
+public class GridElementFactory implements Factory<GridElement<SVGPath, Text>> {
 
 	private static final Logger logger = LogManager.getLogger(GridElementFactory.class);
 
@@ -19,7 +20,7 @@ public class GridElementFactory implements Factory<GridElement> {
 	private Factory<SVGPath> svgPathFactory;
 
 	@Override
-	public GridElement create(final Object... args) throws Exception {
+	public GridElement<SVGPath, Text> create(final Object... args) throws Exception {
 
 		final Node node = (Node) args[0];
 		final ModelChangedEvent modelChangedEvent = (ModelChangedEvent) args[1];
@@ -66,8 +67,6 @@ public class GridElementFactory implements Factory<GridElement> {
 
 			svgPathNew.setLayoutX(modelChangedEvent.getX() * cellWidth);
 			svgPathNew.setLayoutY(modelChangedEvent.getY() * cellWidth);
-
-			// TODO: 1. move this into the factory
 
 			// render the feedback block number onto the layout
 			Text text = null;
@@ -120,7 +119,7 @@ public class GridElementFactory implements Factory<GridElement> {
 				text.setLayoutY(y);
 			}
 
-			final GridElement gridElement = new GridElement(svgPathNew, text);
+			final GridElement<SVGPath, Text> gridElement = new DefaultGridElement(svgPathNew, text);
 
 			return gridElement;
 

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.node.Direction;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
 import de.wfb.model.node.RailNode;
@@ -32,7 +33,19 @@ public class RailDetailsPane extends GridPane {
 
 	private TextField feedbackBlockNumberTextfield;
 
-	private Button savebutton;
+	private Label traverseDirectionLabel;
+
+	private Button northButton;
+
+	private Button eastButton;
+
+	private Button southButton;
+
+	private Button westButton;
+
+	private Button allButton;
+
+	private Button saveButton;
 
 	@Autowired
 	private ModelFacade modelFacade;
@@ -45,16 +58,123 @@ public class RailDetailsPane extends GridPane {
 			return;
 		}
 
-		GridPane.setColumnIndex(idLabel, 1);
-		GridPane.setRowIndex(idLabel, 1);
+		idData(node);
+		feedbackBlockData(node);
+		traverseDirectionData(node);
 
-		idValueLabel = new Label();
-		final String idValue = retrieveRailNodeLabel(node);
-		idValueLabel.setText(idValue);
-		GridPane.setColumnIndex(idValueLabel, 2);
-		GridPane.setRowIndex(idValueLabel, 1);
+		saveButton = new Button();
+		saveButton.setText("Save");
+		GridPane.setColumnIndex(saveButton, 1);
+		GridPane.setRowIndex(saveButton, 10);
+		saveButton.setOnAction(new EventHandler<ActionEvent>() {
 
-		getChildren().addAll(idLabel, idValueLabel);
+			@Override
+			public void handle(final ActionEvent e) {
+
+				// feedback block number
+				final String feedbackBlockNumberTextfieldContent = feedbackBlockNumberTextfield.getText();
+				final int feedbackBlockNumber = NumberUtils.toInt(feedbackBlockNumberTextfieldContent,
+						Integer.MIN_VALUE);
+				if (feedbackBlockNumber != Integer.MIN_VALUE) {
+
+					logger.info("Saving feedbackBlockNumber " + feedbackBlockNumber);
+					node.setFeedbackBlockNumber(feedbackBlockNumber);
+				}
+
+				// direction
+				final RailNode railNode = (RailNode) node;
+				railNode.updateBlockedGraphNode();
+
+			}
+		});
+		getChildren().add(saveButton);
+	}
+
+	private void traverseDirectionData(final Node node) {
+
+		traverseDirectionLabel = new Label("Traversable Direction:");
+		GridPane.setColumnIndex(traverseDirectionLabel, 1);
+		GridPane.setRowIndex(traverseDirectionLabel, 3);
+		getChildren().addAll(traverseDirectionLabel);
+
+		// NORTH
+		northButton = new Button("North");
+		GridPane.setColumnIndex(northButton, 1);
+		GridPane.setRowIndex(northButton, 4);
+		northButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(final ActionEvent e) {
+
+				logger.info("NORTH");
+				node.setTraverse(Direction.NORTH);
+			}
+		});
+		getChildren().add(northButton);
+
+		// EAST
+		eastButton = new Button("East");
+		GridPane.setColumnIndex(eastButton, 1);
+		GridPane.setRowIndex(eastButton, 5);
+		eastButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(final ActionEvent e) {
+
+				logger.info("EAST");
+				node.setTraverse(Direction.EAST);
+			}
+		});
+		getChildren().add(eastButton);
+
+		// SOUTH
+		southButton = new Button("South");
+		GridPane.setColumnIndex(southButton, 1);
+		GridPane.setRowIndex(southButton, 6);
+		southButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(final ActionEvent e) {
+
+				logger.info("SOUTH");
+				node.setTraverse(Direction.SOUTH);
+			}
+		});
+		getChildren().add(southButton);
+
+		// WEST
+		westButton = new Button("West");
+		GridPane.setColumnIndex(westButton, 1);
+		GridPane.setRowIndex(westButton, 7);
+		westButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(final ActionEvent e) {
+
+				logger.info("WEST");
+				node.setTraverse(Direction.WEST);
+			}
+		});
+		getChildren().add(westButton);
+
+		// ALL
+		allButton = new Button("All");
+		GridPane.setColumnIndex(allButton, 1);
+		GridPane.setRowIndex(allButton, 8);
+		allButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(final ActionEvent e) {
+
+				logger.info("ALL");
+				node.setTraverse(null);
+			}
+		});
+		getChildren().add(allButton);
+
+	}
+
+	private void feedbackBlockData(final Node node) {
 
 		GridPane.setColumnIndex(feedbackBlockNumberTextfieldLabel, 1);
 		GridPane.setRowIndex(feedbackBlockNumberTextfieldLabel, 2);
@@ -67,28 +187,22 @@ public class RailDetailsPane extends GridPane {
 		GridPane.setRowIndex(feedbackBlockNumberTextfield, 2);
 
 		getChildren().addAll(feedbackBlockNumberTextfieldLabel, feedbackBlockNumberTextfield);
+	}
 
-		savebutton = new Button();
-		savebutton.setText("Save");
-		GridPane.setColumnIndex(savebutton, 1);
-		GridPane.setRowIndex(savebutton, 3);
-		savebutton.setOnAction(new EventHandler<ActionEvent>() {
+	private void idData(final Node node) {
 
-			@Override
-			public void handle(final ActionEvent e) {
+		// ID label
+		GridPane.setColumnIndex(idLabel, 1);
+		GridPane.setRowIndex(idLabel, 1);
 
-				final String feedbackBlockNumberTextfieldContent = feedbackBlockNumberTextfield.getText();
-				final int feedbackBlockNumber = NumberUtils.toInt(feedbackBlockNumberTextfieldContent,
-						Integer.MIN_VALUE);
-				if (feedbackBlockNumber != Integer.MIN_VALUE) {
+		// ID data
+		idValueLabel = new Label();
+		final String idValue = retrieveRailNodeLabel(node);
+		idValueLabel.setText(idValue);
+		GridPane.setColumnIndex(idValueLabel, 2);
+		GridPane.setRowIndex(idValueLabel, 1);
 
-					logger.info("Saving feedbackBlockNumber " + feedbackBlockNumber);
-					node.setFeedbackBlockNumber(feedbackBlockNumber);
-				}
-			}
-		});
-		getChildren().add(savebutton);
-
+		getChildren().addAll(idLabel, idValueLabel);
 	}
 
 	private String retrieveRailNodeLabel(final Node node) {
@@ -166,11 +280,44 @@ public class RailDetailsPane extends GridPane {
 			feedbackBlockNumberTextfield = null;
 		}
 
-		if (savebutton != null) {
+		if (saveButton != null) {
 
-			getChildren().remove(savebutton);
-			savebutton = null;
+			getChildren().remove(saveButton);
+			saveButton = null;
 		}
+
+		if (northButton != null) {
+
+			getChildren().remove(northButton);
+			northButton = null;
+		}
+		if (eastButton != null) {
+
+			getChildren().remove(eastButton);
+			eastButton = null;
+		}
+		if (southButton != null) {
+
+			getChildren().remove(southButton);
+			southButton = null;
+		}
+		if (westButton != null) {
+
+			getChildren().remove(westButton);
+			westButton = null;
+		}
+		if (allButton != null) {
+
+			getChildren().remove(allButton);
+			allButton = null;
+		}
+
+		if (traverseDirectionLabel != null) {
+
+			getChildren().remove(traverseDirectionLabel);
+			traverseDirectionLabel = null;
+		}
+
 	}
 
 }

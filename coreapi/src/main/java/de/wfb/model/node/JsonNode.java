@@ -13,15 +13,14 @@ public class JsonNode {
 
 	private int y;
 
-	private final List<Integer> leftList = new ArrayList<>();
-
-	private final List<Integer> rightList = new ArrayList<>();
-
 	private Integer protocolTurnoutId;
 
 	private final List<Integer> manualConnections = new ArrayList<>();
 
 	private int feedbackBlockNumber;
+
+	/** Null means traversable in all directions */
+	private Direction traverse = null;
 
 	public int getId() {
 		return id;
@@ -55,14 +54,6 @@ public class JsonNode {
 		this.y = y;
 	}
 
-	public List<Integer> getLeftList() {
-		return leftList;
-	}
-
-	public List<Integer> getRightList() {
-		return rightList;
-	}
-
 	public Integer getProtocolTurnoutId() {
 		return protocolTurnoutId;
 	}
@@ -81,6 +72,14 @@ public class JsonNode {
 
 	public void setFeedbackBlockNumber(final int feedbackBlockNumber) {
 		this.feedbackBlockNumber = feedbackBlockNumber;
+	}
+
+	public Direction getTraverse() {
+		return traverse;
+	}
+
+	public void setTraverse(final Direction traverse) {
+		this.traverse = traverse;
 	}
 
 }
