@@ -144,30 +144,18 @@ public class DefaultLocomotive {
 	public void start(final double speed) {
 
 		this.speed = speed;
-
 		protocolFacade.throttleLocomotive(address, speed, direction);
 	}
 
 	public void stop() {
 
+		// if the speed is set to 0.0d and the reverse direction is used,
+		// locomotives appruptly stop! This is unrealistic. The direction
+		// has to be choosen as the direction the locomotive is currently going!
+		// This causes the decoder to apply it's configured speed curved to bring
+		// the locomotive to a smooth, realistic halt.
 		speed = 0.0d;
 		protocolFacade.throttleLocomotive(address, speed, direction);
-
-//		while (speed > 0.0d) {
-//
-//			speed -= 3.0d;
-//			if (speed < 0.0d) {
-//				speed = 0.0d;
-//			}
-//
-//			protocolFacade.throttleLocomotive(address, speed, direction);
-//			try {
-//				Thread.sleep(300);
-//			} catch (final InterruptedException e) {
-//				// nop
-//			}
-//		}
-
 	}
 
 	public boolean isDirection() {

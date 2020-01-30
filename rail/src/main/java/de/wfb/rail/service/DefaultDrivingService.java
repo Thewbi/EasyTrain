@@ -285,10 +285,54 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		freeRouteExceptUpToBlock(enteredBlock, locomotive);
 
 		// try to reserve the next section
-		final boolean nextSectionIsReserved = reserveUpToIncludingNextBlock(locomotive);
+		final Block nextBlock = reserveUpToIncludingNextBlock(locomotive);
+		final boolean nextSectionIsReserved = (nextBlock != null);
 		if (nextSectionIsReserved) {
 
 			logger.info("Could reserve up to next block");
+
+			// Slow down the locomotive to 20% of is driving speed when the locomotive is
+			// approaching the last block of it's route.
+			//
+			// This is important because some blocks on the real layout are designed very,
+			// very short.
+			//
+			// If decoder speed curves are very flat, the locomotive will take some time to
+			// actually come to a halt. If the block is short and the locomotive
+			// takes a long time to stop, the locomotive exits the block before it even
+			// stops.
+			//
+			// This is not a problem per se because UNLESS THE LOCOMOTIVE RUNS OVER A
+			// TURNOUT, the current block still remains reserved for the locomotive and the
+			// system still correctly keeps track of the locomotive. It cannot be anywhere
+			// else but in close vincinity to the block because there was no turnout nearby.
+			//
+			// The real problem occurs if THERE IS A TURNOUT directly after the LAST BLOCK
+			// OF A ROUTE! The locomotive might run past that turnout and stop. Now the
+			// system has lost track of where the locomotive actually is! It has lost track
+			// because it does not take the slow down into account. For the system, the
+			// locomotive now is located on the block still and has not run past a switch!
+			// The routing algorithm will start computing routes from the last block of the
+			// last route and not from the actual location of the locomotive on the real
+			// layout which makes a difference in this situation!
+			//
+			// If the user starts a new route in that inconsistent situation, the locomotive
+			// is already passed a turnout.
+			// If the new route needs that exact turnout to change direction (thrown or
+			// closed) then the locomotive is literaly on the wrong track (No pun intended!)
+			// The system has no way of telling what happened, it assumes the routing is
+			// correct ant it will make the locomotive go and wait for it to arrive
+			// at the next block which might never happen because the locomotive run over
+			// a incorrectly setup turnout.
+			//
+			// By slowing down the locomotive, the hopes are that the locomotive stops
+			// on the last block of a route before going over the next turnout. That way,
+			// the system assumes a location that actually matches the real situation.
+			// Routing still works correctly.
+			if (route.endsWith(nextBlock)) {
+
+				locomotiveGo(locomotive, DRIVING_SPEED / 100.0d * 20.0d);
+			}
 
 		} else {
 
@@ -306,7 +350,8 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 		logger.info(route);
 
-		if (!reserveUpToIncludingNextBlock(locomotive)) {
+		final Block nextBlock = reserveUpToIncludingNextBlock(locomotive);
+		if (nextBlock == null) {
 
 			logger.info("Could not reserve up to next block");
 
@@ -317,10 +362,10 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 		logger.info(route);
 
-		locomotiveGo(locomotive);
+		locomotiveGo(locomotive, DRIVING_SPEED);
 	}
 
-	private void locomotiveGo(final DefaultLocomotive locomotive) {
+	private void locomotiveGo(final DefaultLocomotive locomotive, final double speed) {
 
 		logger.info(">>>>>>>>>> GO Locomotive GO! locomotive ID: " + locomotive.getId());
 
@@ -342,7 +387,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		logger.info("Locomotive GO Address: " + address);
 
 		locomotive.setDirection(forward);
-		locomotive.start(DRIVING_SPEED);
+		locomotive.start(speed);
 	}
 
 	private void locomotiveStop(final DefaultLocomotive locomotive) {
@@ -470,9 +515,9 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 			}
 
 			// make this locomotive reserve it's path and start it
-			if (reserveUpToIncludingNextBlock(tempLocomotive)) {
+			if (reserveUpToIncludingNextBlock(tempLocomotive) != null) {
 
-				locomotiveGo(tempLocomotive);
+				locomotiveGo(tempLocomotive, DRIVING_SPEED);
 			}
 		}
 	}
@@ -498,13 +543,13 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 	 * @param locomotive
 	 * @return
 	 */
-	private boolean reserveUpToIncludingNextBlock(final DefaultLocomotive locomotive) {
+	private Block reserveUpToIncludingNextBlock(final DefaultLocomotive locomotive) {
 
 		logger.info("reserveUpToIncludingNextBlock()");
 
 		final Route route = locomotive.getRoute();
 		if (route == null) {
-			return false;
+			return null;
 		}
 
 		// find the next block on the route
@@ -512,7 +557,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		if (nextBlock == null) {
 
 			logger.info("No next node!");
-			return false;
+			return null;
 		}
 		logger.info("Next Block.ID: " + nextBlock.getId());
 
@@ -520,7 +565,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 		// check if the nodes are free
 		if (!checkNodes(locomotive, nextBlock)) {
-			return false;
+			return null;
 		}
 
 		// reserve the nodes
@@ -529,7 +574,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		// switch the turnouts on this section of the route
 		switchTurnouts(locomotive, currentBlock, nextBlock);
 
-		return true;
+		return nextBlock;
 	}
 
 	private void switchTurnouts(final DefaultLocomotive locomotive, final Block currentBlock, final Block nextBlock) {
