@@ -163,8 +163,9 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 					final de.wfb.model.node.Node nodeA = selectedNodes.get(0);
 					final de.wfb.model.node.Node nodeB = selectedNodes.get(1);
 
+					final DefaultLocomotive locomotive = null;
 					final boolean routeOverReservedNodes = false;
-					final Route route = routingService.route(nodeA, nodeB, routeOverReservedNodes);
+					final Route route = routingService.route(locomotive, nodeA, nodeB, routeOverReservedNodes);
 
 					logger.info(route);
 

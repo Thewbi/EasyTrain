@@ -26,53 +26,16 @@ public abstract class BaseNode implements Node {
 
 	private final List<Node> rightList = new ArrayList<>();
 
-	public int getX() {
-		return x;
-	}
+	/**
+	 * I think some of the turnouts are hooked up incorrectly and the software has
+	 * to reverse their state to account for the inverted cabeling so that the
+	 * virtual layout shows the state that the turnout actually has on the real
+	 * layout.
+	 */
+	private Boolean flipped;
 
-	public void setX(final int x) {
-		this.x = x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public void setY(final int y) {
-		this.y = y;
-	}
-
-	public ShapeType getShapeType() {
-		return shapeType;
-	}
-
-	public void setShapeType(final ShapeType shapeType) {
-		this.shapeType = shapeType;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(final int id) {
-		this.id = id;
-	}
-
-	public List<Node> getLeftList() {
-		return leftList;
-	}
-
-	public List<Node> getRightList() {
-		return rightList;
-	}
-
-	public Boolean isHorizontal() {
-		return horizontal;
-	}
-
-	public void setHorizontal(final Boolean horizontal) {
-		this.horizontal = horizontal;
-	}
+	@Override
+	public abstract void connect(final Model model);
 
 	@Override
 	public String toString() {
@@ -101,6 +64,74 @@ public abstract class BaseNode implements Node {
 		return true;
 	}
 
-	public abstract void connect(final Model model);
+	@Override
+	public int getX() {
+		return x;
+	}
+
+	@Override
+	public void setX(final int x) {
+		this.x = x;
+	}
+
+	@Override
+	public int getY() {
+		return y;
+	}
+
+	@Override
+	public void setY(final int y) {
+		this.y = y;
+	}
+
+	@Override
+	public ShapeType getShapeType() {
+		return shapeType;
+	}
+
+	@Override
+	public void setShapeType(final ShapeType shapeType) {
+		this.shapeType = shapeType;
+	}
+
+	@Override
+	public int getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(final int id) {
+		this.id = id;
+	}
+
+	public List<Node> getLeftList() {
+		return leftList;
+	}
+
+	public List<Node> getRightList() {
+		return rightList;
+	}
+
+	public Boolean isHorizontal() {
+		return horizontal;
+	}
+
+	public void setHorizontal(final Boolean horizontal) {
+		this.horizontal = horizontal;
+	}
+
+	@Override
+	public Boolean isFlipped() {
+		return flipped;
+	}
+
+	@Override
+	public void setFlipped(final Boolean flipped) {
+		this.flipped = flipped;
+//		this.flipped = null;
+//		if (flipped == true) {
+//			this.flipped = flipped;
+//		}
+	}
 
 }

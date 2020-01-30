@@ -173,7 +173,7 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 
 				if (nodeOptional.isEmpty()) {
 
-					logger.info("Node is null!");
+					logger.trace("Node is null!");
 
 					// remove
 					final GridElement<SVGPath, Text> gridElement = viewModel.getViewModel()[modelChangedEvent

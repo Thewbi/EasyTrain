@@ -37,6 +37,7 @@ public class XTrntStatusMenuItem extends MenuItem implements ApplicationListener
 
 		super(title);
 
+		// determine the turnoutStatus (thrown or closed) of the currently selected node
 		setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -44,6 +45,7 @@ public class XTrntStatusMenuItem extends MenuItem implements ApplicationListener
 
 				logger.info("xTrntStatusMenuItem node : " + node);
 
+				// DEBUG
 				if (node != null) {
 
 					final boolean isThrown = protocolFacade.turnoutStatus(node.getProtocolTurnoutId().shortValue());

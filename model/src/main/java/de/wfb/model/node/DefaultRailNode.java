@@ -803,7 +803,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	@Override
 	public boolean isThrown() {
-		return thrown;
+		return isFlipped() == null ? thrown : isFlipped() ? !thrown : thrown;
 	}
 
 	@Override

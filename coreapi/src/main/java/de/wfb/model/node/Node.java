@@ -67,4 +67,8 @@ public interface Node {
 
 	void setTraverse(Direction traverse);
 
+	Boolean isFlipped();
+
+	void setFlipped(Boolean flipped);
+
 }

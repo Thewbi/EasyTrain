@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 
+import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.Color;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
@@ -42,7 +43,8 @@ public class DefaultRoutingService implements RoutingService {
 	private ProtocolFacade protocolFacade;
 
 	@Override
-	public Route route(final Node start, final Node end, final boolean routeOverReservedGraphNodes) {
+	public Route route(final DefaultLocomotive locomotive, final Node start, final Node end,
+			final boolean routeOverReservedGraphNodes) {
 
 		GraphNode graphNodeStart = null;
 		GraphNode graphNodeEnd = null;
@@ -55,7 +57,7 @@ public class DefaultRoutingService implements RoutingService {
 
 		logger.trace("GREEN");
 
-		final Route greenRoute = route(graphNodeStart, graphNodeEnd, routeOverReservedGraphNodes);
+		final Route greenRoute = route(locomotive, graphNodeStart, graphNodeEnd, routeOverReservedGraphNodes);
 		if (CollectionUtils.isNotEmpty(greenRoute.getGraphNodes())) {
 
 			return greenRoute;
@@ -69,11 +71,11 @@ public class DefaultRoutingService implements RoutingService {
 
 		logger.trace("BLUE");
 
-		return route(graphNodeStart, graphNodeEnd, routeOverReservedGraphNodes);
+		return route(locomotive, graphNodeStart, graphNodeEnd, routeOverReservedGraphNodes);
 	}
 
 	@Override
-	public Route route(final GraphNode graphNodeStart, final GraphNode graphNodeEnd,
+	public Route route(final DefaultLocomotive locomotive, final GraphNode graphNodeStart, final GraphNode graphNodeEnd,
 			final boolean routeOverReservedGraphNodes) {
 
 		final List<GraphNode> nodeList = new ArrayList<>();
@@ -103,7 +105,7 @@ public class DefaultRoutingService implements RoutingService {
 				final GraphNode child = currentNodeGraphNode.getChildren().get(0);
 
 				// if the node cannot be traversed, backtrack to the next option
-				if (!canTraverseGraphNode(child, routeOverReservedGraphNodes)) {
+				if (!canTraverseGraphNode(locomotive, child, routeOverReservedGraphNodes)) {
 
 					currentNodeGraphNode = backtrack(switchingNodeStack, nodeList);
 
@@ -192,10 +194,22 @@ public class DefaultRoutingService implements RoutingService {
 		return topMostSwitchingFrame.getOtherOption();
 	}
 
-	private boolean canTraverseGraphNode(final GraphNode graphNode, final boolean routeOverReservedGraphNodes) {
+	private boolean canTraverseGraphNode(final DefaultLocomotive locomotive, final GraphNode graphNode,
+			final boolean routeOverReservedGraphNodes) {
 
-		// build routes over reserved graphnodes or not
-		if (graphNode.getRailNode().isReserved() && !routeOverReservedGraphNodes) {
+		final Node railNode = graphNode.getRailNode();
+
+		final boolean graphNodeIsReserved = railNode.isReserved();
+
+		boolean reservedForLocomotive = false;
+		if (locomotive != null) {
+			reservedForLocomotive = railNode.getReservedLocomotiveId() == locomotive.getId();
+		}
+
+		// build routes over reserved graphnodes
+		// if the block is reserved for the locomotive for which this route is
+		// created, then there is no problem and the route can pass the node!
+		if (graphNodeIsReserved && reservedForLocomotive && !routeOverReservedGraphNodes) {
 			return false;
 		}
 

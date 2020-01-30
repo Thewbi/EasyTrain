@@ -28,6 +28,7 @@ public class DefaultJsonNodeConverter implements Converter<Node, JsonNode> {
 		target.setProtocolTurnoutId(source.getProtocolTurnoutId());
 		target.setFeedbackBlockNumber(source.getFeedbackBlockNumber());
 		target.setTraverse(source.getTraverse());
+		target.setFlipped(source.isFlipped());
 
 		// manual connections
 		final DefaultRailNode defaultRailNode = (DefaultRailNode) source;
@@ -36,7 +37,6 @@ public class DefaultJsonNodeConverter implements Converter<Node, JsonNode> {
 		if (CollectionUtils.isNotEmpty(manualConnections)) {
 
 			logger.trace("manualConnections.size(): " + manualConnections.size());
-
 			logger.trace("ManualConnection found!");
 
 			for (final RailNode railNode : manualConnections) {

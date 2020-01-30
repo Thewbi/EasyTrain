@@ -69,7 +69,7 @@ public class DefaultModelFacade implements ModelFacade {
 
 	@Override
 	public void loadLocomotivesModel(final String locomotivesModelFile) {
-		modelService.loadModel(locomotivesModelFile);
+		modelService.loadLocomotivesModel(locomotivesModelFile);
 	}
 
 	@Override

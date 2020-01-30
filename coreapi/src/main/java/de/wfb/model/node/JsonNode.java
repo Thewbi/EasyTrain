@@ -22,6 +22,8 @@ public class JsonNode {
 	/** Null means traversable in all directions */
 	private Direction traverse = null;
 
+	private Boolean flipped;
+
 	public int getId() {
 		return id;
 	}
@@ -80,6 +82,21 @@ public class JsonNode {
 
 	public void setTraverse(final Direction traverse) {
 		this.traverse = traverse;
+	}
+
+	public Boolean isFlipped() {
+		return flipped;
+	}
+
+	public void setFlipped(final Boolean flipped) {
+		this.flipped = flipped;
+	}
+
+	@Override
+	public String toString() {
+		return "JsonNode [id=" + id + ", shapeType=" + shapeType + ", x=" + x + ", y=" + y + ", protocolTurnoutId="
+				+ protocolTurnoutId + ", manualConnections=" + manualConnections + ", feedbackBlockNumber="
+				+ feedbackBlockNumber + ", traverse=" + traverse + ", flipped=" + flipped + "]";
 	}
 
 }

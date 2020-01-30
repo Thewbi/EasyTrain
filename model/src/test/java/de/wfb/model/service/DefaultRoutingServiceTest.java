@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import de.wfb.model.DefaultModel;
 import de.wfb.model.Model;
+import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.DefaultRailNodeFactory;
 import de.wfb.model.node.RailNode;
 import de.wfb.rail.service.Route;
@@ -79,9 +80,10 @@ public class DefaultRoutingServiceTest {
 		final RailNode railNodeStart = (RailNode) modelService.getNodeById(0);
 		final RailNode railNodeEnd = (RailNode) modelService.getNodeById(8);
 
+		final DefaultLocomotive locomotive = null;
 		final boolean routeOverReservedNodes = false;
-		final Route route = defaultRoutingService.route(railNodeStart.getGraphNodeOne(), railNodeEnd.getGraphNodeOne(),
-				routeOverReservedNodes);
+		final Route route = defaultRoutingService.route(locomotive, railNodeStart.getGraphNodeOne(),
+				railNodeEnd.getGraphNodeOne(), routeOverReservedNodes);
 
 		System.out.println(route);
 	}

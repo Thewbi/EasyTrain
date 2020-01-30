@@ -159,7 +159,7 @@ public class BlockNavigationPane extends HBox {
 				}
 
 				// create a route
-				final Route route = createRoute(endBlock, startGraphNode);
+				final Route route = createRoute(locomotive, endBlock, startGraphNode);
 				if (route == null) {
 
 					logger.info("Route is null!");
@@ -187,7 +187,8 @@ public class BlockNavigationPane extends HBox {
 
 			}
 
-			private Route createRoute(final Block endBlock, final GraphNode startGraphNode) {
+			private Route createRoute(final DefaultLocomotive locomotive, final Block endBlock,
+					final GraphNode startGraphNode) {
 
 				final boolean routeOverReservedNodes = false;
 
@@ -195,7 +196,7 @@ public class BlockNavigationPane extends HBox {
 
 				Route routeA = null;
 				try {
-					routeA = routingService.route(startGraphNode, endRailNode.getGraphNodeOne(),
+					routeA = routingService.route(locomotive, startGraphNode, endRailNode.getGraphNodeOne(),
 							routeOverReservedNodes);
 				} catch (final Exception e) {
 					;
@@ -203,7 +204,7 @@ public class BlockNavigationPane extends HBox {
 
 				Route routeB = null;
 				try {
-					routeB = routingService.route(startGraphNode, endRailNode.getGraphNodeTwo(),
+					routeB = routingService.route(locomotive, startGraphNode, endRailNode.getGraphNodeTwo(),
 							routeOverReservedNodes);
 				} catch (final Exception e) {
 					;

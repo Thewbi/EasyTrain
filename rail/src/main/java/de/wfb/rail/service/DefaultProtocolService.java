@@ -100,31 +100,42 @@ public class DefaultProtocolService implements ProtocolService {
 				return;
 			}
 
-			// TODO: flip flag in turnout nodes!
-			if (node.getProtocolTurnoutId() == 12 || node.getProtocolTurnoutId() == 80) {
-
-				// in order to operate a turnout once (one change of direction)
-				// two commands have to be sent!
-				turnoutCommandFirst(inputStream, outputStream, node.getProtocolTurnoutId(), !node.isThrown());
-				try {
-					Thread.sleep(100);
-				} catch (final InterruptedException e) {
-					logger.error(e.getMessage(), e);
-				}
-				turnoutCommandSecond(inputStream, outputStream, node.getProtocolTurnoutId(), !node.isThrown());
-
-			} else {
-
-				// in order to operate a turnout once (one change of direction)
-				// two commands have to be sent!
-				turnoutCommandFirst(inputStream, outputStream, node.getProtocolTurnoutId(), node.isThrown());
-				try {
-					Thread.sleep(100);
-				} catch (final InterruptedException e) {
-					logger.error(e.getMessage(), e);
-				}
-				turnoutCommandSecond(inputStream, outputStream, node.getProtocolTurnoutId(), node.isThrown());
+			// in order to operate a turnout once (one change of direction)
+			// two commands have to be sent!
+			turnoutCommandFirst(inputStream, outputStream, node.getProtocolTurnoutId(), node.isThrown());
+			try {
+				Thread.sleep(100);
+			} catch (final InterruptedException e) {
+				logger.error(e.getMessage(), e);
 			}
+			turnoutCommandSecond(inputStream, outputStream, node.getProtocolTurnoutId(), node.isThrown());
+
+//			// TODO: flip flag in turnout nodes!
+//			asdf
+//			if (node.getProtocolTurnoutId() == 12 || node.getProtocolTurnoutId() == 80) {
+//
+//				// in order to operate a turnout once (one change of direction)
+//				// two commands have to be sent!
+//				turnoutCommandFirst(inputStream, outputStream, node.getProtocolTurnoutId(), !node.isThrown());
+//				try {
+//					Thread.sleep(100);
+//				} catch (final InterruptedException e) {
+//					logger.error(e.getMessage(), e);
+//				}
+//				turnoutCommandSecond(inputStream, outputStream, node.getProtocolTurnoutId(), !node.isThrown());
+//
+//			} else {
+//
+//				// in order to operate a turnout once (one change of direction)
+//				// two commands have to be sent!
+//				turnoutCommandFirst(inputStream, outputStream, node.getProtocolTurnoutId(), node.isThrown());
+//				try {
+//					Thread.sleep(100);
+//				} catch (final InterruptedException e) {
+//					logger.error(e.getMessage(), e);
+//				}
+//				turnoutCommandSecond(inputStream, outputStream, node.getProtocolTurnoutId(), node.isThrown());
+//			}
 
 		} catch (final Exception e) {
 
@@ -158,12 +169,15 @@ public class DefaultProtocolService implements ProtocolService {
 			final P50XXTrntStsCommand command = turnoutStatusCommand(inputStream, outputStream, protocolId);
 			logger.trace("executing turnoutStatusCommand done. Thrown: " + command.isThrown());
 
-			// TODO: flip flag in turnout nodes!
-			if ((protocolId == 12) || (protocolId == 80)) {
-				return !command.isThrown();
-			} else {
-				return command.isThrown();
-			}
+			return command.isThrown();
+
+//			// TODO: flip flag in turnout nodes!
+//			asdf
+//			if ((protocolId == 12) || (protocolId == 80)) {
+//				return !command.isThrown();
+//			} else {
+//				return command.isThrown();
+//			}
 
 		} catch (final Exception e) {
 

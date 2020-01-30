@@ -1,5 +1,6 @@
 package de.wfb.model.node;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,14 +45,28 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 
 	private RailNode createFromJsonNode(final JsonNode jsonNode) throws Exception {
 
+		final int id = jsonNode.getId();
 		final int x = jsonNode.getX();
 		final int y = jsonNode.getY();
-		final ShapeType shapeType = ShapeType.valueOf(jsonNode.getShapeType());
-		final int id = jsonNode.getId();
+
+		final String shapeTypeAsString = jsonNode.getShapeType();
+		ShapeType shapeType = ShapeType.NONE;
+		if (StringUtils.isNotBlank(shapeTypeAsString)) {
+
+			shapeType = ShapeType.valueOf(shapeTypeAsString);
+
+		} else {
+
+			logger.error("jsonNode ID: " + id + " has no shape type!");
+
+		}
+
 		final int feebackBlockNumber = jsonNode.getFeedbackBlockNumber();
 		final Direction traverse = jsonNode.getTraverse();
+		final Boolean isFlipped = jsonNode.isFlipped();
 
-		final RailNode node = createFromParametersInternal(id, x, y, shapeType, feebackBlockNumber, traverse);
+		final RailNode node = createFromParametersInternal(id, x, y, shapeType, feebackBlockNumber, traverse,
+				isFlipped);
 
 		if (ShapeType.isTurnout(shapeType)) {
 
@@ -79,11 +94,17 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			traverse = (Direction) args[4];
 		}
 
-		return createFromParametersInternal(idService.getNextId(), x, y, shapeType, feedbackBlockNumber, traverse);
+		boolean flipped = false;
+		if (args.length > 5) {
+			flipped = (boolean) args[5];
+		}
+
+		return createFromParametersInternal(idService.getNextId(), x, y, shapeType, feedbackBlockNumber, traverse,
+				flipped);
 	}
 
 	private RailNode createFromParametersInternal(final int id, final int x, final int y, final ShapeType shapeType,
-			final int feedbackBlockNumber, final Direction traverse) throws Exception {
+			final int feedbackBlockNumber, final Direction traverse, final Boolean flipped) throws Exception {
 
 		RailNode railNode = null;
 		GraphNode graphNodeOne = null;
@@ -294,6 +315,7 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 			railNode.setFeedbackBlockNumber(feedbackBlockNumber);
+			railNode.setFlipped(flipped);
 
 			graphNodeOne = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeOne(graphNodeOne);
@@ -325,7 +347,8 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			break;
 
 		case SWITCH_RIGHT_0:
-			railNode = createFromParametersInternal(id, x, y, ShapeType.SWITCH_LEFT_0, feedbackBlockNumber, traverse);
+			railNode = createFromParametersInternal(id, x, y, ShapeType.SWITCH_LEFT_0, feedbackBlockNumber, traverse,
+					flipped);
 			railNode.setShapeType(ShapeType.SWITCH_RIGHT_0);
 			temp = railNode.getNorthEdge();
 			temp.setDirection(Direction.SOUTH);
@@ -341,6 +364,7 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 			railNode.setFeedbackBlockNumber(feedbackBlockNumber);
+			railNode.setFlipped(flipped);
 
 			graphNodeOne = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeOne(graphNodeOne);
@@ -372,7 +396,8 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			break;
 
 		case SWITCH_RIGHT_90:
-			railNode = createFromParametersInternal(id, x, y, ShapeType.SWITCH_LEFT_90, feedbackBlockNumber, traverse);
+			railNode = createFromParametersInternal(id, x, y, ShapeType.SWITCH_LEFT_90, feedbackBlockNumber, traverse,
+					flipped);
 			railNode.setShapeType(ShapeType.SWITCH_RIGHT_90);
 			temp = railNode.getEastEdge();
 			temp.setDirection(Direction.WEST);
@@ -388,6 +413,7 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 			railNode.setFeedbackBlockNumber(feedbackBlockNumber);
+			railNode.setFlipped(flipped);
 
 			graphNodeOne = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeOne(graphNodeOne);
@@ -419,7 +445,8 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			break;
 
 		case SWITCH_RIGHT_180:
-			railNode = createFromParametersInternal(id, x, y, ShapeType.SWITCH_LEFT_180, feedbackBlockNumber, traverse);
+			railNode = createFromParametersInternal(id, x, y, ShapeType.SWITCH_LEFT_180, feedbackBlockNumber, traverse,
+					flipped);
 			railNode.setShapeType(ShapeType.SWITCH_RIGHT_180);
 			temp = railNode.getSouthEdge();
 			temp.setDirection(Direction.NORTH);
@@ -435,6 +462,7 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			railNode.setId(id);
 			railNode.setShapeType(shapeType);
 			railNode.setFeedbackBlockNumber(feedbackBlockNumber);
+			railNode.setFlipped(flipped);
 
 			graphNodeOne = graphNodeFactory.create(railNode);
 			railNode.setGraphNodeOne(graphNodeOne);
@@ -466,7 +494,8 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			break;
 
 		case SWITCH_RIGHT_270:
-			railNode = createFromParametersInternal(id, x, y, ShapeType.SWITCH_LEFT_270, feedbackBlockNumber, traverse);
+			railNode = createFromParametersInternal(id, x, y, ShapeType.SWITCH_LEFT_270, feedbackBlockNumber, traverse,
+					flipped);
 			railNode.setShapeType(ShapeType.SWITCH_RIGHT_270);
 			temp = railNode.getWestEdge();
 			temp.setDirection(Direction.EAST);

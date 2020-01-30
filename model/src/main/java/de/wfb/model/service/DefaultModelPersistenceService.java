@@ -146,7 +146,7 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 			return;
 		}
 
-		final Collection<JsonNode> nodeArray = deserializeJsonNode(pathToModelFile);
+		final Collection<JsonNode> nodeArray = deserializeJsonNodes(pathToModelFile);
 		if (CollectionUtils.isEmpty(nodeArray)) {
 
 			logger.info("'" + Paths.get(pathToModelFile).toAbsolutePath() + "' contains no data!");
@@ -245,7 +245,7 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 		}
 	}
 
-	private Collection<JsonNode> deserializeJsonNode(final String path) throws FileNotFoundException {
+	private Collection<JsonNode> deserializeJsonNodes(final String path) throws FileNotFoundException {
 
 		final JsonReader reader = new JsonReader(new FileReader(path));
 
