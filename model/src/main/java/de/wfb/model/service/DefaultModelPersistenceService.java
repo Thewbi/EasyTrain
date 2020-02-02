@@ -161,6 +161,8 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 		// connect nodes that are manually connected
 		processManualConnections(model, nodeArray);
 
+		// if a RailNode is only passable in a specific direction, set the blocked flag
+		// on the responsible graph node
 		processDirection(model, nodeArray);
 
 		// initialize the ID-Service so it will only return non-used IDs
@@ -172,6 +174,13 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 		}
 	}
 
+	/**
+	 * if a RailNode is only passable in a specific direction, set the blocked flag
+	 * on the responsible graph node
+	 *
+	 * @param model
+	 * @param nodeArray
+	 */
 	private void processDirection(final Model model, final Collection<JsonNode> nodeArray) {
 
 		for (final RailNode railNode : model.getAllRailNodes()) {

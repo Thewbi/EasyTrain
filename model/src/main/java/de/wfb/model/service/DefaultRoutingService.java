@@ -1,5 +1,6 @@
 package de.wfb.model.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -10,6 +11,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,10 @@ import de.wfb.rail.service.Route;
 
 public class DefaultRoutingService implements RoutingService {
 
-	private static final int MAX_ROUTE_FINDING_STEPS = 5000;
+	private static final int MAX_ROUTE_FINDING_STEPS = 15000;
+
+	// private static final boolean DEBUG_ROUTING = true;
+	private static final boolean DEBUG_ROUTING = false;
 
 	private static final Logger logger = LogManager.getLogger(DefaultRoutingService.class);
 
@@ -44,12 +49,13 @@ public class DefaultRoutingService implements RoutingService {
 
 	@Override
 	public Route route(final DefaultLocomotive locomotive, final Node start, final Node end,
-			final boolean routeOverReservedGraphNodes) {
+			final boolean routeOverReservedGraphNodes, final boolean routeOverBlockedFeedbackBlocks) throws Exception {
 
 		GraphNode graphNodeStart = null;
 		GraphNode graphNodeEnd = null;
 
 		// green route
+
 		// @formatter:off
 		graphNodeStart = start.getGraphNodeOne().getColor() == Color.GREEN ? start.getGraphNodeOne() : start.getGraphNodeTwo();
 		graphNodeEnd = end.getGraphNodeOne().getColor() == Color.GREEN ? end.getGraphNodeOne() : end.getGraphNodeTwo();
@@ -57,13 +63,15 @@ public class DefaultRoutingService implements RoutingService {
 
 		logger.trace("GREEN");
 
-		final Route greenRoute = route(locomotive, graphNodeStart, graphNodeEnd, routeOverReservedGraphNodes);
+		final Route greenRoute = route(locomotive, graphNodeStart, graphNodeEnd, routeOverReservedGraphNodes,
+				routeOverBlockedFeedbackBlocks);
 		if (CollectionUtils.isNotEmpty(greenRoute.getGraphNodes())) {
 
 			return greenRoute;
 		}
 
 		// blue route
+
 		// @formatter:off
 		graphNodeStart = start.getGraphNodeOne().getColor() == Color.BLUE ? start.getGraphNodeOne() : start.getGraphNodeTwo();
 		graphNodeEnd = end.getGraphNodeOne().getColor() == Color.BLUE ? end.getGraphNodeOne() : end.getGraphNodeTwo();
@@ -71,18 +79,35 @@ public class DefaultRoutingService implements RoutingService {
 
 		logger.trace("BLUE");
 
-		return route(locomotive, graphNodeStart, graphNodeEnd, routeOverReservedGraphNodes);
+		return route(locomotive, graphNodeStart, graphNodeEnd, routeOverReservedGraphNodes,
+				routeOverBlockedFeedbackBlocks);
 	}
 
 	@Override
 	public Route route(final DefaultLocomotive locomotive, final GraphNode graphNodeStart, final GraphNode graphNodeEnd,
-			final boolean routeOverReservedGraphNodes) {
+			final boolean routeOverReservedGraphNodes, final boolean routeOverBlockedFeedbackBlocks) throws Exception {
+
+		final StringBuffer stringBuffer = new StringBuffer();
+
+		if (DEBUG_ROUTING) {
+
+			final String startMsg = "Route finding GN Start ID: " + graphNodeStart.getId() + " - GN End ID: "
+					+ graphNodeEnd.getId();
+			stringBuffer.append(startMsg).append("\n");
+			logger.info(startMsg);
+		}
 
 		final List<GraphNode> nodeList = new ArrayList<>();
 
 		final Stack<SwitchingFrame> switchingNodeStack = new Stack<>();
 
 		GraphNode currentNodeGraphNode = graphNodeStart;
+
+		if (DEBUG_ROUTING) {
+			if (nodeList.contains(currentNodeGraphNode)) {
+				stringBuffer.append("A - Node contained already! GN ID: " + currentNodeGraphNode.getId() + "\n");
+			}
+		}
 
 		nodeList.add(currentNodeGraphNode);
 
@@ -95,81 +120,193 @@ public class DefaultRoutingService implements RoutingService {
 			loopBreaker--;
 			if (loopBreaker <= 0) {
 
-				throw new RuntimeException("Failed to find Route from " + graphNodeStart.getId() + " TO "
-						+ graphNodeEnd.getId() + " after " + MAX_ROUTE_FINDING_STEPS + " steps!");
+				final String msg = "Failed to find Route from " + graphNodeStart.getId() + " TO " + graphNodeEnd.getId()
+						+ " after " + MAX_ROUTE_FINDING_STEPS + " steps!";
+
+				if (DEBUG_ROUTING) {
+					stringBuffer.append(msg).append("\n");
+				}
+
+				logger.error(msg);
+
+				FileUtils.writeStringToFile(new File("routing_log.txt"), stringBuffer.toString(), "UTF-8");
+
+				throw new Exception(msg);
 			}
 
 			// current node has only one child -> go to that child, current node = child
 			if (currentNodeGraphNode.getChildren().size() == 1) {
 
+				final GraphNode oldNode = currentNodeGraphNode;
+
 				final GraphNode child = currentNodeGraphNode.getChildren().get(0);
 
-				// if the node cannot be traversed, backtrack to the next option
-				if (!canTraverseGraphNode(locomotive, child, routeOverReservedGraphNodes)) {
+				currentNodeGraphNode = goToNode(locomotive, child, routeOverReservedGraphNodes,
+						routeOverBlockedFeedbackBlocks, switchingNodeStack, nodeList, stringBuffer);
+				if (currentNodeGraphNode == null) {
 
-					currentNodeGraphNode = backtrack(switchingNodeStack, nodeList);
+					logger.warn("No route found!");
+					nodeList.clear();
 
-					if (currentNodeGraphNode == null) {
-						logger.warn("No route found!");
-						nodeList.clear();
-						return new Route();
-					}
-
-					nodeList.add(currentNodeGraphNode);
-
-					continue;
+					return new Route();
 				}
 
-				logger.trace("FROM " + currentNodeGraphNode.getId() + " TO " + child.getId());
+				if (DEBUG_ROUTING) {
 
-				currentNodeGraphNode = child;
+					final String temp = oldNode.getId() + " -> " + currentNodeGraphNode.getId();
+					logger.info(temp);
+
+					stringBuffer.append(temp).append("\n");
+				}
+
+				continue;
+			}
+
+			final Set<GraphNode> viaSet = currentNodeGraphNode.getRoutingTable().get(graphNodeEnd.getId());
+			if (CollectionUtils.isEmpty(viaSet)) {
+
+				currentNodeGraphNode = backtrack(switchingNodeStack, nodeList);
+				if (currentNodeGraphNode == null) {
+
+					if (DEBUG_ROUTING) {
+						stringBuffer.append("No route found!").append("\n");
+					}
+
+					logger.warn("No route found!");
+					nodeList.clear();
+
+					if (DEBUG_ROUTING) {
+						FileUtils.writeStringToFile(new File("routing_log.txt"), stringBuffer.toString(), "UTF-8");
+					}
+
+					return new Route();
+				}
+
+				if (nodeList.contains(currentNodeGraphNode)) {
+					stringBuffer.append("B - Node contained already! GN ID: " + currentNodeGraphNode.getId() + "\n");
+				}
 				nodeList.add(currentNodeGraphNode);
+
+				continue;
+			}
+
+			if (viaSet.size() == 1) {
+
+				final GraphNode oldNode = currentNodeGraphNode;
+
+				// go to that one via node
+				currentNodeGraphNode = goToNode(locomotive, viaSet.iterator().next(), routeOverReservedGraphNodes,
+						routeOverBlockedFeedbackBlocks, switchingNodeStack, nodeList, stringBuffer);
+				if (currentNodeGraphNode == null) {
+
+					stringBuffer.append("No route found!").append("\n");
+					logger.warn("No route found!");
+					nodeList.clear();
+
+					FileUtils.writeStringToFile(new File("routing_log.txt"), stringBuffer.toString(), "UTF-8");
+
+					return new Route();
+				}
+
+				if (DEBUG_ROUTING) {
+
+					final String temp = oldNode.getId() + " -> " + currentNodeGraphNode.getId();
+
+					stringBuffer.append(temp).append("\n");
+					logger.info(temp);
+				}
 
 				continue;
 			}
 
 			// current node has more than one child -> look at routing map, go to node that
 			// leads to the end node
-			final Set<GraphNode> viaSet = currentNodeGraphNode.getRoutingTable().get(graphNodeEnd.getId());
-
-			if (CollectionUtils.isEmpty(viaSet) || viaSet.size() != 2) {
-
-				currentNodeGraphNode = backtrack(switchingNodeStack, nodeList);
-
-				if (currentNodeGraphNode == null) {
-					logger.warn("No route found!");
-					nodeList.clear();
-					return new Route();
-				}
-
-				nodeList.add(currentNodeGraphNode);
-
-				continue;
-			}
 
 			final Iterator<GraphNode> iterator = viaSet.iterator();
 			final GraphNode firstOption = iterator.next();
-
 			final GraphNode secondOption = iterator.next();
+
 			final SwitchingFrame switchingFrame = new SwitchingFrame(currentNodeGraphNode, secondOption);
 
-			currentNodeGraphNode = firstOption;
-			nodeList.add(firstOption);
+			if (DEBUG_ROUTING) {
 
-			switchingNodeStack.push(switchingFrame);
+				final String temp = currentNodeGraphNode.getId() + " -> " + firstOption.getId();
+				stringBuffer.append(temp).append("\n");
+				logger.info(temp);
+			}
+
+			currentNodeGraphNode = firstOption;
+			if (nodeList.contains(firstOption)) {
+				stringBuffer.append("C - Node contained already! GN ID: " + currentNodeGraphNode.getId() + "\n");
+
+				currentNodeGraphNode = backtrack(switchingNodeStack, nodeList);
+				continue;
+
+			} else {
+				nodeList.add(firstOption);
+				switchingNodeStack.push(switchingFrame);
+			}
+
 		}
+
+		FileUtils.writeStringToFile(new File("routing_log.txt"), stringBuffer.toString(), "UTF-8");
 
 		return new Route(nodeList);
 	}
 
+	private GraphNode goToNode(final DefaultLocomotive locomotive, final GraphNode node,
+			final boolean routeOverReservedGraphNodes, final boolean routeOverBlockedFeedbackBlocks,
+			final Stack<SwitchingFrame> switchingNodeStack, final List<GraphNode> nodeList,
+			final StringBuffer stringBuffer) {
+
+		// if the node cannot be traversed, backtrack to the next option
+		if (!canTraverseGraphNode(locomotive, node, routeOverReservedGraphNodes, routeOverBlockedFeedbackBlocks)) {
+
+			if (DEBUG_ROUTING) {
+				stringBuffer.append("backtrack");
+			}
+
+			final GraphNode currentNodeGraphNode = backtrack(switchingNodeStack, nodeList);
+			if (currentNodeGraphNode == null) {
+				return currentNodeGraphNode;
+			}
+
+			if (nodeList.contains(currentNodeGraphNode)) {
+
+				if (DEBUG_ROUTING) {
+					stringBuffer.append("D - Node contained already! GN ID: " + currentNodeGraphNode.getId() + "\n");
+				}
+//				throw new RuntimeException("Node contained already!");
+
+				return null;
+			}
+
+			nodeList.add(currentNodeGraphNode);
+
+			return currentNodeGraphNode;
+		}
+
+//		if (DEBUG_ROUTING) {
+//			logger.info(currentNodeGraphNode.getId() + " -> " + child.getId());
+//		}
+
+//		currentNodeGraphNode = child;
+		nodeList.add(node);
+
+		return node;
+	}
+
 	/**
 	 * Removes graphnodes from the nodelist until the graphnode is found that is the
-	 * switching node of the topmost stack element.
+	 * switching node of the topmost stack element.<br />
+	 * <br />
 	 *
 	 * It then removes this topmost stack element and return the second option of
-	 * that stack element
+	 * that stack element<br />
+	 * <br />
 	 *
-	 * If the stack is empty, there is no route
+	 * If the stack is empty, there is no route<br />
+	 * <br />
 	 *
 	 * @param nodeList
 	 * @param switchingNodeStack
@@ -177,6 +314,8 @@ public class DefaultRoutingService implements RoutingService {
 	 * @return
 	 */
 	private GraphNode backtrack(final Stack<SwitchingFrame> switchingNodeStack, final List<GraphNode> nodeList) {
+
+		logger.info("backtrack");
 
 		if (switchingNodeStack.isEmpty()) {
 			return null;
@@ -186,16 +325,17 @@ public class DefaultRoutingService implements RoutingService {
 
 		GraphNode temp = nodeList.get(nodeList.size() - 1);
 		do {
-			nodeList.remove(nodeList.size() - 1);
 
+			nodeList.remove(nodeList.size() - 1);
 			temp = nodeList.get(nodeList.size() - 1);
+
 		} while (temp.getId() != topMostSwitchingFrame.getSwitchingNode().getId());
 
 		return topMostSwitchingFrame.getOtherOption();
 	}
 
 	private boolean canTraverseGraphNode(final DefaultLocomotive locomotive, final GraphNode graphNode,
-			final boolean routeOverReservedGraphNodes) {
+			final boolean routeOverReservedGraphNodes, final boolean routeOverBlockedFeedbackBlocks) {
 
 		final Node railNode = graphNode.getRailNode();
 
@@ -209,13 +349,34 @@ public class DefaultRoutingService implements RoutingService {
 		// build routes over reserved graphnodes
 		// if the block is reserved for the locomotive for which this route is
 		// created, then there is no problem and the route can pass the node!
-		if (graphNodeIsReserved && reservedForLocomotive && !routeOverReservedGraphNodes) {
+		if (graphNodeIsReserved && !reservedForLocomotive && !routeOverReservedGraphNodes) {
+
+			logger.info("Cannot traverse GN ID: " + graphNode.getId() + " Reason: reserved!");
 			return false;
 		}
 
 		// blocking a graph node, means to make a rail node non-traversable in this
 		// direction
 		if (graphNode.isBlocked()) {
+
+			logger.info("Cannot traverse GN ID: " + graphNode.getId() + " Reason: blocked!");
+			return false;
+		}
+
+		// RailNode FeedbackBlockUsed. A feedback block can be used without beeing
+		// reserved! Hence this case needs handling too.
+		//
+		// A feedback block is used without beeing explicitly reserved in at least the
+		// following cases:
+		//
+		// * If an object without an address was put on a feedback block by hand
+		// * If a wagon of a excessively long train blocks a feedback block
+		// * If a locomotive or train was moved using manual control onto a feedback
+		// block. Manual operation does not reserve feedback blocks
+		if (graphNode.getRailNode().isFeedbackBlockUsed() && !reservedForLocomotive
+				&& !routeOverBlockedFeedbackBlocks) {
+
+			logger.info("Cannot traverse GN ID: " + graphNode.getId() + " Reason: RailNode-FeedbackBlockUsed!");
 			return false;
 		}
 

@@ -155,6 +155,55 @@ public class GraphNode {
 		return null;
 	}
 
+	public Direction getDirection() {
+
+		for (int i = 0; i < 4; i++) {
+
+			final Edge edge = getRailNode().getEdges()[i];
+			if (edge == null) {
+				continue;
+			}
+
+			if (edge.getOutGraphNode().equals(this)) {
+
+				return edge.getDirection();
+			}
+		}
+
+		return null;
+	}
+
+	public Direction getInverseDirection() {
+
+		final Direction dir = getDirection();
+
+		if (dir == null) {
+			return null;
+		}
+
+		if (dir == Direction.NONE) {
+			return Direction.NONE;
+		}
+
+		if (dir == Direction.NORTH) {
+			return Direction.SOUTH;
+		}
+
+		if (dir == Direction.EAST) {
+			return Direction.WEST;
+		}
+
+		if (dir == Direction.SOUTH) {
+			return Direction.NORTH;
+		}
+
+		if (dir == Direction.WEST) {
+			return Direction.EAST;
+		}
+
+		return null;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

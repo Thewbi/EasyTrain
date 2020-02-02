@@ -36,45 +36,50 @@ public class P50XXEvtSenCommand extends BaseEventCommand {
 	@Override
 	public void result(final ByteBuffer byteBuffer) {
 
-		final byte[] array = byteBuffer.array();
+		try {
 
-		final String allDataAsHex = Hex.encodeHexString(array);
-		logger.trace("index = " + index + " byteBuffer.position(): " + byteBuffer.position() + " allDataAsHex = "
-				+ allDataAsHex);
+			final byte[] array = byteBuffer.array();
 
-		for (int i = 0; i < byteBuffer.position(); i++) {
+			final String allDataAsHex = Hex.encodeHexString(array);
+			logger.trace("index = " + index + " byteBuffer.position(): " + byteBuffer.position() + " allDataAsHex = "
+					+ allDataAsHex);
 
-			final byte data = array[i];
+			for (int i = 0; i < byteBuffer.position(); i++) {
 
-			final String dataAsHex = Hex.encodeHexString(new byte[] { data });
-			logger.trace("data = " + dataAsHex);
+				final byte data = array[i];
 
-			switch (index) {
-			case 0:
+				final String dataAsHex = Hex.encodeHexString(new byte[] { data });
+				logger.trace("data = " + dataAsHex);
 
-				// end of data stream
-				if (data == 0) {
+				switch (index) {
+				case 0:
 
-					responseLength = 0;
-					return;
+					// end of data stream
+					if (data == 0) {
+
+						responseLength = 0;
+						return;
+					}
+					s88ID = data;
+					break;
+
+				case 1:
+					inputDescriptor1 = data;
+					break;
+
+				case 2:
+					inputDescriptor2 = data;
+					sendFeedbackBlockUpdateEvents(s88ID, inputDescriptor1, inputDescriptor2);
+					break;
 				}
-				s88ID = data;
-				break;
 
-			case 1:
-				inputDescriptor1 = data;
-				break;
-
-			case 2:
-				inputDescriptor2 = data;
-				sendFeedbackBlockUpdateEvents(s88ID, inputDescriptor1, inputDescriptor2);
-				break;
+				index++;
+				if (index > 2) {
+					index = 0;
+				}
 			}
-
-			index++;
-			if (index > 2) {
-				index = 0;
-			}
+		} catch (final Exception e) {
+			logger.error(e.getMessage(), e);
 		}
 	}
 

@@ -2,6 +2,8 @@ package de.wfb;
 
 import java.io.File;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
 import org.jfree.graphics2d.svg.SVGUtils;
 
@@ -13,6 +15,8 @@ import de.wfb.model.node.RailNode;
 import de.wfb.rail.converter.Converter;
 
 public class LayoutSVGConverter implements Converter<Model, String> {
+
+	private static final Logger logger = LogManager.getLogger(LayoutSVGConverter.class);
 
 	private static final int BLOCK_WIDTH = 100;
 
@@ -59,7 +63,7 @@ public class LayoutSVGConverter implements Converter<Model, String> {
 
 		} catch (final Exception e) {
 
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 
 		} finally {
 

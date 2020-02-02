@@ -42,9 +42,9 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	/** thrown = true ==> */
 	private boolean thrown;
 
-	private final List<RailNode> manualConnections = new ArrayList<>();
+	private List<RailNode> manualConnections;
 
-	private int feedbackBlockNumber = -1;
+	private Integer feedbackBlockNumber;
 
 	/**
 	 * This field is used to communicate with the UI. It will draw nodes with a
@@ -153,15 +153,24 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	private void process(final ProtocolFacade protocolFacade, final boolean newThrown) {
 
-		final boolean oldThrown = isThrown();
+		boolean oldThrown = isThrown();
 
-		logger.info("OldThrown: " + oldThrown + " NewThrown: " + newThrown);
+		if (isFlipped() != null && isFlipped()) {
+			oldThrown = !oldThrown;
+		}
+
+		logger.trace("OldThrown: " + oldThrown + " NewThrown: " + newThrown);
 
 		if (newThrown != oldThrown) {
 
-			logger.info("Switch Turnout. RailNode.ID: " + getId());
+			logger.trace("Switch Turnout. RailNode.ID: " + getId());
 
-			setThrown(newThrown);
+			if (isFlipped() != null && isFlipped()) {
+				setThrown(!newThrown);
+			} else {
+				setThrown(newThrown);
+			}
+
 			protocolFacade.turnTurnout(this);
 		}
 	}
@@ -169,7 +178,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	public void sendModelChangedEvent(final ApplicationEventPublisher applicationEventPublisher, final Model model,
 			final RailNode railNode) {
 
-		logger.info("sendModelChangedEvent()");
+		logger.trace("sendModelChangedEvent()");
 
 		final Object sender = this;
 		final int x = railNode.getX();
@@ -222,13 +231,19 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	@Override
 	public void manualConnectTo(final RailNode railNodeB) {
 
+		// @formatter:off
+
 		final StringBuffer stringBuffer = new StringBuffer();
 
-		stringBuffer.append(getId()).append("(").append(getX()).append(", ").append(getY()).append(") ");
-		stringBuffer.append(railNodeB.getId()).append("(").append(railNodeB.getX()).append(", ")
-				.append(railNodeB.getY()).append(") ");
+		stringBuffer
+			.append(getId())
+			.append("(").append(getX()).append(", ").append(getY()).append(") ")
+			.append(railNodeB.getId())
+			.append("(").append(railNodeB.getX()).append(", ").append(railNodeB.getY()).append(") ");
 
 		logger.trace(stringBuffer.toString());
+
+		// @formatter:on
 
 		// find orientation
 
@@ -265,7 +280,15 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 		// distances, there is a manual connection list, which stores all manual
 		// connections
 		logger.trace("Add manual Connection!");
-		getManualConnections().add(railNodeB);
+		if (getManualConnections() == null) {
+			setManualConnections(new ArrayList<RailNode>());
+		}
+
+		if (!getManualConnections().contains(railNodeB)) {
+
+			logger.trace("ADDING");
+			getManualConnections().add(railNodeB);
+		}
 	}
 
 	@Override
@@ -336,6 +359,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 		if (!westEdge.getOutGraphNode().getChildren().contains(eastEdge.getInGraphNode())) {
 
+			logger.trace("ADDING");
+
 			westEdge.getOutGraphNode().getChildren().add(eastEdge.getInGraphNode());
 			westEdge.setNextOutGraphNode(eastEdge.getInGraphNode());
 
@@ -347,6 +372,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 		}
 
 		if (!eastEdge.getOutGraphNode().getChildren().contains(westEdge.getInGraphNode())) {
+
+			logger.trace("ADDING");
 
 			eastEdge.getOutGraphNode().getChildren().add(westEdge.getInGraphNode());
 			eastEdge.setNextOutGraphNode(westEdge.getInGraphNode());
@@ -373,6 +400,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 		if (!southEdge.getOutGraphNode().getChildren().contains(northEdge.getInGraphNode())) {
 
+			logger.trace("ADDING");
+
 			southEdge.getOutGraphNode().getChildren().add(northEdge.getInGraphNode());
 			southEdge.setNextOutGraphNode(northEdge.getInGraphNode());
 
@@ -384,6 +413,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 		}
 
 		if (!northEdge.getOutGraphNode().getChildren().contains(southEdge.getInGraphNode())) {
+
+			logger.trace("ADDING");
 
 			northEdge.getOutGraphNode().getChildren().add(southEdge.getInGraphNode());
 			northEdge.setNextOutGraphNode(southEdge.getInGraphNode());
@@ -410,6 +441,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 		if (!eastEdge.getOutGraphNode().getChildren().contains(westEdge.getInGraphNode())) {
 
+			logger.trace("ADDING");
+
 			eastEdge.getOutGraphNode().getChildren().add(westEdge.getInGraphNode());
 			eastEdge.setNextOutGraphNode(westEdge.getInGraphNode());
 
@@ -421,6 +454,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 		}
 
 		if (!westEdge.getOutGraphNode().getChildren().contains(eastEdge.getInGraphNode())) {
+
+			logger.trace("ADDING");
 
 			westEdge.getOutGraphNode().getChildren().add(eastEdge.getInGraphNode());
 			westEdge.setNextOutGraphNode(eastEdge.getInGraphNode());
@@ -469,6 +504,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 		} else {
 
+			logger.trace("ADDING");
+
 			northEdge.getOutGraphNode().getChildren().add(southEdge.getInGraphNode());
 			northEdge.setNextOutGraphNode(southEdge.getInGraphNode());
 
@@ -488,6 +525,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 			}
 
 		} else {
+
+			logger.trace("ADDING");
 
 			southEdge.getOutGraphNode().getChildren().add(northEdge.getInGraphNode());
 			southEdge.setNextOutGraphNode(northEdge.getInGraphNode());
@@ -738,6 +777,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 		logger.trace("updateBlockedGraphNode()");
 
+		// reset
 		if (getGraphNodeOne() != null) {
 			getGraphNodeOne().setBlocked(false);
 		}
@@ -746,9 +786,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 		}
 
 		final Direction traverse = getTraverse();
-
 		if (traverse == null) {
-
 			return;
 		}
 
@@ -761,6 +799,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 			if (inGraphNode != null) {
 
+				logger.info("inGraphNode GN ID = " + inGraphNode.getId() + " is blocked!");
 				inGraphNode.setBlocked(true);
 			}
 		}
@@ -803,7 +842,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	@Override
 	public boolean isThrown() {
-		return isFlipped() == null ? thrown : isFlipped() ? !thrown : thrown;
+		// return isFlipped() == null ? thrown : (isFlipped() ? !thrown : thrown);
+		return thrown;
 	}
 
 	@Override
@@ -812,17 +852,12 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	}
 
 	@Override
-	public List<RailNode> getManualConnections() {
-		return manualConnections;
-	}
-
-	@Override
-	public int getFeedbackBlockNumber() {
+	public Integer getFeedbackBlockNumber() {
 		return feedbackBlockNumber;
 	}
 
 	@Override
-	public void setFeedbackBlockNumber(final int feedbackBlockNumber) {
+	public void setFeedbackBlockNumber(final Integer feedbackBlockNumber) {
 		this.feedbackBlockNumber = feedbackBlockNumber;
 	}
 
@@ -901,6 +936,15 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	@Override
 	public void setTraverse(final Direction traverse) {
 		this.traverse = traverse;
+	}
+
+	@Override
+	public List<RailNode> getManualConnections() {
+		return manualConnections;
+	}
+
+	public void setManualConnections(final List<RailNode> manualConnections) {
+		this.manualConnections = manualConnections;
 	}
 
 }

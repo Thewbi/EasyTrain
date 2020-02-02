@@ -1,5 +1,8 @@
 package de.wfb.model.locomotive;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.wfb.model.node.Direction;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.RailNode;
@@ -7,6 +10,8 @@ import de.wfb.rail.facade.ProtocolFacade;
 import de.wfb.rail.service.Route;
 
 public class DefaultLocomotive {
+
+	private static final Logger logger = LogManager.getLogger(DefaultLocomotive.class);
 
 	private static final boolean FORWARD_DEFAULT_VALUE = true;
 
@@ -98,6 +103,8 @@ public class DefaultLocomotive {
 	}
 
 	public void setOrientation(final Direction edgeDirection) {
+
+		logger.info("OldOrientation = " + this.edgeDirection.name() + " NewOrientation = " + edgeDirection.name());
 		this.edgeDirection = edgeDirection;
 	}
 
@@ -143,11 +150,20 @@ public class DefaultLocomotive {
 
 	public void start(final double speed) {
 
+		if (Math.abs(this.speed - speed) < 0.1d) {
+			return;
+		}
+
 		this.speed = speed;
 		protocolFacade.throttleLocomotive(address, speed, direction);
 	}
 
 	public void stop() {
+
+		// if the locomotive is not running, do not send a command
+		if (speed <= 0.0d) {
+			return;
+		}
 
 		// if the speed is set to 0.0d and the reverse direction is used,
 		// locomotives appruptly stop! This is unrealistic. The direction

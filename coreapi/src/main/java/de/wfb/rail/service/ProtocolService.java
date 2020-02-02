@@ -1,6 +1,9 @@
 package de.wfb.rail.service;
 
+import java.util.List;
+
 import de.wfb.model.node.Node;
+import de.wfb.rail.events.FeedbackBlockUpdateEvent;
 
 public interface ProtocolService {
 
@@ -8,7 +11,7 @@ public interface ProtocolService {
 
 	void throttleLocomotive(short locomotiveAddress, double throttleValue, boolean dirForward);
 
-	void event();
+	boolean event();
 
 	void connect() throws Exception;
 
@@ -21,5 +24,7 @@ public interface ProtocolService {
 	boolean turnoutStatus(short protocolId);
 
 	void turnTurnout(Node node);
+
+	List<FeedbackBlockUpdateEvent> eventSenseCommand();
 
 }

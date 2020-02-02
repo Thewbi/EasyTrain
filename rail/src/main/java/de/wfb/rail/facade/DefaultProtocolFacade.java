@@ -1,10 +1,13 @@
 package de.wfb.rail.facade;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.wfb.model.node.Node;
+import de.wfb.rail.events.FeedbackBlockUpdateEvent;
 import de.wfb.rail.service.ProtocolService;
 
 public class DefaultProtocolFacade implements ProtocolFacade {
@@ -32,11 +35,11 @@ public class DefaultProtocolFacade implements ProtocolFacade {
 	}
 
 	@Override
-	public void event() {
+	public boolean event() {
 
 		logger.trace("event() - Sending P50XXEventCommand");
 
-		protocolService.event();
+		return protocolService.event();
 	}
 
 	@Override
@@ -85,6 +88,11 @@ public class DefaultProtocolFacade implements ProtocolFacade {
 		logger.info("turnTurnout()");
 
 		protocolService.turnTurnout(node);
+	}
+
+	@Override
+	public List<FeedbackBlockUpdateEvent> eventSenseCommand() {
+		return protocolService.eventSenseCommand();
 	}
 
 }

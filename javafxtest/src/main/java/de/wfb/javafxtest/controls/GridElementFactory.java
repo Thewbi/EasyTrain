@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.wfb.model.GridElement;
+import de.wfb.model.node.Direction;
 import de.wfb.model.node.Node;
 import de.wfb.rail.events.ModelChangedEvent;
 import de.wfb.rail.factory.Factory;
@@ -29,6 +30,8 @@ public class GridElementFactory implements Factory<GridElement<SVGPath, Text>> {
 
 		// create new path
 		final boolean thrown = node.isThrown();
+		final boolean flipped = node.isFlipped() == null ? false : node.isFlipped();
+		final Direction direction = node.getTraverse();
 		final boolean highlighted = modelChangedEvent.isHighlighted();
 		final boolean blocked = modelChangedEvent.isBlocked();
 		final boolean selected = modelChangedEvent.isSelected();
@@ -41,7 +44,7 @@ public class GridElementFactory implements Factory<GridElement<SVGPath, Text>> {
 			// DEBUG
 			logger.trace(
 					"ProtocolTurnoutID: " + node.getProtocolTurnoutId() +
-					" TurnoutState: " + (thrown ? "THROWN" : "CLOSED") +
+//					" TurnoutState: " + (thrown ? "THROWN" : "CLOSED") +
 					" ShapeType: " + shapeType +
 					" highlighted: " + highlighted +
 					" blocked: " + blocked +
@@ -52,10 +55,12 @@ public class GridElementFactory implements Factory<GridElement<SVGPath, Text>> {
 					shapeType,
 					cellWidth,
 					thrown,
+					flipped,
 					highlighted,
 					blocked,
 					selected,
-					reserved);
+					reserved,
+					direction);
 
 			// @formatter:on
 
@@ -70,8 +75,7 @@ public class GridElementFactory implements Factory<GridElement<SVGPath, Text>> {
 
 			// render the feedback block number onto the layout
 			Text text = null;
-
-			if (node.getFeedbackBlockNumber() > -1) {
+			if (node.getFeedbackBlockNumber() != null && node.getFeedbackBlockNumber() > -1) {
 
 				text = new Text(Integer.toString(node.getFeedbackBlockNumber()));
 				text.setScaleX(0.5);
@@ -82,7 +86,7 @@ public class GridElementFactory implements Factory<GridElement<SVGPath, Text>> {
 
 				if (shapeType == ShapeType.STRAIGHT_HORIZONTAL) {
 
-					x = (modelChangedEvent.getX() + 0) * cellWidth - 3;
+					x = (modelChangedEvent.getX() + 0) * cellWidth - 0;
 					y = (modelChangedEvent.getY() + 1) * cellWidth + 5;
 
 				} else if (shapeType == ShapeType.STRAIGHT_VERTICAL) {

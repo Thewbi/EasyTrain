@@ -1,10 +1,15 @@
 package de.wfb;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.util.CollectionUtils;
 
+import de.wfb.rail.events.FeedbackBlockUpdateEvent;
 import de.wfb.rail.facade.ProtocolFacade;
 
 public class EvtSenCommandThread {
@@ -19,6 +24,9 @@ public class EvtSenCommandThread {
 	@Autowired
 	private ProtocolFacade protocolFacade;
 
+	@Autowired
+	private ApplicationEventPublisher applicationEventPublisher;
+
 	@Scheduled(fixedRate = 1000)
 	public void threadFunc() {
 
@@ -31,7 +39,24 @@ public class EvtSenCommandThread {
 		}
 
 		// send the P50XXEventCommand
-		protocolFacade.event();
+		logger.info("EventThread ...");
+		if (protocolFacade.event()) {
+			logger.info("Event Sense command ...");
+			// final P50XXEvtSenCommand eventSenseCommand = eventSenseCommand(inputStream,
+			// outputStream);
+			final List<FeedbackBlockUpdateEvent> eventSenseCommand = protocolFacade.eventSenseCommand();
+
+			if (!CollectionUtils.isEmpty(eventSenseCommand)) {
+
+				for (final FeedbackBlockUpdateEvent feedbackBlockUpdateEvent : eventSenseCommand) {
+
+					applicationEventPublisher.publishEvent(feedbackBlockUpdateEvent);
+				}
+			}
+
+			logger.info("Event Sense command done.");
+		}
+		logger.info("EventThread done.");
 	}
 
 	public boolean isRunning() {

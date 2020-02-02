@@ -1,5 +1,8 @@
 package de.wfb.rail.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,8 @@ public abstract class BaseEventCommand implements Command {
 
 	protected byte inputDescriptor2;
 
+	protected List<FeedbackBlockUpdateEvent> feedbackBlockUpdates = new ArrayList<>();
+
 	/**
 	 * Outputs all contacts that are signaled in use by this state change event!
 	 *
@@ -33,48 +38,54 @@ public abstract class BaseEventCommand implements Command {
 	protected void sendFeedbackBlockUpdateEvents(final int s88id, final byte inputDescriptor1,
 			final byte inputDescriptor2) {
 
-		logger.trace("sendFeedbackBlockUpdateEvents()");
+		logger.info("sendFeedbackBlockUpdateEvents()");
 
-		final FeedbackBlockUpdateEvent feedbackBlockUpdateEvent = new FeedbackBlockUpdateEvent(this);
+		try {
 
-		final int base = 16 * (s88id - 1);
+			final FeedbackBlockUpdateEvent feedbackBlockUpdateEvent = new FeedbackBlockUpdateEvent(this);
 
-		int currentOffset = 1;
+			final int base = 16 * (s88id - 1);
 
-		// inputDescriptor1 (byte 1) ausgaenge 1 - 8 am modul (laut
-		// https://tams-online.de/WebRoot/Store11/Shops/642f1858-c39b-4b7d-af86-f6a1feaca0e4/MediaGallery/15_Download/Sonstiges/interface.txt)
-		for (byte i = 7; i >= 0; i--) {
+			int currentOffset = 1;
 
-			final int value = ((inputDescriptor1 >> i) & 1);
-			final int offset = base + currentOffset;
+			// inputDescriptor1 (byte 1) ausgaenge 1 - 8 am modul (laut
+			// https://tams-online.de/WebRoot/Store11/Shops/642f1858-c39b-4b7d-af86-f6a1feaca0e4/MediaGallery/15_Download/Sonstiges/interface.txt)
+			for (byte i = 7; i >= 0; i--) {
 
-			logger.trace("Contact " + offset + (value == 0 ? ") UNUSED" : ") USED"));
+				final int value = ((inputDescriptor1 >> i) & 1);
+				final int offset = base + currentOffset;
 
-			feedbackBlockUpdateEvent.getFeedbackBlockState()[offset - 1] = value == 0 ? FeedbackBlockState.FREE
-					: FeedbackBlockState.BLOCKED;
+				logger.trace("Contact " + offset + (value == 0 ? ") UNUSED" : ") USED"));
 
-			currentOffset++;
-		}
+				feedbackBlockUpdateEvent.getFeedbackBlockState()[offset - 1] = value == 0 ? FeedbackBlockState.FREE
+						: FeedbackBlockState.BLOCKED;
 
-		// inputDescriptor2 (byte 2) ausgaenge 9 - 16 am modul (laut
-		// https://tams-online.de/WebRoot/Store11/Shops/642f1858-c39b-4b7d-af86-f6a1feaca0e4/MediaGallery/15_Download/Sonstiges/interface.txt)
-		for (byte i = 7; i >= 0; i--) {
+				currentOffset++;
+			}
 
-			final int value = ((inputDescriptor2 >> i) & 1);
-			final int offset = base + currentOffset;
+			// inputDescriptor2 (byte 2) ausgaenge 9 - 16 am modul (laut
+			// https://tams-online.de/WebRoot/Store11/Shops/642f1858-c39b-4b7d-af86-f6a1feaca0e4/MediaGallery/15_Download/Sonstiges/interface.txt)
+			for (byte i = 7; i >= 0; i--) {
 
-			logger.trace("Contact " + offset + (value == 0 ? ") UNUSED" : ") USED"));
+				final int value = ((inputDescriptor2 >> i) & 1);
+				final int offset = base + currentOffset;
 
-			feedbackBlockUpdateEvent.getFeedbackBlockState()[offset - 1] = value == 0 ? FeedbackBlockState.FREE
-					: FeedbackBlockState.BLOCKED;
+				logger.trace("Contact " + offset + (value == 0 ? ") UNUSED" : ") USED"));
 
-			currentOffset++;
-		}
+				feedbackBlockUpdateEvent.getFeedbackBlockState()[offset - 1] = value == 0 ? FeedbackBlockState.FREE
+						: FeedbackBlockState.BLOCKED;
 
-		// send event
-		logger.trace("applicationEventPublisher: " + applicationEventPublisher);
-		if (applicationEventPublisher != null) {
-			applicationEventPublisher.publishEvent(feedbackBlockUpdateEvent);
+				currentOffset++;
+			}
+
+			// send event
+			logger.trace("applicationEventPublisher: " + applicationEventPublisher);
+			feedbackBlockUpdates.add(feedbackBlockUpdateEvent);
+//			if (applicationEventPublisher != null) {
+//				applicationEventPublisher.publishEvent(feedbackBlockUpdateEvent);
+//			}
+		} catch (final Exception e) {
+			logger.error(e.getMessage(), e);
 		}
 	}
 
@@ -84,5 +95,13 @@ public abstract class BaseEventCommand implements Command {
 
 	public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
 		this.applicationEventPublisher = applicationEventPublisher;
+	}
+
+	public List<FeedbackBlockUpdateEvent> getFeedbackBlockUpdates() {
+		return feedbackBlockUpdates;
+	}
+
+	public void setFeedbackBlockUpdates(final List<FeedbackBlockUpdateEvent> feedbackBlockUpdates) {
+		this.feedbackBlockUpdates = feedbackBlockUpdates;
 	}
 }

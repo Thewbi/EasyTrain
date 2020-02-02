@@ -80,7 +80,7 @@ public interface RailNode extends Node {
 	List<RailNode> getManualConnections();
 
 	@Override
-	int getFeedbackBlockNumber();
+	Integer getFeedbackBlockNumber();
 
 	@Override
 	void connect(Model model);
@@ -110,6 +110,10 @@ public interface RailNode extends Node {
 
 	Edge[] getEdges();
 
+	/**
+	 * If a RailNode is only passable in a specific direction, set the blocked flag
+	 * on the responsible graph node.
+	 */
 	void updateBlockedGraphNode();
 
 }

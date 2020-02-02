@@ -3,7 +3,8 @@ package de.wfb.rail.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +24,7 @@ import de.wfb.rail.commands.P50XXLokCommand;
 import de.wfb.rail.commands.P50XXNOPCommand;
 import de.wfb.rail.commands.P50XXSensOffCommand;
 import de.wfb.rail.commands.P50XXTrntStsCommand;
+import de.wfb.rail.events.FeedbackBlockUpdateEvent;
 import de.wfb.rail.factory.Factory;
 import de.wfb.rail.io.template.DefaultSerialTemplate;
 import de.wfb.rail.io.template.SerialTemplate;
@@ -55,7 +57,7 @@ public class DefaultProtocolService implements ProtocolService {
 	private ApplicationEventPublisher applicationEventPublisher;
 
 	@Override
-	public void nodeClicked(final int x, final int y) {
+	public synchronized void nodeClicked(final int x, final int y) {
 
 		logger.trace("nodeClicked x = " + x + " y = " + y);
 
@@ -75,18 +77,19 @@ public class DefaultProtocolService implements ProtocolService {
 	}
 
 	@Override
-	public void turnTurnout(final Node node) {
+	public synchronized void turnTurnout(final Node node) {
 
-		logger.trace("turnTurnout()");
+		logger.info("turnTurnout()");
 
 		if (ShapeType.isNotTurnout(node.getShapeType())) {
 
+			logger.info("Not a turnout shape!");
 			return;
 		}
 
-		lockLock();
-
 		try {
+
+			lockLock(false);
 
 			if (node.getProtocolTurnoutId() == null || node.getProtocolTurnoutId() <= 0) {
 				logger.info("The turnout has no valid turnoutId! Cannot switch the turnout via the Intellibox!");
@@ -110,7 +113,7 @@ public class DefaultProtocolService implements ProtocolService {
 			}
 			turnoutCommandSecond(inputStream, outputStream, node.getProtocolTurnoutId(), node.isThrown());
 
-//			// TODO: flip flag in turnout nodes!
+//			//  flip flag in turnout nodes!
 //			asdf
 //			if (node.getProtocolTurnoutId() == 12 || node.getProtocolTurnoutId() == 80) {
 //
@@ -143,19 +146,21 @@ public class DefaultProtocolService implements ProtocolService {
 
 		} finally {
 
+			logger.info("turnTurnout unlockLock ...");
 			unlockLock();
+			logger.info("turnTurnout unlockLock done.");
 
 		}
 	}
 
 	@Override
-	public boolean turnoutStatus(final short protocolId) {
+	public synchronized boolean turnoutStatus(final short protocolId) {
 
 		logger.trace("turnoutStatus()");
 
-		lockLock();
-
 		try {
+
+			lockLock(false);
 
 			if (!isConnected()) {
 
@@ -171,7 +176,7 @@ public class DefaultProtocolService implements ProtocolService {
 
 			return command.isThrown();
 
-//			// TODO: flip flag in turnout nodes!
+//			//  flip flag in turnout nodes!
 //			asdf
 //			if ((protocolId == 12) || (protocolId == 80)) {
 //				return !command.isThrown();
@@ -185,7 +190,9 @@ public class DefaultProtocolService implements ProtocolService {
 
 		} finally {
 
+			logger.info("turnoutStatus unlockLock ...");
 			unlockLock();
+			logger.info("turnoutStatus unlockLock done.");
 
 		}
 
@@ -193,48 +200,54 @@ public class DefaultProtocolService implements ProtocolService {
 	}
 
 	@Override
-	public void event() {
+	public synchronized boolean event() {
 
 		logger.trace("E - event()");
 
-		logger.trace("E - Lock HoldCount: " + lock.getHoldCount() + " QueueLength: " + lock.getQueueLength()
-				+ " hasQueuedThreads: " + lock.hasQueuedThreads());
+//		logger.info("E - Lock HoldCount: " + lock.getHoldCount() + " QueueLength: " + lock.getQueueLength()
+//				+ " hasQueuedThreads: " + lock.hasQueuedThreads());
 
-		logger.trace("E - Aquiring lock ...");
-		try {
-			final boolean tryLockResult = lock.tryLock(10, TimeUnit.SECONDS);
-			if (tryLockResult) {
-				logger.trace("E - Aquiring Lock done.");
-			} else {
-				logger.info("E - Aquiring Lock failed!");
-				return;
-			}
-		} catch (final InterruptedException e) {
-			logger.trace(e.getMessage(), e);
-
-			logger.info("E - Aquiring Lock failed!");
-			return;
-		}
-
+//		logger.trace("E - Aquiring lock ...");
 		try {
 
+			logger.trace("Event lock...");
+			lockLock(true);
+			logger.info("Event locked done.");
+
+//			final boolean tryLockResult = lock.tryLock(10, TimeUnit.SECONDS);
+//
+//			if (tryLockResult) {
+//				logger.trace("E - Aquiring Lock done.");
+//			} else {
+//				logger.info("E - Aquiring Lock failed!");
+//				return;
+//			}
+
+			logger.trace("E - Checking Connection!");
 			if (!isConnected()) {
 
-				logger.trace("Not connected! Aborting operation!");
+				logger.info("E - Not connected! Aborting operation!");
 
-				return;
+				return false;
 			}
 
 			// check the event status
+			logger.info("Event command ...");
 			final P50XXEventCommand eventCommand = eventCommand(inputStream, outputStream);
+			logger.info("Event command done.");
 
-			logger.trace("eventCommand.isxStatusShouldBeCalled() = " + eventCommand.isxStatusShouldBeCalled());
+			logger.trace("E - eventCommand.isxStatusShouldBeCalled() = " + eventCommand.isxStatusShouldBeCalled());
 
+			// yolo
 			// if the event status says to check the S88 contacts, check those contacts
 			if (eventCommand.isxStatusShouldBeCalled()) {
 
-				final P50XXEvtSenCommand eventSenseCommand = eventSenseCommand(inputStream, outputStream);
-				logger.trace(eventSenseCommand);
+				return true;
+
+				// yolo
+//				logger.info("Event Sense command ...");
+//				final P50XXEvtSenCommand eventSenseCommand = eventSenseCommand(inputStream, outputStream);
+//				logger.info("Event Sense command done.");
 			}
 
 		} catch (final Exception e) {
@@ -243,18 +256,22 @@ public class DefaultProtocolService implements ProtocolService {
 
 		} finally {
 
+			logger.info("Event unlockLock ...");
 			unlockLock();
+			logger.info("Event unlockLock done.");
 
 		}
+
+		return false;
 	}
 
 	@Override
-	public void throttleLocomotive(final short locomotiveAddress, final double throttleValue,
+	public synchronized void throttleLocomotive(final short locomotiveAddress, final double throttleValue,
 			final boolean dirForward) {
 
-		lockLock();
-
 		try {
+
+			lockLock(true);
 
 			if (!isConnected()) {
 
@@ -270,16 +287,20 @@ public class DefaultProtocolService implements ProtocolService {
 
 		} finally {
 
+			logger.info("throttleLocomotive unlockLock ...");
 			unlockLock();
+			logger.info("throttleLocomotive unlockLock done.");
 		}
 	}
 
 	@Override
-	public void sense(final int feedbackContactId) {
-
-		lockLock();
+	public synchronized void sense(final int feedbackContactId) {
 
 		try {
+
+			logger.trace("Sense lock...");
+			lockLock(false);
+			logger.info("Sense locked done.");
 
 			if (!isConnected()) {
 
@@ -295,16 +316,18 @@ public class DefaultProtocolService implements ProtocolService {
 
 		} finally {
 
+			logger.info("Sense unlockLock ...");
 			unlockLock();
+			logger.info("Sense unlockLock done.");
 		}
 	}
 
 	@Override
-	public void xSensOff() {
-
-		lockLock();
+	public synchronized void xSensOff() {
 
 		try {
+
+			lockLock(false);
 
 			if (!isConnected()) {
 
@@ -312,7 +335,9 @@ public class DefaultProtocolService implements ProtocolService {
 				return;
 			}
 
+			logger.info("xSensOffCommand ...");
 			xSensOffCommand(inputStream, outputStream);
+			logger.info("xSensOffCommand done.");
 
 		} catch (final Exception e) {
 
@@ -324,115 +349,175 @@ public class DefaultProtocolService implements ProtocolService {
 		}
 	}
 
-	private void lockLock() {
+	private void lockLock(final boolean debug) {
 
-		logger.trace("Aquiring lock ...");
-		lock.lock();
-		logger.trace("Aquiring Lock done.");
+//		if (debug) {
+//			logger.info("Lock BEFORE IsHeldByCurrentThread: " + lock.isHeldByCurrentThread() + " HoldCount: "
+//					+ lock.getHoldCount() + " QueueLength: " + lock.getQueueLength() + " hasQueuedThreads: "
+//					+ lock.hasQueuedThreads());
+//
+//			logger.info("Aquiring lock ...");
+//		}
+//
+//		if (!lock.isHeldByCurrentThread()) {
+//			lock.lock();
+//		}
+//
+//		if (debug) {
+//			logger.info("Aquiring Lock done.");
+//
+//			logger.info("Lock AFTER IsHeldByCurrentThread: " + lock.isHeldByCurrentThread() + " HoldCount: "
+//					+ lock.getHoldCount() + " QueueLength: " + lock.getQueueLength() + " hasQueuedThreads: "
+//					+ lock.hasQueuedThreads());
+//		}
 	}
 
 	private void unlockLock() {
 
-		logger.trace("Releasing lock ...");
-		lock.unlock();
-		logger.trace("Releasing lock done.");
-
-		logger.trace("Lock HoldCount: " + lock.getHoldCount() + " QueueLength: " + lock.getQueueLength()
-				+ " hasQueuedThreads: " + lock.hasQueuedThreads());
+//		try {
+//
+//			logger.trace("Unlock BEFORE HoldCount: " + lock.getHoldCount() + " QueueLength: " + lock.getQueueLength()
+//					+ " hasQueuedThreads: " + lock.hasQueuedThreads());
+//
+//			logger.trace("Releasing lock ...");
+//			lock.unlock();
+//			logger.trace("Releasing lock done.");
+//
+//			if (lock.getHoldCount() > 0) {
+//
+//				logger.info("Unlock AFTER HoldCount: " + lock.getHoldCount() + " QueueLength: " + lock.getQueueLength()
+//						+ " hasQueuedThreads: " + lock.hasQueuedThreads());
+//			}
+//		} catch (final Exception e) {
+//			logger.error(e.getMessage(), e);
+//		}
 	}
 
 	@SuppressWarnings("unused")
 	private void nopCommand(final InputStream inputStream, final OutputStream outputStream) {
 
-		final Command command = new P50XXNOPCommand();
-		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
-		serialTemplate.execute();
+		synchronized (this) {
+			final Command command = new P50XXNOPCommand();
+			final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
+			serialTemplate.execute();
+		}
 	}
 
 	@SuppressWarnings("unused")
 	private void versionCommand(final InputStream inputStream, final OutputStream outputStream) {
 
-		final Command command = new P50XVersionCommand();
-		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
-		serialTemplate.execute();
+		synchronized (this) {
+			final Command command = new P50XVersionCommand();
+			final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
+			serialTemplate.execute();
+		}
 	}
 
 	private void turnoutCommandFirst(final InputStream inputStream, final OutputStream outputStream,
 			final int protocolTurnoutId, final boolean thrown) {
 
-		final Command command = new P50XTurnoutCommand((short) protocolTurnoutId, thrown, true);
-		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
-		serialTemplate.execute();
+		synchronized (this) {
+			final Command command = new P50XTurnoutCommand((short) protocolTurnoutId, thrown, true);
+			final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
+			serialTemplate.execute();
+		}
 	}
 
 	private void turnoutCommandSecond(final InputStream inputStream, final OutputStream outputStream,
 			final int protocolTurnoutId, final boolean thrown) {
 
-		final Command command = new P50XTurnoutCommand((short) protocolTurnoutId, thrown, false);
-		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
-		serialTemplate.execute();
+		synchronized (this) {
+			final Command command = new P50XTurnoutCommand((short) protocolTurnoutId, thrown, false);
+			final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
+			serialTemplate.execute();
+		}
 	}
 
 	private void throttleCommand(final InputStream inputStream, final OutputStream outputStream,
 			final short locomotiveAddress, final double throttleValue, final boolean dirForward) {
 
-		final Command command = new P50XXLokCommand(locomotiveAddress, throttleValue, dirForward);
-		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
-		serialTemplate.execute();
+		synchronized (this) {
+			final Command command = new P50XXLokCommand(locomotiveAddress, throttleValue, dirForward);
+			final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
+			serialTemplate.execute();
+		}
 	}
 
 	private P50XXEventCommand eventCommand(final InputStream inputStream, final OutputStream outputStream) {
 
-		final P50XXEventCommand command = new P50XXEventCommand();
-		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
-		serialTemplate.execute();
+		synchronized (this) {
+			final P50XXEventCommand command = new P50XXEventCommand();
+			final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
+			serialTemplate.execute();
 
-		return command;
+			return command;
+		}
 	}
 
-	private P50XXEvtSenCommand eventSenseCommand(final InputStream inputStream, final OutputStream outputStream) {
+	private List<FeedbackBlockUpdateEvent> eventSenseCommand(final InputStream inputStream,
+			final OutputStream outputStream) {
 
-		final P50XXEvtSenCommand command = new P50XXEvtSenCommand();
+		synchronized (this) {
+			try {
 
-		// this command will send out a FeedbackBlockUpdateEvent per S88 module state
-		// update. To send events, it gets a reference to a ApplicationEventPublisher
-		command.setApplicationEventPublisher(applicationEventPublisher);
+				logger.info("EventSense Command ...");
 
-		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
-		serialTemplate.execute();
+				final P50XXEvtSenCommand command = new P50XXEvtSenCommand();
 
-		return command;
+				// this command will send out a FeedbackBlockUpdateEvent per S88 module state
+				// update. To send events, it gets a reference to a ApplicationEventPublisher
+				command.setApplicationEventPublisher(applicationEventPublisher);
+
+				final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
+				serialTemplate.execute();
+
+				logger.info("EventSense done.");
+
+				return command.getFeedbackBlockUpdates();
+			} catch (final Exception e) {
+				logger.error(e.getMessage(), e);
+			}
+
+			return null;
+		}
 	}
 
 	private P50XSensorCommand sensorCommand(final InputStream inputStream, final OutputStream outputStream,
 			final int feedbackBlockId) {
 
-		final P50XSensorCommand command = new P50XSensorCommand(feedbackBlockId);
-		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
-		serialTemplate.execute();
+		synchronized (this) {
 
-		return command;
+			final P50XSensorCommand command = new P50XSensorCommand(feedbackBlockId);
+			final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
+			serialTemplate.execute();
+
+			return command;
+		}
 	}
 
 	private P50XXSensOffCommand xSensOffCommand(final InputStream inputStream, final OutputStream outputStream) {
 
-		final P50XXSensOffCommand command = new P50XXSensOffCommand();
-		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
-		serialTemplate.execute();
+		synchronized (this) {
+			final P50XXSensOffCommand command = new P50XXSensOffCommand();
+			final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
+			serialTemplate.execute();
 
-		return command;
+			return command;
+		}
 	}
 
 	private P50XXTrntStsCommand turnoutStatusCommand(final InputStream inputStream, final OutputStream outputStream,
 			final short protocolId) {
 
-		logger.trace("turnoutStatusCommand()");
+		synchronized (this) {
+			logger.trace("turnoutStatusCommand()");
 
-		final P50XXTrntStsCommand command = new P50XXTrntStsCommand(protocolId);
-		final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
-		serialTemplate.execute();
+			final P50XXTrntStsCommand command = new P50XXTrntStsCommand(protocolId);
+			final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
+			serialTemplate.execute();
 
-		return command;
+			return command;
+		}
 	}
 
 	public boolean isConnected() {
@@ -485,6 +570,21 @@ public class DefaultProtocolService implements ProtocolService {
 
 		serialPort.close();
 		serialPort = null;
+	}
+
+	@Override
+	public List<FeedbackBlockUpdateEvent> eventSenseCommand() {
+		lockLock(true);
+		try {
+			return eventSenseCommand(inputStream, outputStream);
+		} catch (final Exception e) {
+			logger.error(e.getMessage(), e);
+		} finally {
+			unlockLock();
+		}
+
+		return new ArrayList<>();
+
 	}
 
 }

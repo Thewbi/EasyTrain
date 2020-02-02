@@ -40,7 +40,7 @@ public class DefaultBlock implements Block {
 
 			} else {
 
-				if (blockRailNode.isReserved()) {
+				if (blockRailNode.isReserved() && (blockRailNode.getReservedLocomotiveId() != locomotive.getId())) {
 
 					throw new IllegalArgumentException(
 							"Block is reserved already by Locomotive " + blockRailNode.getReservedLocomotiveId());
@@ -67,6 +67,40 @@ public class DefaultBlock implements Block {
 		}
 
 		return false;
+	}
+
+	@Override
+	public boolean isFeedbackBlockUsed() {
+
+		if (CollectionUtils.isEmpty(getNodes())) {
+			return false;
+		}
+
+		for (final RailNode blockRailNode : getNodes()) {
+
+			if (blockRailNode.isFeedbackBlockUsed()) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	@Override
+	public int getReservedForLocomotive() {
+
+		if (CollectionUtils.isEmpty(getNodes())) {
+			return -1;
+		}
+
+		for (final RailNode blockRailNode : getNodes()) {
+
+			if (blockRailNode.isReserved()) {
+				return blockRailNode.getReservedLocomotiveId();
+			}
+		}
+
+		return -1;
 	}
 
 	@Override

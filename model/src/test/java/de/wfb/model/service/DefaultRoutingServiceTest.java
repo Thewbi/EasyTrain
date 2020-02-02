@@ -4,8 +4,6 @@ import static org.mockito.Matchers.any;
 //import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.doNothing;
 
-import java.io.IOException;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -34,7 +32,7 @@ public class DefaultRoutingServiceTest {
 	private ApplicationEventPublisher applicationEventPublisher;
 
 	@Test
-	public void testBlockedRailNodeRoute() throws IOException {
+	public void testBlockedRailNodeRoute() throws Exception {
 
 		final Model model = new DefaultModel();
 
@@ -82,8 +80,9 @@ public class DefaultRoutingServiceTest {
 
 		final DefaultLocomotive locomotive = null;
 		final boolean routeOverReservedNodes = false;
+		final boolean routeOverBlockedFeedbackBlocks = false;
 		final Route route = defaultRoutingService.route(locomotive, railNodeStart.getGraphNodeOne(),
-				railNodeEnd.getGraphNodeOne(), routeOverReservedNodes);
+				railNodeEnd.getGraphNodeOne(), routeOverReservedNodes, routeOverBlockedFeedbackBlocks);
 
 		System.out.println(route);
 	}

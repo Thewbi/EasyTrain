@@ -35,6 +35,10 @@ public class RailDetailsPane extends GridPane {
 
 	private Label traverseDirectionLabel;
 
+	private Label currentValueLabel;
+
+	private Label currentValue;
+
 	private Button northButton;
 
 	private Button eastButton;
@@ -61,6 +65,10 @@ public class RailDetailsPane extends GridPane {
 		idData(node);
 		feedbackBlockData(node);
 		traverseDirectionData(node);
+		saveButton(node);
+	}
+
+	private void saveButton(final Node node) {
 
 		saveButton = new Button();
 		saveButton.setText("Save");
@@ -92,15 +100,34 @@ public class RailDetailsPane extends GridPane {
 
 	private void traverseDirectionData(final Node node) {
 
+		// header label
 		traverseDirectionLabel = new Label("Traversable Direction:");
 		GridPane.setColumnIndex(traverseDirectionLabel, 1);
 		GridPane.setRowIndex(traverseDirectionLabel, 3);
 		getChildren().addAll(traverseDirectionLabel);
 
+		// current value label
+		currentValueLabel = new Label("Current Value: ");
+		GridPane.setColumnIndex(currentValueLabel, 1);
+		GridPane.setRowIndex(currentValueLabel, 4);
+		getChildren().addAll(currentValueLabel);
+
+		// current value
+		currentValue = new Label();
+		GridPane.setColumnIndex(currentValue, 2);
+		GridPane.setRowIndex(currentValue, 4);
+		getChildren().addAll(currentValue);
+
+		if (node.getTraverse() == null) {
+			currentValue.setText("");
+		} else {
+			currentValue.setText(node.getTraverse().name());
+		}
+
 		// NORTH
 		northButton = new Button("North");
 		GridPane.setColumnIndex(northButton, 1);
-		GridPane.setRowIndex(northButton, 4);
+		GridPane.setRowIndex(northButton, 5);
 		northButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -108,13 +135,14 @@ public class RailDetailsPane extends GridPane {
 
 				logger.info("NORTH");
 				node.setTraverse(Direction.NORTH);
+				currentValue.setText("NORTH");
 			}
 		});
 		getChildren().add(northButton);
 
 		// EAST
 		eastButton = new Button("East");
-		GridPane.setColumnIndex(eastButton, 1);
+		GridPane.setColumnIndex(eastButton, 2);
 		GridPane.setRowIndex(eastButton, 5);
 		eastButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -123,14 +151,15 @@ public class RailDetailsPane extends GridPane {
 
 				logger.info("EAST");
 				node.setTraverse(Direction.EAST);
+				currentValue.setText("EAST");
 			}
 		});
 		getChildren().add(eastButton);
 
 		// SOUTH
 		southButton = new Button("South");
-		GridPane.setColumnIndex(southButton, 1);
-		GridPane.setRowIndex(southButton, 6);
+		GridPane.setColumnIndex(southButton, 3);
+		GridPane.setRowIndex(southButton, 5);
 		southButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -138,14 +167,15 @@ public class RailDetailsPane extends GridPane {
 
 				logger.info("SOUTH");
 				node.setTraverse(Direction.SOUTH);
+				currentValue.setText("SOUTH");
 			}
 		});
 		getChildren().add(southButton);
 
 		// WEST
 		westButton = new Button("West");
-		GridPane.setColumnIndex(westButton, 1);
-		GridPane.setRowIndex(westButton, 7);
+		GridPane.setColumnIndex(westButton, 4);
+		GridPane.setRowIndex(westButton, 5);
 		westButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -153,6 +183,7 @@ public class RailDetailsPane extends GridPane {
 
 				logger.info("WEST");
 				node.setTraverse(Direction.WEST);
+				currentValue.setText("WEST");
 			}
 		});
 		getChildren().add(westButton);
@@ -168,10 +199,10 @@ public class RailDetailsPane extends GridPane {
 
 				logger.info("ALL");
 				node.setTraverse(null);
+				currentValue.setText("");
 			}
 		});
 		getChildren().add(allButton);
-
 	}
 
 	private void feedbackBlockData(final Node node) {
@@ -180,7 +211,7 @@ public class RailDetailsPane extends GridPane {
 		GridPane.setRowIndex(feedbackBlockNumberTextfieldLabel, 2);
 
 		feedbackBlockNumberTextfield = new TextField();
-		if (node.getFeedbackBlockNumber() != -1) {
+		if (node.getFeedbackBlockNumber() != null && node.getFeedbackBlockNumber() > -1) {
 			feedbackBlockNumberTextfield.setText(Integer.toString(node.getFeedbackBlockNumber()));
 		}
 		GridPane.setColumnIndex(feedbackBlockNumberTextfield, 2);
@@ -250,6 +281,13 @@ public class RailDetailsPane extends GridPane {
 
 		stringBuffer.append("Highlighted: ").append(node.isHighlighted()).append("\n");
 
+		// graphnode blocked
+		stringBuffer.append("GN 1 Blocked: ").append(node.getGraphNodeOne().isBlocked()).append("\n");
+		stringBuffer.append("GN 2 Blocked: ").append(node.getGraphNodeTwo().isBlocked()).append("\n");
+
+		// railnode feedbackblock used
+		stringBuffer.append("RN FeedbackBlockUsed: ").append(node.isFeedbackBlockUsed()).append("\n");
+
 		// locomotive data
 		stringBuffer.append("Reserved: ").append(node.isReserved()).append("\n");
 		stringBuffer.append("ReservedByLocomotiveId: ").append(node.getReservedLocomotiveId()).append("\n");
@@ -316,6 +354,17 @@ public class RailDetailsPane extends GridPane {
 
 			getChildren().remove(traverseDirectionLabel);
 			traverseDirectionLabel = null;
+		}
+
+		if (currentValueLabel != null) {
+
+			getChildren().remove(currentValueLabel);
+			currentValueLabel = null;
+		}
+		if (currentValue != null) {
+
+			getChildren().remove(currentValue);
+			currentValue = null;
 		}
 
 	}

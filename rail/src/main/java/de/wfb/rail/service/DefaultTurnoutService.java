@@ -50,6 +50,9 @@ public class DefaultTurnoutService implements TurnoutService {
 
 			// request and set the turnout status
 			final boolean isThrown = protocolFacade.turnoutStatus(node.getProtocolTurnoutId().shortValue());
+
+			// node.setThrown(node.isFlipped() == null ? isThrown : (node.isFlipped() ?
+			// !isThrown : isThrown));
 			node.setThrown(isThrown);
 
 			logger.trace("ProtocolTurnoutID: " + node.getProtocolTurnoutId() + " is "

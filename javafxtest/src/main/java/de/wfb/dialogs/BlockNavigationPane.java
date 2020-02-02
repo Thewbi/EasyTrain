@@ -25,7 +25,7 @@ import javafx.scene.layout.HBox;
 
 /**
  * This pane allows a user to select a locomotive, a start block, a target block
- * and a driving direction to move. It will compute a rout and assign the rout
+ * and a driving direction to move. It will compute a route and assign the rout
  * to the locomotive.
  */
 public class BlockNavigationPane extends HBox {
@@ -62,6 +62,7 @@ public class BlockNavigationPane extends HBox {
 	}
 
 	public void clear() {
+
 		getChildren().clear();
 
 		locomotiveComboBox.getItems().clear();
@@ -191,44 +192,91 @@ public class BlockNavigationPane extends HBox {
 					final GraphNode startGraphNode) {
 
 				final boolean routeOverReservedNodes = false;
+				boolean routeOverBlockedFeedbackBlocks = false;
 
 				final RailNode endRailNode = endBlock.getNodes().get(0);
 
-				Route routeA = null;
+				Route routeA = new Route();
 				try {
-					routeA = routingService.route(locomotive, startGraphNode, endRailNode.getGraphNodeOne(),
-							routeOverReservedNodes);
+
+					try {
+						routeOverBlockedFeedbackBlocks = false;
+						routeA = routingService.route(locomotive, startGraphNode, endRailNode.getGraphNodeOne(),
+								routeOverReservedNodes, routeOverBlockedFeedbackBlocks);
+					} catch (final Exception e) {
+						routeA = new Route();
+					}
+
+					if (routeA == null || routeA.isEmpty()) {
+
+						routeOverBlockedFeedbackBlocks = true;
+						routeA = routingService.route(locomotive, startGraphNode, endRailNode.getGraphNodeOne(),
+								routeOverReservedNodes, routeOverBlockedFeedbackBlocks);
+					}
 				} catch (final Exception e) {
-					;
+					logger.error(e.getMessage(), e);
+					routeA = new Route();
 				}
 
-				Route routeB = null;
+				Route routeB = new Route();
 				try {
-					routeB = routingService.route(locomotive, startGraphNode, endRailNode.getGraphNodeTwo(),
-							routeOverReservedNodes);
+
+					try {
+						routeOverBlockedFeedbackBlocks = false;
+						routeB = routingService.route(locomotive, startGraphNode, endRailNode.getGraphNodeTwo(),
+								routeOverReservedNodes, routeOverBlockedFeedbackBlocks);
+					} catch (final Exception e) {
+						routeB = new Route();
+					}
+
+					if (routeB == null || routeB.isEmpty()) {
+
+						routeOverBlockedFeedbackBlocks = true;
+						routeB = routingService.route(locomotive, startGraphNode, endRailNode.getGraphNodeTwo(),
+								routeOverReservedNodes, routeOverBlockedFeedbackBlocks);
+					}
 				} catch (final Exception e) {
-					;
+					logger.error(e.getMessage(), e);
+					routeB = new Route();
 				}
 
 				logger.info("RouteA: " + routeA);
 				logger.info("RouteB: " + routeB);
 
-				if (routeA == null && routeB == null) {
+				if (routeA.isEmpty() && routeB.isEmpty()) {
 
 					return null;
 
-				} else if (routeA != null && routeB == null) {
-
-					return routeA;
-
-				} else if (routeA == null && routeB != null) {
+				} else if (routeA.isEmpty()) {
 
 					return routeB;
+
+				} else if (routeB.isEmpty()) {
+
+					return routeA;
 
 				} else {
 
 					return routeA.getGraphNodes().size() < routeB.getGraphNodes().size() ? routeA : routeB;
+
 				}
+
+//				if (routeA == null && routeB == null) {
+//
+//					return null;
+//
+//				} else if (routeA != null && routeB == null) {
+//
+//					return routeA;
+//
+//				} else if (routeA == null && routeB != null) {
+//
+//					return routeB;
+//
+//				} else {
+//
+//					return routeA.getGraphNodes().size() < routeB.getGraphNodes().size() ? routeA : routeB;
+//				}
 			}
 		});
 

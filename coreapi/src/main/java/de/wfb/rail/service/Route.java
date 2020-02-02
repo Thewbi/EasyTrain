@@ -32,10 +32,6 @@ public class Route {
 		graphNodes.addAll(nodeList);
 	}
 
-	public List<GraphNode> getGraphNodes() {
-		return graphNodes;
-	}
-
 	@Override
 	public String toString() {
 
@@ -110,7 +106,12 @@ public class Route {
 
 		logger.info("switchTurnouts()");
 
-		switchTurnouts(graphNodes, applicationEventPublisher, protocolFacade);
+		try {
+
+			switchTurnouts(graphNodes, applicationEventPublisher, protocolFacade);
+		} catch (final Exception e) {
+			logger.error(e.getMessage(), e);
+		}
 	}
 
 	public static void switchTurnouts(final List<GraphNode> graphNodes,
@@ -129,10 +130,12 @@ public class Route {
 		for (final GraphNode graphNode : graphNodes) {
 
 			logger.trace("Index: " + index + " RailNode.ID: " + graphNode.getRailNode().getId() + " GraphNode.ID: "
-					+ graphNode.getId());
+					+ graphNode.getId() + " ProcotolAddressId: " + graphNode.getRailNode().getProtocolTurnoutId());
 
 			// ignore all nodes that are no turnouts
 			if (ShapeType.isNotTurnout(graphNode.getRailNode().getShapeType())) {
+
+				logger.trace("Not a Turnout ShapeType!");
 
 				index++;
 				continue;
@@ -141,7 +144,7 @@ public class Route {
 			// if the turnout is NOT traversed in switching direction, continue
 			if (graphNode.getChildren().size() < 2) {
 
-				logger.info("RailNode.ID: " + graphNode.getRailNode().getId() + " Index = " + index
+				logger.trace("RailNode.ID: " + graphNode.getRailNode().getId() + " Index = " + index
 						+ " Turnout found. Not in switching order!");
 
 				index++;
@@ -150,23 +153,31 @@ public class Route {
 
 			final RailNode turnoutRailNode = graphNode.getRailNode();
 
-			logger.trace("Index = " + index + " RN.ID: " + turnoutRailNode.getId() + " GN.ID: " + graphNode.getId()
+			logger.info("Index = " + index + " RN.ID: " + turnoutRailNode.getId() + " GN.ID: " + graphNode.getId()
+					+ " ProcotolAddressId: " + graphNode.getRailNode().getProtocolTurnoutId()
 					+ " Turnout found in switching order!");
 
-			logger.trace("Turnout ShapeType = " + turnoutRailNode.getShapeType().name());
+			logger.info("Turnout ShapeType = " + turnoutRailNode.getShapeType().name());
 
 			final int nextIndex = index + 1;
 
-			logger.trace("nextIndex = " + nextIndex + " graphNodes.size(): " + graphNodes.size());
+			logger.info("nextIndex = " + nextIndex + " graphNodes.size(): " + graphNodes.size());
 
-			if (nextIndex < graphNodes.size()) {
+			if (nextIndex <= graphNodes.size()) {
 
+				// yolo
 				final GraphNode nextGraphNode = graphNodes.get(nextIndex);
 
-				logger.info("Switching RailNode.ID: " + turnoutRailNode.getId() + " to GraphNode.ID: "
-						+ nextGraphNode.getId());
+				logger.info("Switching ProtocolAddress: " + turnoutRailNode.getProtocolTurnoutId() + " RailNode.ID: "
+						+ turnoutRailNode.getId() + " to GraphNode.ID: " + nextGraphNode.getId());
 
 				turnoutRailNode.switchToGraphNode(applicationEventPublisher, protocolFacade, null, nextGraphNode);
+
+				try {
+					Thread.sleep(50);
+				} catch (final InterruptedException e) {
+					logger.error(e.getMessage(), e);
+				}
 			}
 
 			index++;
@@ -183,6 +194,8 @@ public class Route {
 	public List<GraphNode> getSubListStartingFromRailNode(final RailNode railNode) {
 
 		if (CollectionUtils.isEmpty(graphNodes)) {
+
+			logger.info("Route has no graphNodes!");
 			return new ArrayList<>();
 		}
 
@@ -217,6 +230,8 @@ public class Route {
 			found = found | graphNode.equals(railNode.getGraphNodeTwo());
 
 			if (found) {
+				// yolo
+				result.add(graphNode);
 				return result;
 			}
 
@@ -250,7 +265,7 @@ public class Route {
 
 	public boolean reservesBlock(final Block block) {
 
-		for (final GraphNode graphNode : getGraphNodes()) {
+		for (final GraphNode graphNode : graphNodes) {
 
 			final RailNode railNode = graphNode.getRailNode();
 
@@ -310,6 +325,44 @@ public class Route {
 		}
 
 		return false;
+	}
+
+	public boolean isEmpty() {
+		return CollectionUtils.isEmpty(graphNodes);
+	}
+
+	public Block findSuccessorBlock(final Block block) {
+
+		logger.info("Find Successor of block ID: " + block.getId());
+
+		if (CollectionUtils.isEmpty(graphNodes)) {
+			return null;
+		}
+
+		boolean currentBlockFound = false;
+
+		for (final GraphNode graphNode : graphNodes) {
+
+			final Block currentBlock = graphNode.getRailNode().getBlock();
+
+			if (currentBlock == null) {
+				continue;
+			}
+
+			if (currentBlock.getId() == block.getId()) {
+				currentBlockFound = true;
+			}
+
+			if (currentBlockFound && (currentBlock.getId() != block.getId())) {
+				return currentBlock;
+			}
+		}
+
+		return null;
+	}
+
+	public List<GraphNode> getGraphNodes() {
+		return graphNodes;
 	}
 
 }

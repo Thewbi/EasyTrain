@@ -128,10 +128,6 @@ public abstract class BaseNode implements Node {
 	@Override
 	public void setFlipped(final Boolean flipped) {
 		this.flipped = flipped;
-//		this.flipped = null;
-//		if (flipped == true) {
-//			this.flipped = flipped;
-//		}
 	}
 
 }

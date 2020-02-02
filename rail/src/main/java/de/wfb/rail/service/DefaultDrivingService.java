@@ -25,9 +25,58 @@ import de.wfb.rail.events.RouteAddedEvent;
 import de.wfb.rail.events.RouteFinishedEvent;
 import de.wfb.rail.facade.ProtocolFacade;
 
+/**
+ * Slow down the locomotive to 20% of is driving speed when the locomotive is
+ * approaching the last block of it's route or a blocked block.<br />
+ * <br />
+ *
+ * This is important because some blocks on the real layout are designed very,
+ * very short.<br />
+ * <br />
+ *
+ * If decoder speed curves are very flat, the locomotive will take some time to
+ * actually come to a halt. If the block is short and the locomotive takes a
+ * long time to stop, the locomotive exits the block before it even stops.<br />
+ * <br />
+ *
+ * This is not a problem per se because UNLESS THE LOCOMOTIVE RUNS OVER A
+ * TURNOUT, the current block still remains reserved for the locomotive and the
+ * system still correctly keeps track of the locomotive. It cannot be anywhere
+ * else but in close vincinity to the block because there was no turnout
+ * nearby.<br />
+ * <br />
+ *
+ * The real problem occurs if THERE IS A TURNOUT directly after the LAST BLOCK
+ * OF A ROUTE! The locomotive might run past that turnout and stop. Now the
+ * system has lost track of where the locomotive actually is! It has lost track
+ * because it does not take the slow down into account. For the system, the
+ * locomotive now is located on the block still and has not run past a switch!
+ * The routing algorithm will start computing routes from the last block of the
+ * last route and not from the actual location of the locomotive on the real
+ * layout which makes a difference in this situation!<br />
+ * <br />
+ *
+ * If the user starts a new route in that inconsistent situation, the locomotive
+ * is already passed a turnout. If the new route needs that exact turnout to
+ * change direction (thrown or closed) then the locomotive is literaly on the
+ * wrong track (No pun intended!) The system has no way of telling what
+ * happened, it assumes the routing is correct ant it will make the locomotive
+ * go and wait for it to arrive at the next block which might never happen
+ * because the locomotive run over a incorrectly setup turnout.<br />
+ * <br />
+ *
+ * By slowing down the locomotive, the hopes are that the locomotive stops on
+ * the last block of a route before going over the next turnout. That way, the
+ * system assumes a location that actually matches the real situation. Routing
+ * still works correctly.<br />
+ * <br />
+ */
 public class DefaultDrivingService implements DrivingService, ApplicationListener<ApplicationEvent> {
 
-	private static final double DRIVING_SPEED = 50.0d;
+	private static final double DRIVING_SPEED_ABSOLUTE = 50.0d;
+
+//	private static final double DRIVING_SPEED_SLOW_PERCENTAGE = 50.0d;
+	private static final double DRIVING_SPEED_SLOW_PERCENTAGE = 40.0d;
 
 	private static final Logger logger = LogManager.getLogger(DefaultDrivingService.class);
 
@@ -124,30 +173,39 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 	 */
 	private void processFeedbackBlockFree(final FeedbackBlockEvent event) {
 
-		logger.trace("processFeedbackBlockFree()");
+		logger.info("processFeedbackBlockFree()");
+
+		DefaultLocomotive locomotive = null;
+		Block block = null;
+		Route route = null;
 
 		// determine the block
 		final int feedbackBlockNumber = event.getFeedbackBlockNumber();
-		logger.trace("feedbackBlockNumber: " + feedbackBlockNumber);
-		final Block block = blockService.getBlockById(feedbackBlockNumber);
+
+		logger.info("feedbackBlockNumber: " + feedbackBlockNumber);
+
+		block = blockService.getBlockById(feedbackBlockNumber);
 		if (block == null) {
-			return;
-		}
+			logger.info("No block!");
+		} else {
+			logger.info("block: " + block);
 
-		// determine the route
-		logger.trace("block: " + block);
-		final Route route = routingFacade.getRouteByBlock(block);
-		if (route == null) {
-			return;
-		}
-		logger.trace("route: " + route);
+			// determine the route
+			route = routingFacade.getRouteByBlock(block);
+			if (route == null) {
+				logger.info("No route!");
+			} else {
+				logger.info("route: " + route);
 
-		// determine the locomotive
-		final DefaultLocomotive locomotive = route.getLocomotive();
-		if (locomotive == null) {
-			return;
+				// determine the locomotive
+				locomotive = route.getLocomotive();
+				if (locomotive == null) {
+					logger.info("No locomotive!");
+				} else {
+					logger.info("locomotive: " + locomotive);
+				}
+			}
 		}
-		logger.trace("locomotive: " + locomotive);
 
 		// It will determine which locomotive has exited that block. Because
 		// only a single locomotive can reserve a route to this block.
@@ -159,9 +217,11 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 	/**
 	 * Determines which locomotive has entered that block. Because only a single
-	 * locomotive can reserve a route to this block.
+	 * locomotive can reserve a route to this block.<br />
+	 * <br />
 	 *
-	 * based on that knowledge it will send the BlockEnteredEvent
+	 * Based on that knowledge it will send the BlockEnteredEvent<br />
+	 * <br />
 	 *
 	 * @param event
 	 */
@@ -169,7 +229,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 		final int feedbackBlockNumber = event.getFeedbackBlockNumber();
 
-		logger.trace("processFeedbackBlockBlocked() feedbackBlockNumber: " + feedbackBlockNumber);
+		logger.info("processFeedbackBlockBlocked() feedbackBlockNumber: " + feedbackBlockNumber);
 
 		// get block
 		final Block block = blockService.getBlockById(feedbackBlockNumber);
@@ -241,13 +301,23 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 	 */
 	private void processBlockExitedEvent(final BlockExitedEvent event) {
 
-		// nop
-		logger.trace("processBlockExitedEvent()");
+		if (event.getBlock() == null) {
+			return;
+		}
+
+		final DefaultLocomotive locomotive = event.getLocomotive();
+
+		final int id = (locomotive == null) ? -1 : locomotive.getId();
+
+		logger.info("processBlockExitedEvent() BlockID: " + event.getBlock().getId() + " locomotive ID: " + id);
+
+		// yolo
+		continueAllRoutes(locomotive);
 	}
 
 	private void processBlockEnteredEvent(final BlockEnteredEvent event) {
 
-		logger.info("processBlockEnteredEvent()");
+		logger.info("processBlockEnteredEvent() Block ID: " + event.getBlock().getId());
 
 		final DefaultLocomotive locomotive = event.getLocomotive();
 		final Block enteredBlock = event.getBlock();
@@ -259,11 +329,26 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 			final RailNode blockRailNode = enteredBlock.getNodes().get(0);
 
-			// put the locomotive onto that block
 			logger.info("Putting locomotive onto RailNode: " + blockRailNode);
 			locomotive.setRailNode(blockRailNode);
 
+			final GraphNode positionalGraphNode = route.findGraphNode(blockRailNode);
+			logger.info("Putting locomotive onto GraphNode: " + positionalGraphNode);
+			locomotive.setGraphNode(positionalGraphNode);
+
 			if (route != null) {
+
+				final GraphNode graphNode = route.findGraphNode(enteredBlock.getNodes().get(0));
+
+				logger.info("Assuming GraphNode ID: " + graphNode.getId());
+				logger.info("GraphNode Direction: " + graphNode.getDirection());
+
+				final Direction dir = locomotive.isDirection() ? graphNode.getDirection()
+						: graphNode.getInverseDirection();
+
+				logger.info("Assuming Direction: " + dir);
+
+				locomotive.setOrientation(dir);
 
 				// if route did finish, stop the locomotive
 				if (route.endsWith(enteredBlock)) {
@@ -284,61 +369,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		// free the last section
 		freeRouteExceptUpToBlock(enteredBlock, locomotive);
 
-		// try to reserve the next section
-		final Block nextBlock = reserveUpToIncludingNextBlock(locomotive);
-		final boolean nextSectionIsReserved = (nextBlock != null);
-		if (nextSectionIsReserved) {
-
-			logger.info("Could reserve up to next block");
-
-			// Slow down the locomotive to 20% of is driving speed when the locomotive is
-			// approaching the last block of it's route.
-			//
-			// This is important because some blocks on the real layout are designed very,
-			// very short.
-			//
-			// If decoder speed curves are very flat, the locomotive will take some time to
-			// actually come to a halt. If the block is short and the locomotive
-			// takes a long time to stop, the locomotive exits the block before it even
-			// stops.
-			//
-			// This is not a problem per se because UNLESS THE LOCOMOTIVE RUNS OVER A
-			// TURNOUT, the current block still remains reserved for the locomotive and the
-			// system still correctly keeps track of the locomotive. It cannot be anywhere
-			// else but in close vincinity to the block because there was no turnout nearby.
-			//
-			// The real problem occurs if THERE IS A TURNOUT directly after the LAST BLOCK
-			// OF A ROUTE! The locomotive might run past that turnout and stop. Now the
-			// system has lost track of where the locomotive actually is! It has lost track
-			// because it does not take the slow down into account. For the system, the
-			// locomotive now is located on the block still and has not run past a switch!
-			// The routing algorithm will start computing routes from the last block of the
-			// last route and not from the actual location of the locomotive on the real
-			// layout which makes a difference in this situation!
-			//
-			// If the user starts a new route in that inconsistent situation, the locomotive
-			// is already passed a turnout.
-			// If the new route needs that exact turnout to change direction (thrown or
-			// closed) then the locomotive is literaly on the wrong track (No pun intended!)
-			// The system has no way of telling what happened, it assumes the routing is
-			// correct ant it will make the locomotive go and wait for it to arrive
-			// at the next block which might never happen because the locomotive run over
-			// a incorrectly setup turnout.
-			//
-			// By slowing down the locomotive, the hopes are that the locomotive stops
-			// on the last block of a route before going over the next turnout. That way,
-			// the system assumes a location that actually matches the real situation.
-			// Routing still works correctly.
-			if (route.endsWith(nextBlock)) {
-
-				locomotiveGo(locomotive, DRIVING_SPEED / 100.0d * 20.0d);
-			}
-
-		} else {
-
-			logger.info("Could NOT reserve up to next block");
-
-		}
+		proceedToNextRouteSection(locomotive);
 	}
 
 	private void processRouteAddedEvent(final RouteAddedEvent event) {
@@ -350,6 +381,14 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 		logger.info(route);
 
+		proceedToNextRouteSection(locomotive);
+	}
+
+	private void proceedToNextRouteSection(final DefaultLocomotive locomotive) {
+
+		logger.info("proceedToNextRouteSection()");
+
+		// try to reserve the next section
 		final Block nextBlock = reserveUpToIncludingNextBlock(locomotive);
 		if (nextBlock == null) {
 
@@ -360,14 +399,48 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 			return;
 		}
 
+		logger.info("nextBlock ID: " + nextBlock.getId());
+
+		final Route route = locomotive.getRoute();
+
+		// DEBUG
 		logger.info(route);
 
-		locomotiveGo(locomotive, DRIVING_SPEED);
+		double speed = DRIVING_SPEED_ABSOLUTE;
+
+		// see class documentation for the motivation of this part
+		if (route.endsWith(nextBlock)) {
+
+			logger.info("EndBlock found ID: " + nextBlock.getId());
+			speed = DRIVING_SPEED_ABSOLUTE / 100.0d * DRIVING_SPEED_SLOW_PERCENTAGE;
+
+		} else {
+
+			// find next block successor
+			final Block successorBlock = locomotive.getRoute().findSuccessorBlock(nextBlock);
+			if (successorBlock != null) {
+
+				logger.info("Found successor block ID: " + successorBlock.getId());
+
+				if (successorBlock.isFeedbackBlockUsed()) {
+
+					logger.info("Blocked route ahead detected!");
+
+					// slow down locomotive because a blocked node was detected
+					logger.info("Slowing down locomotive ...");
+					// locomotiveGo(locomotive, DRIVING_SPEED_ABSOLUTE / 100.0d *
+					// DRIVING_SPEED_SLOW_PERCENTAGE);
+					speed = DRIVING_SPEED_ABSOLUTE / 100.0d * DRIVING_SPEED_SLOW_PERCENTAGE;
+				}
+			}
+		}
+
+		locomotiveGo(locomotive, speed);
 	}
 
 	private void locomotiveGo(final DefaultLocomotive locomotive, final double speed) {
 
-		logger.info(">>>>>>>>>> GO Locomotive GO! locomotive ID: " + locomotive.getId());
+		logger.info(">>>>>>>>>> GO Locomotive GO! locomotive ID: " + locomotive.getId() + " Speed: " + speed);
 
 		final Direction locomotiveOrientation = locomotive.getOrientation();
 		final GraphNode graphNode = locomotive.getGraphNode();
@@ -383,8 +456,12 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		final boolean forward = locomotiveOrientation == graphNodeExitDirection;
 		final short address = locomotive.getAddress();
 
-		logger.info("Locomotive GO forward: " + forward);
-		logger.info("Locomotive GO Address: " + address);
+		// @formatter:off
+		logger.info("Locomotive GO - GN: " + graphNode.getId() + " graphNodeExitDirection: " + graphNodeExitDirection.name());
+		logger.info("Locomotive GO - GN: " + graphNode.getId() + " locomotiveOrientation: " + locomotiveOrientation.name());
+		logger.info("Locomotive GO - forward: " + forward);
+		logger.info("Locomotive GO - Address: " + address);
+		// @formatter:on
 
 		locomotive.setDirection(forward);
 		locomotive.start(speed);
@@ -506,18 +583,43 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 			}
 		}
 
+		// yolo
+		continueAllRoutes(locomotive);
+	}
+
+	private void continueAllRoutes(final DefaultLocomotive excludedLocomotive) {
+
+		logger.info("Continuing all routes ... excludedLocomotive = " + excludedLocomotive);
+
 		// tell all other locomotives to recompute their routes
-		for (final DefaultLocomotive tempLocomotive : modelFacade.getLocomotives()) {
+		for (final DefaultLocomotive locomotive : modelFacade.getLocomotives()) {
 
 			// skip the current locomotive
-			if (tempLocomotive == locomotive) {
+			if (locomotive == excludedLocomotive) {
 				continue;
 			}
 
-			// make this locomotive reserve it's path and start it
-			if (reserveUpToIncludingNextBlock(tempLocomotive) != null) {
+			if (locomotive.getRoute() == null) {
+				continue;
+			}
 
-				locomotiveGo(tempLocomotive, DRIVING_SPEED);
+			// make this locomotive resume its route == reserve it's path and start it
+			final Block nextBlock = reserveUpToIncludingNextBlock(locomotive);
+			if (nextBlock != null) {
+
+				double speed = DRIVING_SPEED_ABSOLUTE;
+				if (locomotive.getRoute() != null && locomotive.getRoute().endsWith(nextBlock)) {
+
+					logger.info("Reducing speed ...");
+					speed = DRIVING_SPEED_ABSOLUTE / 100.0d * DRIVING_SPEED_SLOW_PERCENTAGE;
+				}
+				locomotiveGo(locomotive, speed);
+
+			} else {
+
+				logger.info("Stopping locomotive ...");
+				locomotiveStop(locomotive);
+
 			}
 		}
 	}
@@ -565,8 +667,12 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 		// check if the nodes are free
 		if (!checkNodes(locomotive, nextBlock)) {
+
+			logger.info("Nodes are NOT free!: " + nextBlock.getId());
 			return null;
 		}
+
+		logger.info("Nodes are free!: " + nextBlock.getId());
 
 		// reserve the nodes
 		reserveNodes(locomotive, nextBlock);
@@ -592,6 +698,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 			logger.trace("SubList RailNode.ID: " + graphNode.getRailNode().getId());
 		}
 
+		logger.info("SwitchTurnouts sublist ...");
 		Route.switchTurnouts(subList, applicationEventPublisher, protocolFacade);
 	}
 
@@ -626,9 +733,12 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 		// check if all nodes from the current block to and including the next block are
 		// free
-		if (nextBlock.isReserved()) {
+		if ((nextBlock.isReserved() && nextBlock.getReservedForLocomotive() != locomotive.getId())
+				|| nextBlock.isFeedbackBlockUsed()) {
 
-			logger.info("BlockID: " + nextBlock.getId() + " is reserved already!");
+			logger.info("BlockID: " + nextBlock.getId() + " is reserved already for ID: "
+					+ nextBlock.getReservedForLocomotive() + " used by some object!");
+
 			return false;
 		}
 
@@ -671,6 +781,8 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		logger.info("currentBlock = " + currentBlock);
 
 		if (locomotive.getRailNode() == null) {
+
+			logger.info("locomotive has no RailNode!");
 			return null;
 		}
 

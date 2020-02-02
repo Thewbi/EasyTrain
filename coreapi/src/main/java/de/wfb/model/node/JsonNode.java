@@ -1,6 +1,5 @@
 package de.wfb.model.node;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class JsonNode {
@@ -15,14 +14,21 @@ public class JsonNode {
 
 	private Integer protocolTurnoutId;
 
-	private final List<Integer> manualConnections = new ArrayList<>();
+	private List<Integer> manualConnections;
 
-	private int feedbackBlockNumber;
+	private Integer feedbackBlockNumber;
 
 	/** Null means traversable in all directions */
 	private Direction traverse = null;
 
 	private Boolean flipped;
+
+	@Override
+	public String toString() {
+		return "JsonNode [id=" + id + ", shapeType=" + shapeType + ", x=" + x + ", y=" + y + ", protocolTurnoutId="
+				+ protocolTurnoutId + ", manualConnections=" + manualConnections + ", feedbackBlockNumber="
+				+ feedbackBlockNumber + ", traverse=" + traverse + ", flipped=" + flipped + "]";
+	}
 
 	public int getId() {
 		return id;
@@ -64,15 +70,11 @@ public class JsonNode {
 		this.protocolTurnoutId = protocolTurnoutId;
 	}
 
-	public List<Integer> getManualConnections() {
-		return manualConnections;
-	}
-
-	public int getFeedbackBlockNumber() {
+	public Integer getFeedbackBlockNumber() {
 		return feedbackBlockNumber;
 	}
 
-	public void setFeedbackBlockNumber(final int feedbackBlockNumber) {
+	public void setFeedbackBlockNumber(final Integer feedbackBlockNumber) {
 		this.feedbackBlockNumber = feedbackBlockNumber;
 	}
 
@@ -92,11 +94,12 @@ public class JsonNode {
 		this.flipped = flipped;
 	}
 
-	@Override
-	public String toString() {
-		return "JsonNode [id=" + id + ", shapeType=" + shapeType + ", x=" + x + ", y=" + y + ", protocolTurnoutId="
-				+ protocolTurnoutId + ", manualConnections=" + manualConnections + ", feedbackBlockNumber="
-				+ feedbackBlockNumber + ", traverse=" + traverse + ", flipped=" + flipped + "]";
+	public void setManualConnections(final List<Integer> manualConnections) {
+		this.manualConnections = manualConnections;
+	}
+
+	public List<Integer> getManualConnections() {
+		return manualConnections;
 	}
 
 }

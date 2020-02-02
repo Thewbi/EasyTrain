@@ -9,6 +9,8 @@ import java.io.File;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
 import org.jfree.graphics2d.svg.SVGUtils;
 import org.junit.Test;
@@ -32,6 +34,8 @@ import de.wfb.rail.service.TurnoutService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SVGTest {
+
+	private static final Logger logger = LogManager.getLogger(SVGTest.class);
 
 	private static final int BLOCK_WIDTH = 100;
 
@@ -205,7 +209,7 @@ public class SVGTest {
 
 		} catch (final Exception e) {
 
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 
 		} finally {
 

@@ -6,13 +6,16 @@ import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.RailNode;
 
 /**
- * Feedback block.
+ * Feedback block.<br />
+ * <br />
  *
  * Feedback blocks are an area of RailNodes on the Layout. They have a physical
- * counterpart on the real world layout.
+ * counterpart on the real world layout.<br />
+ * <br />
  *
  * The Intellibox can send events when rolling stock enters Feedback Blocks and
- * when rolling stock leaves Feedback blocks.
+ * when rolling stock leaves Feedback blocks.<br />
+ * <br />
  */
 public interface Block {
 
@@ -25,5 +28,9 @@ public interface Block {
 	void reserveForLocomotive(DefaultLocomotive defaultLocomotive);
 
 	boolean isReserved();
+
+	boolean isFeedbackBlockUsed();
+
+	int getReservedForLocomotive();
 
 }

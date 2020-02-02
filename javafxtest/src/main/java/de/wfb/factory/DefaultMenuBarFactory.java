@@ -152,7 +152,6 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 
 				// build the routing tables
 				routingService.buildRoutingTables();
-//				routingService.colorGraph();
 
 				final List<de.wfb.model.node.Node> selectedNodes = modelFacade.getSelectedNodes();
 
@@ -165,14 +164,25 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 
 					final DefaultLocomotive locomotive = null;
 					final boolean routeOverReservedNodes = false;
-					final Route route = routingService.route(locomotive, nodeA, nodeB, routeOverReservedNodes);
+					final boolean routeOverBlockedFeedbackBlocks = true;
+					Route route;
+					try {
+						route = routingService.route(locomotive, nodeA, nodeB, routeOverReservedNodes,
+								routeOverBlockedFeedbackBlocks);
 
-					logger.info(route);
+						logger.info(route);
 
-					if (CollectionUtils.isNotEmpty(route.getGraphNodes())) {
+						if (CollectionUtils.isNotEmpty(route.getGraphNodes())) {
 
-						routingService.highlightRoute(route);
-						routingService.switchTurnouts(route);
+							// visually highlight the route in the UI
+							routingService.highlightRoute(route);
+
+							// switch turnouts
+							routingService.switchTurnouts(route);
+						}
+
+					} catch (final Exception e) {
+						logger.error(e.getMessage(), e);
 					}
 
 				} else {

@@ -113,14 +113,14 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 		}
 	}
 
-	private List<Node> retrieveNodesOfFeedbackBlock(final int feedbackBlockNumber) {
+	private List<Node> retrieveNodesOfFeedbackBlock(final Integer feedbackBlockNumber) {
 
 		final List<Node> result = new ArrayList<>();
 		for (final Map.Entry<Integer, Node> entry : model.getIdMap().entrySet()) {
 
 			final RailNode railNode = (RailNode) entry.getValue();
 
-			if (railNode.getFeedbackBlockNumber() == feedbackBlockNumber) {
+			if (railNode.getFeedbackBlockNumber() != null && railNode.getFeedbackBlockNumber() == feedbackBlockNumber) {
 
 				logger.trace("RailNode ID: " + railNode.getId() + " FeedbackBlockNumber ID: "
 						+ railNode.getFeedbackBlockNumber());

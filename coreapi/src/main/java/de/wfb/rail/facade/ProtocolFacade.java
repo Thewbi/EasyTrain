@@ -1,6 +1,9 @@
 package de.wfb.rail.facade;
 
+import java.util.List;
+
 import de.wfb.model.node.Node;
+import de.wfb.rail.events.FeedbackBlockUpdateEvent;
 
 public interface ProtocolFacade {
 
@@ -10,8 +13,10 @@ public interface ProtocolFacade {
 
 	/**
 	 * Sends P50XXEventCommand.
+	 *
+	 * @return
 	 */
-	void event();
+	boolean event();
 
 	void connect() throws Exception;
 
@@ -27,5 +32,7 @@ public interface ProtocolFacade {
 	boolean turnoutStatus(short protocolId);
 
 	void turnTurnout(Node node);
+
+	List<FeedbackBlockUpdateEvent> eventSenseCommand();
 
 }

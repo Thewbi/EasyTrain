@@ -46,6 +46,8 @@ public class Startup extends Application {
 
 	private static final Logger logger = LogManager.getLogger(Startup.class);
 
+	private static final boolean SHOW_THROTTLE_NONMODAL_DIALOG = false;
+
 	private EventHandler<WindowEvent> closeWindowEventHandler;
 
 	private ModelFacade modelFacade;
@@ -122,7 +124,9 @@ public class Startup extends Application {
 		turnoutService.startQueryingFromQueue();
 
 		// locomotive throttle
-		createAndShowThrottle(context);
+		if (SHOW_THROTTLE_NONMODAL_DIALOG) {
+			createAndShowThrottle(context);
+		}
 
 		// stop the application after it's last window was closed as opposed to keep a
 		// thread without any windows
@@ -286,7 +290,7 @@ public class Startup extends Application {
 			try {
 				Thread.sleep(1000);
 			} catch (final InterruptedException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 
 			activeCount = customThreadPoolScheduler.getActiveCount();

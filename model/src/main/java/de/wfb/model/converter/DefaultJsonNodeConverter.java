@@ -1,5 +1,6 @@
 package de.wfb.model.converter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -26,7 +27,12 @@ public class DefaultJsonNodeConverter implements Converter<Node, JsonNode> {
 		target.setX(source.getX());
 		target.setY(source.getY());
 		target.setProtocolTurnoutId(source.getProtocolTurnoutId());
-		target.setFeedbackBlockNumber(source.getFeedbackBlockNumber());
+
+		target.setFeedbackBlockNumber(null);
+		if (source.getFeedbackBlockNumber() != null && source.getFeedbackBlockNumber() > -1) {
+			target.setFeedbackBlockNumber(source.getFeedbackBlockNumber());
+		}
+
 		target.setTraverse(source.getTraverse());
 		target.setFlipped(source.isFlipped());
 
@@ -38,6 +44,8 @@ public class DefaultJsonNodeConverter implements Converter<Node, JsonNode> {
 
 			logger.trace("manualConnections.size(): " + manualConnections.size());
 			logger.trace("ManualConnection found!");
+
+			target.setManualConnections(new ArrayList<Integer>());
 
 			for (final RailNode railNode : manualConnections) {
 

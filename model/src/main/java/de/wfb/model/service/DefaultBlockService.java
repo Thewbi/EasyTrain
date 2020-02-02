@@ -40,9 +40,8 @@ public class DefaultBlockService implements BlockService {
 
 	private void processBlock(final RailNode railNode) {
 
-		final int feedbackBlockNumber = railNode.getFeedbackBlockNumber();
-
-		if (feedbackBlockNumber < 0) {
+		final Integer feedbackBlockNumber = railNode.getFeedbackBlockNumber();
+		if (feedbackBlockNumber == null || feedbackBlockNumber < 0) {
 			return;
 		}
 

@@ -10,8 +10,12 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Main {
+
+	private static final Logger logger = LogManager.getLogger(Main.class);
 
 	public static void main(final String[] args) throws FileNotFoundException {
 
@@ -50,7 +54,7 @@ public class Main {
 			fos.flush();
 			fos.close();
 		} catch (final IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 	}
 

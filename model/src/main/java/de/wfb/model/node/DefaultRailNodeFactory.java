@@ -61,7 +61,7 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 
 		}
 
-		final int feebackBlockNumber = jsonNode.getFeedbackBlockNumber();
+		final Integer feebackBlockNumber = jsonNode.getFeedbackBlockNumber();
 		final Direction traverse = jsonNode.getTraverse();
 		final Boolean isFlipped = jsonNode.isFlipped();
 
@@ -104,7 +104,7 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 	}
 
 	private RailNode createFromParametersInternal(final int id, final int x, final int y, final ShapeType shapeType,
-			final int feedbackBlockNumber, final Direction traverse, final Boolean flipped) throws Exception {
+			final Integer feedbackBlockNumber, final Direction traverse, final Boolean flipped) throws Exception {
 
 		RailNode railNode = null;
 		GraphNode graphNodeOne = null;

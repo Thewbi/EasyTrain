@@ -29,9 +29,9 @@ public interface Node {
 
 	void setProtocolTurnoutId(Integer protocolTurnoutId);
 
-	int getFeedbackBlockNumber();
+	Integer getFeedbackBlockNumber();
 
-	void setFeedbackBlockNumber(int feedbackBlockNumber);
+	void setFeedbackBlockNumber(Integer feedbackBlockNumber);
 
 	boolean isFeedbackBlockUsed();
 
