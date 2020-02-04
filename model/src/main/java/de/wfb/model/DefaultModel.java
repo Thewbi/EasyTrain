@@ -170,6 +170,35 @@ public class DefaultModel implements Model {
 	}
 
 	@Override
+	public void clear() {
+		idMap = new HashMap<>();
+		nodeGrid = new Node[rows][columns];
+		selectedNode = null;
+	}
+
+	@Override
+	public GraphNode getGraphNodeById(final int id) {
+
+		final List<RailNode> allRailNodes = getAllRailNodes();
+
+		if (org.springframework.util.CollectionUtils.isEmpty(allRailNodes)) {
+			return null;
+		}
+
+		for (final RailNode railNode : allRailNodes) {
+
+			if (railNode.getGraphNodeOne().getId() == id) {
+				return railNode.getGraphNodeOne();
+			}
+			if (railNode.getGraphNodeTwo().getId() == id) {
+				return railNode.getGraphNodeTwo();
+			}
+		}
+
+		return null;
+	}
+
+	@Override
 	public String getCurrentModelFile() {
 		return currentModelFile;
 	}
@@ -187,13 +216,6 @@ public class DefaultModel implements Model {
 	@Override
 	public void setCurrentLocomotiveModelFile(final String currentLocomotiveModelFile) {
 		this.currentLocomotiveModelFile = currentLocomotiveModelFile;
-	}
-
-	@Override
-	public void clear() {
-		idMap = new HashMap<>();
-		nodeGrid = new Node[rows][columns];
-		selectedNode = null;
 	}
 
 }

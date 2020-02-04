@@ -29,6 +29,9 @@ public class SidePane extends GridPane implements ApplicationListener<Applicatio
 	@Autowired
 	private ThrottlePane throttlePane;
 
+	@Autowired
+	private RoutingPane routingPane;
+
 	@Override
 	public void onApplicationEvent(final ApplicationEvent event) {
 
@@ -88,6 +91,14 @@ public class SidePane extends GridPane implements ApplicationListener<Applicatio
 		throttleTitledPane.setText("Locomotive Throttle");
 		throttleTitledPane.setContent(throttlePane);
 		getChildren().add(throttleTitledPane);
+
+		routingPane.setup();
+		final TitledPane routingTitledPane = new TitledPane();
+		GridPane.setColumnIndex(routingTitledPane, 1);
+		GridPane.setRowIndex(routingTitledPane, 5);
+		routingTitledPane.setText("Routing");
+		routingTitledPane.setContent(routingPane);
+		getChildren().add(routingTitledPane);
 	}
 
 }

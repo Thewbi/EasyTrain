@@ -22,4 +22,9 @@ public class SwitchingFrame {
 		return otherOption;
 	}
 
+	@Override
+	public String toString() {
+		return "SwitchingFrame [switchingNode=" + switchingNode.getId() + ", otherOption=" + otherOption.getId() + "]";
+	}
+
 }

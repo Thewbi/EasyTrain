@@ -254,25 +254,41 @@ public class RailDetailsPane extends GridPane {
 		// @formatter:off
 
 		// GraphNode ONE and children
-		stringBuffer.append(node.getId()).append(" [").append(node.getGraphNodeOne().getId()).append(" ").append(node.getGraphNodeOne().getColor().name()).append(" -> \n");
+		stringBuffer
+			.append(node.getId()).append(" [")
+			.append(node.getGraphNodeOne().getId())
+//			.append(" ")
+//			.append(node.getGraphNodeOne().getColor().name())
+			.append(" -> \n");
 
 		if (CollectionUtils.isNotEmpty(node.getGraphNodeOne().getChildren())) {
 
 			for (final GraphNode graphNode : node.getGraphNodeOne().getChildren()) {
 
-				stringBuffer.append(graphNode.getId()).append(" ").append(graphNode.getColor().name()).append(", ");
+				stringBuffer
+				.append(graphNode.getId()).append(" ");
+//				.append(graphNode.getColor().name()).append(", ");
 			}
 		}
 		stringBuffer.append("]\n");
 
 		// GraphNode TWO and children
-		stringBuffer.append(" [").append(node.getGraphNodeTwo().getId()).append(" ").append(node.getGraphNodeTwo().getColor().name()).append(" -> \n");
+		stringBuffer
+			.append(" [")
+			.append(node.getGraphNodeTwo().getId())
+//			.append(" ")
+//			.append(node.getGraphNodeTwo().getColor().name())
+			.append(" -> \n");
 
 		if (CollectionUtils.isNotEmpty(node.getGraphNodeTwo().getChildren())) {
 
 			for (final GraphNode graphNode : node.getGraphNodeTwo().getChildren()) {
 
-				stringBuffer.append(graphNode.getId()).append(" ").append(graphNode.getColor().name()).append(", ");
+				stringBuffer
+				.append(graphNode.getId())
+//				.append(" ")
+//				.append(graphNode.getColor().name())
+				.append(", ");
 			}
 		}
 		stringBuffer.append("]\n");

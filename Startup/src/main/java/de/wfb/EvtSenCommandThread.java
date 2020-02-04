@@ -39,9 +39,11 @@ public class EvtSenCommandThread {
 		}
 
 		// send the P50XXEventCommand
-		logger.info("EventThread ...");
+		logger.trace("EventThread ...");
 		if (protocolFacade.event()) {
-			logger.info("Event Sense command ...");
+
+			logger.trace("Event Sense command ...");
+
 			// final P50XXEvtSenCommand eventSenseCommand = eventSenseCommand(inputStream,
 			// outputStream);
 			final List<FeedbackBlockUpdateEvent> eventSenseCommand = protocolFacade.eventSenseCommand();
@@ -56,7 +58,7 @@ public class EvtSenCommandThread {
 
 			logger.info("Event Sense command done.");
 		}
-		logger.info("EventThread done.");
+		logger.trace("EventThread done.");
 	}
 
 	public boolean isRunning() {

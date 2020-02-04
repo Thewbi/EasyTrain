@@ -150,8 +150,10 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 
 				logger.trace("Route Menu clicked!");
 
+				routingService.removeHighlightedRoute();
+
 				// build the routing tables
-				routingService.buildRoutingTables();
+//				routingService.buildRoutingTables();
 
 				final List<de.wfb.model.node.Node> selectedNodes = modelFacade.getSelectedNodes();
 
@@ -163,7 +165,7 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 					final de.wfb.model.node.Node nodeB = selectedNodes.get(1);
 
 					final DefaultLocomotive locomotive = null;
-					final boolean routeOverReservedNodes = false;
+					final boolean routeOverReservedNodes = true;
 					final boolean routeOverBlockedFeedbackBlocks = true;
 					Route route;
 					try {
@@ -178,7 +180,7 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 							routingService.highlightRoute(route);
 
 							// switch turnouts
-							routingService.switchTurnouts(route);
+//							routingService.switchTurnouts(route);
 						}
 
 					} catch (final Exception e) {

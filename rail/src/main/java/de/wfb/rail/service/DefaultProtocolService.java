@@ -190,9 +190,9 @@ public class DefaultProtocolService implements ProtocolService {
 
 		} finally {
 
-			logger.info("turnoutStatus unlockLock ...");
+			logger.trace("turnoutStatus unlockLock ...");
 			unlockLock();
-			logger.info("turnoutStatus unlockLock done.");
+			logger.trace("turnoutStatus unlockLock done.");
 
 		}
 
@@ -212,7 +212,7 @@ public class DefaultProtocolService implements ProtocolService {
 
 			logger.trace("Event lock...");
 			lockLock(true);
-			logger.info("Event locked done.");
+			logger.trace("Event locked done.");
 
 //			final boolean tryLockResult = lock.tryLock(10, TimeUnit.SECONDS);
 //
@@ -226,15 +226,15 @@ public class DefaultProtocolService implements ProtocolService {
 			logger.trace("E - Checking Connection!");
 			if (!isConnected()) {
 
-				logger.info("E - Not connected! Aborting operation!");
+				logger.trace("E - Not connected! Aborting operation!");
 
 				return false;
 			}
 
 			// check the event status
-			logger.info("Event command ...");
+			logger.trace("Event command ...");
 			final P50XXEventCommand eventCommand = eventCommand(inputStream, outputStream);
-			logger.info("Event command done.");
+			logger.trace("Event command done.");
 
 			logger.trace("E - eventCommand.isxStatusShouldBeCalled() = " + eventCommand.isxStatusShouldBeCalled());
 
@@ -256,9 +256,9 @@ public class DefaultProtocolService implements ProtocolService {
 
 		} finally {
 
-			logger.info("Event unlockLock ...");
+			logger.trace("Event unlockLock ...");
 			unlockLock();
-			logger.info("Event unlockLock done.");
+			logger.trace("Event unlockLock done.");
 
 		}
 

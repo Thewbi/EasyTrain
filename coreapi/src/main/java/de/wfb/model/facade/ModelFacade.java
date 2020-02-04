@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import de.wfb.model.Model;
 import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
 import de.wfb.model.node.RailNode;
 import de.wfb.rail.ui.ShapeType;
@@ -56,5 +57,7 @@ public interface ModelFacade {
 	String getCurrentModel();
 
 	void clear();
+
+	GraphNode getGraphNodeById(int id);
 
 }

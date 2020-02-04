@@ -16,6 +16,7 @@ import de.wfb.dialogs.LocomotiveListStage;
 import de.wfb.dialogs.PlaceLocomotivePane;
 import de.wfb.dialogs.PlaceLocomotiveStage;
 import de.wfb.dialogs.RailDetailsPane;
+import de.wfb.dialogs.RoutingPane;
 import de.wfb.dialogs.SidePane;
 import de.wfb.dialogs.ThrottlePane;
 import de.wfb.dialogs.ThrottleStage;
@@ -37,8 +38,9 @@ import de.wfb.model.service.DefaultFeedbackBlockService;
 import de.wfb.model.service.DefaultIdService;
 import de.wfb.model.service.DefaultModelPersistenceService;
 import de.wfb.model.service.DefaultModelService;
-import de.wfb.model.service.DefaultRoutingService;
 import de.wfb.model.service.ModelService;
+import de.wfb.model.service.OptimizedNewRoutingService;
+import de.wfb.model.service.RoutingService;
 import de.wfb.model.strategy.DefaultGraphColorStrategy;
 import de.wfb.rail.facade.DefaultProtocolFacade;
 import de.wfb.rail.factory.DefaultSVGPathFactory;
@@ -181,9 +183,16 @@ public class ConfigurationClass implements SchedulingConfigurer {
 		return new TimedDrivingThread();
 	}
 
+//	@Bean
+//	public DefaultRoutingService DefaultRoutingService() {
+//		return new DefaultRoutingService();
+//	}
+
 	@Bean
-	public DefaultRoutingService DefaultRoutingService() {
-		return new DefaultRoutingService();
+	public RoutingService RoutingService() {
+//		return new NewRoutingService();
+
+		return new OptimizedNewRoutingService();
 	}
 
 	@Bean
@@ -294,6 +303,11 @@ public class ConfigurationClass implements SchedulingConfigurer {
 	@Bean
 	public DefaultViewModel DefaultViewModel() {
 		return new DefaultViewModel();
+	}
+
+	@Bean
+	public RoutingPane RoutingPane() {
+		return new RoutingPane();
 	}
 
 }

@@ -25,11 +25,12 @@ public class GraphNode {
 
 	private final List<SwitchingNodeEntry> switchingGraphNodeChildren = new ArrayList<>();
 
-	private final Map<Integer, Set<GraphNode>> routingTable = new HashMap<>();
+//	private final Map<Integer, Set<GraphNode>> routingTable = new HashMap<>();
+	private final Map<Integer, Set<GraphNodeEntry>> routingTable = new HashMap<>();
 
 	private RailNode railNode;
 
-	private Color color = Color.NONE;
+//	private Color color = Color.NONE;
 
 	/**
 	 * blocking a graph node, means to make a rail node non-traversable in this
@@ -49,7 +50,11 @@ public class GraphNode {
 		return children;
 	}
 
-	public Map<Integer, Set<GraphNode>> getRoutingTable() {
+//	public Map<Integer, Set<GraphNode>> getRoutingTable() {
+//		return routingTable;
+//	}
+
+	public Map<Integer, Set<GraphNodeEntry>> getRoutingTable() {
 		return routingTable;
 	}
 
@@ -65,13 +70,13 @@ public class GraphNode {
 		this.railNode = railNode;
 	}
 
-	public Color getColor() {
-		return color;
-	}
-
-	public void setColor(final Color color) {
-		this.color = color;
-	}
+//	public Color getColor() {
+//		return color;
+//	}
+//
+//	public void setColor(final Color color) {
+//		this.color = color;
+//	}
 
 	@Override
 	public String toString() {
@@ -97,31 +102,35 @@ public class GraphNode {
 
 	public String dumpRoutingTable() {
 
-		final StringBuffer stringBuffer = new StringBuffer();
+//		if (routingTable.entrySet().isEmpty()) {
+//			return "Empty";
+//		}
+//
+//		final StringBuffer stringBuffer = new StringBuffer();
+//
+//		for (final Map.Entry<Integer, Set<GraphNode>> entry : routingTable.entrySet()) {
+//
+//			stringBuffer.append("\n").append("Reach ").append(entry.getKey()).append(" via ")
+//					.append(entry.getValue().toString());
+//		}
+//
+//		return stringBuffer.toString();
 
-		if (!routingTable.entrySet().isEmpty()) {
-
-			for (final Map.Entry<Integer, Set<GraphNode>> entry : routingTable.entrySet()) {
-
-				stringBuffer.append("\n").append("Reach ").append(entry.getKey()).append(" via ")
-						.append(entry.getValue().toString());
-			}
-		}
-
-		return stringBuffer.toString();
+		return null;
 	}
 
 	public String dumpSwitchingTable() {
 
+		if (switchingGraphNodeChildren.isEmpty()) {
+			return "Empty";
+		}
+
 		final StringBuffer stringBuffer = new StringBuffer();
 
-		if (!switchingGraphNodeChildren.isEmpty()) {
+		for (final SwitchingNodeEntry entry : switchingGraphNodeChildren) {
 
-			for (final SwitchingNodeEntry entry : switchingGraphNodeChildren) {
-
-				stringBuffer.append("\n").append("Reach Switch ").append(entry.getSwitchingGraphNode().getId())
-						.append(" via ").append(entry.getConnectingGraphNode().getId());
-			}
+			stringBuffer.append("\n").append("Reach Switch ").append(entry.getSwitchingGraphNode().getId())
+					.append(" via ").append(entry.getConnectingGraphNode().getId());
 		}
 
 		return stringBuffer.toString();

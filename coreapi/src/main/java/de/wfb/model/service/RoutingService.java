@@ -17,10 +17,12 @@ public interface RoutingService {
 
 	void buildRoutingTables();
 
-	void colorGraph();
+//	void colorGraph();
 
 	void highlightRoute(Route route);
 
 	void switchTurnouts(Route route);
+
+	void removeHighlightedRoute();
 
 }

@@ -17,7 +17,6 @@ import org.springframework.context.ApplicationListener;
 import de.wfb.dot.DefaultDotSerializer;
 import de.wfb.model.Model;
 import de.wfb.model.locomotive.DefaultLocomotive;
-import de.wfb.model.node.Color;
 import de.wfb.model.node.DefaultRailNode;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
@@ -427,16 +426,16 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 		return model;
 	}
 
-	@Override
-	public void resetGraphColors() {
-
-		for (final Map.Entry<Integer, Node> entry : model.getIdMap().entrySet()) {
-
-			final RailNode railNode = (RailNode) entry.getValue();
-			railNode.getGraphNodeOne().setColor(Color.NONE);
-			railNode.getGraphNodeTwo().setColor(Color.NONE);
-		}
-	}
+//	@Override
+//	public void resetGraphColors() {
+//
+//		for (final Map.Entry<Integer, Node> entry : model.getIdMap().entrySet()) {
+//
+//			final RailNode railNode = (RailNode) entry.getValue();
+//			railNode.getGraphNodeOne().setColor(Color.NONE);
+//			railNode.getGraphNodeTwo().setColor(Color.NONE);
+//		}
+//	}
 
 	@Override
 	public List<Node> getSelectedNodes() {
@@ -520,6 +519,25 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 	@Override
 	public void clear() {
 		model.clear();
+	}
+
+	@Override
+	public void removeAllHighlights() {
+
+		for (final RailNode railNode : model.getAllRailNodes()) {
+
+			final boolean hightlighted = false;
+			railNode.setHighlighted(hightlighted);
+			final NodeHighlightedEvent nodeHighlightedEvent = new NodeHighlightedEvent(this, model, railNode,
+					railNode.getX(), railNode.getY(), hightlighted);
+
+			applicationEventPublisher.publishEvent(nodeHighlightedEvent);
+		}
+	}
+
+	@Override
+	public GraphNode getGraphNodeById(final int id) {
+		return model.getGraphNodeById(id);
 	}
 
 }

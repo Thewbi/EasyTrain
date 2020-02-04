@@ -12,7 +12,6 @@ import de.wfb.dialogs.ThrottleStage;
 import de.wfb.factory.DefaultSceneFactory;
 import de.wfb.factory.GraphNodeSVGMenuItem;
 import de.wfb.model.facade.ModelFacade;
-import de.wfb.model.service.DefaultRoutingService;
 import de.wfb.model.service.RoutingService;
 import de.wfb.rail.facade.DefaultProtocolFacade;
 import de.wfb.rail.facade.ProtocolFacade;
@@ -89,8 +88,9 @@ public class Startup extends Application {
 
 		// load the model
 		loadModel("persistence/model.json", "persistence/locomotives.json");
-
 //		loadModel("../model/src/test/resources/DefaultRoutingServiceTest/model.json", "persistence/locomotives.json");
+//		loadModel("../model/src/test/resources/DefaultRoutingServiceTest/modelLearning.json",
+//				"persistence/locomotives.json");
 
 		// build blocks
 		blockService.determineBlocks();
@@ -143,7 +143,7 @@ public class Startup extends Application {
 		// https://stackoverflow.com/questions/26619566/javafx-stage-close-handler
 		stage.setOnCloseRequest(closeWindowEventHandler);
 
-		stage.setTitle("Easy Train (Beta v0.1)");
+		stage.setTitle("Easy Train (Beta v0.2)");
 		stage.setWidth(1400);
 		stage.setHeight(1000);
 
@@ -195,7 +195,7 @@ public class Startup extends Application {
 		protocolFacade = context.getBean(DefaultProtocolFacade.class);
 
 		// services
-		routingService = context.getBean(DefaultRoutingService.class);
+		routingService = context.getBean(RoutingService.class);
 		blockService = context.getBean(BlockService.class);
 		turnoutService = context.getBean(TurnoutService.class);
 

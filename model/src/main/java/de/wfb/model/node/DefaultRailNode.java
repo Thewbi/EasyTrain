@@ -648,6 +648,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	@SuppressWarnings("unused")
 	private String toStringLineBreaks() {
 
+		// @formatter:off
+
 		final StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append("\n");
 
@@ -672,14 +674,22 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 		}
 
 		stringBuffer.append("\n");
-		stringBuffer.append("GraphNode One: ").append(getGraphNodeOne()).append(" COLOR: ")
-				.append(getGraphNodeOne().getColor().name());
+		stringBuffer
+			.append("GraphNode One: ")
+			.append(getGraphNodeOne());
+//			.append(" COLOR: ")
+//			.append(getGraphNodeOne().getColor().name());
 
 		stringBuffer.append("\n");
-		stringBuffer.append("GraphNode Two: ").append(getGraphNodeTwo()).append(" COLOR: ")
-				.append(getGraphNodeTwo().getColor().name());
+		stringBuffer
+			.append("GraphNode Two: ")
+			.append(getGraphNodeTwo());
+//			.append(" COLOR: ")
+//			.append(getGraphNodeTwo().getColor().name());
 
 		stringBuffer.append("\n");
+
+		// @formatter:on
 
 		return stringBuffer.toString();
 	}

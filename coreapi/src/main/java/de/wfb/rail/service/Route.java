@@ -1,7 +1,9 @@
 package de.wfb.rail.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -285,14 +287,6 @@ public class Route {
 		return false;
 	}
 
-	public DefaultLocomotive getLocomotive() {
-		return locomotive;
-	}
-
-	public void setLocomotive(final DefaultLocomotive locomotive) {
-		this.locomotive = locomotive;
-	}
-
 	public boolean containsBlock(final Block block) {
 
 		for (int i = graphNodes.size() - 1; i >= 0; i--) {
@@ -331,6 +325,10 @@ public class Route {
 		return CollectionUtils.isEmpty(graphNodes);
 	}
 
+	public boolean isNotEmpty() {
+		return !isEmpty();
+	}
+
 	public Block findSuccessorBlock(final Block block) {
 
 		logger.info("Find Successor of block ID: " + block.getId());
@@ -361,8 +359,59 @@ public class Route {
 		return null;
 	}
 
+	public boolean hasDuplicateGraphNodes() {
+
+		if (CollectionUtils.isEmpty(graphNodes)) {
+			return false;
+		}
+
+		boolean duplicatesFound = false;
+
+		final Set<GraphNode> set = new HashSet<>();
+
+		for (final GraphNode graphNode : graphNodes) {
+
+			if (set.contains(graphNode)) {
+
+				logger.info("Duplicate GN-ID: " + graphNode.getId());
+				duplicatesFound = true;
+			}
+			set.add(graphNode);
+		}
+
+		return duplicatesFound;
+	}
+
+	public boolean checkRoute() {
+
+		if (CollectionUtils.isEmpty(graphNodes)) {
+			return true;
+		}
+
+		for (int i = 0; i < graphNodes.size() - 1; i++) {
+
+			final GraphNode gnA = graphNodes.get(i);
+			final GraphNode gnB = graphNodes.get(i + 1);
+
+			if (!gnA.getChildren().contains(gnB)) {
+				logger.info("GN-B-ID: " + gnB.getId() + " is not reachable from GN-A-ID: " + gnA.getId());
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	public List<GraphNode> getGraphNodes() {
 		return graphNodes;
+	}
+
+	public DefaultLocomotive getLocomotive() {
+		return locomotive;
+	}
+
+	public void setLocomotive(final DefaultLocomotive locomotive) {
+		this.locomotive = locomotive;
 	}
 
 }

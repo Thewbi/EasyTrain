@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import de.wfb.model.Model;
 import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
 import de.wfb.model.node.RailNode;
 import de.wfb.model.service.ModelService;
@@ -132,6 +133,11 @@ public class DefaultModelFacade implements ModelFacade {
 	@Override
 	public void clear() {
 		modelService.clear();
+	}
+
+	@Override
+	public GraphNode getGraphNodeById(final int id) {
+		return modelService.getGraphNodeById(id);
 	}
 
 }

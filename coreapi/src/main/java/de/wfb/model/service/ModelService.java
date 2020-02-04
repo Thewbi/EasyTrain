@@ -44,7 +44,7 @@ public interface ModelService {
 
 	Model getModel();
 
-	void resetGraphColors();
+//	void resetGraphColors();
 
 	List<Node> getSelectedNodes();
 
@@ -63,5 +63,9 @@ public interface ModelService {
 	String getCurrentModel();
 
 	void clear();
+
+	void removeAllHighlights();
+
+	GraphNode getGraphNodeById(int id);
 
 }
