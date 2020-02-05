@@ -98,7 +98,7 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 		final Menu helpMenu = new Menu("Help");
 
 		// create MenuItems
-		final MenuItem newItem = new MenuItem("New");
+//		final MenuItem newItem = new MenuItem("New");
 		final MenuItem openFileItem = new MenuItem("Open File");
 		openFileItem.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -152,9 +152,6 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 
 				routingService.removeHighlightedRoute();
 
-				// build the routing tables
-//				routingService.buildRoutingTables();
-
 				final List<de.wfb.model.node.Node> selectedNodes = modelFacade.getSelectedNodes();
 
 				if (CollectionUtils.isNotEmpty(selectedNodes) && selectedNodes.size() >= 2) {
@@ -163,6 +160,9 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 
 					final de.wfb.model.node.Node nodeA = selectedNodes.get(0);
 					final de.wfb.model.node.Node nodeB = selectedNodes.get(1);
+
+					routingService.highlightNode(nodeA);
+					routingService.highlightNode(nodeB);
 
 					final DefaultLocomotive locomotive = null;
 					final boolean routeOverReservedNodes = true;
@@ -217,8 +217,8 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 				layoutGridController.connect();
 			}
 		});
-		final MenuItem copyItem = new MenuItem("Copy");
-		final MenuItem pasteItem = new MenuItem("Paste");
+//		final MenuItem copyItem = new MenuItem("Copy");
+//		final MenuItem pasteItem = new MenuItem("Paste");
 		final MenuItem locomotiveListItem = new MenuItem("Locomotive List");
 		locomotiveListItem.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -301,6 +301,46 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 			}
 		});
 
+		final MenuItem reserveNodeMenuItem = new MenuItem("Reserve Node");
+		reserveNodeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(final ActionEvent event) {
+
+				final List<de.wfb.model.node.Node> selectedNodes = modelFacade.getSelectedNodes();
+
+				logger.info(selectedNodes);
+
+				if (CollectionUtils.isEmpty(selectedNodes)) {
+					return;
+				}
+
+				final de.wfb.model.node.Node nodeA = selectedNodes.get(0);
+
+				modelFacade.reserveNodeToggle(nodeA);
+			}
+		});
+
+		final MenuItem blockNodeMenuItem = new MenuItem("Block Node");
+		blockNodeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(final ActionEvent event) {
+
+				final List<de.wfb.model.node.Node> selectedNodes = modelFacade.getSelectedNodes();
+
+				logger.info(selectedNodes);
+
+				if (CollectionUtils.isEmpty(selectedNodes)) {
+					return;
+				}
+
+				final de.wfb.model.node.Node nodeA = selectedNodes.get(0);
+
+				modelFacade.blockNodeToggle(nodeA);
+			}
+		});
+
 		final MenuItem routingNodeMenuItem = new MenuItem("Routing Node");
 		routingNodeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -378,27 +418,47 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 
 		});
 
-//		final MenuItem xTrntStatusMenuItem = new XTrnStatusMenuItem("XTrntStatus Command");
-//		xTrntStatusMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-//
-//			@Override
-//			public void handle(final ActionEvent event) {
-//
-//				logger.info("xTrntStatusMenuItem");
-//
-//				final boolean isThrown = protocolFacade.turnoutStatus((short) 28);
-//				logger.info("Result: " + isThrown);
-//			}
-//
-//		});
-
 		// add menuItems to the Menus
-		fileMenu.getItems().addAll(newItem, openFileItem, saveItem, exitItem);
-		routingMenu.getItems().addAll(findRouteMenuItem);
-		editMenu.getItems().addAll(connectItem, copyItem, pasteItem, locomotiveListItem, placeLocomotiveItem);
-		serialMenu.getItems().addAll(serialConnectItem, serialDisconnectItem);
-		debugMenu.getItems().addAll(routingNodeMenuItem, feedbackBlockEventMenuItem, removeLocomotiveItem,
-				sensorCommandMenuItem, xSensOffMenuItem, xTrntStatusMenuItem, graphNodeSVGMenuItem);
+
+		// @formatter:off
+
+		fileMenu.getItems().addAll(
+//				newItem,
+				openFileItem,
+				saveItem,
+				exitItem
+				);
+
+		routingMenu.getItems().addAll(
+				findRouteMenuItem
+				);
+
+		editMenu.getItems().addAll(
+				connectItem,
+//				copyItem,
+//				pasteItem,
+				locomotiveListItem,
+				placeLocomotiveItem
+				);
+
+		serialMenu.getItems().addAll(
+				serialConnectItem,
+				serialDisconnectItem
+				);
+
+		debugMenu.getItems().addAll(
+				reserveNodeMenuItem,
+				blockNodeMenuItem,
+				routingNodeMenuItem,
+				feedbackBlockEventMenuItem,
+				removeLocomotiveItem,
+				sensorCommandMenuItem,
+				xSensOffMenuItem,
+				xTrntStatusMenuItem,
+				graphNodeSVGMenuItem
+				);
+
+		// @formatter:on
 
 		// add Menus to the MenuBar
 		menuBar.getMenus().addAll(fileMenu, routingMenu, debugMenu, editMenu, serialMenu, helpMenu);

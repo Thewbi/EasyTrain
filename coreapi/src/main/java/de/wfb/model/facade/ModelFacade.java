@@ -60,4 +60,12 @@ public interface ModelFacade {
 
 	GraphNode getGraphNodeById(int id);
 
+	void reserveNode(Node node);
+
+	void blockNode(Node node);
+
+	void reserveNodeToggle(Node node);
+
+	void blockNodeToggle(Node node);
+
 }

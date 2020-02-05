@@ -20,25 +20,29 @@ import de.wfb.rail.service.Route;
 
 /**
  * <pre>
- * 338 - 1366
- *
- * 338 - 1580
+ * 338 - 1366 --> Has to produce a route
+ * 338 - 1580 --> Has to produce a route
  *
  * -- straight ahead only
- * 488 -> 338
+ * 488 -> 338 --> Has to produce a route
  *
  * -- over turnout in non-switching direction
- * 1324 -> 1360
+ * 1324 -> 1360 --> Has to produce a route
  *
  * -- over turnout in switching direction
- * 1361 -> 1325
- * 1361 -> 1346
+ * 1361 -> 1325 --> No Route because the nodes in this direction are blocked
+ * 1361 -> 1346 --> No Route because the nodes in this direction are blocked
  *
- * -- over blocked graph node against driving direction!
- * 1844 -> 1848
+ * -- routes away from switch
+ * 1325 -> 1361 --> No Route because the nodes in this direction are blocked
+ * 1346 -> 1361 --> No Route because the nodes in this direction are blocked
  *
- * -- over blocked graph in driving direction!
- * 1849 -> 1845
+ * -- over blocked graph node IN driving direction!
+ * 1849 -> 1845 --> Has to produce a route
+ *
+ * -- over blocked graph node AGAINST driving direction!
+ * 1844 -> 1848 --> No Route because the nodes in this direction are blocked
+ * 1848 -> 1844 --> No Route because the nodes in this direction are blocked
  *
  * -- durch Schattenbahnhof
  * 474 -> 538
@@ -48,11 +52,25 @@ import de.wfb.rail.service.Route;
  * 474 -> 3001
  * 474 -> 3104
  * 474 -> 3363
- * 474 -> 3425
+ * 474 -> 3425 --> Has to produce a route
  *
  * 764 -> 534
  * 764 -> 556
- * 764 -> 3425
+ * 764 -> 3425 --> Has to produce a route
+ *
+ * 766 -> 2428 --> Has to produce a route
+ *
+ * 590 -> 3178 --> No Route because the nodes in this direction are blocked
+ * 591 -> 3178 --> Has to produce a route *
+ *
+ * -- route over blocks. Usable for reserved block tests
+ * 591 -> 3178
+ *
+ * -- ???
+ * 322 -> 1844
+ *
+ * -- against driving direction
+ * 266 -> 1844
  * </pre>
  */
 public class OptimizedNewRoutingService extends BaseRoutingService {
@@ -75,6 +93,13 @@ public class OptimizedNewRoutingService extends BaseRoutingService {
 
 			currNode = findNextNode(currNode, graphNodeEnd, locomotive, switchingNodeStack, route, visitedNodes);
 
+			logger.trace("GN-ID: " + currNode.getId());
+
+			if (!canTraverseGraphNode(locomotive, currNode, routeOverReservedGraphNodes,
+					routeOverBlockedFeedbackBlocks)) {
+				currNode = bb(currNode, locomotive, switchingNodeStack, route, visitedNodes);
+			}
+
 			if (currNode == null) {
 				return new Route();
 			}
@@ -84,6 +109,77 @@ public class OptimizedNewRoutingService extends BaseRoutingService {
 		}
 
 		return route;
+	}
+
+	private GraphNode bb(final GraphNode currNode, final DefaultLocomotive locomotive,
+			final Stack<SwitchingFrame> switchingNodeStack, final Route route, final Set<GraphNode> visitedNodes) {
+
+		GraphNode nextNode = null;
+
+		while (nextNode == null && !CollectionUtils.isEmpty(route.getGraphNodes())) {
+
+			nextNode = backtrack(switchingNodeStack, route);
+			if (nextNode == null) {
+				continue;
+			}
+
+			if (!canTraverseGraphNode(locomotive, nextNode, true, true)) {
+				nextNode = null;
+				continue;
+			}
+
+			if (visitedNodes.contains(nextNode)) {
+				nextNode = null;
+				continue;
+			}
+		}
+
+		return nextNode;
+	}
+
+	/**
+	 * Removes graphnodes from the nodelist until the graphnode is found that is the
+	 * switching node of the topmost stack element.<br />
+	 * <br />
+	 *
+	 * It then removes this topmost stack element and return the second option of
+	 * that stack element<br />
+	 * <br />
+	 *
+	 * If the stack is empty, there is no route<br />
+	 * <br />
+	 *
+	 * @param nodeList
+	 * @param switchingNodeStack
+	 *
+	 * @return
+	 */
+	private GraphNode backtrack(final Stack<SwitchingFrame> switchingNodeStack, final Route route) {
+
+		logger.info("backtrack");
+
+		if (switchingNodeStack.isEmpty()) {
+
+			logger.info("switchingNodeStack is Empty");
+			route.getGraphNodes().clear();
+			return null;
+		}
+
+		final SwitchingFrame topMostSwitchingFrame = switchingNodeStack.pop();
+
+		logger.info("topMostSwitchingFrame: " + topMostSwitchingFrame);
+
+		GraphNode temp = route.getGraphNodes().get(route.getGraphNodes().size() - 1);
+		while (temp.getId() != topMostSwitchingFrame.getSwitchingNode().getId()) {
+
+			route.getGraphNodes().remove(route.getGraphNodes().size() - 1);
+			temp = route.getGraphNodes().get(route.getGraphNodes().size() - 1);
+		}
+
+		logger.info("StackSize: " + switchingNodeStack.size() + " Backtrack is returning GetOtherOption GN-ID: "
+				+ topMostSwitchingFrame.getOtherOption().getId());
+
+		return topMostSwitchingFrame.getOtherOption();
 	}
 
 	private GraphNode findNextNode(final GraphNode currNode, final GraphNode graphNodeEnd,
@@ -104,21 +200,70 @@ public class OptimizedNewRoutingService extends BaseRoutingService {
 				throw new Exception("No route found!");
 			}
 
+			if (set.size() > 2) {
+				throw new Exception("Set incorrect!");
+			}
+
 			final Iterator<GraphNodeEntry> iterator = set.iterator();
 
 			GraphNodeEntry smallest = null;
+			GraphNodeEntry other = null;
 			while (iterator.hasNext()) {
 
 				final GraphNodeEntry graphNodeEntry = iterator.next();
 
 				if (smallest == null) {
+
 					smallest = graphNodeEntry;
+
 				} else {
+
+					other = graphNodeEntry;
 					if (graphNodeEntry.getDistance() < smallest.getDistance()) {
+
+						other = smallest;
 						smallest = graphNodeEntry;
 					}
+
 				}
 			}
+
+			if (other != null) {
+
+				final SwitchingFrame switchingFrame = new SwitchingFrame(currNode, other.getGraphNode());
+				switchingNodeStack.push(switchingFrame);
+			}
+
+//			// SNIP
+//
+//			final GraphNode gn1 = currNode.getChildren().get(1);
+//			final GraphNode gn2 = currNode.getChildren().get(0);
+//
+//			final boolean traverseGN1 = canTraverseGraphNode(locomotive, gn1, true, true);
+//			final boolean traverseGN2 = canTraverseGraphNode(locomotive, gn2, true, true);
+//
+//			if (traverseGN1) {
+//
+//				final SwitchingFrame switchingFrame = new SwitchingFrame(currNode, gn2);
+//				switchingNodeStack.push(switchingFrame);
+//
+//				nextNode = gn1;
+//
+//			} else {
+//
+//				if (traverseGN2) {
+//
+//					nextNode = gn2;
+//
+//				} else {
+//
+//					nextNode = bb(currNode, locomotive, switchingNodeStack, route, visitedNodes);
+//
+//				}
+//
+//			}
+//
+//			// SNAP
 
 			nextNode = smallest.getGraphNode();
 		}
@@ -147,6 +292,23 @@ public class OptimizedNewRoutingService extends BaseRoutingService {
 
 				// walk until the next switching node was found
 				GraphNode currentGraphNode = child;
+
+				boolean blocked = false;
+				while (CollectionUtils.isNotEmpty(currentGraphNode.getChildren()) && currentGraphNode.getChildren().size() < 2) {
+
+					if (currentGraphNode.isBlocked()) {
+
+						blocked = true;
+						break;
+					}
+
+					currentGraphNode = currentGraphNode.getChildren().get(0);
+				}
+				if (blocked) {
+					continue;
+				}
+
+				currentGraphNode = child;
 
 				// walk to the next switching node
 				int steps = 1;

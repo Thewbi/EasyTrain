@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
+import de.wfb.rail.events.NodeHighlightedEvent;
 import de.wfb.rail.facade.ProtocolFacade;
 import de.wfb.rail.service.Route;
 
@@ -63,18 +64,34 @@ public abstract class BaseRoutingService implements RoutingService {
 		modelService.removeAllHighlights();
 	}
 
+	@Override
+	public void highlightNode(final Node node) {
+		final boolean hightlighted = true;
+		final NodeHighlightedEvent nodeHighlightedEvent = new NodeHighlightedEvent(this, null, node, node.getX(),
+				node.getY(), hightlighted);
+
+		applicationEventPublisher.publishEvent(nodeHighlightedEvent);
+	}
+
 	protected boolean canTraverseGraphNode(final DefaultLocomotive locomotive, final GraphNode graphNode,
 			final boolean routeOverReservedGraphNodes, final boolean routeOverBlockedFeedbackBlocks) {
 
-		// return true;
-
 		final Node railNode = graphNode.getRailNode();
+
+		final boolean debugOutput = railNode.getId() == 2383;
 
 		final boolean graphNodeIsReserved = railNode.isReserved();
 
 		boolean reservedForLocomotive = false;
 		if (locomotive != null) {
 			reservedForLocomotive = railNode.getReservedLocomotiveId() == locomotive.getId();
+		}
+
+		if (debugOutput) {
+			logger.info("graphNodeIsReserved: " + graphNodeIsReserved);
+			logger.info("locomotive: " + locomotive);
+			logger.info("reservedForLocomotive: " + reservedForLocomotive);
+			logger.info("routeOverReservedGraphNodes: " + routeOverReservedGraphNodes);
 		}
 
 		// build routes over reserved graphnodes
@@ -86,7 +103,6 @@ public abstract class BaseRoutingService implements RoutingService {
 			return false;
 		}
 
-		// yolo
 		// blocking a graph node, means to make a rail node non-traversable in this
 		// direction
 		if (graphNode.isBlocked()) {

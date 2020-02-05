@@ -13,6 +13,7 @@ import de.wfb.rail.service.Route;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -31,6 +32,12 @@ public class RoutingPane extends GridPane {
 
 	private Button routeButton;
 
+	/** if a feedback block was reserved by the routing algorithm */
+	private CheckBox routeOverReservedNodesCheckBox;
+
+	/** if a feedback block is not reserved but some object sits on that block */
+	private CheckBox routeOverBlockedFeedbackBlocksCheckBox;
+
 	@Autowired
 	private RoutingService routingService;
 
@@ -46,10 +53,26 @@ public class RoutingPane extends GridPane {
 	}
 
 	private void routeButton() {
+
+		routeOverReservedNodesCheckBox = new CheckBox();
+		routeOverReservedNodesCheckBox.setIndeterminate(false);
+		routeOverReservedNodesCheckBox.setText("Route Over Reserved Nodes");
+		GridPane.setColumnIndex(routeOverReservedNodesCheckBox, 1);
+		GridPane.setRowIndex(routeOverReservedNodesCheckBox, 3);
+		getChildren().add(routeOverReservedNodesCheckBox);
+
+		routeOverBlockedFeedbackBlocksCheckBox = new CheckBox();
+		routeOverBlockedFeedbackBlocksCheckBox.setIndeterminate(false);
+		routeOverBlockedFeedbackBlocksCheckBox.setText("Route Over Blocked Feedback Blocks");
+		GridPane.setColumnIndex(routeOverBlockedFeedbackBlocksCheckBox, 1);
+		GridPane.setRowIndex(routeOverBlockedFeedbackBlocksCheckBox, 4);
+		getChildren().add(routeOverBlockedFeedbackBlocksCheckBox);
+
 		routeButton = new Button();
 		routeButton.setText("Route");
 		GridPane.setColumnIndex(routeButton, 1);
-		GridPane.setRowIndex(routeButton, 3);
+		GridPane.setRowIndex(routeButton, 5);
+
 		routeButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -64,11 +87,19 @@ public class RoutingPane extends GridPane {
 				final int end = Integer.parseInt(endTextfield.getText());
 				final GraphNode graphNodeEnd = modelFacade.getGraphNodeById(end);
 
+				routingService.highlightNode(graphNodeStart.getRailNode());
+				routingService.highlightNode(graphNodeEnd.getRailNode());
+
 				logger.info("Start: " + start + " end: " + end);
 
 				final DefaultLocomotive locomotive = null;
-				final boolean routeOverReservedNodes = true;
-				final boolean routeOverBlockedFeedbackBlocks = true;
+
+				// if a feedback block was reserved by the routing algorithm
+				final boolean routeOverReservedNodes = routeOverReservedNodesCheckBox.isSelected();
+
+				// if a feedback block is not reserved but some object sits on that block
+				final boolean routeOverBlockedFeedbackBlocks = routeOverBlockedFeedbackBlocksCheckBox.isSelected();
+
 				Route route;
 				try {
 					route = routingService.route(locomotive, graphNodeStart, graphNodeEnd, routeOverReservedNodes,
@@ -76,6 +107,8 @@ public class RoutingPane extends GridPane {
 
 					logger.info(route);
 
+					logger.info("routeOverReservedNodes: " + routeOverReservedNodes);
+					logger.info("routeOverBlockedFeedbackBlocks: " + routeOverBlockedFeedbackBlocks);
 					logger.info("Has duplicate GraphNodes: " + route.hasDuplicateGraphNodes());
 					logger.info("Is route valid? " + route.checkRoute());
 
@@ -105,6 +138,7 @@ public class RoutingPane extends GridPane {
 		GridPane.setRowIndex(startTextfieldLabel, 1);
 
 		startTextfield = new TextField();
+		startTextfield.setText("591");
 		GridPane.setColumnIndex(startTextfield, 2);
 		GridPane.setRowIndex(startTextfield, 1);
 
@@ -119,6 +153,7 @@ public class RoutingPane extends GridPane {
 		GridPane.setRowIndex(endTextfieldLabel, 2);
 
 		endTextfield = new TextField();
+		endTextfield.setText("3178");
 		GridPane.setColumnIndex(endTextfield, 2);
 		GridPane.setRowIndex(endTextfield, 2);
 
@@ -155,6 +190,18 @@ public class RoutingPane extends GridPane {
 
 			getChildren().remove(routeButton);
 			routeButton = null;
+		}
+
+		if (routeOverReservedNodesCheckBox != null) {
+
+			getChildren().remove(routeOverReservedNodesCheckBox);
+			routeOverReservedNodesCheckBox = null;
+		}
+
+		if (routeOverBlockedFeedbackBlocksCheckBox != null) {
+
+			getChildren().remove(routeOverBlockedFeedbackBlocksCheckBox);
+			routeOverBlockedFeedbackBlocksCheckBox = null;
 		}
 	}
 

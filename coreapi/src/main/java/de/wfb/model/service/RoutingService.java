@@ -25,4 +25,6 @@ public interface RoutingService {
 
 	void removeHighlightedRoute();
 
+	void highlightNode(Node node);
+
 }

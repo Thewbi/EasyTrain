@@ -140,4 +140,24 @@ public class DefaultModelFacade implements ModelFacade {
 		return modelService.getGraphNodeById(id);
 	}
 
+	@Override
+	public void reserveNode(final Node node) {
+		modelService.reserveNode(node);
+	}
+
+	@Override
+	public void blockNode(final Node node) {
+		modelService.blockNode(node);
+	}
+
+	@Override
+	public void reserveNodeToggle(final Node node) {
+		modelService.reserveNodeToggle(node);
+	}
+
+	@Override
+	public void blockNodeToggle(final Node node) {
+		modelService.blockNodeToggle(node);
+	}
+
 }

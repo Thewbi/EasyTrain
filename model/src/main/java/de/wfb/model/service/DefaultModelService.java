@@ -540,4 +540,35 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 		return model.getGraphNodeById(id);
 	}
 
+	@Override
+	public void reserveNode(final Node node) {
+		node.setReserved(true);
+		node.setReservedLocomotiveId(0);
+	}
+
+	@Override
+	public void blockNode(final Node node) {
+		node.getGraphNodeOne().setBlocked(true);
+		node.getGraphNodeTwo().setBlocked(true);
+	}
+
+	@Override
+	public void reserveNodeToggle(final Node node) {
+
+		if (node.isReserved()) {
+			node.setReserved(false);
+			node.setReservedLocomotiveId(-1);
+		} else {
+			node.setReserved(true);
+			node.setReservedLocomotiveId(0);
+		}
+	}
+
+	@Override
+	public void blockNodeToggle(final Node node) {
+
+		node.getGraphNodeOne().setBlocked(!node.getGraphNodeOne().isBlocked());
+		node.getGraphNodeTwo().setBlocked(!node.getGraphNodeTwo().isBlocked());
+	}
+
 }
