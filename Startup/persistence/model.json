@@ -5277,36 +5277,31 @@
     "id": 985,
     "shapeType": "TURN_BOTTOM_LEFT",
     "x": 81,
-    "y": 4,
-    "feedbackBlockNumber": 34
+    "y": 4
   },
   {
     "id": 986,
     "shapeType": "TURN_TOP_RIGHT",
     "x": 81,
-    "y": 5,
-    "feedbackBlockNumber": 34
+    "y": 5
   },
   {
     "id": 987,
     "shapeType": "TURN_BOTTOM_LEFT",
     "x": 82,
-    "y": 5,
-    "feedbackBlockNumber": 34
+    "y": 5
   },
   {
     "id": 988,
     "shapeType": "TURN_TOP_RIGHT",
     "x": 82,
-    "y": 6,
-    "feedbackBlockNumber": 34
+    "y": 6
   },
   {
     "id": 989,
     "shapeType": "TURN_BOTTOM_LEFT",
     "x": 83,
-    "y": 6,
-    "feedbackBlockNumber": 34
+    "y": 6
   },
   {
     "id": 990,
@@ -6758,8 +6753,7 @@
     "id": 1251,
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 21,
-    "y": 21,
-    "traverse": "EAST"
+    "y": 21
   },
   {
     "id": 1252,

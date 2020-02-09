@@ -11,4 +11,9 @@ public class DefaultJsonLocomotiveConverter implements Converter<DefaultLocomoti
 		target.setName(source.getName());
 	}
 
+	@Override
+	public DefaultLocomotive convert(final DefaultLocomotiveJson source) {
+		throw new RuntimeException("Not implemented yet!");
+	}
+
 }

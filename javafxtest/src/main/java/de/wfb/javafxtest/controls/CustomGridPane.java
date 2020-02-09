@@ -168,16 +168,19 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 			@Override
 			public void run() {
 
-				final Optional<Node> nodeOptional = modelFacade.getNode(modelChangedEvent.getX(),
-						modelChangedEvent.getY());
+				final int x = modelChangedEvent.getX();
+				final int y = modelChangedEvent.getY();
+
+				logger.trace("x = " + y + " y = " + y);
+
+				final Optional<Node> nodeOptional = modelFacade.getNode(x, y);
 
 				if (nodeOptional.isEmpty()) {
 
-					logger.trace("Node is null!");
+					logger.info("Node is null!");
 
 					// remove
-					final GridElement<SVGPath, Text> gridElement = viewModel.getViewModel()[modelChangedEvent
-							.getX()][modelChangedEvent.getY()];
+					final GridElement<SVGPath, Text> gridElement = viewModel.getViewModel()[x][y];
 
 					if (gridElement == null) {
 						return;
@@ -212,9 +215,10 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 				}
 
 				// remove
-				final GridElement<SVGPath, Text> tempGridElement = viewModel.getViewModel()[modelChangedEvent
-						.getX()][modelChangedEvent.getY()];
+				final GridElement<SVGPath, Text> tempGridElement = viewModel.getViewModel()[x][y];
 				if (tempGridElement != null) {
+
+					logger.trace("Removing x: " + x + " y: " + y);
 
 					// remove SVGPath
 					final SVGPath svgPathOld = tempGridElement.getPath();
@@ -231,9 +235,12 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 
 				try {
 
+					// adding new element
 					final GridElement<SVGPath, Text> gridElement = gridElementFactory.create(node, modelChangedEvent,
 							shapeType, CELL_WIDTH);
 					if (gridElement != null) {
+
+						logger.trace("Adding x: " + x + " y: " + y);
 
 						if (gridElement.getPath() != null) {
 							getChildren().addAll(gridElement.getPath());
@@ -243,7 +250,7 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 							getChildren().addAll(gridElement.getText());
 						}
 
-						viewModel.getViewModel()[modelChangedEvent.getX()][modelChangedEvent.getY()] = gridElement;
+						viewModel.getViewModel()[x][y] = gridElement;
 					}
 
 				} catch (final Exception e) {

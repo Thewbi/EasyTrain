@@ -22,6 +22,8 @@ public class Route {
 
 	private static final Logger logger = LogManager.getLogger(Route.class);
 
+	private int locomotiveId;
+
 	private DefaultLocomotive locomotive;
 
 	private final List<GraphNode> graphNodes = new ArrayList<>();
@@ -75,7 +77,7 @@ public class Route {
 
 	public void highlightRoute(final ApplicationEventPublisher applicationEventPublisher) {
 
-		logger.info("highlighting route");
+		logger.trace("highlighting route");
 
 		if (CollectionUtils.isEmpty(graphNodes)) {
 			return;
@@ -106,7 +108,7 @@ public class Route {
 	public void switchTurnouts(final ApplicationEventPublisher applicationEventPublisher,
 			final ProtocolFacade protocolFacade) {
 
-		logger.info("switchTurnouts()");
+		logger.trace("switchTurnouts()");
 
 		try {
 
@@ -119,7 +121,7 @@ public class Route {
 	public static void switchTurnouts(final List<GraphNode> graphNodes,
 			final ApplicationEventPublisher applicationEventPublisher, final ProtocolFacade protocolFacade) {
 
-		logger.info("switchTurnouts() - static");
+		logger.trace("switchTurnouts() - static");
 
 		if (CollectionUtils.isEmpty(graphNodes)) {
 
@@ -155,22 +157,22 @@ public class Route {
 
 			final RailNode turnoutRailNode = graphNode.getRailNode();
 
-			logger.info("Index = " + index + " RN.ID: " + turnoutRailNode.getId() + " GN.ID: " + graphNode.getId()
+			logger.trace("Index = " + index + " RN.ID: " + turnoutRailNode.getId() + " GN.ID: " + graphNode.getId()
 					+ " ProcotolAddressId: " + graphNode.getRailNode().getProtocolTurnoutId()
 					+ " Turnout found in switching order!");
 
-			logger.info("Turnout ShapeType = " + turnoutRailNode.getShapeType().name());
+			logger.trace("Turnout ShapeType = " + turnoutRailNode.getShapeType().name());
 
 			final int nextIndex = index + 1;
 
-			logger.info("nextIndex = " + nextIndex + " graphNodes.size(): " + graphNodes.size());
+			logger.trace("nextIndex = " + nextIndex + " graphNodes.size(): " + graphNodes.size());
 
 			if (nextIndex <= graphNodes.size()) {
 
 				// yolo
 				final GraphNode nextGraphNode = graphNodes.get(nextIndex);
 
-				logger.info("Switching ProtocolAddress: " + turnoutRailNode.getProtocolTurnoutId() + " RailNode.ID: "
+				logger.trace("Switching ProtocolAddress: " + turnoutRailNode.getProtocolTurnoutId() + " RailNode.ID: "
 						+ turnoutRailNode.getId() + " to GraphNode.ID: " + nextGraphNode.getId());
 
 				turnoutRailNode.switchToGraphNode(applicationEventPublisher, protocolFacade, null, nextGraphNode);
@@ -412,6 +414,14 @@ public class Route {
 
 	public void setLocomotive(final DefaultLocomotive locomotive) {
 		this.locomotive = locomotive;
+	}
+
+	public int getLocomotiveId() {
+		return locomotiveId;
+	}
+
+	public void setLocomotiveId(final int locomotiveId) {
+		this.locomotiveId = locomotiveId;
 	}
 
 }

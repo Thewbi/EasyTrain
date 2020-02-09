@@ -24,6 +24,11 @@ public class DefaultModelFacade implements ModelFacade {
 	}
 
 	@Override
+	public Node getNodeById(final int id) {
+		return modelService.getNodeById(id);
+	}
+
+	@Override
 	public void nodeClicked(final int x, final int y, final boolean shiftClicked) {
 		modelService.nodeClicked(x, y, shiftClicked);
 	}

@@ -8,11 +8,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.Direction;
-import de.wfb.model.node.Edge;
-import de.wfb.model.node.GraphNode;
-import de.wfb.model.node.RailNode;
 import de.wfb.model.service.RoutingService;
-import de.wfb.rail.events.RouteAddedEvent;
 import de.wfb.rail.service.Block;
 import de.wfb.rail.service.BlockService;
 import de.wfb.rail.service.Route;
@@ -96,8 +92,6 @@ public class BlockNavigationPane extends HBox {
 			@Override
 			public void handle(final ActionEvent actionEvent) {
 
-				final StringBuffer stringBuffer = new StringBuffer();
-
 				final DefaultLocomotive locomotive = (DefaultLocomotive) locomotiveComboBox.getValue();
 				final Direction locomotiveOrientation = locomotive.getOrientation();
 				final Block startBlock = (Block) startBlockComboBox.getValue();
@@ -105,6 +99,9 @@ public class BlockNavigationPane extends HBox {
 				final Block endBlock = (Block) endBlockComboBox.getValue();
 
 				// @formatter:off
+
+				final StringBuffer stringBuffer = new StringBuffer();
+
 				stringBuffer.append("\n");
 				stringBuffer.append("LOCOMOTIVE: ").append(locomotive.getName()).append("\n");
 				stringBuffer.append("LOCOMOTIVE ID: ").append(locomotive.getId()).append("\n");
@@ -112,171 +109,17 @@ public class BlockNavigationPane extends HBox {
 				stringBuffer.append("START BLOCK: ").append(startBlock).append("\n");
 				stringBuffer.append("START DIRECTION: ").append(startEdgeDirection.name()).append("\n");
 				stringBuffer.append("END BLOCK: ").append(endBlock).append("\n");
-				// @formatter:on
 
 				logger.info(stringBuffer.toString());
 
-				// determine the correct graph node based on the direction the user wants the
-				// route to be
-				// traversed by the locomotive.
-				//
-				// The startEdgeDirection is not the direction in which the front part of the
-				// faces!
-				//
-				// If startEdgeDirection and locomotive defaultLocomotive.getOrientation() point
-				// in the same direction, the locomotive will move in forwards direction.
-				//
-				// If they do not point into the same direction, the locomotive will move in
-				// reverse direction.
-
-				final RailNode railNode = locomotive.getRailNode();
-
-				logger.info("Locomotive RailNode is: " + railNode);
-
-				if (railNode == null) {
-					return;
-				}
-
-				final Edge edge = railNode.getEdge(startEdgeDirection);
-
-				if (edge == null) {
-					logger.error("The direction startEdgeDirection: " + startEdgeDirection + " does not exist!");
-					return;
-				}
-
-				final GraphNode startGraphNode = edge.getOutGraphNode();
-
-				logger.info("Assign GraphNode " + startGraphNode.getId() + " to locomotive!");
-				locomotive.setGraphNode(startGraphNode);
-
-				if (startEdgeDirection == locomotive.getOrientation()) {
-
-					logger.info("Locomotive is going forwards!");
-
-				} else {
-
-					logger.info("Locomotive is going backwards (reverse)!");
-
-				}
-
-				// create a route
-				final Route route = createRoute(locomotive, endBlock, startGraphNode);
-				if (route == null) {
-
-					logger.info("Route is null!");
-
-				} else {
-
-					logger.info(route);
-
-					// set the route into the locomotive, this causes the TimedDrivingThread to move
-					// the locomotive starting with the next timed iteration
-					locomotive.setRoute(route);
-					route.setLocomotive(locomotive);
-
-					// highlight the entire route
-					logger.info("highlighting the route!");
-					route.highlightRoute(applicationEventPublisher);
-
-					// Send an event that a locomotive now has a route
-					final RouteAddedEvent routeAddedEvent = new RouteAddedEvent(this, route, locomotive);
-					applicationEventPublisher.publishEvent(routeAddedEvent);
-
-					// The DrivingService will catch the event and reserve the route so that the
-					// locomotive can move to the next block
-				}
-
-			}
-
-			private Route createRoute(final DefaultLocomotive locomotive, final Block endBlock,
-					final GraphNode startGraphNode) {
+				// @formatter:on
 
 				final boolean routeOverReservedNodes = false;
-				boolean routeOverBlockedFeedbackBlocks = false;
+				final boolean routeOverBlockedFeedbackBlocks = false;
+				final Route route = routingService.startLocomotiveToBlock(locomotive, locomotiveOrientation, startBlock,
+						startEdgeDirection, endBlock, routeOverReservedNodes, routeOverBlockedFeedbackBlocks);
 
-				final RailNode endRailNode = endBlock.getNodes().get(0);
-
-				Route routeA = new Route();
-				try {
-
-					try {
-						routeOverBlockedFeedbackBlocks = false;
-						routeA = routingService.route(locomotive, startGraphNode, endRailNode.getGraphNodeOne(),
-								routeOverReservedNodes, routeOverBlockedFeedbackBlocks);
-					} catch (final Exception e) {
-						routeA = new Route();
-					}
-
-					if (routeA == null || routeA.isEmpty()) {
-
-						routeOverBlockedFeedbackBlocks = true;
-						routeA = routingService.route(locomotive, startGraphNode, endRailNode.getGraphNodeOne(),
-								routeOverReservedNodes, routeOverBlockedFeedbackBlocks);
-					}
-				} catch (final Exception e) {
-					logger.error(e.getMessage(), e);
-					routeA = new Route();
-				}
-
-				Route routeB = new Route();
-				try {
-
-					try {
-						routeOverBlockedFeedbackBlocks = false;
-						routeB = routingService.route(locomotive, startGraphNode, endRailNode.getGraphNodeTwo(),
-								routeOverReservedNodes, routeOverBlockedFeedbackBlocks);
-					} catch (final Exception e) {
-						routeB = new Route();
-					}
-
-					if (routeB == null || routeB.isEmpty()) {
-
-						routeOverBlockedFeedbackBlocks = true;
-						routeB = routingService.route(locomotive, startGraphNode, endRailNode.getGraphNodeTwo(),
-								routeOverReservedNodes, routeOverBlockedFeedbackBlocks);
-					}
-				} catch (final Exception e) {
-					logger.error(e.getMessage(), e);
-					routeB = new Route();
-				}
-
-				logger.info("RouteA: " + routeA);
-				logger.info("RouteB: " + routeB);
-
-				if (routeA.isEmpty() && routeB.isEmpty()) {
-
-					return null;
-
-				} else if (routeA.isEmpty()) {
-
-					return routeB;
-
-				} else if (routeB.isEmpty()) {
-
-					return routeA;
-
-				} else {
-
-					return routeA.getGraphNodes().size() < routeB.getGraphNodes().size() ? routeA : routeB;
-
-				}
-
-//				if (routeA == null && routeB == null) {
-//
-//					return null;
-//
-//				} else if (routeA != null && routeB == null) {
-//
-//					return routeA;
-//
-//				} else if (routeA == null && routeB != null) {
-//
-//					return routeB;
-//
-//				} else {
-//
-//					return routeA.getGraphNodes().size() < routeB.getGraphNodes().size() ? routeA : routeB;
-//				}
+				routingService.attachRouteToLocomotive(locomotive, route);
 			}
 		});
 

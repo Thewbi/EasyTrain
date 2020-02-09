@@ -253,44 +253,56 @@ public class RailDetailsPane extends GridPane {
 
 		// @formatter:off
 
+		final GraphNode graphNodeOne = node.getGraphNodeOne();
+
 		// GraphNode ONE and children
 		stringBuffer
 			.append(node.getId()).append(" [")
-			.append(node.getGraphNodeOne().getId())
+			.append(graphNodeOne.getId())
+			.append(" x: ").append(graphNodeOne.getX()).append(" y: ").append(graphNodeOne.getY());
 //			.append(" ")
 //			.append(node.getGraphNodeOne().getColor().name())
-			.append(" -> \n");
 
-		if (CollectionUtils.isNotEmpty(node.getGraphNodeOne().getChildren())) {
+		if (false) {
+			stringBuffer.append(" -> \n");
+			if (CollectionUtils.isNotEmpty(graphNodeOne.getChildren())) {
 
-			for (final GraphNode graphNode : node.getGraphNodeOne().getChildren()) {
+				for (final GraphNode graphNode : graphNodeOne.getChildren()) {
 
-				stringBuffer
-				.append(graphNode.getId()).append(" ");
-//				.append(graphNode.getColor().name()).append(", ");
+					stringBuffer
+					.append(graphNode.getId()).append(" ");
+	//				.append(graphNode.getColor().name()).append(", ");
+				}
 			}
 		}
+
 		stringBuffer.append("]\n");
+
+		final GraphNode graphNodeTwo = node.getGraphNodeTwo();
 
 		// GraphNode TWO and children
 		stringBuffer
 			.append(" [")
-			.append(node.getGraphNodeTwo().getId())
+			.append(graphNodeTwo.getId())
+			.append(" x: ").append(graphNodeTwo.getX()).append(" y: ").append(graphNodeTwo.getY());
 //			.append(" ")
 //			.append(node.getGraphNodeTwo().getColor().name())
-			.append(" -> \n");
 
-		if (CollectionUtils.isNotEmpty(node.getGraphNodeTwo().getChildren())) {
+		if (false) {
+			stringBuffer.append(" -> \n");
+			if (CollectionUtils.isNotEmpty(graphNodeTwo.getChildren())) {
 
-			for (final GraphNode graphNode : node.getGraphNodeTwo().getChildren()) {
+				for (final GraphNode graphNode : graphNodeTwo.getChildren()) {
 
-				stringBuffer
-				.append(graphNode.getId())
-//				.append(" ")
-//				.append(graphNode.getColor().name())
-				.append(", ");
+					stringBuffer
+					.append(graphNode.getId())
+	//				.append(" ")
+	//				.append(graphNode.getColor().name())
+					.append(", ");
+				}
 			}
 		}
+
 		stringBuffer.append("]\n");
 
 		// @formatter:on

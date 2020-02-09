@@ -15,8 +15,11 @@ import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.Edge;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.RailNode;
+import de.wfb.model.service.RoutingController;
+import de.wfb.rail.controller.TimedDrivingThreadController;
 import de.wfb.rail.events.FeedbackBlockEvent;
 import de.wfb.rail.events.FeedbackBlockState;
+import de.wfb.rail.events.ModelChangedEvent;
 import de.wfb.rail.events.RouteFinishedEvent;
 import de.wfb.rail.service.Block;
 import de.wfb.rail.service.Route;
@@ -36,8 +39,8 @@ public class TimedDrivingThread {
 
 	private static final Logger logger = LogManager.getLogger(TimedDrivingThread.class);
 
-//	private static final boolean ACTIVE = true;
-	private static final boolean ACTIVE = false;
+	private static final boolean ACTIVE = true;
+//	private static final boolean ACTIVE = false;
 
 	@Autowired
 	private ModelFacade modelFacade;
@@ -45,8 +48,27 @@ public class TimedDrivingThread {
 	@Autowired
 	private ApplicationEventPublisher applicationEventPublisher;
 
-	@Scheduled(fixedRate = 500)
+	@Autowired
+	private TimedDrivingThreadController timedDrivingThreadController;
+
+	@Autowired
+	private RoutingController routingController;
+
+	private int iterationCount = 0;
+
+	private final int goToIteration = 290;
+
+	private int infoCounter = 0;
+
+//	@Scheduled(fixedRate = 100)
+	@Scheduled(fixedRate = 150)
 	public void threadFunc() {
+
+		if (infoCounter == 100) {
+			infoCounter = 0;
+		} else {
+			infoCounter++;
+		}
 
 		logger.trace("threadFunc() ACTIVE = " + ACTIVE);
 
@@ -55,6 +77,25 @@ public class TimedDrivingThread {
 			logger.trace("threadFunc() is deactivated!");
 			return;
 		}
+
+		if (!routingController.isStarted()) {
+
+			logger.info("Routing controller is not started!");
+			return;
+		}
+
+//		if (goToIteration > 0 && iterationCount < goToIteration) {
+//			iterationCount++;
+//			moveLocomotives();
+//			return;
+//		}
+
+//		if (timedDrivingThreadController.isPaused() && timedDrivingThreadController.decrementSingleStep() <= 0) {
+//			return;
+//		}
+
+		iterationCount++;
+		logger.trace(iterationCount);
 
 		moveLocomotives();
 	}
@@ -78,7 +119,9 @@ public class TimedDrivingThread {
 			final Route route = locomotive.getRoute();
 			if (route == null) {
 
-				logger.trace("No route found on locomotive ID: " + locomotive.getId());
+				if (infoCounter == 0) {
+					logger.info("No route found on locomotive ID: " + locomotive.getId());
+				}
 				continue;
 			}
 
@@ -118,7 +161,7 @@ public class TimedDrivingThread {
 
 			if (graphNode.getRailNode().getReservedLocomotiveId() != locomotive.getId()) {
 
-				logger.warn("Child GraphNode ID: " + graphNode.getId()
+				logger.trace("Child GraphNode ID: " + graphNode.getId()
 						+ " Not reserved for locomotive! Reserved for LocomotiveID: "
 						+ graphNode.getRailNode().getReservedLocomotiveId()
 						+ " The Locomotive ID of the blocked Locomotive is: " + locomotive.getId());
@@ -140,7 +183,7 @@ public class TimedDrivingThread {
 			logger.info("Locomotive ID: " + locomotive.getId() + " is waiting on GraphNode ID: "
 					+ locomotive.getGraphNode().getId());
 
-			logger.info(locomotive.getRoute());
+			logger.trace(locomotive.getRoute());
 		}
 	}
 
@@ -176,18 +219,31 @@ public class TimedDrivingThread {
 	}
 
 	private RailNode moveLocomotiveToNextGraphNode(final DefaultLocomotive locomotive, final GraphNode currentGraphNode,
-			final GraphNode graphNode) {
+			final GraphNode nextGraphNode) {
 
-		logger.info("MOVED FROM GN: " + currentGraphNode.getId() + " TO GN: " + graphNode.getId());
+		final int currentGraphNodeId = currentGraphNode.getId();
+		final int currentGraphNodeX = currentGraphNode.getX();
+		final int currentGraphNodeY = currentGraphNode.getY();
+
+		final int nextGraphNodeId = nextGraphNode.getId();
+		final int nextGraphNodeX = nextGraphNode.getX();
+		final int nextGraphNodeY = nextGraphNode.getY();
+
+		logger.trace("Locomotive: " + locomotive);
+
+		logger.trace(
+				"Loc-ID: " + locomotive.getId() + " MOVED FROM GN: " + currentGraphNodeId + " x: " + currentGraphNodeX
+						+ " y: " + currentGraphNodeY + " TO GN: " + nextGraphNodeId + " x: " + nextGraphNodeX + " y: "
+						+ nextGraphNodeY + " locomotive.getOrientation: " + locomotive.getOrientation());
 
 		// move the locomotive to the next graph node
-		final RailNode newRailNode = graphNode.getRailNode();
-		locomotive.setRailNode(newRailNode);
+		final RailNode nextRailNode = nextGraphNode.getRailNode();
+		locomotive.setRailNode(nextRailNode);
 
 		// compute the orientation of the locomotive on this rail
 		for (int i = 0; i < 4; i++) {
 
-			final Edge edge = newRailNode.getEdges()[i];
+			final Edge edge = nextRailNode.getEdges()[i];
 			if (edge == null) {
 
 				continue;
@@ -195,13 +251,31 @@ public class TimedDrivingThread {
 
 			locomotive.setGraphNode(edge.getOutGraphNode());
 
-			if (edge.getOutGraphNode().equals(graphNode)) {
+			if (edge.getOutGraphNode().equals(nextGraphNode)) {
 
 				locomotive.setOrientation(edge.getDirection());
 			}
 		}
 
-		return newRailNode;
+		boolean highlighted = false;
+		boolean blocked = currentGraphNode.isBlocked();
+		boolean selected = false;
+		boolean reserved = false;
+		boolean containsLocomotive = false;
+		ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, null, currentGraphNode.getX(),
+				currentGraphNode.getY(), highlighted, blocked, selected, reserved, containsLocomotive);
+		applicationEventPublisher.publishEvent(modelChangedEvent);
+
+		highlighted = false;
+		blocked = nextGraphNode.isBlocked();
+		selected = false;
+		reserved = false;
+		containsLocomotive = true;
+		modelChangedEvent = new ModelChangedEvent(this, null, nextGraphNode.getX(), nextGraphNode.getY(), highlighted,
+				blocked, selected, reserved, containsLocomotive);
+		applicationEventPublisher.publishEvent(modelChangedEvent);
+
+		return nextRailNode;
 	}
 
 	private void sendEnteringMessage(final Block block, final DefaultLocomotive defaultLocomotive) {

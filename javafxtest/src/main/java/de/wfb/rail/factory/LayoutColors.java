@@ -18,4 +18,6 @@ public interface LayoutColors {
 
 	public static final Color RESERVED_FILL_COLOR = Color.DARKMAGENTA;
 
+	public static final Color CONTAINS_LOCOMOTIVE_COLOR = Color.BLACK;
+
 }

@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
+import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.RailNode;
 import de.wfb.rail.service.Block;
 import de.wfb.rail.service.BlockService;
@@ -83,6 +84,28 @@ public class DefaultBlockService implements BlockService {
 			return null;
 		}
 		return idBlockMap.get(feedbackBlockNumber);
+	}
+
+	@Override
+	public Block getBlockByGraphNode(final GraphNode graphNode) {
+
+		final RailNode railNode = graphNode.getRailNode();
+
+		if (null == railNode) {
+			return null;
+		}
+
+		final Integer feedbackBlockNumber = railNode.getFeedbackBlockNumber();
+		if (feedbackBlockNumber == null || feedbackBlockNumber < 0) {
+			return null;
+		}
+
+		if (idBlockMap.containsKey(feedbackBlockNumber)) {
+
+			return idBlockMap.get(feedbackBlockNumber);
+		}
+
+		return null;
 	}
 
 }

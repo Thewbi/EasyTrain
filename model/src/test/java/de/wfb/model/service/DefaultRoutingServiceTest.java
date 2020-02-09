@@ -40,7 +40,7 @@ public class DefaultRoutingServiceTest {
 		final String path = "src/test/resources/DefaultRoutingServiceTest/modelLearning.json";
 		final Model model = new DefaultModel();
 
-		final OptimizedNewRoutingService routingService = (OptimizedNewRoutingService) buildRoutingTables(path, model);
+		final DefaultRoutingService routingService = (DefaultRoutingService) buildRoutingTables(path, model);
 
 //		for (final GraphNode switchingGraphNode : model.getSwitchingNodes()) {
 //
@@ -140,7 +140,7 @@ public class DefaultRoutingServiceTest {
 		model.connectModel();
 
 //		final DefaultRoutingService defaultRoutingService = new DefaultRoutingService();
-		final OptimizedNewRoutingService routingService = new OptimizedNewRoutingService();
+		final DefaultRoutingService routingService = new DefaultRoutingService();
 		routingService.setModelService(modelService);
 		routingService.buildRoutingTables();
 

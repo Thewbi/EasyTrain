@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.wfb.dialogs.BlockNavigationPane;
+import de.wfb.dialogs.DrivingThreadControlPane;
 import de.wfb.dialogs.SidePane;
 import de.wfb.javafxtest.controller.LayoutGridController;
 import de.wfb.javafxtest.controls.CustomGridPane;
@@ -26,6 +27,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -44,6 +46,9 @@ public class DefaultSceneFactory implements Factory<Scene> {
 
 	@Autowired
 	private BlockNavigationPane blockNavigationPane;
+
+	@Autowired
+	private DrivingThreadControlPane drivingThreadControlPane;
 
 	@Autowired
 	private SidePane sidePane;
@@ -88,7 +93,9 @@ public class DefaultSceneFactory implements Factory<Scene> {
 		borderPane.setTop(menuBar);
 		borderPane.setCenter(stackPane);
 		borderPane.setRight(createDetailsView());
-		borderPane.setBottom(blockNavigationPane);
+		final VBox bottomVBox = new VBox();
+		bottomVBox.getChildren().addAll(blockNavigationPane, drivingThreadControlPane);
+		borderPane.setBottom(bottomVBox);
 
 		borderPane.setOnKeyReleased(new EventHandler<KeyEvent>() {
 

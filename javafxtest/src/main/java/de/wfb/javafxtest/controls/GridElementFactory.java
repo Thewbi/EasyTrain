@@ -36,6 +36,7 @@ public class GridElementFactory implements Factory<GridElement<SVGPath, Text>> {
 		final boolean blocked = modelChangedEvent.isBlocked();
 		final boolean selected = modelChangedEvent.isSelected();
 		final boolean reserved = modelChangedEvent.isReserved();
+		final boolean containsLocomotive = modelChangedEvent.isContainsLocomotive();
 
 		try {
 
@@ -49,18 +50,30 @@ public class GridElementFactory implements Factory<GridElement<SVGPath, Text>> {
 					" highlighted: " + highlighted +
 					" blocked: " + blocked +
 					" selected: " + selected +
-					" reserved: " + reserved);
+					" reserved: " + reserved +
+					" containsLocomotive: " + containsLocomotive);
 
 			final SVGPath svgPathNew = svgPathFactory.create(
+					// 0
 					shapeType,
+					// 1
 					cellWidth,
+					// 2
 					thrown,
+					// 3
 					flipped,
+					// 4
 					highlighted,
+					// 5
 					blocked,
+					// 6
 					selected,
+					// 7
 					reserved,
-					direction);
+					// 8
+					direction,
+					// 9
+					containsLocomotive);
 
 			// @formatter:on
 

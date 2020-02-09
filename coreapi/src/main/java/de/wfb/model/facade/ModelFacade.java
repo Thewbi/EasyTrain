@@ -14,6 +14,10 @@ public interface ModelFacade {
 
 	Optional<Node> getNode(int x, int y);
 
+	Node getNodeById(int i);
+
+	GraphNode getGraphNodeById(int id);
+
 	void nodeClicked(int x, int y, boolean shiftClicked);
 
 	void addNode(int x, int y, ShapeType shapeType);
@@ -57,8 +61,6 @@ public interface ModelFacade {
 	String getCurrentModel();
 
 	void clear();
-
-	GraphNode getGraphNodeById(int id);
 
 	void reserveNode(Node node);
 

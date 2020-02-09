@@ -91,7 +91,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	public void switchToGraphNode(final ApplicationEventPublisher applicationEventPublisher,
 			final ProtocolFacade protocolFacade, final Model model, final GraphNode nextGraphNode) {
 
-		logger.info("switchToGraphNode() RailNode.ID: " + getId());
+		logger.trace("switchToGraphNode() RailNode.ID: " + getId());
 
 		final Edge outEdge = findOutEdge(nextGraphNode);
 		if (outEdge == null) {
@@ -100,7 +100,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 			return;
 		}
 
-		logger.info("OUT EDGE: " + outEdge.getDirection().name());
+		logger.trace("OUT EDGE: " + outEdge.getDirection().name());
 
 		updateSwitchState(outEdge, protocolFacade);
 
@@ -110,7 +110,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	private void updateSwitchState(final Edge outEdge, final ProtocolFacade protocolFacade) {
 
-		logger.info("ShapeType: " + getShapeType().name() + " Direction: " + outEdge.getDirection().name());
+		logger.trace("ShapeType: " + getShapeType().name() + " Direction: " + outEdge.getDirection().name());
 
 		switch (getShapeType()) {
 
@@ -187,6 +187,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 		final boolean feedbackBlockUsed = railNode.isFeedbackBlockUsed();
 		final boolean selected = railNode.isSelected();
 		final boolean reserved = railNode.isReserved();
+		final boolean containsLocomotive = false;
 
 		// @formatter:off
 
@@ -198,7 +199,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 				highlighted,
 				feedbackBlockUsed,
 				selected,
-				reserved);
+				reserved,
+				containsLocomotive);
 
 		// @formatter:on
 

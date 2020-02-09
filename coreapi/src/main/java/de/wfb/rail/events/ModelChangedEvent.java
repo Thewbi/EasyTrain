@@ -25,6 +25,8 @@ public class ModelChangedEvent extends ApplicationEvent {
 
 	private final boolean reserved;
 
+	private final boolean containsLocomotive;
+
 	/**
 	 * ctor
 	 *
@@ -35,7 +37,8 @@ public class ModelChangedEvent extends ApplicationEvent {
 	 * @param highlighted
 	 */
 	public ModelChangedEvent(final Object source, final Model model, final int x, final int y,
-			final boolean highlighted, final boolean blocked, final boolean selected, final boolean reserved) {
+			final boolean highlighted, final boolean blocked, final boolean selected, final boolean reserved,
+			final boolean containsLocomotive) {
 
 		super(source);
 		this.model = model;
@@ -45,6 +48,7 @@ public class ModelChangedEvent extends ApplicationEvent {
 		this.highlighted = highlighted;
 		this.blocked = blocked;
 		this.reserved = reserved;
+		this.containsLocomotive = containsLocomotive;
 	}
 
 	public int getX() {
@@ -73,5 +77,9 @@ public class ModelChangedEvent extends ApplicationEvent {
 
 	public boolean isReserved() {
 		return reserved;
+	}
+
+	public boolean isContainsLocomotive() {
+		return containsLocomotive;
 	}
 }

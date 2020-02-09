@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import de.wfb.dialogs.BlockNavigationPane;
+import de.wfb.dialogs.DrivingThreadControlPane;
 import de.wfb.dialogs.LocomotiveListStage;
 import de.wfb.dialogs.PlaceLocomotiveStage;
 import de.wfb.dialogs.ThrottleStage;
@@ -67,6 +68,8 @@ public class Startup extends Application {
 
 	private BlockNavigationPane blockNavigationPane;
 
+	private DrivingThreadControlPane drivingThreadControlPane;
+
 	private CustomThreadPoolScheduler customThreadPoolScheduler;
 
 	private Factory<Scene> sceneFactory;
@@ -92,6 +95,8 @@ public class Startup extends Application {
 //		loadModel("../model/src/test/resources/DefaultRoutingServiceTest/modelLearning.json",
 //				"persistence/locomotives.json");
 
+		routingService.initialize();
+
 		// build blocks
 		blockService.determineBlocks();
 
@@ -110,6 +115,7 @@ public class Startup extends Application {
 		placeLocomotiveStage.initialize();
 
 		blockNavigationPane.setup();
+		drivingThreadControlPane.setup();
 
 		// connect to the intellibox
 		connectToIntellibox();
@@ -205,6 +211,7 @@ public class Startup extends Application {
 
 		// UI
 		blockNavigationPane = context.getBean(BlockNavigationPane.class);
+		drivingThreadControlPane = context.getBean(DrivingThreadControlPane.class);
 		locomotiveListStage = context.getBean(LocomotiveListStage.class);
 		placeLocomotiveStage = context.getBean(PlaceLocomotiveStage.class);
 		final GraphNodeSVGMenuItem graphNodeSVGMenuItem = context.getBean(GraphNodeSVGMenuItem.class);

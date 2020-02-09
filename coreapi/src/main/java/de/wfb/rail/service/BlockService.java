@@ -2,6 +2,8 @@ package de.wfb.rail.service;
 
 import java.util.List;
 
+import de.wfb.model.node.GraphNode;
+
 public interface BlockService {
 
 	void determineBlocks();
@@ -9,5 +11,7 @@ public interface BlockService {
 	List<Block> getAllBlocks();
 
 	Block getBlockById(int feedbackBlockNumber);
+
+	Block getBlockByGraphNode(GraphNode graphNode);
 
 }

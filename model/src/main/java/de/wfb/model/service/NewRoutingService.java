@@ -204,4 +204,9 @@ public class NewRoutingService extends BaseRoutingService {
 		return topMostSwitchingFrame.getOtherOption();
 	}
 
+	@Override
+	public void initialize() {
+		// nop
+	}
+
 }

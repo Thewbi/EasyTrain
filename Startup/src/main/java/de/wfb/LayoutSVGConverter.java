@@ -29,7 +29,7 @@ public class LayoutSVGConverter implements Converter<Model, String> {
 		for (final RailNode railNode : model.getAllRailNodes()) {
 
 			// DEBUG
-//			System.out.println(railNode.toString());
+//			logger.trace(railNode.toString());
 
 			final int x = railNode.getX() * BLOCK_WIDTH;
 			final int y = railNode.getY() * BLOCK_WIDTH;
@@ -187,7 +187,7 @@ public class LayoutSVGConverter implements Converter<Model, String> {
 			return;
 		}
 
-//		System.out.println("Dir: " + edge.getDirection() + " OutGN: " + edge.getOutGraphNode().getId() + " NextOutGN: "
+//		logger.trace("Dir: " + edge.getDirection() + " OutGN: " + edge.getOutGraphNode().getId() + " NextOutGN: "
 //				+ (edge.getNextOutGraphNode() == null ? "NULL" : edge.getNextOutGraphNode().getId()));
 
 		final Direction direction = edge.getDirection();
@@ -252,6 +252,11 @@ public class LayoutSVGConverter implements Converter<Model, String> {
 		svgGraphics2D.drawString(graphNodeId, graphNode.getX() + 6, graphNode.getY() - 3 + yOffset);
 		svgGraphics2D.drawString(railNodeId, graphNode.getX() + 6, graphNode.getY() - 17 + yOffset);
 
+	}
+
+	@Override
+	public String convert(final Model source) {
+		throw new RuntimeException("Not implemented yet!");
 	}
 
 }

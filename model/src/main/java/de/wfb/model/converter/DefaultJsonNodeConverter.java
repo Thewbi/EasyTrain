@@ -54,4 +54,9 @@ public class DefaultJsonNodeConverter implements Converter<Node, JsonNode> {
 		}
 	}
 
+	@Override
+	public JsonNode convert(final Node source) {
+		throw new RuntimeException("Not implemented yet!");
+	}
+
 }

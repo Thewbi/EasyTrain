@@ -1,4 +1,4 @@
-package de.wfb.rail.converter;
+package de.wbi.model.converter;
 
 public interface Converter<S, T> {
 

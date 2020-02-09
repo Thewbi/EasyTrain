@@ -8,7 +8,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
+import de.wbi.model.serializer.DefaultRouteDeserializer;
+import de.wbi.model.serializer.DefaultRouteSerializer;
 import de.wfb.dialogs.BlockNavigationPane;
+import de.wfb.dialogs.DrivingThreadControlPane;
 import de.wfb.dialogs.LayoutElementSelectionPane;
 import de.wfb.dialogs.LocomotiveAddPane;
 import de.wfb.dialogs.LocomotiveListPane;
@@ -24,12 +27,14 @@ import de.wfb.dialogs.TurnoutDetailsPane;
 import de.wfb.factory.DefaultMenuBarFactory;
 import de.wfb.factory.DefaultSceneFactory;
 import de.wfb.factory.GraphNodeSVGMenuItem;
+import de.wfb.factory.RoutingControllerMenuItem;
 import de.wfb.factory.XTrntStatusMenuItem;
 import de.wfb.javafxtest.controller.LayoutGridController;
 import de.wfb.javafxtest.controls.GridElementFactory;
 import de.wfb.model.DefaultModel;
 import de.wfb.model.DefaultViewModel;
 import de.wfb.model.Model;
+import de.wfb.model.driving.RandomRoutingController;
 import de.wfb.model.facade.DefaultModelFacade;
 import de.wfb.model.facade.DefaultRoutingFacade;
 import de.wfb.model.node.DefaultRailNodeFactory;
@@ -38,16 +43,21 @@ import de.wfb.model.service.DefaultFeedbackBlockService;
 import de.wfb.model.service.DefaultIdService;
 import de.wfb.model.service.DefaultModelPersistenceService;
 import de.wfb.model.service.DefaultModelService;
+import de.wfb.model.service.DefaultRoutingService;
 import de.wfb.model.service.ModelService;
-import de.wfb.model.service.OptimizedNewRoutingService;
+import de.wfb.model.service.RoutingController;
 import de.wfb.model.service.RoutingService;
 import de.wfb.model.strategy.DefaultGraphColorStrategy;
+import de.wfb.rail.controller.TimedDrivingThreadController;
+import de.wfb.rail.converter.Converter;
 import de.wfb.rail.facade.DefaultProtocolFacade;
 import de.wfb.rail.factory.DefaultSVGPathFactory;
 import de.wfb.rail.factory.DefaultSerialPortFactory;
 import de.wfb.rail.service.DefaultDrivingService;
 import de.wfb.rail.service.DefaultProtocolService;
 import de.wfb.rail.service.DefaultTurnoutService;
+import de.wfb.rail.service.Route;
+import de.wfb.threads.DefaultTimedDrivingThreadController;
 import de.wfb.threads.TimedDrivingThread;
 
 /**
@@ -183,16 +193,10 @@ public class ConfigurationClass implements SchedulingConfigurer {
 		return new TimedDrivingThread();
 	}
 
-//	@Bean
-//	public DefaultRoutingService DefaultRoutingService() {
-//		return new DefaultRoutingService();
-//	}
-
 	@Bean
 	public RoutingService RoutingService() {
-//		return new NewRoutingService();
-
-		return new OptimizedNewRoutingService();
+		return new DefaultRoutingService();
+//		return new PreRecordedRoutingService();
 	}
 
 	@Bean
@@ -204,11 +208,6 @@ public class ConfigurationClass implements SchedulingConfigurer {
 	public DefaultDebugFacade DefaultDebugFacade() {
 		return new DefaultDebugFacade();
 	}
-
-//	@Bean
-//	public StaticGraphColorStrategy StaticGraphColorStrategy() {
-//		return new StaticGraphColorStrategy();
-//	}
 
 	@Bean
 	public DefaultGraphColorStrategy DefaultGraphColorStrategy() {
@@ -308,6 +307,36 @@ public class ConfigurationClass implements SchedulingConfigurer {
 	@Bean
 	public RoutingPane RoutingPane() {
 		return new RoutingPane();
+	}
+
+	@Bean
+	public RoutingControllerMenuItem RoutingControllerMenuItem() {
+		return new RoutingControllerMenuItem("Start");
+	}
+
+	@Bean
+	public RoutingController RoutingController() {
+		return new RandomRoutingController();
+	}
+
+	@Bean
+	public Converter<Route, String> RouteSerializer() {
+		return new DefaultRouteSerializer();
+	}
+
+	@Bean
+	public Converter<String, Route> RouteDeserializer() {
+		return new DefaultRouteDeserializer();
+	}
+
+	@Bean
+	public TimedDrivingThreadController TimedDrivingThreadController() {
+		return new DefaultTimedDrivingThreadController();
+	}
+
+	@Bean
+	public DrivingThreadControlPane DrivingThreadControlPane() {
+		return new DrivingThreadControlPane();
 	}
 
 }

@@ -103,8 +103,7 @@ public class DefaultLocomotive {
 	}
 
 	public void setOrientation(final Direction edgeDirection) {
-
-		logger.info("OldOrientation = " + this.edgeDirection.name() + " NewOrientation = " + edgeDirection.name());
+		logger.trace("OldOrientation = " + this.edgeDirection.name() + " NewOrientation = " + edgeDirection.name());
 		this.edgeDirection = edgeDirection;
 	}
 

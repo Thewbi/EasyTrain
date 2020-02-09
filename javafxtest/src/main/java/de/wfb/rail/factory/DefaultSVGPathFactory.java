@@ -16,28 +16,45 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 	@Override
 	public SVGPath create(final Object... args) {
 
+		logger.trace(args.length);
+		for (int i = 0; i < args.length; i++) {
+			logger.trace(i + ") " + args[i]);
+		}
+
 		logger.trace("SVG CREATE");
 
+		// 0
 		final ShapeType shapeType = (ShapeType) args[0];
 
+		// 1
 		final int size = (int) args[1];
 
+		// 2
 		final boolean thrown = (boolean) args[2];
 
+		// 3
 		final boolean flipped = (boolean) args[3];
 
+		// 4
 		final boolean highlighted = (boolean) args[4];
 
+		// 5
 		final boolean blocked = (boolean) args[5];
 
+		// 6
 		final boolean selected = (boolean) args[6];
 
+		// 7
 		final boolean reserved = (boolean) args[7];
 
+		// 8
 		Direction direction = null;
 		if (args[8] != null) {
 			direction = (Direction) args[8];
 		}
+
+		// 9
+		final boolean containsLocomotive = (boolean) args[9];
 
 		switch (shapeType) {
 
@@ -46,42 +63,52 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 			return null;
 
 		case SQUARE:
-			return createSquare(size, highlighted, blocked, selected, reserved);
+			return createSquare(size, highlighted, blocked, selected, reserved, containsLocomotive);
 
 		case TRIANGLE:
-			return createTriangle(size, highlighted, blocked, selected, reserved);
+			return createTriangle(size, highlighted, blocked, selected, reserved, containsLocomotive);
 
 		case STRAIGHT_HORIZONTAL:
-			return createStraightHorizontal(direction, size, highlighted, blocked, selected, reserved);
+			return createStraightHorizontal(direction, size, highlighted, blocked, selected, reserved,
+					containsLocomotive);
 		case STRAIGHT_VERTICAL:
-			return createStraightVertical(direction, size, highlighted, blocked, selected, reserved);
+			return createStraightVertical(direction, size, highlighted, blocked, selected, reserved,
+					containsLocomotive);
 
 		case TURN_BOTTOM_LEFT:
-			return createTurnBottomLeft(size, highlighted, blocked, selected, reserved);
+			return createTurnBottomLeft(size, highlighted, blocked, selected, reserved, containsLocomotive);
 		case TURN_LEFT_TOP:
-			return createTurnLeftTop(size, highlighted, blocked, selected, reserved);
+			return createTurnLeftTop(size, highlighted, blocked, selected, reserved, containsLocomotive);
 		case TURN_TOP_RIGHT:
-			return createTurnTopRight(size, highlighted, blocked, selected, reserved);
+			return createTurnTopRight(size, highlighted, blocked, selected, reserved, containsLocomotive);
 		case TURN_RIGHT_BOTTOM:
-			return createTurnRightBottom(size, highlighted, blocked, selected, reserved);
+			return createTurnRightBottom(size, highlighted, blocked, selected, reserved, containsLocomotive);
 
 		case SWITCH_LEFT_0:
-			return createSwitchLeft(size, 0, true, thrown, flipped, highlighted, blocked, selected, reserved);
+			return createSwitchLeft(size, 0, true, thrown, flipped, highlighted, blocked, selected, reserved,
+					containsLocomotive);
 		case SWITCH_LEFT_90:
-			return createSwitchLeft(size, 90, true, thrown, flipped, highlighted, blocked, selected, reserved);
+			return createSwitchLeft(size, 90, true, thrown, flipped, highlighted, blocked, selected, reserved,
+					containsLocomotive);
 		case SWITCH_LEFT_180:
-			return createSwitchLeft(size, 180, true, thrown, flipped, highlighted, blocked, selected, reserved);
+			return createSwitchLeft(size, 180, true, thrown, flipped, highlighted, blocked, selected, reserved,
+					containsLocomotive);
 		case SWITCH_LEFT_270:
-			return createSwitchLeft(size, 270, true, thrown, flipped, highlighted, blocked, selected, reserved);
+			return createSwitchLeft(size, 270, true, thrown, flipped, highlighted, blocked, selected, reserved,
+					containsLocomotive);
 
 		case SWITCH_RIGHT_0:
-			return createSwitchRight(size, 0, false, thrown, flipped, highlighted, blocked, selected, reserved);
+			return createSwitchRight(size, 0, false, thrown, flipped, highlighted, blocked, selected, reserved,
+					containsLocomotive);
 		case SWITCH_RIGHT_90:
-			return createSwitchRight(size, 90, false, thrown, flipped, highlighted, blocked, selected, reserved);
+			return createSwitchRight(size, 90, false, thrown, flipped, highlighted, blocked, selected, reserved,
+					containsLocomotive);
 		case SWITCH_RIGHT_180:
-			return createSwitchRight(size, 180, false, thrown, flipped, highlighted, blocked, selected, reserved);
+			return createSwitchRight(size, 180, false, thrown, flipped, highlighted, blocked, selected, reserved,
+					containsLocomotive);
 		case SWITCH_RIGHT_270:
-			return createSwitchRight(size, 270, false, thrown, flipped, highlighted, blocked, selected, reserved);
+			return createSwitchRight(size, 270, false, thrown, flipped, highlighted, blocked, selected, reserved,
+					containsLocomotive);
 
 		default:
 			throw new IllegalArgumentException("Uknown ShapeType " + shapeType);
@@ -89,7 +116,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 	}
 
 	private Paint retrieveFillColor(final boolean highlighted, final boolean blocked, final boolean selected,
-			final boolean reserved) {
+			final boolean reserved, final boolean containsLocomotive) {
 
 		// if the node is selected, draw the selected color
 		// if the node is not selected but blocked, draw it in blocked color
@@ -97,7 +124,12 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 
 		// @formatter:off
 
-		if (selected)
+		if (containsLocomotive)
+		{
+			logger.trace("Contains locomotive");
+			return LayoutColors.CONTAINS_LOCOMOTIVE_COLOR;
+		}
+		else if (selected)
 		{
 			return LayoutColors.SELECTED_FILL_COLOR;
 		}
@@ -125,7 +157,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 
 	private SVGPath createSwitchRight(final int size, final double rotateAngle, final boolean left,
 			final boolean thrown, final boolean flipped, final boolean highlighted, final boolean blocked,
-			final boolean selected, final boolean reserved) {
+			final boolean selected, final boolean reserved, final boolean containsLocomotive) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -158,7 +190,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		}
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved));
+		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved, containsLocomotive));
 		svgPath.setStroke(LayoutColors.TURNOUT_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
@@ -180,7 +212,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 
 	private SVGPath createSwitchLeft(final int size, final double rotateAngle, final boolean left, final boolean thrown,
 			final boolean flipped, final boolean highlighted, final boolean blocked, final boolean selected,
-			final boolean reserved) {
+			final boolean reserved, final boolean containsLocomotive) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -220,7 +252,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		}
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved));
+		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved, containsLocomotive));
 		svgPath.setStroke(LayoutColors.TURNOUT_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
@@ -241,7 +273,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 	}
 
 	private SVGPath createTurnRightBottom(final int i, final boolean highlighted, final boolean blocked,
-			final boolean selected, final boolean reserved) {
+			final boolean selected, final boolean reserved, final boolean containsLocomotive) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -254,7 +286,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		// @formatter:on
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved));
+		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved, containsLocomotive));
 		svgPath.setStroke(LayoutColors.STANDARD_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
@@ -262,7 +294,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 	}
 
 	private SVGPath createTurnTopRight(final int i, final boolean highlighted, final boolean blocked,
-			final boolean selected, final boolean reserved) {
+			final boolean selected, final boolean reserved, final boolean containsLocomotive) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -275,7 +307,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		// @formatter:on
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved));
+		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved, containsLocomotive));
 		svgPath.setStroke(LayoutColors.STANDARD_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
@@ -283,7 +315,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 	}
 
 	private SVGPath createTurnBottomLeft(final int size, final boolean highlighted, final boolean blocked,
-			final boolean selected, final boolean reserved) {
+			final boolean selected, final boolean reserved, final boolean containsLocomotive) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -296,7 +328,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		// @formatter:on
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved));
+		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved, containsLocomotive));
 		svgPath.setStroke(LayoutColors.STANDARD_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
@@ -304,7 +336,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 	}
 
 	private SVGPath createTurnLeftTop(final int size, final boolean highlighted, final boolean blocked,
-			final boolean selected, final boolean reserved) {
+			final boolean selected, final boolean reserved, final boolean containsLocomotive) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -317,7 +349,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		// @formatter:on
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved));
+		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved, containsLocomotive));
 		svgPath.setStroke(LayoutColors.STANDARD_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
@@ -325,7 +357,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 	}
 
 	private SVGPath createTriangle(final int size, final boolean highlighted, final boolean blocked,
-			final boolean selected, final boolean reserved) {
+			final boolean selected, final boolean reserved, final boolean containsLocomotive) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -337,7 +369,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		// @formatter:on
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved));
+		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved, containsLocomotive));
 		svgPath.setStroke(LayoutColors.STANDARD_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
@@ -345,7 +377,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 	}
 
 	private SVGPath createSquare(final int size, final boolean highlighted, final boolean blocked,
-			final boolean selected, final boolean reserved) {
+			final boolean selected, final boolean reserved, final boolean containsLocomotive) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -358,7 +390,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		// @formatter:on
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved));
+		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved, containsLocomotive));
 		svgPath.setStroke(LayoutColors.STANDARD_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
@@ -366,7 +398,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 	}
 
 	private SVGPath createStraightHorizontal(final Direction direction, final int size, final boolean highlighted,
-			final boolean blocked, final boolean selected, final boolean reserved) {
+			final boolean blocked, final boolean selected, final boolean reserved, final boolean containsLocomotive) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -398,7 +430,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		}
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved));
+		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved, containsLocomotive));
 		svgPath.setStroke(LayoutColors.STANDARD_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 
@@ -406,7 +438,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 	}
 
 	private SVGPath createStraightVertical(final Direction direction, final int size, final boolean highlighted,
-			final boolean blocked, final boolean selected, final boolean reserved) {
+			final boolean blocked, final boolean selected, final boolean reserved, final boolean containsLocomotive) {
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -439,7 +471,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		}
 
 		final SVGPath svgPath = new SVGPath();
-		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved));
+		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved, containsLocomotive));
 		svgPath.setStroke(LayoutColors.STANDARD_STROKE_COLOR);
 		svgPath.setContent(stringBuffer.toString());
 

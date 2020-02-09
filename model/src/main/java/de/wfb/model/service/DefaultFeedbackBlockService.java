@@ -14,13 +14,17 @@ import de.wfb.rail.events.FeedbackBlockUpdateEvent;
 /**
  * In Startup.java, a thread is started. That thread constantly queries the
  * intellibox for block updates. Once it parses block status updates from the
- * response it will send a FeedbackBlockUpdateEvent with all updates blocks.
+ * response it will send a FeedbackBlockUpdateEvent with all updates
+ * blocks.<br />
+ * <br />
  *
- * This services handles the event.
+ * This services handles the event.<br />
+ * <br />
  *
  * It will remember the state of the blocks. If the block did indeed change
  * their state, this service will send out FeedbackBlockEvents (!=
- * FeedbackBlockUpdateEvent).
+ * FeedbackBlockUpdateEvent).<br />
+ * <br />
  *
  * The layout will handle FeedbackBlockEvents and redraw blocks.
  */

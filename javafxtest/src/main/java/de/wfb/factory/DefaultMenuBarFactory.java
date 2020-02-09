@@ -80,6 +80,9 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 	@Autowired
 	private GraphNodeSVGMenuItem graphNodeSVGMenuItem;
 
+	@Autowired
+	private RoutingControllerMenuItem routingControllerMenuItem;
+
 	@Override
 	public MenuBar create(final Object... args) throws Exception {
 
@@ -93,6 +96,7 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 		final Menu fileMenu = new Menu("File");
 		final Menu debugMenu = new Menu("Debug");
 		final Menu routingMenu = new Menu("Routing");
+		final Menu routingControllerMenu = new Menu("RoutingController");
 		final Menu editMenu = new Menu("Edit");
 		final Menu serialMenu = new Menu("Serial");
 		final Menu helpMenu = new Menu("Help");
@@ -433,6 +437,10 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 				findRouteMenuItem
 				);
 
+		routingControllerMenu.getItems().addAll(
+				routingControllerMenuItem
+				);
+
 		editMenu.getItems().addAll(
 				connectItem,
 //				copyItem,
@@ -458,10 +466,17 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 				graphNodeSVGMenuItem
 				);
 
-		// @formatter:on
-
 		// add Menus to the MenuBar
-		menuBar.getMenus().addAll(fileMenu, routingMenu, debugMenu, editMenu, serialMenu, helpMenu);
+		menuBar.getMenus().addAll(
+				fileMenu,
+				routingMenu,
+				routingControllerMenu,
+				debugMenu,
+				editMenu,
+				serialMenu,
+				helpMenu);
+
+		// @formatter:on
 
 		return menuBar;
 	}

@@ -105,8 +105,10 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 
 			// the model changed because some of the nodes are now used.
 			// Publish an event after model changes
+			final boolean containsLocomotive = false;
 			final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, node.getX(), node.getY(),
-					node.isHighlighted(), node.isFeedbackBlockUsed(), node.isSelected(), node.isReserved());
+					node.isHighlighted(), node.isFeedbackBlockUsed(), node.isSelected(), node.isReserved(),
+					containsLocomotive);
 
 			applicationEventPublisher.publishEvent(modelChangedEvent);
 		}
@@ -231,8 +233,9 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 
 		logger.trace("sendModelChangedEvent() x: " + x + " y: " + y);
 
+		final boolean containsLocomotive = false;
 		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, x, y, hightlighted, blocked,
-				selected, reserved);
+				selected, reserved, containsLocomotive);
 
 		logger.trace("Sending ModelChangedEvent ...");
 		applicationEventPublisher.publishEvent(modelChangedEvent);
@@ -252,6 +255,8 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 
 		final boolean selected = railNode.isSelected();
 
+		final boolean containsLocomotive = false;
+
 		// @formatter:off
 
 		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(
@@ -262,7 +267,8 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 				highlighted,
 				blocked,
 				selected,
-				reserved);
+				reserved,
+				containsLocomotive);
 
 		// @formatter:on
 
@@ -425,17 +431,6 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 	public Model getModel() {
 		return model;
 	}
-
-//	@Override
-//	public void resetGraphColors() {
-//
-//		for (final Map.Entry<Integer, Node> entry : model.getIdMap().entrySet()) {
-//
-//			final RailNode railNode = (RailNode) entry.getValue();
-//			railNode.getGraphNodeOne().setColor(Color.NONE);
-//			railNode.getGraphNodeTwo().setColor(Color.NONE);
-//		}
-//	}
 
 	@Override
 	public List<Node> getSelectedNodes() {
