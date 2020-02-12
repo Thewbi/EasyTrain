@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationEventPublisher;
 
 import de.wfb.model.Model;
+import de.wfb.model.facade.ModelFacade;
 import de.wfb.rail.events.ModelChangedEvent;
 import de.wfb.rail.facade.ProtocolFacade;
 import de.wfb.rail.service.Block;
@@ -67,6 +68,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	/** null means that the rail node is traversable in all directions */
 	private Direction traverse = null;
+
+	private ModelFacade modelFacade;
 
 	/**
 	 * ctor
@@ -818,6 +821,17 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	}
 
 	@Override
+	public void free() {
+
+		setHighlighted(false);
+		setReserved(false);
+		setReservedLocomotiveId(-1);
+
+		// send model changed event
+		modelFacade.sendModelChangedEvent(this);
+	}
+
+	@Override
 	public boolean isReservedExcluding(final int locomotiveId) {
 		return reservedLocomotiveId != NOT_RESERVED && reservedLocomotiveId != locomotiveId;
 	}
@@ -921,7 +935,9 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	@Override
 	public void setReservedLocomotiveId(final int reservedLocomotiveId) {
-		logger.trace("LocomotiveId: " + reservedLocomotiveId);
+		if (reservedLocomotiveId != -1) {
+			logger.trace("RN-ID: " + getId() + " Reserved for LocomotiveId: " + reservedLocomotiveId);
+		}
 		this.reservedLocomotiveId = reservedLocomotiveId;
 	}
 
@@ -957,6 +973,14 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 	public void setManualConnections(final List<RailNode> manualConnections) {
 		this.manualConnections = manualConnections;
+	}
+
+	public ModelFacade getModelFacade() {
+		return modelFacade;
+	}
+
+	public void setModelFacade(final ModelFacade modelFacade) {
+		this.modelFacade = modelFacade;
 	}
 
 }

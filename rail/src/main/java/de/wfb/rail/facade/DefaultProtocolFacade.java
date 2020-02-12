@@ -85,7 +85,7 @@ public class DefaultProtocolFacade implements ProtocolFacade {
 	@Override
 	public void turnTurnout(final Node node) {
 
-		logger.info("turnTurnout()");
+		logger.trace("turnTurnout()");
 
 		protocolService.turnTurnout(node);
 	}

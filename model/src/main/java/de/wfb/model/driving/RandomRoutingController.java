@@ -11,6 +11,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import de.wfb.rail.events.RouteFinishedEvent;
 import de.wfb.rail.service.Block;
 import de.wfb.rail.service.BlockService;
 import de.wfb.rail.service.Route;
+import de.wfb.rail.service.RouteUtils;
 
 /**
  * <pre>
@@ -61,20 +63,20 @@ import de.wfb.rail.service.Route;
  */
 public class RandomRoutingController implements RoutingController, ApplicationListener<ApplicationEvent> {
 
+	private static final boolean WRITE_ROUTES_TO_FILE = false;
+
 	private static final Logger logger = LogManager.getLogger(RandomRoutingController.class);
+
+	private final Random random = new Random();
 
 //	private static final int LOCOMOTIVE_COUNT_DEFAULT = 1;
 	private static final int LOCOMOTIVE_COUNT_DEFAULT = 2;
 
-	private static final int STOP_COUNT_DEFAULT = 2;
+	private static final int STOP_COUNT_DEFAULT = 3;
 
 	private final int locomotiveCount = LOCOMOTIVE_COUNT_DEFAULT;
 
-	private final Random random = new Random();
-
 	private final Set<Integer> requiredBlocks = new HashSet<>();
-
-	private final List<Block> ignoredBlocks = new ArrayList<>();
 
 	private List<DefaultLocomotive> locomotives = new ArrayList<>();
 
@@ -88,70 +90,27 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 	private ModelFacade modelFacade;
 
 	@Autowired
-	private BlockService blockService;
-
-	@Autowired
 	private RoutingService routingService;
 
 	@Autowired
 	private Converter<Route, String> routeSerializer;
 
+	@Autowired
+	private BlockService blockService;
+
 	@Override
 	public void initialize() throws IOException, Exception {
 
-		logger.info("initialize()");
+		logger.trace("initialize()");
+
+		if (WRITE_ROUTES_TO_FILE) {
+
+			FileUtils.writeStringToFile(new File("routelog.txt"),
+					">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n", "UTF-8", true);
+		}
 
 		requiredBlocks.add(76);
 		requiredBlocks.add(21);
-
-		ignoredBlocks.add(blockService.getBlockById(1));
-		ignoredBlocks.add(blockService.getBlockById(2));
-		ignoredBlocks.add(blockService.getBlockById(3));
-		ignoredBlocks.add(blockService.getBlockById(4));
-		ignoredBlocks.add(blockService.getBlockById(5));
-		ignoredBlocks.add(blockService.getBlockById(6));
-		ignoredBlocks.add(blockService.getBlockById(7));
-		ignoredBlocks.add(blockService.getBlockById(8));
-		ignoredBlocks.add(blockService.getBlockById(9));
-		ignoredBlocks.add(blockService.getBlockById(10));
-		ignoredBlocks.add(blockService.getBlockById(11));
-
-		ignoredBlocks.add(blockService.getBlockById(35));
-		ignoredBlocks.add(blockService.getBlockById(36));
-		ignoredBlocks.add(blockService.getBlockById(37));
-
-		ignoredBlocks.add(blockService.getBlockById(41));
-		ignoredBlocks.add(blockService.getBlockById(44));
-		ignoredBlocks.add(blockService.getBlockById(45));
-		ignoredBlocks.add(blockService.getBlockById(46));
-
-		ignoredBlocks.add(blockService.getBlockById(50));
-		ignoredBlocks.add(blockService.getBlockById(51));
-		ignoredBlocks.add(blockService.getBlockById(52));
-		ignoredBlocks.add(blockService.getBlockById(53));
-//		ignoredBlocks.add(blockService.getBlockById(54));
-		ignoredBlocks.add(blockService.getBlockById(55));
-		ignoredBlocks.add(blockService.getBlockById(56));
-		ignoredBlocks.add(blockService.getBlockById(57));
-		ignoredBlocks.add(blockService.getBlockById(58));
-		ignoredBlocks.add(blockService.getBlockById(59));
-
-		ignoredBlocks.add(blockService.getBlockById(60));
-		ignoredBlocks.add(blockService.getBlockById(61));
-		ignoredBlocks.add(blockService.getBlockById(62));
-		ignoredBlocks.add(blockService.getBlockById(63));
-		ignoredBlocks.add(blockService.getBlockById(64));
-
-		ignoredBlocks.add(blockService.getBlockById(81));
-		ignoredBlocks.add(blockService.getBlockById(86));
-
-		ignoredBlocks.add(blockService.getBlockById(91));
-		ignoredBlocks.add(blockService.getBlockById(93));
-
-		ignoredBlocks.add(blockService.getBlockById(103));
-
-		ignoredBlocks.add(blockService.getBlockById(111));
-		ignoredBlocks.add(blockService.getBlockById(112));
 
 		locomotives = modelFacade.getLocomotives();
 
@@ -160,7 +119,7 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 		railNode = (RailNode) modelFacade.getNodeById(489);
 		routingService.placeLocomotive(railNode, locomotives.get(1), Direction.EAST);
 
-		logger.info("building context ...");
+		logger.trace("building context ...");
 
 		// create the locomotiveContext for all locomotives that have been placed on the
 		// layout
@@ -169,14 +128,14 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 			final GraphNode graphNode = locomotive.getGraphNode();
 			if (graphNode == null) {
 
-				logger.info("Locomotive has no graph node!");
+				logger.trace("Locomotive has no graph node!");
 				continue;
 			}
 
 			final Block block = blockService.getBlockByGraphNode(graphNode);
 			if (block == null) {
 
-				logger.info("Locomotive graph node has no block!");
+				logger.trace("Locomotive graph node has no block!");
 				continue;
 			}
 
@@ -186,7 +145,7 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 			locomotiveEntry.setStartGraphNode(graphNode);
 			locomotiveEntry.getVisitedBlocks().clear();
 
-			logger.info(locomotiveEntry);
+			logger.trace(locomotiveEntry);
 
 			locomotiveContext.put(locomotive, locomotiveEntry);
 		}
@@ -250,7 +209,9 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 
 			logger.info("Starting locomotive: " + locomotive);
 
-			addNewRouteToLocomotive(locomotive);
+			if (locomotive.getRoute() == null || locomotive.getRoute().isEmpty()) {
+				addNewRouteToLocomotive(StringUtils.EMPTY, locomotive);
+			}
 		}
 
 		logger.info("Starting done.");
@@ -279,17 +240,21 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 	}
 
 	private void processFeedbackBlockEvent(final FeedbackBlockEvent feedbackBlockEvent) {
-		logger.info("processFeedbackBlockEvent()");
+		logger.trace("processFeedbackBlockEvent()");
 	}
 
 	private void processRouteFinishedEvent(final RouteFinishedEvent routeFinishedEvent) throws IOException, Exception {
 
-		logger.info("processRouteFinishedEvent()");
-
 		final DefaultLocomotive locomotive = routeFinishedEvent.getDefaultLocomotive();
+
+		logger.info("processRouteFinishedEvent() locomotive: " + locomotive);
 
 		final Block block = locomotive.getRailNode().getBlock();
 		final LocomotiveEntry locomotiveEntry = locomotiveContext.get(locomotive);
+
+		logger.info("processRouteFinishedEvent() locomotive: " + locomotive + " locomotiveEntry.loco: "
+				+ locomotiveEntry.getLocomotive());
+
 		locomotiveEntry.getVisitedBlocks().add(block);
 
 		if (block.equals(locomotiveEntry.getStartBlock())) {
@@ -307,7 +272,7 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 			refillActiveLocomotives();
 			start();
 
-		} else if (locomotiveEntry.getVisitedBlocks().size() == STOP_COUNT_DEFAULT) {
+		} else if (locomotiveEntry.getVisitedBlocks().size() >= STOP_COUNT_DEFAULT) {
 
 			logger.trace("processRouteFinishedEvent() - required block count visited!");
 
@@ -326,77 +291,92 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 
 			logger.trace("Trying to find a route from startBlock: " + startBlock + " to: " + endBlock);
 
-			final Route route = routingService.startLocomotiveToBlock(locomotive, locomotive.getOrientation(),
-					startBlock, locomotive.getOrientation(), endBlock, routeOverReservedGraphNodes,
-					routeOverBlockedFeedbackBlocks);
+			// reserve the start block
+			startBlock.reserveForLocomotive(locomotive);
+
+			Route route = routingService.startLocomotiveToBlock(locomotive, locomotive.getOrientation(), startBlock,
+					locomotive.getOrientation(), endBlock, routeOverReservedGraphNodes, routeOverBlockedFeedbackBlocks);
+
+			if (RouteUtils.isEmpty(route)) {
+
+				route = routingService.startLocomotiveToRandomBlock(locomotive, locomotive.getOrientation(), startBlock,
+						locomotive.getOrientation(), routeOverReservedGraphNodes, routeOverBlockedFeedbackBlocks);
+			}
 
 			logger.trace("Trying to find a route from startBlock: " + startBlock + " to: " + endBlock
 					+ " done! Route is " + route);
 
 			routingService.attachRouteToLocomotive(locomotive, route);
 
-			String routeAsString = routeSerializer.convert(route);
-			routeAsString += "\n";
-			FileUtils.writeStringToFile(new File("routelog.txt"), routeAsString, "UTF-8", true);
+			if (RouteUtils.isNotEmpty(route)) {
+
+				if (WRITE_ROUTES_TO_FILE) {
+
+					String routeAsString = routeSerializer.convert(route);
+					routeAsString += "\n";
+					FileUtils.writeStringToFile(new File("routelog.txt"), routeAsString, "UTF-8", true);
+				}
+			}
 
 		} else {
 
 			logger.trace("processRouteFinishedEvent() - required block count NOT visited yet!");
 
-			addNewRouteToLocomotive(locomotive);
+			addNewRouteToLocomotive(StringUtils.EMPTY, locomotive);
 		}
 	}
 
-	private void addNewRouteToLocomotive(final DefaultLocomotive locomotive) throws IOException, Exception {
+	private void addNewRouteToLocomotive(final String label, final DefaultLocomotive locomotive)
+			throws IOException, Exception {
 
-		logger.info("addNewRouteToLocomotive() locomotive = " + locomotive);
+		logger.trace("addNewRouteToLocomotive() locomotive = " + locomotive);
 
 		final LocomotiveEntry locomotiveEntry = locomotiveContext.get(locomotive);
 
-		logger.info("addNewRouteToLocomotive() locomotiveEntry = " + locomotiveEntry);
+		logger.trace("addNewRouteToLocomotive() locomotiveEntry = " + locomotiveEntry);
 
 		Route route = null;
 		Block startBlock = null;
-		Block endBlock = null;
+		final Block endBlock = null;
 
 		final int loopBreakerRetries = 100;
 		int loopBreaker = loopBreakerRetries;
 
-		while (route == null && loopBreaker > 0) {
+		while (RouteUtils.isEmpty(route) && loopBreaker > 0) {
 
 			loopBreaker--;
-
-			final Block selectRandomBlock = selectRandomBlock(random);
 
 			// always go forward! Do not invert startEdgeDirection
 			final Direction locomotiveOrientation = locomotive.getOrientation();
 			final Direction startEdgeDirection = locomotive.getOrientation();
 			startBlock = locomotiveEntry.getCurrentBlock();
-			endBlock = selectRandomBlock;
 
-			logger.info("Trying to find a route from startBlock: " + startBlock + " to: " + endBlock);
+			logger.trace("Trying to find a route from startBlock: " + startBlock + " to: " + endBlock);
 
 			final boolean routeOverReservedNodes = true;
 			final boolean routeOverBlockedFeedbackBlocks = false;
 
-			route = routingService.startLocomotiveToBlock(locomotive, locomotiveOrientation, startBlock,
-					startEdgeDirection, endBlock, routeOverReservedNodes, routeOverBlockedFeedbackBlocks);
+			route = routingService.startLocomotiveToRandomBlock(locomotive, locomotiveOrientation, startBlock,
+					startEdgeDirection, routeOverReservedNodes, routeOverBlockedFeedbackBlocks);
 
-			logger.info("Route finding result: " + route);
+			logger.trace("Route finding result: " + route);
 		}
 
-		if (route == null) {
+		if (RouteUtils.isEmpty(route)) {
 
-			logger.info("Could not find a route from startBlock: " + startBlock + " to: " + endBlock
+			logger.trace("Could not find a route from startBlock: " + startBlock + " to: " + endBlock
 					+ " after loopBreakerRetries: " + loopBreakerRetries);
 
 		} else {
 
 			routingService.attachRouteToLocomotive(locomotive, route);
 
-			String routeAsString = routeSerializer.convert(route);
-			routeAsString += "\n";
-			FileUtils.writeStringToFile(new File("routelog.txt"), routeAsString, "UTF-8", true);
+			if (WRITE_ROUTES_TO_FILE) {
+
+				String routeAsString = routeSerializer.convert(route);
+				routeAsString += "\n";
+				FileUtils.writeStringToFile(new File("routelog.txt"), label + routeAsString, "UTF-8", true);
+			}
 		}
 	}
 
@@ -422,21 +402,6 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 		final LocomotiveEntry randomValue = (LocomotiveEntry) values[random.nextInt(values.length)];
 
 		return randomValue.getLocomotive();
-	}
-
-	private Block selectRandomBlock(final Random random) {
-
-		final List<Block> allBlocks = blockService.getAllBlocks();
-
-		allBlocks.removeAll(ignoredBlocks);
-
-		final int min = 0;
-		final int max = allBlocks.size() - 1;
-		final int index = random.nextInt((max - min) + 1) + min;
-
-		final Block block = allBlocks.get(index);
-
-		return block;
 	}
 
 	@Override

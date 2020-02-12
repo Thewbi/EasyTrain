@@ -1,6 +1,9 @@
 package de.wfb.model.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,11 +20,15 @@ import de.wfb.rail.events.NodeHighlightedEvent;
 import de.wfb.rail.events.RouteAddedEvent;
 import de.wfb.rail.facade.ProtocolFacade;
 import de.wfb.rail.service.Block;
+import de.wfb.rail.service.BlockService;
 import de.wfb.rail.service.Route;
+import de.wfb.rail.service.RouteUtils;
 
 public abstract class BaseRoutingService implements RoutingService {
 
 	private static final Logger logger = LogManager.getLogger(BaseRoutingService.class);
+
+	private final Random random = new Random();
 
 	@Autowired
 	private ModelService modelService;
@@ -31,6 +38,11 @@ public abstract class BaseRoutingService implements RoutingService {
 
 	@Autowired
 	private ProtocolFacade protocolFacade;
+
+	@Autowired
+	private BlockService blockService;
+
+	private List<Block> ignoredBlocks = new ArrayList<>();
 
 	@Override
 	public Route route(final DefaultLocomotive locomotive, final GraphNode graphNodeStart, final GraphNode graphNodeEnd,
@@ -126,11 +138,118 @@ public abstract class BaseRoutingService implements RoutingService {
 		if (graphNode.getRailNode().isFeedbackBlockUsed() && !reservedForLocomotive
 				&& !routeOverBlockedFeedbackBlocks) {
 
-			logger.info("Cannot traverse GN ID: " + graphNode.getId() + " Reason: RailNode-FeedbackBlockUsed!");
+			// TODO: there is a case where a locomotive has just entered a block and the
+			// block is
+			// therefore feedbackBlockUsed = true
+			// but the block was not reserved for that locomotive for some reason! The
+			// feedback block is
+			// then cannot be traversed by the locomotive because it is used by the
+			// locomotive but not reserved by that
+			// locomotive
+			// if (graphNode.getRailNode().getBlock() == )
+
+			logger.info("Cannot traverse GN ID: " + graphNode.getId()
+					+ " Reason: RailNode-FeedbackBlockUsed but not reserved for this locomotive-ID: "
+					+ locomotive.getId());
+
 			return false;
 		}
 
 		return true;
+	}
+
+	private Block selectRandomBlock(final Random random) {
+
+		final List<Block> allBlocks = blockService.getAllBlocks();
+		allBlocks.removeAll(getIgnoredBlocks());
+
+		final int min = 0;
+		final int max = allBlocks.size() - 1;
+		final int index = random.nextInt((max - min) + 1) + min;
+
+		final Block block = allBlocks.get(index);
+
+		return block;
+	}
+
+	protected List<Block> getIgnoredBlocks() {
+
+		ignoredBlocks = new ArrayList<>();
+
+		ignoredBlocks.add(blockService.getBlockById(1));
+		ignoredBlocks.add(blockService.getBlockById(2));
+		ignoredBlocks.add(blockService.getBlockById(3));
+		ignoredBlocks.add(blockService.getBlockById(4));
+		ignoredBlocks.add(blockService.getBlockById(5));
+		ignoredBlocks.add(blockService.getBlockById(6));
+		ignoredBlocks.add(blockService.getBlockById(7));
+		ignoredBlocks.add(blockService.getBlockById(8));
+		ignoredBlocks.add(blockService.getBlockById(9));
+		ignoredBlocks.add(blockService.getBlockById(10));
+		ignoredBlocks.add(blockService.getBlockById(11));
+
+		ignoredBlocks.add(blockService.getBlockById(35));
+		ignoredBlocks.add(blockService.getBlockById(36));
+		ignoredBlocks.add(blockService.getBlockById(37));
+
+		ignoredBlocks.add(blockService.getBlockById(41));
+		ignoredBlocks.add(blockService.getBlockById(44));
+		ignoredBlocks.add(blockService.getBlockById(45));
+		ignoredBlocks.add(blockService.getBlockById(46));
+		ignoredBlocks.add(blockService.getBlockById(47));
+
+		ignoredBlocks.add(blockService.getBlockById(50));
+		ignoredBlocks.add(blockService.getBlockById(51));
+		ignoredBlocks.add(blockService.getBlockById(52));
+		ignoredBlocks.add(blockService.getBlockById(53));
+//		ignoredBlocks.add(blockService.getBlockById(54));
+		ignoredBlocks.add(blockService.getBlockById(55));
+		ignoredBlocks.add(blockService.getBlockById(56));
+		ignoredBlocks.add(blockService.getBlockById(57));
+		ignoredBlocks.add(blockService.getBlockById(58));
+		ignoredBlocks.add(blockService.getBlockById(59));
+
+		ignoredBlocks.add(blockService.getBlockById(60));
+		ignoredBlocks.add(blockService.getBlockById(61));
+		ignoredBlocks.add(blockService.getBlockById(62));
+		ignoredBlocks.add(blockService.getBlockById(63));
+		ignoredBlocks.add(blockService.getBlockById(64));
+
+		ignoredBlocks.add(blockService.getBlockById(81));
+		ignoredBlocks.add(blockService.getBlockById(86));
+
+		ignoredBlocks.add(blockService.getBlockById(91));
+		ignoredBlocks.add(blockService.getBlockById(93));
+
+		ignoredBlocks.add(blockService.getBlockById(103));
+
+		ignoredBlocks.add(blockService.getBlockById(111));
+		ignoredBlocks.add(blockService.getBlockById(112));
+
+		return ignoredBlocks;
+	}
+
+	@Override
+	public Route startLocomotiveToRandomBlock(final DefaultLocomotive locomotive, final Direction locomotiveOrientation,
+			final Block startBlock, final Direction startEdgeDirection, final boolean routeOverReservedNodes,
+			final boolean routeOverBlockedFeedbackBlocks) {
+
+		Route route = null;
+		Block randomBlock = null;
+		int loopBreaker = 10;
+		while ((RouteUtils.isEmpty(route) || route.sizeInBlocks() <= 1) && loopBreaker > 0) {
+
+			loopBreaker--;
+
+			randomBlock = selectRandomBlock(random);
+
+			logger.info("Trying to find route to block " + randomBlock);
+
+			route = startLocomotiveToBlock(locomotive, locomotiveOrientation, startBlock, startEdgeDirection,
+					randomBlock, routeOverReservedNodes, routeOverBlockedFeedbackBlocks);
+		}
+
+		return route;
 	}
 
 	@Override
@@ -139,7 +258,19 @@ public abstract class BaseRoutingService implements RoutingService {
 			final boolean routeOverReservedNodes, final boolean routeOverBlockedFeedbackBlocks) {
 
 		final RailNode railNode = locomotive.getRailNode();
-		logger.trace("Locomotive RailNode is: " + railNode);
+
+		final boolean debug = false;
+		if (debug) {
+			logger.info("Locomotive: " + locomotive);
+			logger.info("locomotiveOrientation: " + locomotiveOrientation);
+			logger.info("startBlock: " + startBlock);
+			logger.info("startEdgeDirection: " + startEdgeDirection);
+			logger.info("endBlock: " + endBlock);
+			logger.info("routeOverReservedNodes: " + routeOverReservedNodes);
+			logger.info("routeOverBlockedFeedbackBlocks: " + routeOverBlockedFeedbackBlocks);
+			logger.info("Locomotive RailNode is: " + railNode);
+		}
+
 		if (railNode == null) {
 
 			logger.error("Returning null!");
@@ -148,6 +279,7 @@ public abstract class BaseRoutingService implements RoutingService {
 
 		final Edge edge = railNode.getEdge(startEdgeDirection);
 		if (edge == null) {
+
 			logger.error("The direction startEdgeDirection: " + startEdgeDirection + " does not exist! locomotive: "
 					+ locomotive + " locomotive.getOrientation(): " + locomotive.getOrientation() + " RailNode-ID: "
 					+ railNode.getId());
@@ -155,17 +287,14 @@ public abstract class BaseRoutingService implements RoutingService {
 		}
 
 		final GraphNode startGraphNode = edge.getOutGraphNode();
-		logger.info("Assign GraphNode " + startGraphNode.getId() + " to locomotive!");
+		logger.trace("Assign GraphNode " + startGraphNode.getId() + " to locomotive!");
 		locomotive.setGraphNode(startGraphNode);
 
+		// DEBUG
 		if (startEdgeDirection == locomotive.getOrientation()) {
-
 			logger.trace("Locomotive is going forwards!");
-
 		} else {
-
 			logger.trace("Locomotive is going backwards (reverse)!");
-
 		}
 
 		// create a route
@@ -180,7 +309,7 @@ public abstract class BaseRoutingService implements RoutingService {
 	public Route createRoute(final DefaultLocomotive locomotive, final Block endBlock, final GraphNode startGraphNode,
 			final boolean routeOverReservedNodes, final boolean routeOverBlockedFeedbackBlocks) {
 
-		logger.info("createRoute()");
+		logger.trace("createRoute() to endBlock: " + endBlock);
 
 		final RailNode endRailNode = endBlock.getNodes().get(0);
 
@@ -195,71 +324,81 @@ public abstract class BaseRoutingService implements RoutingService {
 			}
 
 			if (routeA == null || routeA.isEmpty()) {
-
-				routeA = route(locomotive, startGraphNode, endRailNode.getGraphNodeOne(), routeOverReservedNodes,
+				routeA = route(locomotive, startGraphNode, endRailNode.getGraphNodeTwo(), routeOverReservedNodes,
 						routeOverBlockedFeedbackBlocks);
 			}
 		} catch (final Exception e) {
-			logger.error(e.getMessage(), e);
 			routeA = new Route();
 		}
 
-		Route routeB = new Route();
-		try {
-
-			try {
-				routeB = route(locomotive, startGraphNode, endRailNode.getGraphNodeTwo(), routeOverReservedNodes,
-						routeOverBlockedFeedbackBlocks);
-			} catch (final Exception e) {
-				routeB = new Route();
-			}
-
-			if (routeB == null || routeB.isEmpty()) {
-
-				routeB = route(locomotive, startGraphNode, endRailNode.getGraphNodeTwo(), routeOverReservedNodes,
-						routeOverBlockedFeedbackBlocks);
-			}
-		} catch (final Exception e) {
-			logger.error(e.getMessage(), e);
-			routeB = new Route();
+		if (routeA.isEmpty()) {
+			logger.info("No route found!");
+//			try {
+//				Thread.sleep(1000);
+//			} catch (final InterruptedException e) {
+//				logger.error(e.getMessage(), e);
+//			}
 		}
 
-		logger.info("RouteA: " + routeA);
-		logger.info("RouteB: " + routeB);
+		return routeA;
 
-		if (routeA.isEmpty() && routeB.isEmpty()) {
-
-			return null;
-
-		} else if (routeA.isEmpty()) {
-
-			return routeB;
-
-		} else if (routeB.isEmpty()) {
-
-			return routeA;
-
-		} else {
-
-			return routeA.getGraphNodes().size() < routeB.getGraphNodes().size() ? routeA : routeB;
-
-		}
+//		Route routeB = new Route();
+//		try {
+//
+//			try {
+//				routeB = route(locomotive, startGraphNode, endRailNode.getGraphNodeTwo(), routeOverReservedNodes,
+//						routeOverBlockedFeedbackBlocks);
+//			} catch (final Exception e) {
+//				routeB = new Route();
+//			}
+//
+//			if (routeB == null || routeB.isEmpty()) {
+//
+//				routeB = route(locomotive, startGraphNode, endRailNode.getGraphNodeTwo(), routeOverReservedNodes,
+//						routeOverBlockedFeedbackBlocks);
+//			}
+//		} catch (final Exception e) {
+//			routeB = new Route();
+//		}
+//
+//		logger.trace("RouteA: " + routeA);
+//		logger.trace("RouteB: " + routeB);
+//
+//		if (routeA.isEmpty() && routeB.isEmpty()) {
+//
+//			return null;
+//
+//		} else if (routeA.isEmpty()) {
+//
+//			return routeB;
+//
+//		} else if (routeB.isEmpty()) {
+//
+//			return routeA;
+//
+//		} else {
+//
+//			return routeA.getGraphNodes().size() < routeB.getGraphNodes().size() ? routeA : routeB;
+//
+//		}
 	}
 
 	@Override
 	public void attachRouteToLocomotive(final DefaultLocomotive locomotive, final Route route) {
 
-		if (route == null) {
+		if (RouteUtils.isEmpty(route)) {
 
 			logger.info("Route is null!");
 			return;
 		}
 
-		logger.info(route);
+		logger.trace("For Locomotive " + locomotive + " new Route: " + route);
 
 		if (locomotive.getGraphNode().getId() != route.getGraphNodes().get(0).getId()) {
 
-			throw new RuntimeException("GraphNode ids do not match for locomotive: " + locomotive);
+			final String msg = "GraphNode ids do not match for locomotive: " + locomotive;
+			// throw new RuntimeException(msg);
+			logger.warn(msg);
 		}
 
 		// set the route into the locomotive, this causes the TimedDrivingThread to move
@@ -317,7 +456,11 @@ public abstract class BaseRoutingService implements RoutingService {
 		// place a graphnode into the locomotive
 
 		// why was this feature deactivated?
-		locomotive.setGraphNode(railNode.getEdge(edgeDirection).getOutGraphNode());
+		final GraphNode outGraphNode = railNode.getEdge(edgeDirection).getOutGraphNode();
+
+		logger.info("Placing locomotive " + locomotive + " to graphNode: " + outGraphNode);
+
+		locomotive.setGraphNode(outGraphNode);
 
 		final Block block = railNode.getBlock();
 		if (block == null) {

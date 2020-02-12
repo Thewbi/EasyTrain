@@ -536,9 +536,9 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 	}
 
 	@Override
-	public void reserveNode(final Node node) {
+	public void reserveNode(final Node node, final int locomotiveId) {
 		node.setReserved(true);
-		node.setReservedLocomotiveId(0);
+		node.setReservedLocomotiveId(locomotiveId);
 	}
 
 	@Override
@@ -548,14 +548,18 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 	}
 
 	@Override
-	public void reserveNodeToggle(final Node node) {
+	public void reserveNodeToggle(final Node node, final int locomotiveId) {
 
 		if (node.isReserved()) {
+
 			node.setReserved(false);
 			node.setReservedLocomotiveId(-1);
+
 		} else {
+
 			node.setReserved(true);
-			node.setReservedLocomotiveId(0);
+			node.setReservedLocomotiveId(locomotiveId);
+
 		}
 	}
 

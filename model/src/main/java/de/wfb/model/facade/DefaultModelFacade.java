@@ -146,8 +146,8 @@ public class DefaultModelFacade implements ModelFacade {
 	}
 
 	@Override
-	public void reserveNode(final Node node) {
-		modelService.reserveNode(node);
+	public void reserveNode(final Node node, final int locomotiveId) {
+		modelService.reserveNode(node, locomotiveId);
 	}
 
 	@Override
@@ -156,8 +156,8 @@ public class DefaultModelFacade implements ModelFacade {
 	}
 
 	@Override
-	public void reserveNodeToggle(final Node node) {
-		modelService.reserveNodeToggle(node);
+	public void reserveNodeToggle(final Node node, final int locomotiveId) {
+		modelService.reserveNodeToggle(node, locomotiveId);
 	}
 
 	@Override

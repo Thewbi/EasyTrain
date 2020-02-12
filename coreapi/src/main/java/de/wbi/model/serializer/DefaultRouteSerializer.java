@@ -15,6 +15,10 @@ public class DefaultRouteSerializer implements Converter<Route, String> {
 	@Override
 	public String convert(final Route route) {
 
+		if (route == null) {
+			return null;
+		}
+
 		final StringBuilder stringBuilder = new StringBuilder(4096);
 
 		final DefaultLocomotive locomotive = route.getLocomotive();

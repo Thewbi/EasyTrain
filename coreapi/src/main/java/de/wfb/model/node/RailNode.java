@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.context.ApplicationEventPublisher;
 
 import de.wfb.model.Model;
+import de.wfb.model.facade.ModelFacade;
 import de.wfb.rail.facade.ProtocolFacade;
 import de.wfb.rail.service.Block;
 import de.wfb.rail.ui.ShapeType;
@@ -115,5 +116,9 @@ public interface RailNode extends Node {
 	 * on the responsible graph node.
 	 */
 	void updateBlockedGraphNode();
+
+	void free();
+
+	void setModelFacade(ModelFacade modelFacade);
 
 }

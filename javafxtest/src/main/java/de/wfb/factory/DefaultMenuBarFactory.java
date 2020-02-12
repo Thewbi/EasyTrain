@@ -139,7 +139,7 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 			@Override
 			public void handle(final ActionEvent event) {
 
-				logger.info("Exit Menu clicked!");
+				logger.trace("Exit Menu clicked!");
 
 				final Window window = stage.getScene().getWindow();
 				window.fireEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSE_REQUEST));
@@ -176,7 +176,7 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 						route = routingService.route(locomotive, nodeA, nodeB, routeOverReservedNodes,
 								routeOverBlockedFeedbackBlocks);
 
-						logger.info(route);
+//						logger.info(route);
 
 						if (CollectionUtils.isNotEmpty(route.getGraphNodes())) {
 
@@ -305,25 +305,25 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 			}
 		});
 
-		final MenuItem reserveNodeMenuItem = new MenuItem("Reserve Node");
-		reserveNodeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(final ActionEvent event) {
-
-				final List<de.wfb.model.node.Node> selectedNodes = modelFacade.getSelectedNodes();
-
-				logger.info(selectedNodes);
-
-				if (CollectionUtils.isEmpty(selectedNodes)) {
-					return;
-				}
-
-				final de.wfb.model.node.Node nodeA = selectedNodes.get(0);
-
-				modelFacade.reserveNodeToggle(nodeA);
-			}
-		});
+//		final MenuItem reserveNodeMenuItem = new MenuItem("Reserve Node");
+//		reserveNodeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+//
+//			@Override
+//			public void handle(final ActionEvent event) {
+//
+//				final List<de.wfb.model.node.Node> selectedNodes = modelFacade.getSelectedNodes();
+//
+//				logger.info(selectedNodes);
+//
+//				if (CollectionUtils.isEmpty(selectedNodes)) {
+//					return;
+//				}
+//
+//				final de.wfb.model.node.Node nodeA = selectedNodes.get(0);
+//
+//				modelFacade.reserveNodeToggle(nodeA);
+//			}
+//		});
 
 		final MenuItem blockNodeMenuItem = new MenuItem("Block Node");
 		blockNodeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -455,7 +455,7 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 				);
 
 		debugMenu.getItems().addAll(
-				reserveNodeMenuItem,
+//				reserveNodeMenuItem,
 				blockNodeMenuItem,
 				routingNodeMenuItem,
 				feedbackBlockEventMenuItem,

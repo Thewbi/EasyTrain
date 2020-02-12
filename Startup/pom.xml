@@ -105,17 +105,10 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/batik/batik-svggen 
 		<dependency>
-			<groupId>batik</groupId>
-			<artifactId>batik-svggen</artifactId>
-			<version>1.6-1</version>
-		</dependency>-->
-
-		<dependency>
-		    <groupId>org.jfree</groupId>
-		    <artifactId>jfreesvg</artifactId>
-		    <version>3.4</version>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreesvg</artifactId>
+			<version>3.4</version>
 		</dependency>
 
 	</dependencies>
@@ -135,6 +128,28 @@
 					<!--<mainClass>javafxtest.GraphicsScalingApp</mainClass> -->
 					<mainClass>de.wfb.Startup</mainClass>
 				</configuration>
+				<executions>
+					<execution>
+						<!-- Default configuration for running -->
+						<id>default-cli</id>
+						<configuration>
+							<mainClass>de.wfb.Startup</mainClass>
+						</configuration>
+					</execution>
+					<execution>
+						<!-- Configuration for debugging -->
+						<!-- run with a maven debug configuration: javafx:run@debug -->
+						<!-- The app will start and wait for a remote debugger to connect. -->
+						<!-- Create a Debug configuration: Remote Java Application to localhost and the specified port (8000 in this case)  -->
+						<id>debug</id>
+						<configuration>
+							<options>
+								<option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8000</option>
+							</options>
+							<mainClass>de.wfb.Startup</mainClass>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 

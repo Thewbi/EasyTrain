@@ -26,14 +26,17 @@ import de.wfb.rail.service.Route;
 
 /**
  * This Thread is scheduled by the @EnableScheduling annotation on the
- * configuration class (de.wfb.ConfigurationClass).
+ * configuration class (de.wfb.ConfigurationClass).<br />
+ * <br />
  *
  * It is simulation locomotive motion. Whenever you use EasyTrain with real
- * hardware on a real layout, you do not need this Thread.
+ * hardware on a real layout, you do not need this Thread.<br />
+ * <br />
  *
  * Whenever a locomotive has a child graph node that is reserved for this
  * locomotive, the TimedDrivingThread will move the locomotive onto this
- * reserved child.
+ * reserved child.<br />
+ * <br />
  */
 public class TimedDrivingThread {
 
@@ -56,13 +59,13 @@ public class TimedDrivingThread {
 
 	private int iterationCount = 0;
 
-	private final int goToIteration = 290;
+//	private final int goToIteration = 290;
 
 	private int infoCounter = 0;
 
 //	@Scheduled(fixedRate = 100)
 	@Scheduled(fixedRate = 150)
-	public void threadFunc() {
+	public void threadFunc() throws Exception {
 
 		if (infoCounter == 100) {
 			infoCounter = 0;
@@ -80,7 +83,7 @@ public class TimedDrivingThread {
 
 		if (!routingController.isStarted()) {
 
-			logger.info("Routing controller is not started!");
+			logger.trace("Routing controller is not started!");
 			return;
 		}
 
@@ -90,9 +93,9 @@ public class TimedDrivingThread {
 //			return;
 //		}
 
-//		if (timedDrivingThreadController.isPaused() && timedDrivingThreadController.decrementSingleStep() <= 0) {
-//			return;
-//		}
+		if (timedDrivingThreadController.isPaused() && timedDrivingThreadController.decrementSingleStep() <= 0) {
+			return;
+		}
 
 		iterationCount++;
 		logger.trace(iterationCount);
@@ -100,7 +103,7 @@ public class TimedDrivingThread {
 		moveLocomotives();
 	}
 
-	public void moveLocomotives() {
+	public void moveLocomotives() throws Exception {
 
 		final Date date = new Date();
 
@@ -129,22 +132,50 @@ public class TimedDrivingThread {
 		}
 	}
 
-	private void processLocomotive(final DefaultLocomotive locomotive) {
+	private void processLocomotive(final DefaultLocomotive locomotive) throws Exception {
 
 		logger.trace("processLocomotive() locomotive ID: " + locomotive.getId());
 
 		// find the graph node the locomotive is on currently
 		final RailNode currentRailNode = locomotive.getRailNode();
-		final GraphNode currentGraphNode = locomotive.getRoute().findGraphNode(currentRailNode);
-		locomotive.setGraphNode(currentGraphNode);
+		logger.trace("RailNode: " + currentRailNode);
+
+		final Block block = currentRailNode.getBlock();
+		logger.trace("Block: " + block);
 
 		final Route route = locomotive.getRoute();
+		logger.trace("Route is null? " + (route == null));
+		logger.trace("Route: " + route);
 
-		if (currentGraphNode.equals(route.getLastGraphNode())) {
+		// DEBUG - stop locomotives on blocks
+//		if (block != null && (block.getId() == 43 || block.getId() == 17)) {
+//			return;
+//		}
+
+//		final GraphNode currentGraphNode = route.findGraphNode(currentRailNode);
+//		logger.info("GraphNode: " + currentGraphNode);
+//		if (null == currentGraphNode) {
+//			return;
+//		}
+//		locomotive.setGraphNode(currentGraphNode);
+//		if (currentGraphNode != null && currentGraphNode.equals(route.getLastGraphNode())) {
+
+		if (route.endsWith(block)) {
 
 			logger.trace("Locomotive is on the last graph node of it's route!");
 			applicationEventPublisher.publishEvent(new RouteFinishedEvent(this, route, locomotive));
+			return;
 		}
+
+		final GraphNode currentGraphNode = route.findGraphNode(currentRailNode);
+		logger.trace("GraphNode: " + currentGraphNode);
+		if (null == currentGraphNode) {
+
+			logger.error("Locomotive is on a node that is not part of its route!");
+			throw new Exception(
+					"Route: " + route + " Locomotive: " + locomotive + " currentRailNode: " + currentRailNode);
+		}
+		locomotive.setGraphNode(currentGraphNode);
 
 		final List<GraphNode> children = currentGraphNode.getChildren();
 		if (CollectionUtils.isEmpty(children)) {
@@ -159,12 +190,28 @@ public class TimedDrivingThread {
 		boolean locomotiveWasUsed = false;
 		for (final GraphNode graphNode : children) {
 
-			if (graphNode.getRailNode().getReservedLocomotiveId() != locomotive.getId()) {
+			final int reservedForId = graphNode.getRailNode().getReservedLocomotiveId();
+			if (reservedForId != locomotive.getId()) {
 
 				logger.trace("Child GraphNode ID: " + graphNode.getId()
 						+ " Not reserved for locomotive! Reserved for LocomotiveID: "
 						+ graphNode.getRailNode().getReservedLocomotiveId()
 						+ " The Locomotive ID of the blocked Locomotive is: " + locomotive.getId());
+
+				continue;
+			}
+
+			if (!route.containsGraphNode(graphNode)) {
+
+				// this happens if both children of a turnout are part of blocks and those
+				// blocks are both part of the same blockgroup. If the locomotive is on one of
+				// the blocks of the
+				// group all blocks get reserved.
+				//
+				// The result is that a child can only be visited if it is reserved for the
+				// locomotive and
+				// at the same time really is part of the route
+
 				continue;
 			}
 
@@ -180,7 +227,7 @@ public class TimedDrivingThread {
 
 		if (!locomotiveWasUsed) {
 
-			logger.info("Locomotive ID: " + locomotive.getId() + " is waiting on GraphNode ID: "
+			logger.trace("Locomotive ID: " + locomotive.getId() + " is waiting on GraphNode ID: "
 					+ locomotive.getGraphNode().getId());
 
 			logger.trace(locomotive.getRoute());
@@ -202,7 +249,6 @@ public class TimedDrivingThread {
 			} else {
 
 				sendLeavingMessage(oldBlock, locomotive);
-
 				sendEnteringMessage(newBlock, locomotive);
 
 			}
@@ -257,6 +303,7 @@ public class TimedDrivingThread {
 			}
 		}
 
+		// remove the highlight from the graph node, the locomotive is leaving
 		boolean highlighted = false;
 		boolean blocked = currentGraphNode.isBlocked();
 		boolean selected = false;
@@ -266,6 +313,7 @@ public class TimedDrivingThread {
 				currentGraphNode.getY(), highlighted, blocked, selected, reserved, containsLocomotive);
 		applicationEventPublisher.publishEvent(modelChangedEvent);
 
+		// add highlight to the GraphNode the locomotive moves to.
 		highlighted = false;
 		blocked = nextGraphNode.isBlocked();
 		selected = false;
@@ -292,7 +340,7 @@ public class TimedDrivingThread {
 
 	private void sendLeavingMessage(final Block block, final DefaultLocomotive defaultLocomotive) {
 
-		logger.info("Leaving block: " + block);
+		logger.trace("Leaving block: " + block);
 
 		final int feedbackBlockNumber = block.getId();
 		final FeedbackBlockState feedbackBlockState = FeedbackBlockState.FREE;

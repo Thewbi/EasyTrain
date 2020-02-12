@@ -62,11 +62,11 @@ public interface ModelFacade {
 
 	void clear();
 
-	void reserveNode(Node node);
+	void reserveNode(Node node, int locomotiveId);
 
 	void blockNode(Node node);
 
-	void reserveNodeToggle(Node node);
+	void reserveNodeToggle(Node node, int locomotiveId);
 
 	void blockNodeToggle(Node node);
 

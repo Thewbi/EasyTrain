@@ -99,6 +99,7 @@ public class Startup extends Application {
 
 		// build blocks
 		blockService.determineBlocks();
+		blockService.createBlockGroups();
 
 		// build the routing tables
 		routingService.buildRoutingTables();

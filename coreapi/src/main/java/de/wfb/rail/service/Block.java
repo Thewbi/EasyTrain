@@ -27,10 +27,18 @@ public interface Block {
 
 	void reserveForLocomotive(DefaultLocomotive defaultLocomotive);
 
+	void reserveForLocomotiveSingular(DefaultLocomotive locomotive);
+
 	boolean isReserved();
 
 	boolean isFeedbackBlockUsed();
 
 	int getReservedForLocomotive();
+
+	void free();
+
+	void freeSingular();
+
+	void setBlockGroup(BlockGroup blockGroup);
 
 }

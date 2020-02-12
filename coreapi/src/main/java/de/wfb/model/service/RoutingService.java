@@ -45,6 +45,9 @@ public interface RoutingService {
 			Direction startEdgeDirection, Block endBlock, boolean routeOverReservedNodes,
 			boolean routeOverBlockedFeedbackBlocks);
 
+	Route startLocomotiveToRandomBlock(DefaultLocomotive locomotive, Direction locomotiveOrientation, Block startBlock,
+			Direction startEdgeDirection, boolean routeOverReservedNodes, boolean routeOverBlockedFeedbackBlocks);
+
 	void attachRouteToLocomotive(DefaultLocomotive locomotive, Route route);
 
 	void placeLocomotive(Node node, DefaultLocomotive locomotive, Direction edgeDirection);

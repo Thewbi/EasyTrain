@@ -5,6 +5,10 @@ import org.apache.logging.log4j.Logger;
 
 import de.wfb.rail.controller.TimedDrivingThreadController;
 
+/**
+ * Is used when the user uses the debug buttons that control the
+ * TimedDrivingThread such as start and pause and the single step button.
+ */
 public class DefaultTimedDrivingThreadController implements TimedDrivingThreadController {
 
 	private static final Logger logger = LogManager.getLogger(DefaultTimedDrivingThreadController.class);

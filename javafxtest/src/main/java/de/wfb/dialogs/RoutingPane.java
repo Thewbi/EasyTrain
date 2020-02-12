@@ -105,7 +105,7 @@ public class RoutingPane extends GridPane {
 					route = routingService.route(locomotive, graphNodeStart, graphNodeEnd, routeOverReservedNodes,
 							routeOverBlockedFeedbackBlocks);
 
-					logger.info(route);
+//					logger.info(route);
 
 					logger.info("routeOverReservedNodes: " + routeOverReservedNodes);
 					logger.info("routeOverBlockedFeedbackBlocks: " + routeOverBlockedFeedbackBlocks);

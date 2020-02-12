@@ -194,12 +194,6 @@ public class ConfigurationClass implements SchedulingConfigurer {
 	}
 
 	@Bean
-	public RoutingService RoutingService() {
-		return new DefaultRoutingService();
-//		return new PreRecordedRoutingService();
-	}
-
-	@Bean
 	public LayoutGridController LayoutGridController() {
 		return new LayoutGridController();
 	}
@@ -337,6 +331,12 @@ public class ConfigurationClass implements SchedulingConfigurer {
 	@Bean
 	public DrivingThreadControlPane DrivingThreadControlPane() {
 		return new DrivingThreadControlPane();
+	}
+
+	@Bean
+	public RoutingService RoutingService() {
+		return new DefaultRoutingService();
+//		return new PreRecordedRoutingService();
 	}
 
 }

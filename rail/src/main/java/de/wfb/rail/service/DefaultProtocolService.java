@@ -79,11 +79,11 @@ public class DefaultProtocolService implements ProtocolService {
 	@Override
 	public synchronized void turnTurnout(final Node node) {
 
-		logger.info("turnTurnout()");
+		logger.trace("turnTurnout()");
 
 		if (ShapeType.isNotTurnout(node.getShapeType())) {
 
-			logger.info("Not a turnout shape!");
+			logger.trace("Not a turnout shape!");
 			return;
 		}
 
@@ -92,13 +92,13 @@ public class DefaultProtocolService implements ProtocolService {
 			lockLock(false);
 
 			if (node.getProtocolTurnoutId() == null || node.getProtocolTurnoutId() <= 0) {
-				logger.info("The turnout has no valid turnoutId! Cannot switch the turnout via the Intellibox!");
+				logger.trace("The turnout has no valid turnoutId! Cannot switch the turnout via the Intellibox!");
 
 				return;
 			}
 
 			if (!isConnected()) {
-				logger.info("Not connected! Aborting operation!");
+				logger.trace("Not connected! Aborting operation!");
 
 				return;
 			}
@@ -113,42 +113,15 @@ public class DefaultProtocolService implements ProtocolService {
 			}
 			turnoutCommandSecond(inputStream, outputStream, node.getProtocolTurnoutId(), node.isThrown());
 
-//			//  flip flag in turnout nodes!
-//			asdf
-//			if (node.getProtocolTurnoutId() == 12 || node.getProtocolTurnoutId() == 80) {
-//
-//				// in order to operate a turnout once (one change of direction)
-//				// two commands have to be sent!
-//				turnoutCommandFirst(inputStream, outputStream, node.getProtocolTurnoutId(), !node.isThrown());
-//				try {
-//					Thread.sleep(100);
-//				} catch (final InterruptedException e) {
-//					logger.error(e.getMessage(), e);
-//				}
-//				turnoutCommandSecond(inputStream, outputStream, node.getProtocolTurnoutId(), !node.isThrown());
-//
-//			} else {
-//
-//				// in order to operate a turnout once (one change of direction)
-//				// two commands have to be sent!
-//				turnoutCommandFirst(inputStream, outputStream, node.getProtocolTurnoutId(), node.isThrown());
-//				try {
-//					Thread.sleep(100);
-//				} catch (final InterruptedException e) {
-//					logger.error(e.getMessage(), e);
-//				}
-//				turnoutCommandSecond(inputStream, outputStream, node.getProtocolTurnoutId(), node.isThrown());
-//			}
-
 		} catch (final Exception e) {
 
 			logger.error(e.getMessage(), e);
 
 		} finally {
 
-			logger.info("turnTurnout unlockLock ...");
+			logger.trace("turnTurnout unlockLock ...");
 			unlockLock();
-			logger.info("turnTurnout unlockLock done.");
+			logger.trace("turnTurnout unlockLock done.");
 
 		}
 	}
@@ -287,9 +260,9 @@ public class DefaultProtocolService implements ProtocolService {
 
 		} finally {
 
-			logger.info("throttleLocomotive unlockLock ...");
+			logger.trace("throttleLocomotive unlockLock ...");
 			unlockLock();
-			logger.info("throttleLocomotive unlockLock done.");
+			logger.trace("throttleLocomotive unlockLock done.");
 		}
 	}
 

@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.service.IdService;
 import de.wfb.rail.factory.Factory;
 import de.wfb.rail.service.TurnoutService;
@@ -22,6 +23,9 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 
 	@Autowired
 	private TurnoutService turnoutService;
+
+	@Autowired
+	private ModelFacade modelFacade;
 
 	@Override
 	public Node create(final Object... args) throws Exception {
@@ -122,6 +126,7 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 		case STRAIGHT_HORIZONTAL:
 
 			railNode = new DefaultRailNode();
+			railNode.setModelFacade(modelFacade);
 			railNode.setX(x);
 			railNode.setY(y);
 			railNode.setId(id);
@@ -154,6 +159,7 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 		case STRAIGHT_VERTICAL:
 
 			railNode = new DefaultRailNode();
+			railNode.setModelFacade(modelFacade);
 			railNode.setX(x);
 			railNode.setY(y);
 			railNode.setId(id);
@@ -186,6 +192,7 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 		case TURN_TOP_RIGHT:
 
 			railNode = new DefaultRailNode();
+			railNode.setModelFacade(modelFacade);
 			railNode.setX(x);
 			railNode.setY(y);
 			railNode.setId(id);
@@ -217,6 +224,7 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 		case TURN_RIGHT_BOTTOM:
 
 			railNode = new DefaultRailNode();
+			railNode.setModelFacade(modelFacade);
 			railNode.setX(x);
 			railNode.setY(y);
 			railNode.setId(id);
@@ -248,6 +256,7 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 		case TURN_BOTTOM_LEFT:
 
 			railNode = new DefaultRailNode();
+			railNode.setModelFacade(modelFacade);
 			railNode.setX(x);
 			railNode.setY(y);
 			railNode.setId(id);
@@ -279,6 +288,7 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 		case TURN_LEFT_TOP:
 
 			railNode = new DefaultRailNode();
+			railNode.setModelFacade(modelFacade);
 			railNode.setX(x);
 			railNode.setY(y);
 			railNode.setId(id);
@@ -310,6 +320,7 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 		case SWITCH_LEFT_0:
 
 			railNode = new DefaultRailNode();
+			railNode.setModelFacade(modelFacade);
 			railNode.setX(x);
 			railNode.setY(y);
 			railNode.setId(id);
@@ -359,6 +370,7 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 		case SWITCH_LEFT_90:
 
 			railNode = new DefaultRailNode();
+			railNode.setModelFacade(modelFacade);
 			railNode.setX(x);
 			railNode.setY(y);
 			railNode.setId(id);
@@ -408,6 +420,7 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 		case SWITCH_LEFT_180:
 
 			railNode = new DefaultRailNode();
+			railNode.setModelFacade(modelFacade);
 			railNode.setX(x);
 			railNode.setY(y);
 			railNode.setId(id);
@@ -457,6 +470,7 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 		case SWITCH_LEFT_270:
 
 			railNode = new DefaultRailNode();
+			railNode.setModelFacade(modelFacade);
 			railNode.setX(x);
 			railNode.setY(y);
 			railNode.setId(id);

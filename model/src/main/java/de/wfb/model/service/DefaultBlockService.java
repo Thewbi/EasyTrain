@@ -13,6 +13,7 @@ import org.springframework.util.CollectionUtils;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.RailNode;
 import de.wfb.rail.service.Block;
+import de.wfb.rail.service.BlockGroup;
 import de.wfb.rail.service.BlockService;
 
 public class DefaultBlockService implements BlockService {
@@ -20,6 +21,8 @@ public class DefaultBlockService implements BlockService {
 	private static final Logger logger = LogManager.getLogger(DefaultBlockService.class);
 
 	private final HashMap<Integer, Block> idBlockMap = new HashMap<>();
+
+	private final List<BlockGroup> blockGroups = new ArrayList<BlockGroup>();
 
 	@Autowired
 	private ModelService modelService;
@@ -106,6 +109,40 @@ public class DefaultBlockService implements BlockService {
 		}
 
 		return null;
+	}
+
+	@Override
+	public void createBlockGroups() {
+
+		if (CollectionUtils.isEmpty(idBlockMap.values())) {
+			return;
+		}
+
+		final BlockGroup blockGroup = new DefaultBlockGroup();
+
+		// 17,21,28,29,30,43,44,45,46,47
+		addBlockToBlockGroup(17, blockGroup);
+		addBlockToBlockGroup(21, blockGroup);
+		addBlockToBlockGroup(28, blockGroup);
+		addBlockToBlockGroup(29, blockGroup);
+		addBlockToBlockGroup(30, blockGroup);
+		addBlockToBlockGroup(43, blockGroup);
+		addBlockToBlockGroup(44, blockGroup);
+		addBlockToBlockGroup(45, blockGroup);
+		addBlockToBlockGroup(46, blockGroup);
+		addBlockToBlockGroup(47, blockGroup);
+
+		blockGroups.add(blockGroup);
+	}
+
+	private void addBlockToBlockGroup(final int blockId, final BlockGroup blockGroup) {
+		final Block block = idBlockMap.get(blockId);
+		blockGroup.getBlocks().add(block);
+		block.setBlockGroup(blockGroup);
+	}
+
+	public List<BlockGroup> getBlockGroups() {
+		return blockGroups;
 	}
 
 }

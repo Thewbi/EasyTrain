@@ -68,11 +68,11 @@ public interface ModelService {
 
 	GraphNode getGraphNodeById(int id);
 
-	void reserveNode(Node node);
+	void reserveNode(Node node, int locomotiveId);
 
 	void blockNode(Node node);
 
-	void reserveNodeToggle(Node node);
+	void reserveNodeToggle(Node node, int locomotiveId);
 
 	void blockNodeToggle(Node node);
 

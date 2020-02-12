@@ -44,6 +44,7 @@ public class Route {
 		}
 
 		final StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append("Route:");
 
 		for (final GraphNode graphNode : graphNodes) {
 
@@ -247,11 +248,19 @@ public class Route {
 
 	public GraphNode findGraphNode(final RailNode railNode) {
 
+		logger.trace("findGraphNode");
+
 		for (final GraphNode graphNode : graphNodes) {
 
 			if (graphNode.getRailNode().equals(railNode)) {
 				return graphNode;
 			}
+		}
+
+		// output for debugging if the railNode was not part of the route
+		logger.error("RailNode RN-ID: " + railNode.getId() + " is not part of the Route!");
+		for (final GraphNode graphNode : graphNodes) {
+			logger.error("GN-ID: " + graphNode.getId() + " RailNode: " + graphNode.getRailNode());
 		}
 
 		return null;
@@ -333,7 +342,7 @@ public class Route {
 
 	public Block findSuccessorBlock(final Block block) {
 
-		logger.info("Find Successor of block ID: " + block.getId());
+		logger.trace("Find Successor of block ID: " + block.getId());
 
 		if (CollectionUtils.isEmpty(graphNodes)) {
 			return null;
@@ -402,6 +411,42 @@ public class Route {
 		}
 
 		return true;
+	}
+
+	public int sizeInBlocks() {
+
+		if (isEmpty()) {
+			return 0;
+		}
+
+		final Set<Integer> blockIdSet = new HashSet<>();
+
+		for (final GraphNode graphNode : graphNodes) {
+
+			final Block block = graphNode.getRailNode().getBlock();
+			if (block != null) {
+				blockIdSet.add(block.getId());
+			}
+
+		}
+
+		return blockIdSet.size();
+	}
+
+	public boolean containsGraphNode(final GraphNode graphNode) {
+
+		if (isEmpty() || graphNode == null) {
+			return false;
+		}
+
+		for (final GraphNode tempGraphNode : graphNodes) {
+
+			if (tempGraphNode == graphNode) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public List<GraphNode> getGraphNodes() {

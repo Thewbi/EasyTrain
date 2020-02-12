@@ -28,7 +28,9 @@ public class PreRecordedRoutingService extends BaseRoutingService {
 	@Override
 	public void initialize() {
 
-		final String filename = "routelog_quick_revert_one_loco.txt";
+//		final String filename = "routelog_quick_revert_one_loco.txt";
+//		final String filename = "routelog_quick_deadlock_2.txt";
+		final String filename = "routelog.txt";
 
 		logger.info("Initializing from file: \"" + filename + "\"");
 
@@ -38,6 +40,11 @@ public class PreRecordedRoutingService extends BaseRoutingService {
 			final List<String> readLines = FileUtils.readLines(new File(filename), "UTF-8");
 
 			for (final String routeAsString : readLines) {
+
+				if (routeAsString.startsWith(">>>>>>>>>>>>>>")) {
+
+					continue;
+				}
 
 				logger.info("RouteAsString: " + routeAsString);
 
@@ -66,6 +73,7 @@ public class PreRecordedRoutingService extends BaseRoutingService {
 		for (final Route route : routes) {
 
 			if (route.getLocomotiveId() == locomotive.getId()) {
+
 				result = route;
 				break;
 			}
