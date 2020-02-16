@@ -57,14 +57,15 @@ public class DefaultProtocolService implements ProtocolService {
 	private ApplicationEventPublisher applicationEventPublisher;
 
 	@Override
-	public synchronized void nodeClicked(final int x, final int y) {
+	public synchronized Node nodeClicked(final int x, final int y) {
 
 		logger.trace("nodeClicked x = " + x + " y = " + y);
 
 		final Node node = model.getNode(x, y);
 		if (node == null) {
-			logger.trace("nodeClicked node is null");
-			return;
+
+			logger.info("nodeClicked node is null");
+			return null;
 		}
 
 		logger.trace("nodeClicked " + node.getId() + " (" + node.getX() + ", " + node.getY() + ")");
@@ -74,16 +75,18 @@ public class DefaultProtocolService implements ProtocolService {
 
 			turnTurnout(node);
 		}
+
+		return node;
 	}
 
 	@Override
 	public synchronized void turnTurnout(final Node node) {
 
-		logger.trace("turnTurnout()");
+		logger.info("turnTurnout()");
 
 		if (ShapeType.isNotTurnout(node.getShapeType())) {
 
-			logger.trace("Not a turnout shape!");
+			logger.info("Not a turnout shape!");
 			return;
 		}
 
@@ -92,13 +95,13 @@ public class DefaultProtocolService implements ProtocolService {
 			lockLock(false);
 
 			if (node.getProtocolTurnoutId() == null || node.getProtocolTurnoutId() <= 0) {
-				logger.trace("The turnout has no valid turnoutId! Cannot switch the turnout via the Intellibox!");
+				logger.info("The turnout has no valid turnoutId! Cannot switch the turnout via the Intellibox!");
 
 				return;
 			}
 
 			if (!isConnected()) {
-				logger.trace("Not connected! Aborting operation!");
+				logger.info("Not connected! Aborting operation!");
 
 				return;
 			}
@@ -149,14 +152,6 @@ public class DefaultProtocolService implements ProtocolService {
 
 			return command.isThrown();
 
-//			//  flip flag in turnout nodes!
-//			asdf
-//			if ((protocolId == 12) || (protocolId == 80)) {
-//				return !command.isThrown();
-//			} else {
-//				return command.isThrown();
-//			}
-
 		} catch (final Exception e) {
 
 			logger.error(e.getMessage(), e);
@@ -177,24 +172,11 @@ public class DefaultProtocolService implements ProtocolService {
 
 		logger.trace("E - event()");
 
-//		logger.info("E - Lock HoldCount: " + lock.getHoldCount() + " QueueLength: " + lock.getQueueLength()
-//				+ " hasQueuedThreads: " + lock.hasQueuedThreads());
-
-//		logger.trace("E - Aquiring lock ...");
 		try {
 
 			logger.trace("Event lock...");
 			lockLock(true);
 			logger.trace("Event locked done.");
-
-//			final boolean tryLockResult = lock.tryLock(10, TimeUnit.SECONDS);
-//
-//			if (tryLockResult) {
-//				logger.trace("E - Aquiring Lock done.");
-//			} else {
-//				logger.info("E - Aquiring Lock failed!");
-//				return;
-//			}
 
 			logger.trace("E - Checking Connection!");
 			if (!isConnected()) {
@@ -433,7 +415,7 @@ public class DefaultProtocolService implements ProtocolService {
 		synchronized (this) {
 			try {
 
-				logger.info("EventSense Command ...");
+				logger.trace("EventSense Command ...");
 
 				final P50XXEvtSenCommand command = new P50XXEvtSenCommand();
 
@@ -444,7 +426,7 @@ public class DefaultProtocolService implements ProtocolService {
 				final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
 				serialTemplate.execute();
 
-				logger.info("EventSense done.");
+				logger.trace("EventSense done.");
 
 				return command.getFeedbackBlockUpdates();
 			} catch (final Exception e) {
@@ -547,7 +529,9 @@ public class DefaultProtocolService implements ProtocolService {
 
 	@Override
 	public List<FeedbackBlockUpdateEvent> eventSenseCommand() {
+
 		lockLock(true);
+
 		try {
 			return eventSenseCommand(inputStream, outputStream);
 		} catch (final Exception e) {
@@ -557,7 +541,6 @@ public class DefaultProtocolService implements ProtocolService {
 		}
 
 		return new ArrayList<>();
-
 	}
 
 }

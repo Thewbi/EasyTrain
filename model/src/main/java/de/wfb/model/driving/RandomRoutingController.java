@@ -4,11 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,11 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
+import de.wfb.configuration.ConfigurationConstants;
+import de.wfb.configuration.ConfigurationService;
 import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.Direction;
 import de.wfb.model.node.GraphNode;
-import de.wfb.model.node.RailNode;
 import de.wfb.model.service.RoutingController;
 import de.wfb.model.service.RoutingService;
 import de.wfb.rail.converter.Converter;
@@ -63,7 +62,7 @@ import de.wfb.rail.service.RouteUtils;
  */
 public class RandomRoutingController implements RoutingController, ApplicationListener<ApplicationEvent> {
 
-	private static final boolean WRITE_ROUTES_TO_FILE = false;
+//	private static final boolean WRITE_ROUTES_TO_FILE = false;
 
 	private static final Logger logger = LogManager.getLogger(RandomRoutingController.class);
 
@@ -76,7 +75,7 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 
 	private final int locomotiveCount = LOCOMOTIVE_COUNT_DEFAULT;
 
-	private final Set<Integer> requiredBlocks = new HashSet<>();
+//	private final Set<Integer> requiredBlocks = new HashSet<>();
 
 	private List<DefaultLocomotive> locomotives = new ArrayList<>();
 
@@ -98,26 +97,30 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 	@Autowired
 	private BlockService blockService;
 
+	@Autowired
+	private ConfigurationService configurationService;
+
 	@Override
 	public void initialize() throws IOException, Exception {
 
 		logger.trace("initialize()");
 
-		if (WRITE_ROUTES_TO_FILE) {
+		if (configurationService.getConfigurationAsBoolean(ConfigurationConstants.WRITE_ROUTES_TO_FILE)) {
 
 			FileUtils.writeStringToFile(new File("routelog.txt"),
 					">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n", "UTF-8", true);
 		}
 
-		requiredBlocks.add(76);
-		requiredBlocks.add(21);
+//		requiredBlocks.add(76);
+//		requiredBlocks.add(21);
 
 		locomotives = modelFacade.getLocomotives();
 
-		RailNode railNode = (RailNode) modelFacade.getNodeById(498);
-		routingService.placeLocomotive(railNode, locomotives.get(0), Direction.EAST);
-		railNode = (RailNode) modelFacade.getNodeById(489);
-		routingService.placeLocomotive(railNode, locomotives.get(1), Direction.EAST);
+//		// put locomotives on railnodes for testing
+//		RailNode railNode = (RailNode) modelFacade.getNodeById(498);
+//		routingService.placeLocomotive(railNode, locomotives.get(0), Direction.EAST);
+//		railNode = (RailNode) modelFacade.getNodeById(489);
+//		routingService.placeLocomotive(railNode, locomotives.get(1), Direction.EAST);
 
 		logger.trace("building context ...");
 
@@ -192,11 +195,24 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 	}
 
 	@Override
+	public void stop() {
+
+		// TODO: implement
+		// let all locomotives finish their tour (return them to their start node) but
+		// then do not assign them a
+		// new route any more.
+
+		started = false;
+		configurationService.setConfigurationAsBoolean(ConfigurationConstants.AUTOMATED_DRIVING_ACTIVE, started);
+	}
+
+	@Override
 	public void start() throws IOException, Exception {
 
 		logger.info("Starting ...");
 
 		started = true;
+		configurationService.setConfigurationAsBoolean(ConfigurationConstants.AUTOMATED_DRIVING_ACTIVE, started);
 
 		if (locomotiveContext.isEmpty()) {
 
@@ -207,10 +223,20 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 		// add routes to all active locomotives
 		for (final DefaultLocomotive locomotive : activeLocomotives) {
 
-			logger.info("Starting locomotive: " + locomotive);
+			final boolean addNewRoute = locomotive.getRoute() == null || locomotive.getRoute().isEmpty();
 
-			if (locomotive.getRoute() == null || locomotive.getRoute().isEmpty()) {
+			logger.info("Starting locomotive: " + locomotive);
+			logger.info("locomotive.getRoute(): " + locomotive.getRoute());
+			logger.info("addNewRoute: " + addNewRoute);
+
+			if (addNewRoute) {
+
 				addNewRouteToLocomotive(StringUtils.EMPTY, locomotive);
+
+			} else {
+
+				logger.info("Not adding a new route to locomotive: " + locomotive.getId());
+
 			}
 		}
 
@@ -235,7 +261,6 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 			} catch (final Exception e) {
 				logger.info(e.getMessage(), e);
 			}
-
 		}
 	}
 
@@ -248,6 +273,12 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 		final DefaultLocomotive locomotive = routeFinishedEvent.getDefaultLocomotive();
 
 		logger.info("processRouteFinishedEvent() locomotive: " + locomotive);
+
+		if (configurationService.getConfigurationAsBoolean(ConfigurationConstants.AUTOMATED_DRIVING_ACTIVE)) {
+
+			// remove the route, otherwise start() will not assign it a new route
+			locomotive.setRoute(null);
+		}
 
 		final Block block = locomotive.getRailNode().getBlock();
 		final LocomotiveEntry locomotiveEntry = locomotiveContext.get(locomotive);
@@ -274,7 +305,7 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 
 		} else if (locomotiveEntry.getVisitedBlocks().size() >= STOP_COUNT_DEFAULT) {
 
-			logger.trace("processRouteFinishedEvent() - required block count visited!");
+			logger.info("processRouteFinishedEvent() - required block count visited!");
 
 			// if the locomotive has had enough routes
 
@@ -284,7 +315,7 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 			final boolean routeOverBlockedFeedbackBlocks = false;
 
 			logger.info("GraphNodeStart: " + graphNodeStart);
-			logger.info("graphNodeEnd: " + graphNodeEnd);
+			logger.info("GraphNodeEnd: " + graphNodeEnd);
 
 			final Block startBlock = locomotiveEntry.getCurrentBlock();
 			final Block endBlock = locomotiveEntry.getStartBlock();
@@ -310,7 +341,7 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 
 			if (RouteUtils.isNotEmpty(route)) {
 
-				if (WRITE_ROUTES_TO_FILE) {
+				if (configurationService.getConfigurationAsBoolean(ConfigurationConstants.WRITE_ROUTES_TO_FILE)) {
 
 					String routeAsString = routeSerializer.convert(route);
 					routeAsString += "\n";
@@ -320,16 +351,26 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 
 		} else {
 
-			logger.trace("processRouteFinishedEvent() - required block count NOT visited yet!");
+			logger.info("processRouteFinishedEvent() - required block count NOT visited yet!");
 
-			addNewRouteToLocomotive(StringUtils.EMPTY, locomotive);
+			if (configurationService.getConfigurationAsBoolean(ConfigurationConstants.TIMED_DRIVING_THREAD_ACTIVE)) {
+
+				// timed driving service will automatically make all locomotives go that have a
+				// route assigned to them
+				addNewRouteToLocomotive(StringUtils.EMPTY, locomotive);
+
+			} else {
+
+				start();
+
+			}
 		}
 	}
 
 	private void addNewRouteToLocomotive(final String label, final DefaultLocomotive locomotive)
 			throws IOException, Exception {
 
-		logger.trace("addNewRouteToLocomotive() locomotive = " + locomotive);
+		logger.info("addNewRouteToLocomotive() locomotive = " + locomotive);
 
 		final LocomotiveEntry locomotiveEntry = locomotiveContext.get(locomotive);
 
@@ -371,7 +412,7 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 
 			routingService.attachRouteToLocomotive(locomotive, route);
 
-			if (WRITE_ROUTES_TO_FILE) {
+			if (configurationService.getConfigurationAsBoolean(ConfigurationConstants.WRITE_ROUTES_TO_FILE)) {
 
 				String routeAsString = routeSerializer.convert(route);
 				routeAsString += "\n";

@@ -35,6 +35,65 @@ public class DefaultRoutingServiceTest {
 	private ApplicationEventPublisher applicationEventPublisher;
 
 	@Test
+	public void testRoutingStraightHorizontal() throws Exception {
+
+		final String path = "../Startup/persistence/model.json";
+		final Model model = new DefaultModel();
+
+		final DefaultRoutingService defaultRoutingService = (DefaultRoutingService) buildRoutingTables(path, model);
+
+//		for (final GraphNode switchingGraphNode : model.getSwitchingNodes()) {
+//
+//			if (switchingGraphNode.getId() == 48) {
+//
+//				System.out.println(switchingGraphNode.dumpSwitchingTable());
+//			}
+//		}
+
+		// 2294 -> 2296 > 3178
+		final GraphNode graphNodeStart = model.getGraphNodeById(2994);
+		final GraphNode graphNodeEnd = model.getGraphNodeById(3178);
+
+		final DefaultLocomotive locomotive = null;
+		final boolean routeOverReservedGraphNodes = true;
+		final boolean routeOverBlockedFeedbackBlocks = true;
+
+		final Route route = defaultRoutingService.route(locomotive, graphNodeStart, graphNodeEnd,
+				routeOverReservedGraphNodes, routeOverBlockedFeedbackBlocks);
+
+		System.out.println(route);
+	}
+
+	@Test
+	public void testRoutingOverDoublecross() throws Exception {
+
+		final String path = "../Startup/persistence/model.json";
+		final Model model = new DefaultModel();
+
+		final DefaultRoutingService defaultRoutingService = (DefaultRoutingService) buildRoutingTables(path, model);
+
+//		for (final GraphNode switchingGraphNode : model.getSwitchingNodes()) {
+//
+//			if (switchingGraphNode.getId() == 48) {
+//
+//				System.out.println(switchingGraphNode.dumpSwitchingTable());
+//			}
+//		}
+
+		final GraphNode graphNodeStart = model.getGraphNodeById(2942);
+		final GraphNode graphNodeEnd = model.getGraphNodeById(4604);
+
+		final DefaultLocomotive locomotive = null;
+		final boolean routeOverReservedGraphNodes = true;
+		final boolean routeOverBlockedFeedbackBlocks = true;
+
+		final Route route = defaultRoutingService.route(locomotive, graphNodeStart, graphNodeEnd,
+				routeOverReservedGraphNodes, routeOverBlockedFeedbackBlocks);
+
+		System.out.println(route);
+	}
+
+	@Test
 	public void testLearning() throws Exception {
 
 		final String path = "src/test/resources/DefaultRoutingServiceTest/modelLearning.json";
@@ -42,14 +101,8 @@ public class DefaultRoutingServiceTest {
 
 		final DefaultRoutingService routingService = (DefaultRoutingService) buildRoutingTables(path, model);
 
-//		for (final GraphNode switchingGraphNode : model.getSwitchingNodes()) {
-//
-//
-//		}
-
 		final GraphNode graphNodeById = routingService.getModelService().getGraphNodeById(2);
 		System.out.println(graphNodeById);
-
 	}
 
 	@Test

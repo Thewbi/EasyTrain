@@ -74,7 +74,6 @@ public class BlockNavigationPane extends HBox {
 		locomotiveComboBox.getSelectionModel().selectFirst();
 
 		startBlockComboBox.getItems().addAll(blockService.getAllBlocks());
-//		startBlockComboBox.getSelectionModel().selectFirst();
 		startBlockComboBox.getSelectionModel().select(19);
 
 		endBlockComboBox.getItems().addAll(blockService.getAllBlocks());
@@ -91,6 +90,8 @@ public class BlockNavigationPane extends HBox {
 
 			@Override
 			public void handle(final ActionEvent actionEvent) {
+
+				logger.info("BlockNavigationPane - StartButton");
 
 				final DefaultLocomotive locomotive = (DefaultLocomotive) locomotiveComboBox.getValue();
 				final Direction locomotiveOrientation = locomotive.getOrientation();

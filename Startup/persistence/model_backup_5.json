@@ -8157,10 +8157,24 @@
     "y": 28
   },
   {
+    "id": 1523,
+    "shapeType": "TURN_BOTTOM_LEFT",
+    "x": 32,
+    "y": 26
+  },
+  {
     "id": 1526,
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 34,
     "y": 27
+  },
+  {
+    "id": 1527,
+    "shapeType": "SWITCH_RIGHT_180",
+    "x": 32,
+    "y": 27,
+    "protocolTurnoutId": 112,
+    "flipped": true
   },
   {
     "id": 1528,
@@ -8174,6 +8188,14 @@
     "x": 33,
     "y": 28,
     "protocolTurnoutId": 111
+  },
+  {
+    "id": 1530,
+    "shapeType": "SWITCH_RIGHT_0",
+    "x": 33,
+    "y": 27,
+    "protocolTurnoutId": 112,
+    "flipped": true
   },
   {
     "id": 1531,
@@ -9305,6 +9327,28 @@
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 54,
     "y": 59
+  },
+  {
+    "id": 1770,
+    "shapeType": "TURN_RIGHT_BOTTOM",
+    "x": 53,
+    "y": 57
+  },
+  {
+    "id": 1771,
+    "shapeType": "SWITCH_LEFT_0",
+    "x": 53,
+    "y": 58,
+    "protocolTurnoutId": 19,
+    "flipped": false
+  },
+  {
+    "id": 1773,
+    "shapeType": "SWITCH_LEFT_180",
+    "x": 52,
+    "y": 58,
+    "protocolTurnoutId": 19,
+    "flipped": true
   },
   {
     "id": 1774,
@@ -14344,55 +14388,5 @@
     "shapeType": "TURN_LEFT_TOP",
     "x": 30,
     "y": 5
-  },
-  {
-    "id": 2648,
-    "shapeType": "SWITCH_DOUBLECROSS_LEFT_TOP",
-    "x": 52,
-    "y": 58,
-    "protocolTurnoutId": 19
-  },
-  {
-    "id": 2649,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 53,
-    "y": 57
-  },
-  {
-    "id": 2650,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 53,
-    "y": 58
-  },
-  {
-    "id": 2651,
-    "shapeType": "TURN_RIGHT_BOTTOM",
-    "x": 52,
-    "y": 57
-  },
-  {
-    "id": 2652,
-    "shapeType": "SWITCH_DOUBLECROSS_TOP_RIGHT",
-    "x": 33,
-    "y": 27,
-    "protocolTurnoutId": 112
-  },
-  {
-    "id": 2653,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 32,
-    "y": 26
-  },
-  {
-    "id": 2654,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 32,
-    "y": 27
-  },
-  {
-    "id": 2655,
-    "shapeType": "TURN_BOTTOM_LEFT",
-    "x": 33,
-    "y": 26
   }
 ]

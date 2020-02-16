@@ -44,8 +44,6 @@ public interface ModelService {
 
 	Model getModel();
 
-//	void resetGraphColors();
-
 	List<Node> getSelectedNodes();
 
 	List<RailNode> getAllRailNodes();
@@ -75,5 +73,7 @@ public interface ModelService {
 	void reserveNodeToggle(Node node, int locomotiveId);
 
 	void blockNodeToggle(Node node);
+
+	List<RailNode> getTurnoutsByAddress(int address);
 
 }

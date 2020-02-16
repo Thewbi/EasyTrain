@@ -139,6 +139,20 @@ public class LayoutElementSelectionPane extends GridPane {
 		GridPane.setColumnIndex(switchRight270, 8);
 		GridPane.setRowIndex(switchRight270, 2);
 		getChildren().add(switchRight270);
+
+		final ToggleButton switchDoubleCrossLeftTop = createToggleButton(applicationEventPublisher, toggleGroup,
+				"src/main/resources/SWITCH_DOUBLECROSS_LEFT_TOP_SELECTED.png",
+				"src/main/resources/SWITCH_DOUBLECROSS_LEFT_TOP.png", ShapeType.SWITCH_DOUBLECROSS_LEFT_TOP);
+		GridPane.setColumnIndex(switchDoubleCrossLeftTop, 1);
+		GridPane.setRowIndex(switchDoubleCrossLeftTop, 3);
+		getChildren().add(switchDoubleCrossLeftTop);
+
+		final ToggleButton switchDoubleCrossTopRight = createToggleButton(applicationEventPublisher, toggleGroup,
+				"src/main/resources/SWITCH_DOUBLECROSS_TOP_RIGHT_SELECTED.png",
+				"src/main/resources/SWITCH_DOUBLECROSS_TOP_RIGHT.png", ShapeType.SWITCH_DOUBLECROSS_TOP_RIGHT);
+		GridPane.setColumnIndex(switchDoubleCrossTopRight, 2);
+		GridPane.setRowIndex(switchDoubleCrossTopRight, 3);
+		getChildren().add(switchDoubleCrossTopRight);
 	}
 
 	private ToggleButton createToggleButton(final ApplicationEventPublisher applicationEventPublisher,

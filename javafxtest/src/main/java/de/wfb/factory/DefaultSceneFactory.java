@@ -155,7 +155,10 @@ public class DefaultSceneFactory implements Factory<Scene> {
 			logger.error(e.getMessage(), e);
 		}
 
-		return stackPane;
+		final ScrollPane scrollPane = new ScrollPane();
+		scrollPane.setContent(stackPane);
+
+		return scrollPane;
 	}
 
 }

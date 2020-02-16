@@ -101,6 +101,8 @@ public class Startup extends Application {
 		blockService.determineBlocks();
 		blockService.createBlockGroups();
 
+		turnoutService.createTurnoutGroups();
+
 		// build the routing tables
 		routingService.buildRoutingTables();
 

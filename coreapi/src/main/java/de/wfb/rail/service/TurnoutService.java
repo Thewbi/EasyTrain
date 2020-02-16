@@ -8,4 +8,6 @@ public interface TurnoutService {
 
 	void startQueryingFromQueue();
 
+	void createTurnoutGroups();
+
 }

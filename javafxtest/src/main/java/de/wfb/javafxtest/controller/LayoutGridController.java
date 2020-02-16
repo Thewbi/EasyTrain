@@ -76,7 +76,28 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 			// is a turnout, the protocol facade will send a command to turn the turnout on
 			// the
 			// model railroad
-			protocolFacade.nodeClicked(selectionEvent.getX(), selectionEvent.getY());
+			final Node clickedNode = protocolFacade.nodeClicked(selectionEvent.getX(), selectionEvent.getY());
+
+			if (clickedNode != null) {
+
+				if (clickedNode.getGraphNodeOne() != null) {
+					logger.info("GraphNodeOne GN-ID: " + clickedNode.getGraphNodeOne().getId() + " RoutingTable:");
+					logger.info(clickedNode.getGraphNodeOne().dumpRoutingTable());
+				}
+				if (clickedNode.getGraphNodeTwo() != null) {
+					logger.info("GraphNodeTwo GN-ID: " + clickedNode.getGraphNodeTwo().getId() + " RoutingTable:");
+					logger.info(clickedNode.getGraphNodeTwo().dumpRoutingTable());
+				}
+				if (clickedNode.getGraphNodeThree() != null) {
+					logger.info("GraphNodeThree GN-ID: " + clickedNode.getGraphNodeThree().getId() + " RoutingTable:");
+					logger.info(clickedNode.getGraphNodeThree().dumpRoutingTable());
+				}
+				if (clickedNode.getGraphNodeFour() != null) {
+					logger.info("GraphNodeFour GN-ID: " + clickedNode.getGraphNodeFour().getId() + " RoutingTable:");
+					logger.info(clickedNode.getGraphNodeFour().dumpRoutingTable());
+				}
+			}
+
 			break;
 
 		default:

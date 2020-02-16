@@ -182,27 +182,69 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 			sendNodeClickedEvent(node);
 
 			// switch turnouts
-			// if (node instanceof TurnoutNode) {
 			if (ShapeType.isTurnout(node.getShapeType())) {
 
-				// change thrown status of the node
 				logger.trace("toggleTurnout()");
+
+				// change thrown status of the node
 				node.toggleTurnout();
 			}
 		}
 
-		// @formatter:off
-
 		// tell the UI
-		sendModelChangedEvent(
-				x,
-				y,
-				node.isHighlighted(),
-				node.isFeedbackBlockUsed(),
-				node.isSelected(),
-				node.isReserved());
 
+		// @formatter:off
+		sendModelChangedEvent(x,
+				              y,
+				              node.isHighlighted(),
+				              node.isFeedbackBlockUsed(),
+				              node.isSelected(),
+				              node.isReserved());
 		// @formatter:on
+
+//		// @formatter:off
+//
+//		// tell the UI
+//		if (node instanceof RailNode) {
+//
+//			final RailNode railNode = (RailNode) node;
+//
+//			if (CollectionUtils.isNotEmpty(railNode.getTurnoutGroup())) {
+//
+//				for (final RailNode tempRailNode : railNode.getTurnoutGroup()) {
+//
+//					sendModelChangedEvent(
+//						tempRailNode.getX(),
+//						tempRailNode.getY(),
+//						tempRailNode.isHighlighted(),
+//						tempRailNode.isFeedbackBlockUsed(),
+//						tempRailNode.isSelected(),
+//						tempRailNode.isReserved());
+//				}
+//
+//			} else {
+//
+//				sendModelChangedEvent(
+//						x,
+//						y,
+//						node.isHighlighted(),
+//						node.isFeedbackBlockUsed(),
+//						node.isSelected(),
+//						node.isReserved());
+//			}
+//
+//		} else {
+//
+//			sendModelChangedEvent(
+//				x,
+//				y,
+//				node.isHighlighted(),
+//				node.isFeedbackBlockUsed(),
+//				node.isSelected(),
+//				node.isReserved());
+//		}
+//
+//		// @formatter:on
 	}
 
 	private void sendNodeClickedEvent(final Node node) {
@@ -233,11 +275,22 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 
 		logger.trace("sendModelChangedEvent() x: " + x + " y: " + y);
 
-		final boolean containsLocomotive = false;
-		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(this, model, x, y, hightlighted, blocked,
-				selected, reserved, containsLocomotive);
+		// @formatter:off
 
-		logger.trace("Sending ModelChangedEvent ...");
+		final boolean containsLocomotive = false;
+		final ModelChangedEvent modelChangedEvent = new ModelChangedEvent(
+				this,
+				model,
+				x,
+				y,
+				hightlighted,
+				blocked,
+				selected,
+				reserved,
+				containsLocomotive);
+
+		// @formatter:on
+
 		applicationEventPublisher.publishEvent(modelChangedEvent);
 	}
 
@@ -568,6 +621,21 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 
 		node.getGraphNodeOne().setBlocked(!node.getGraphNodeOne().isBlocked());
 		node.getGraphNodeTwo().setBlocked(!node.getGraphNodeTwo().isBlocked());
+	}
+
+	@Override
+	public List<RailNode> getTurnoutsByAddress(final int address) {
+
+		final List<RailNode> result = new ArrayList<>();
+		for (final RailNode turnoutNode : getAllRailNodes()) {
+
+			if (turnoutNode.getProtocolTurnoutId() != null && turnoutNode.getProtocolTurnoutId() == address) {
+
+				result.add(turnoutNode);
+			}
+		}
+
+		return result;
 	}
 
 }

@@ -176,15 +176,10 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 						route = routingService.route(locomotive, nodeA, nodeB, routeOverReservedNodes,
 								routeOverBlockedFeedbackBlocks);
 
-//						logger.info(route);
-
 						if (CollectionUtils.isNotEmpty(route.getGraphNodes())) {
 
 							// visually highlight the route in the UI
 							routingService.highlightRoute(route);
-
-							// switch turnouts
-//							routingService.switchTurnouts(route);
 						}
 
 					} catch (final Exception e) {
@@ -221,8 +216,6 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 				layoutGridController.connect();
 			}
 		});
-//		final MenuItem copyItem = new MenuItem("Copy");
-//		final MenuItem pasteItem = new MenuItem("Paste");
 		final MenuItem locomotiveListItem = new MenuItem("Locomotive List");
 		locomotiveListItem.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -304,26 +297,6 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 				protocolFacade.disconnect();
 			}
 		});
-
-//		final MenuItem reserveNodeMenuItem = new MenuItem("Reserve Node");
-//		reserveNodeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-//
-//			@Override
-//			public void handle(final ActionEvent event) {
-//
-//				final List<de.wfb.model.node.Node> selectedNodes = modelFacade.getSelectedNodes();
-//
-//				logger.info(selectedNodes);
-//
-//				if (CollectionUtils.isEmpty(selectedNodes)) {
-//					return;
-//				}
-//
-//				final de.wfb.model.node.Node nodeA = selectedNodes.get(0);
-//
-//				modelFacade.reserveNodeToggle(nodeA);
-//			}
-//		});
 
 		final MenuItem blockNodeMenuItem = new MenuItem("Block Node");
 		blockNodeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -427,7 +400,6 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 		// @formatter:off
 
 		fileMenu.getItems().addAll(
-//				newItem,
 				openFileItem,
 				saveItem,
 				exitItem
@@ -443,8 +415,6 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 
 		editMenu.getItems().addAll(
 				connectItem,
-//				copyItem,
-//				pasteItem,
 				locomotiveListItem,
 				placeLocomotiveItem
 				);
@@ -455,7 +425,6 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 				);
 
 		debugMenu.getItems().addAll(
-//				reserveNodeMenuItem,
 				blockNodeMenuItem,
 				routingNodeMenuItem,
 				feedbackBlockEventMenuItem,

@@ -1058,6 +1058,38 @@
     "protocolTurnoutId": 2
   },
   {
+    "id": 185,
+    "shapeType": "SWITCH_LEFT_180",
+    "x": 31,
+    "y": 4,
+    "protocolTurnoutId": 3,
+    "flipped": true
+  },
+  {
+    "id": 193,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 30,
+    "y": 4
+  },
+  {
+    "id": 194,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 29,
+    "y": 4
+  },
+  {
+    "id": 195,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 28,
+    "y": 4
+  },
+  {
+    "id": 196,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 27,
+    "y": 4
+  },
+  {
     "id": 197,
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 26,
@@ -1102,6 +1134,14 @@
     "y": 4
   },
   {
+    "id": 259,
+    "shapeType": "SWITCH_RIGHT_90",
+    "x": 31,
+    "y": 5,
+    "protocolTurnoutId": 36,
+    "flipped": true
+  },
+  {
     "id": 260,
     "shapeType": "STRAIGHT_VERTICAL",
     "x": 31,
@@ -1133,6 +1173,37 @@
     "x": 35,
     "y": 8,
     "feedbackBlockNumber": 12
+  },
+  {
+    "id": 265,
+    "shapeType": "SWITCH_LEFT_180",
+    "x": 30,
+    "y": 5,
+    "protocolTurnoutId": 32
+  },
+  {
+    "id": 266,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 29,
+    "y": 5
+  },
+  {
+    "id": 267,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 28,
+    "y": 5
+  },
+  {
+    "id": 268,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 27,
+    "y": 5
+  },
+  {
+    "id": 269,
+    "shapeType": "TURN_LEFT_TOP",
+    "x": 30,
+    "y": 6
   },
   {
     "id": 273,
@@ -1249,10 +1320,50 @@
     "y": 7
   },
   {
+    "id": 304,
+    "shapeType": "SWITCH_LEFT_180",
+    "x": 29,
+    "y": 6,
+    "protocolTurnoutId": 65,
+    "flipped": true
+  },
+  {
+    "id": 305,
+    "shapeType": "TURN_LEFT_TOP",
+    "x": 29,
+    "y": 7
+  },
+  {
+    "id": 306,
+    "shapeType": "TURN_RIGHT_BOTTOM",
+    "x": 28,
+    "y": 7
+  },
+  {
+    "id": 307,
+    "shapeType": "SWITCH_RIGHT_90",
+    "x": 28,
+    "y": 8,
+    "protocolTurnoutId": 66,
+    "flipped": true
+  },
+  {
     "id": 311,
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 26,
     "y": 8
+  },
+  {
+    "id": 313,
+    "shapeType": "TURN_LEFT_TOP",
+    "x": 28,
+    "y": 9
+  },
+  {
+    "id": 314,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 27,
+    "y": 9
   },
   {
     "id": 315,
@@ -1323,6 +1434,25 @@
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 21,
     "y": 8
+  },
+  {
+    "id": 326,
+    "shapeType": "SWITCH_LEFT_180",
+    "x": 27,
+    "y": 6,
+    "protocolTurnoutId": 67
+  },
+  {
+    "id": 327,
+    "shapeType": "TURN_LEFT_TOP",
+    "x": 27,
+    "y": 7
+  },
+  {
+    "id": 328,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 28,
+    "y": 6
   },
   {
     "id": 329,
@@ -8157,10 +8287,23 @@
     "y": 28
   },
   {
+    "id": 1523,
+    "shapeType": "TURN_BOTTOM_LEFT",
+    "x": 32,
+    "y": 26
+  },
+  {
     "id": 1526,
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 34,
     "y": 27
+  },
+  {
+    "id": 1527,
+    "shapeType": "SWITCH_RIGHT_180",
+    "x": 32,
+    "y": 27,
+    "protocolTurnoutId": 112
   },
   {
     "id": 1528,
@@ -8174,6 +8317,13 @@
     "x": 33,
     "y": 28,
     "protocolTurnoutId": 111
+  },
+  {
+    "id": 1530,
+    "shapeType": "SWITCH_RIGHT_0",
+    "x": 33,
+    "y": 27,
+    "protocolTurnoutId": 112
   },
   {
     "id": 1531,
@@ -9305,6 +9455,26 @@
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 54,
     "y": 59
+  },
+  {
+    "id": 1770,
+    "shapeType": "TURN_RIGHT_BOTTOM",
+    "x": 53,
+    "y": 57
+  },
+  {
+    "id": 1771,
+    "shapeType": "SWITCH_LEFT_0",
+    "x": 53,
+    "y": 58,
+    "protocolTurnoutId": 19
+  },
+  {
+    "id": 1773,
+    "shapeType": "SWITCH_LEFT_180",
+    "x": 52,
+    "y": 58,
+    "protocolTurnoutId": 19
   },
   {
     "id": 1774,
@@ -14026,6 +14196,12 @@
     "y": 50
   },
   {
+    "id": 2596,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 27,
+    "y": 8
+  },
+  {
     "id": 2597,
     "shapeType": "SWITCH_LEFT_0",
     "x": 78,
@@ -14200,199 +14376,5 @@
     "shapeType": "TURN_BOTTOM_LEFT",
     "x": 7,
     "y": 51
-  },
-  {
-    "id": 2626,
-    "shapeType": "SWITCH_LEFT_180",
-    "x": 31,
-    "y": 4,
-    "protocolTurnoutId": 36,
-    "flipped": false
-  },
-  {
-    "id": 2627,
-    "shapeType": "STRAIGHT_VERTICAL",
-    "x": 31,
-    "y": 5
-  },
-  {
-    "id": 2628,
-    "shapeType": "SWITCH_LEFT_180",
-    "x": 30,
-    "y": 4,
-    "protocolTurnoutId": 3,
-    "flipped": true
-  },
-  {
-    "id": 2629,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 27,
-    "y": 4
-  },
-  {
-    "id": 2630,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 28,
-    "y": 4
-  },
-  {
-    "id": 2631,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 29,
-    "y": 4
-  },
-  {
-    "id": 2632,
-    "shapeType": "SWITCH_LEFT_180",
-    "x": 29,
-    "y": 5,
-    "protocolTurnoutId": 32,
-    "flipped": false
-  },
-  {
-    "id": 2633,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 27,
-    "y": 5
-  },
-  {
-    "id": 2634,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 28,
-    "y": 5
-  },
-  {
-    "id": 2635,
-    "shapeType": "SWITCH_RIGHT_90",
-    "x": 29,
-    "y": 6,
-    "protocolTurnoutId": 66,
-    "flipped": true
-  },
-  {
-    "id": 2636,
-    "shapeType": "STRAIGHT_VERTICAL",
-    "x": 29,
-    "y": 7
-  },
-  {
-    "id": 2637,
-    "shapeType": "STRAIGHT_VERTICAL",
-    "x": 29,
-    "y": 8
-  },
-  {
-    "id": 2638,
-    "shapeType": "TURN_LEFT_TOP",
-    "x": 29,
-    "y": 9
-  },
-  {
-    "id": 2639,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 28,
-    "y": 9
-  },
-  {
-    "id": 2640,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 27,
-    "y": 9
-  },
-  {
-    "id": 2641,
-    "shapeType": "SWITCH_LEFT_180",
-    "x": 28,
-    "y": 6,
-    "protocolTurnoutId": 65,
-    "flipped": true
-  },
-  {
-    "id": 2642,
-    "shapeType": "STRAIGHT_VERTICAL",
-    "x": 28,
-    "y": 7
-  },
-  {
-    "id": 2643,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 27,
-    "y": 8
-  },
-  {
-    "id": 2644,
-    "shapeType": "TURN_LEFT_TOP",
-    "x": 28,
-    "y": 8
-  },
-  {
-    "id": 2645,
-    "shapeType": "SWITCH_LEFT_180",
-    "x": 27,
-    "y": 6,
-    "protocolTurnoutId": 67,
-    "flipped": false
-  },
-  {
-    "id": 2646,
-    "shapeType": "TURN_LEFT_TOP",
-    "x": 27,
-    "y": 7
-  },
-  {
-    "id": 2647,
-    "shapeType": "TURN_LEFT_TOP",
-    "x": 30,
-    "y": 5
-  },
-  {
-    "id": 2648,
-    "shapeType": "SWITCH_DOUBLECROSS_LEFT_TOP",
-    "x": 52,
-    "y": 58,
-    "protocolTurnoutId": 19
-  },
-  {
-    "id": 2649,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 53,
-    "y": 57
-  },
-  {
-    "id": 2650,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 53,
-    "y": 58
-  },
-  {
-    "id": 2651,
-    "shapeType": "TURN_RIGHT_BOTTOM",
-    "x": 52,
-    "y": 57
-  },
-  {
-    "id": 2652,
-    "shapeType": "SWITCH_DOUBLECROSS_TOP_RIGHT",
-    "x": 33,
-    "y": 27,
-    "protocolTurnoutId": 112
-  },
-  {
-    "id": 2653,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 32,
-    "y": 26
-  },
-  {
-    "id": 2654,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 32,
-    "y": 27
-  },
-  {
-    "id": 2655,
-    "shapeType": "TURN_BOTTOM_LEFT",
-    "x": 33,
-    "y": 26
   }
 ]

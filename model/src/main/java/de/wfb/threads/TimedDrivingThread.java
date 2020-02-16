@@ -10,6 +10,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.CollectionUtils;
 
+import de.wfb.configuration.ConfigurationConstants;
+import de.wfb.configuration.ConfigurationService;
 import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.Edge;
@@ -42,9 +44,6 @@ public class TimedDrivingThread {
 
 	private static final Logger logger = LogManager.getLogger(TimedDrivingThread.class);
 
-	private static final boolean ACTIVE = true;
-//	private static final boolean ACTIVE = false;
-
 	@Autowired
 	private ModelFacade modelFacade;
 
@@ -56,6 +55,9 @@ public class TimedDrivingThread {
 
 	@Autowired
 	private RoutingController routingController;
+
+	@Autowired
+	private ConfigurationService configurationService;
 
 	private int iterationCount = 0;
 
@@ -73,9 +75,12 @@ public class TimedDrivingThread {
 			infoCounter++;
 		}
 
-		logger.trace("threadFunc() ACTIVE = " + ACTIVE);
+		final boolean active = configurationService
+				.getConfigurationAsBoolean(ConfigurationConstants.TIMED_DRIVING_THREAD_ACTIVE);
 
-		if (!ACTIVE) {
+		logger.trace("threadFunc() ACTIVE = " + active);
+
+		if (!active) {
 
 			logger.trace("threadFunc() is deactivated!");
 			return;
@@ -295,11 +300,13 @@ public class TimedDrivingThread {
 				continue;
 			}
 
-			locomotive.setGraphNode(edge.getOutGraphNode());
+			for (final GraphNode outGraphNode : edge.getOutGraphNodes()) {
 
-			if (edge.getOutGraphNode().equals(nextGraphNode)) {
+				if (outGraphNode.equals(nextGraphNode)) {
 
-				locomotive.setOrientation(edge.getDirection());
+					locomotive.setGraphNode(outGraphNode);
+					locomotive.setOrientation(edge.getDirection());
+				}
 			}
 		}
 

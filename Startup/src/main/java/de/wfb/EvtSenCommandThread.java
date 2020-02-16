@@ -56,7 +56,7 @@ public class EvtSenCommandThread {
 				}
 			}
 
-			logger.info("Event Sense command done.");
+			logger.trace("Event Sense command done.");
 		}
 		logger.trace("EventThread done.");
 	}

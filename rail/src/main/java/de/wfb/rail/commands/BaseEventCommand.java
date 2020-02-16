@@ -38,7 +38,7 @@ public abstract class BaseEventCommand implements Command {
 	protected void sendFeedbackBlockUpdateEvents(final int s88id, final byte inputDescriptor1,
 			final byte inputDescriptor2) {
 
-		logger.info("sendFeedbackBlockUpdateEvents()");
+		logger.trace("sendFeedbackBlockUpdateEvents()");
 
 		try {
 

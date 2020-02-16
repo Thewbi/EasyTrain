@@ -38,7 +38,11 @@ public enum ShapeType {
 
 	SWITCH_RIGHT_180,
 
-	SWITCH_RIGHT_270;
+	SWITCH_RIGHT_270,
+
+	SWITCH_DOUBLECROSS_LEFT_TOP,
+
+	SWITCH_DOUBLECROSS_TOP_RIGHT;
 
 	public static boolean isTurnout(final ShapeType shapeType) {
 
@@ -52,6 +56,8 @@ public enum ShapeType {
 		case SWITCH_RIGHT_90:
 		case SWITCH_RIGHT_180:
 		case SWITCH_RIGHT_270:
+		case SWITCH_DOUBLECROSS_LEFT_TOP:
+		case SWITCH_DOUBLECROSS_TOP_RIGHT:
 			return true;
 
 		default:

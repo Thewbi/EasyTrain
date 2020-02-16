@@ -14375,7 +14375,8 @@
     "shapeType": "SWITCH_DOUBLECROSS_TOP_RIGHT",
     "x": 33,
     "y": 27,
-    "protocolTurnoutId": 112
+    "protocolTurnoutId": 112,
+    "flipped": false
   },
   {
     "id": 2653,

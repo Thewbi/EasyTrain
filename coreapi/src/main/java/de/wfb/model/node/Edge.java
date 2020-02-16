@@ -1,5 +1,7 @@
 package de.wfb.model.node;
 
+import java.util.List;
+
 public interface Edge {
 
 	Direction getDirection();
@@ -10,9 +12,9 @@ public interface Edge {
 
 	void setInGraphNode(GraphNode inGraphNode);
 
-	GraphNode getOutGraphNode();
+	List<GraphNode> getOutGraphNodes();
 
-	void setOutGraphNode(GraphNode outGraphNode);
+//	void setOutGraphNode(GraphNode outGraphNode);
 
 	GraphNode getNextOutGraphNode();
 

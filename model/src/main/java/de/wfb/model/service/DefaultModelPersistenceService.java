@@ -120,8 +120,8 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 
 		logger.trace("'" + Paths.get(pathToModelFile).toAbsolutePath() + "' contains " + nodeArray.size() + " nodes!");
 
+		// locomotives
 		final DefaultJsonLocomotiveConverter defaultJsonLocomotiveConverter = new DefaultJsonLocomotiveConverter();
-
 		for (final DefaultLocomotiveJson defaultLocomotiveJson : nodeArray) {
 
 			final DefaultLocomotive defaulLocomotive = new DefaultLocomotive();
@@ -213,6 +213,7 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 				if (jsonNode.getId() > maxId) {
 					maxId = jsonNode.getId();
 				}
+
 			} catch (final Exception e) {
 				logger.error(e.getMessage(), e);
 			}

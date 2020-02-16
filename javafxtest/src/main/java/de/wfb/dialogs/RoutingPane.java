@@ -82,7 +82,7 @@ public class RoutingPane extends GridPane {
 
 				final int start = Integer.parseInt(startTextfield.getText());
 				final GraphNode graphNodeStart = modelFacade.getGraphNodeById(start);
-				graphNodeStart.dumpRoutingTable();
+//				graphNodeStart.dumpRoutingTable();
 
 				final int end = Integer.parseInt(endTextfield.getText());
 				final GraphNode graphNodeEnd = modelFacade.getGraphNodeById(end);
@@ -104,8 +104,6 @@ public class RoutingPane extends GridPane {
 				try {
 					route = routingService.route(locomotive, graphNodeStart, graphNodeEnd, routeOverReservedNodes,
 							routeOverBlockedFeedbackBlocks);
-
-//					logger.info(route);
 
 					logger.info("routeOverReservedNodes: " + routeOverReservedNodes);
 					logger.info("routeOverBlockedFeedbackBlocks: " + routeOverBlockedFeedbackBlocks);

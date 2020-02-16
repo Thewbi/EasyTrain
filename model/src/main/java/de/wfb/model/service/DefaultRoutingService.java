@@ -88,7 +88,7 @@ public class DefaultRoutingService extends BaseRoutingService {
 			final boolean routeOverReservedGraphNodes, final boolean routeOverBlockedFeedbackBlocks)
 			throws IOException, Exception {
 
-		logger.trace("Routing from GraphNodeStart: " + graphNodeStart + " To GraphNodeEnd: " + graphNodeEnd
+		logger.info("Routing from GraphNodeStart: " + graphNodeStart + " To GraphNodeEnd: " + graphNodeEnd
 				+ " routeOverReservedGraphNodes: " + routeOverReservedGraphNodes + " routeOverBlockedFeedbackBlocks: "
 				+ routeOverBlockedFeedbackBlocks);
 
@@ -107,6 +107,7 @@ public class DefaultRoutingService extends BaseRoutingService {
 
 			if (!canTraverseGraphNode(locomotive, currNode, routeOverReservedGraphNodes,
 					routeOverBlockedFeedbackBlocks)) {
+
 				currNode = bb(currNode, locomotive, switchingNodeStack, route, visitedNodes);
 			}
 
@@ -268,6 +269,15 @@ public class DefaultRoutingService extends BaseRoutingService {
 		// tables and also insert their switching node children
 		for (final GraphNode switchingGraphNode : switchingNodes) {
 
+			// DEBUG
+			if (switchingGraphNode.getId() == 4598 ||
+				switchingGraphNode.getId() == 4599 ||
+				switchingGraphNode.getId() == 4600||
+				switchingGraphNode.getId() == 4601) {
+
+				logger.info("Debug");
+			}
+
 			// over all children of the switching graph node
 			for (final GraphNode child : switchingGraphNode.getChildren()) {
 
@@ -285,6 +295,7 @@ public class DefaultRoutingService extends BaseRoutingService {
 
 					currentGraphNode = currentGraphNode.getChildren().get(0);
 				}
+
 				if (blocked) {
 					continue;
 				}

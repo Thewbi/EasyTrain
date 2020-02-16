@@ -228,7 +228,11 @@ public class RailDetailsPane extends GridPane {
 
 		// ID data
 		idValueLabel = new Label();
+		idValueLabel.setMinHeight(200);
 		final String idValue = retrieveRailNodeLabel(node);
+
+		logger.info(idValue);
+
 		idValueLabel.setText(idValue);
 		GridPane.setColumnIndex(idValueLabel, 2);
 		GridPane.setRowIndex(idValueLabel, 1);
@@ -237,6 +241,8 @@ public class RailDetailsPane extends GridPane {
 	}
 
 	private String retrieveRailNodeLabel(final Node node) {
+
+		final boolean showConnectionData = true;
 
 		final StringBuffer stringBuffer = new StringBuffer();
 
@@ -253,57 +259,48 @@ public class RailDetailsPane extends GridPane {
 
 		// @formatter:off
 
-		final GraphNode graphNodeOne = node.getGraphNodeOne();
-
 		// GraphNode ONE and children
-		stringBuffer
-			.append(node.getId()).append(" [")
-			.append(graphNodeOne.getId())
-			.append(" x: ").append(graphNodeOne.getX()).append(" y: ").append(graphNodeOne.getY());
-//			.append(" ")
-//			.append(node.getGraphNodeOne().getColor().name())
+		stringBuffer.append(node.getId()).append("\n");
 
-		if (false) {
-			stringBuffer.append(" -> \n");
-			if (CollectionUtils.isNotEmpty(graphNodeOne.getChildren())) {
+		logger.info("GraphNodeOne: " + node.getGraphNodeOne());
+		outputGraphNode(node.getGraphNodeOne(), showConnectionData, stringBuffer);
 
-				for (final GraphNode graphNode : graphNodeOne.getChildren()) {
+		logger.info("GraphNodeTwo: " + node.getGraphNodeTwo());
+		outputGraphNode(node.getGraphNodeTwo(), showConnectionData, stringBuffer);
 
-					stringBuffer
-					.append(graphNode.getId()).append(" ");
-	//				.append(graphNode.getColor().name()).append(", ");
-				}
-			}
-		}
+		logger.info("GraphNodeThree: " + node.getGraphNodeThree());
+		outputGraphNode(node.getGraphNodeThree(), showConnectionData, stringBuffer);
 
-		stringBuffer.append("]\n");
+		logger.info("GraphNodeFour: " + node.getGraphNodeFour());
+		outputGraphNode(node.getGraphNodeFour(), showConnectionData, stringBuffer);
 
-		final GraphNode graphNodeTwo = node.getGraphNodeTwo();
-
-		// GraphNode TWO and children
-		stringBuffer
-			.append(" [")
-			.append(graphNodeTwo.getId())
-			.append(" x: ").append(graphNodeTwo.getX()).append(" y: ").append(graphNodeTwo.getY());
-//			.append(" ")
-//			.append(node.getGraphNodeTwo().getColor().name())
-
-		if (false) {
-			stringBuffer.append(" -> \n");
-			if (CollectionUtils.isNotEmpty(graphNodeTwo.getChildren())) {
-
-				for (final GraphNode graphNode : graphNodeTwo.getChildren()) {
-
-					stringBuffer
-					.append(graphNode.getId())
-	//				.append(" ")
-	//				.append(graphNode.getColor().name())
-					.append(", ");
-				}
-			}
-		}
-
-		stringBuffer.append("]\n");
+//		final GraphNode graphNodeTwo = node.getGraphNodeTwo();
+//
+//		// GraphNode TWO and children
+//		stringBuffer
+//			.append(" [")
+//			.append(graphNodeTwo.getId())
+//			.append(" x: ").append(graphNodeTwo.getX()).append(" y: ").append(graphNodeTwo.getY());
+////			.append(" ")
+////			.append(node.getGraphNodeTwo().getColor().name())
+//
+//		if (showConnectionData) {
+//
+//			stringBuffer.append(" -> \n");
+//			if (CollectionUtils.isNotEmpty(graphNodeTwo.getChildren())) {
+//
+//				for (final GraphNode graphNode : graphNodeTwo.getChildren()) {
+//
+//					stringBuffer
+//					.append(graphNode.getId())
+//	//				.append(" ")
+//	//				.append(graphNode.getColor().name())
+//					.append(", ");
+//				}
+//			}
+//		}
+//
+//		stringBuffer.append("]\n");
 
 		// @formatter:on
 
@@ -326,6 +323,36 @@ public class RailDetailsPane extends GridPane {
 		}
 
 		return stringBuffer.toString();
+	}
+
+	private void outputGraphNode(final GraphNode graphNode, final boolean showConnectionData,
+			final StringBuffer stringBuffer) {
+
+		if (graphNode == null) {
+
+			return;
+		}
+
+		// graphnode one
+		stringBuffer.append("[").append(graphNode.getId()).append(" x: ").append(graphNode.getX()).append(" y: ")
+				.append(graphNode.getY());
+//			.append(" ")
+//			.append(node.getGraphNodeOne().getColor().name())
+
+		if (showConnectionData) {
+
+			stringBuffer.append(" -> ");
+			if (CollectionUtils.isNotEmpty(graphNode.getChildren())) {
+
+				for (final GraphNode tempGraphNode : graphNode.getChildren()) {
+
+					stringBuffer.append(tempGraphNode.getId()).append(" ");
+					// .append(graphNode.getColor().name()).append(", ");
+				}
+			}
+		}
+
+		stringBuffer.append("]\n");
 	}
 
 	public void clear() {

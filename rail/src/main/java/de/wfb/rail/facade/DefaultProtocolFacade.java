@@ -18,11 +18,11 @@ public class DefaultProtocolFacade implements ProtocolFacade {
 	private ProtocolService protocolService;
 
 	@Override
-	public void nodeClicked(final int x, final int y) {
+	public Node nodeClicked(final int x, final int y) {
 
-		logger.trace("nodeClicked()");
+		logger.info("nodeClicked()");
 
-		protocolService.nodeClicked(x, y);
+		return protocolService.nodeClicked(x, y);
 	}
 
 	@Override
@@ -85,7 +85,7 @@ public class DefaultProtocolFacade implements ProtocolFacade {
 	@Override
 	public void turnTurnout(final Node node) {
 
-		logger.trace("turnTurnout()");
+		logger.info("turnTurnout() Node RN-ID: " + node.getId());
 
 		protocolService.turnTurnout(node);
 	}

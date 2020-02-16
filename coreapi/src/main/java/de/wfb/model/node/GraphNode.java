@@ -2,6 +2,7 @@ package de.wfb.model.node;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -102,21 +103,26 @@ public class GraphNode {
 
 	public String dumpRoutingTable() {
 
-//		if (routingTable.entrySet().isEmpty()) {
-//			return "Empty";
-//		}
-//
-//		final StringBuffer stringBuffer = new StringBuffer();
-//
-//		for (final Map.Entry<Integer, Set<GraphNode>> entry : routingTable.entrySet()) {
-//
-//			stringBuffer.append("\n").append("Reach ").append(entry.getKey()).append(" via ")
-//					.append(entry.getValue().toString());
-//		}
-//
-//		return stringBuffer.toString();
+		if (routingTable.entrySet().isEmpty()) {
+			return "Empty";
+		}
 
-		return null;
+		final StringBuffer stringBuffer = new StringBuffer();
+
+		for (final Map.Entry<Integer, Set<GraphNodeEntry>> entry : routingTable.entrySet()) {
+
+			stringBuffer.append("\n").append("Reach ").append(entry.getKey()).append(" via ");
+
+			final Set<GraphNodeEntry> entrySet = entry.getValue();
+			final Iterator<GraphNodeEntry> entrySetIterator = entrySet.iterator();
+			while (entrySetIterator.hasNext()) {
+				final GraphNodeEntry graphNodeEntry = entrySetIterator.next();
+
+				stringBuffer.append(graphNodeEntry.getGraphNode().getId()).append(",");
+			}
+		}
+
+		return stringBuffer.toString();
 	}
 
 	public String dumpSwitchingTable() {
@@ -150,7 +156,8 @@ public class GraphNode {
 				continue;
 			}
 
-			final GraphNode outGraphNode = edge.getOutGraphNode();
+//			final GraphNode outGraphNode = edge.getOutGraphNode();
+			final GraphNode outGraphNode = edge.getOutGraphNodes().get(0);
 
 			if (outGraphNode == null) {
 				continue;
@@ -173,9 +180,12 @@ public class GraphNode {
 				continue;
 			}
 
-			if (edge.getOutGraphNode().equals(this)) {
+			for (final GraphNode outGraphNode : edge.getOutGraphNodes()) {
 
-				return edge.getDirection();
+				if (outGraphNode.equals(this)) {
+
+					return edge.getDirection();
+				}
 			}
 		}
 

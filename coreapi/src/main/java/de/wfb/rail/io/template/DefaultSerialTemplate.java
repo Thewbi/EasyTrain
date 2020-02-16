@@ -47,9 +47,9 @@ public class DefaultSerialTemplate implements SerialTemplate {
 		logger.trace("REQUEST: " + Hex.encodeHexString(byteArray));
 
 		try {
-			logger.info("writing ...");
+			logger.trace("writing ...");
 			outputStream.write(byteArray, 0, byteArray.length);
-			logger.info("writing done.");
+			logger.trace("writing done.");
 		} catch (final IOException e) {
 			logger.error(e.getMessage(), e);
 		}

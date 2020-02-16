@@ -1,12 +1,15 @@
 package de.wfb.model.node;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DefaultEdge implements Edge {
 
 	private Direction direction;
 
 	private GraphNode inGraphNode;
 
-	private GraphNode outGraphNode;
+	private final List<GraphNode> outGraphNodes = new ArrayList<>();
 
 	private GraphNode nextOutGraphNode;
 
@@ -20,15 +23,15 @@ public class DefaultEdge implements Edge {
 		this.inGraphNode = inGraphNode;
 	}
 
-	@Override
-	public GraphNode getOutGraphNode() {
-		return outGraphNode;
-	}
-
-	@Override
-	public void setOutGraphNode(final GraphNode outGraphNode) {
-		this.outGraphNode = outGraphNode;
-	}
+//	@Override
+//	public GraphNode getOutGraphNode() {
+//		return outGraphNode;
+//	}
+//
+//	@Override
+//	public void setOutGraphNode(final GraphNode outGraphNode) {
+//		this.outGraphNode = outGraphNode;
+//	}
 
 	@Override
 	public Direction getDirection() {
@@ -48,6 +51,11 @@ public class DefaultEdge implements Edge {
 	@Override
 	public void setNextOutGraphNode(final GraphNode nextOutGraphNode) {
 		this.nextOutGraphNode = nextOutGraphNode;
+	}
+
+	@Override
+	public List<GraphNode> getOutGraphNodes() {
+		return outGraphNodes;
 	}
 
 }

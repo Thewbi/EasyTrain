@@ -110,9 +110,155 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 			return createSwitchRight(size, 270, false, thrown, flipped, highlighted, blocked, selected, reserved,
 					containsLocomotive);
 
+		case SWITCH_DOUBLECROSS_LEFT_TOP:
+			return createDoubleCrossLeftTop(thrown, flipped, highlighted, blocked, selected, reserved,
+					containsLocomotive);
+
+		case SWITCH_DOUBLECROSS_TOP_RIGHT:
+			return createDoubleCrossTopRight(thrown, flipped, highlighted, blocked, selected, reserved,
+					containsLocomotive);
+
 		default:
 			throw new IllegalArgumentException("Uknown ShapeType " + shapeType);
 		}
+	}
+
+	private SVGPath createDoubleCrossLeftTop(final boolean thrown, final boolean flipped, final boolean highlighted,
+			final boolean blocked, final boolean selected, final boolean reserved, final boolean containsLocomotive) {
+
+		final StringBuffer stringBuffer = new StringBuffer();
+
+		if (flipped ? !thrown : thrown) {
+
+			// @formatter:off
+
+			// gebogen (left to top)
+			stringBuffer.append("M0,3").append("L")
+			    .append(" ").append(3).append(",").append(0)
+			    .append(" ").append(7).append(",").append(0)
+			    .append(" ").append(0).append(",").append(7)
+			    .append(" ").append(0).append(",").append(3);
+
+			// gebogen (bottom to right)
+			stringBuffer.append("M10,3").append("L")
+				.append(" ").append(10).append(",").append(7)
+				.append(" ").append(7).append(",").append(10)
+				.append(" ").append(3).append(",").append(10)
+				.append(" ").append(10).append(",").append(3);
+
+			// @formatter:on
+
+		} else {
+
+			// @formatter:off
+
+			// gerade (left to right)
+			stringBuffer.append("M0,3").append("L")
+				.append(" ").append(10).append(",").append(3)
+				.append(" ").append(10).append(",").append(7)
+				.append(" ").append(0).append(",").append(7)
+				.append(" ").append(0).append(",").append(3);
+
+			// top to bottom
+			stringBuffer.append("M3,0").append("L")
+				.append(" ").append(7).append(",").append(0)
+				.append(" ").append(7).append(",").append(10)
+				.append(" ").append(3).append(",").append(10)
+				.append(" ").append(3).append(",").append(0);
+
+			// @formatter:on
+
+		}
+
+		final SVGPath svgPath = new SVGPath();
+		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved, containsLocomotive));
+		svgPath.setStroke(LayoutColors.TURNOUT_STROKE_COLOR);
+		svgPath.setContent(stringBuffer.toString());
+
+//		// Creating the rotation transformation
+//		final Rotate rotate = new Rotate();
+//
+//		// Setting the angle for the rotation (20 degrees)
+//		rotate.setAngle(rotateAngle);
+//
+//		// Setting pivot points for the rotation
+//		rotate.setPivotX(5);
+//		rotate.setPivotY(5);
+//
+//		// Adding the transformation to rectangle2
+//		svgPath.getTransforms().addAll(rotate);
+
+		return svgPath;
+
+	}
+
+	private SVGPath createDoubleCrossTopRight(final boolean thrown, final boolean flipped, final boolean highlighted,
+			final boolean blocked, final boolean selected, final boolean reserved, final boolean containsLocomotive) {
+
+		final StringBuffer stringBuffer = new StringBuffer();
+
+		if (flipped ? !thrown : thrown) {
+
+			// @formatter:off
+
+			// gebogen (left to bottom)
+			stringBuffer.append("M0,3").append("L")
+				.append(" ").append(7).append(",").append(10)
+				.append(" ").append(3).append(",").append(10)
+				.append(" ").append(0).append(",").append(7)
+				.append(" ").append(0).append(",").append(3);
+
+			// gebogen (top to right)
+			stringBuffer.append("M3,0").append("L")
+				.append(" ").append(7).append(",").append(0)
+				.append(" ").append(10).append(",").append(3)
+				.append(" ").append(10).append(",").append(7)
+				.append(" ").append(3).append(",").append(0);
+
+			// @formatter:on
+
+		} else {
+
+			// @formatter:off
+
+			// gerade (left to right)
+			stringBuffer.append("M0,3").append("L")
+				.append(" ").append(10).append(",").append(3)
+				.append(" ").append(10).append(",").append(7)
+				.append(" ").append(0).append(",").append(7)
+				.append(" ").append(0).append(",").append(3);
+
+			// top to bottom
+			stringBuffer.append("M3,0").append("L")
+				.append(" ").append(7).append(",").append(0)
+				.append(" ").append(7).append(",").append(10)
+				.append(" ").append(3).append(",").append(10)
+				.append(" ").append(3).append(",").append(0);
+
+			// @formatter:on
+
+		}
+
+		final SVGPath svgPath = new SVGPath();
+		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved, containsLocomotive));
+		svgPath.setStroke(LayoutColors.TURNOUT_STROKE_COLOR);
+		svgPath.setContent(stringBuffer.toString());
+
+//		// Creating the rotation transformation
+//		final Rotate rotate = new Rotate();
+//
+//		// Setting the angle for the rotation (20 degrees)
+//		rotate.setAngle(rotateAngle);
+//
+//		// Setting pivot points for the rotation
+//		rotate.setPivotX(5);
+//		rotate.setPivotY(5);
+//
+//		// Adding the transformation to rectangle2
+//		svgPath.getTransforms().addAll(rotate);
+
+		return svgPath;
+
 	}
 
 	private Paint retrieveFillColor(final boolean highlighted, final boolean blocked, final boolean selected,
@@ -235,6 +381,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 				.append(" ").append(7).append(",").append(0)
 			    .append(" ").append(0).append(",").append(7)
 			    .append(" ").append(0).append(",").append(3);
+
 			// @formatter:on
 
 		} else {
@@ -247,6 +394,7 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 			    .append(" ").append(10).append(",").append(7)
 			    .append(" ").append(0).append(",").append(7)
 			    .append(" ").append(0).append(",").append(3);
+
 			// @formatter:on
 
 		}
@@ -278,11 +426,13 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		final StringBuffer stringBuffer = new StringBuffer();
 
 		// @formatter:off
+
 		stringBuffer.append("M10,3").append("L")
 			.append(" ").append(10).append(",").append(7)
 			.append(" ").append(7).append(",").append(10)
 			.append(" ").append(3).append(",").append(10)
 			.append(" ").append(10).append(",").append(3);
+
 		// @formatter:on
 
 		final SVGPath svgPath = new SVGPath();
@@ -299,11 +449,13 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		final StringBuffer stringBuffer = new StringBuffer();
 
 		// @formatter:off
+
 		stringBuffer.append("M3,0").append("L")
 			.append(" ").append(7).append(",").append(0)
 			.append(" ").append(10).append(",").append(3)
 			.append(" ").append(10).append(",").append(7)
 			.append(" ").append(3).append(",").append(0);
+
 		// @formatter:on
 
 		final SVGPath svgPath = new SVGPath();
@@ -320,11 +472,13 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		final StringBuffer stringBuffer = new StringBuffer();
 
 		// @formatter:off
+
 		stringBuffer.append("M0,3").append("L")
 			.append(" ").append(7).append(",").append(size)
 			.append(" ").append(3).append(",").append(size)
 			.append(" ").append(0).append(",").append(7)
 			.append(" ").append(0).append(",").append(3);
+
 		// @formatter:on
 
 		final SVGPath svgPath = new SVGPath();
@@ -445,27 +599,36 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		if (direction != null && direction == Direction.NORTH) {
 
 			// @formatter:off
+
+			// arrowhead pointing up
 			stringBuffer.append("M0,10").append("L")
 				.append(" ").append(5).append(",").append(0)
 				.append(" ").append(10).append(",").append(10);
+
 			// @formatter:on
 
 		} else if (direction != null && direction == Direction.SOUTH) {
 
 			// @formatter:off
+
+			// arrowhead pointing down
 			stringBuffer.append("M0,0").append("L")
 				.append(" ").append(5).append(",").append(10)
 				.append(" ").append(10).append(",").append(0);
+
 			// @formatter:on
 
 		} else {
 
 			// @formatter:off
+
+			// top to bottom
 			stringBuffer.append("M3,0").append("L")
 				.append(" ").append(7).append(",").append(0)
 				.append(" ").append(7).append(",").append(size)
 				.append(" ").append(3).append(",").append(size)
 				.append(" ").append(3).append(",").append(0);
+
 			// @formatter:on
 
 		}

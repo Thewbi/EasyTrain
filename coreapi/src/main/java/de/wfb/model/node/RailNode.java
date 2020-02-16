@@ -56,15 +56,25 @@ public interface RailNode extends Node {
 	@Override
 	void setShapeType(ShapeType shapeType);
 
-	void setGraphNodeOne(GraphNode graphNodeOut);
+	void setGraphNodeOne(GraphNode graphNode);
 
 	@Override
 	GraphNode getGraphNodeOne();
 
-	void setGraphNodeTwo(GraphNode graphNodeOut);
+	void setGraphNodeTwo(GraphNode graphNode);
 
 	@Override
 	GraphNode getGraphNodeTwo();
+
+	void setGraphNodeThree(GraphNode graphNode);
+
+	@Override
+	GraphNode getGraphNodeThree();
+
+	void setGraphNodeFour(GraphNode graphNode);
+
+	@Override
+	GraphNode getGraphNodeFour();
 
 	@Override
 	Integer getProtocolTurnoutId();
@@ -89,7 +99,7 @@ public interface RailNode extends Node {
 	void manualConnectTo(RailNode railNode);
 
 	void switchToGraphNode(ApplicationEventPublisher applicationEventPublisher, ProtocolFacade protocolFacade,
-			Model model, GraphNode nextGraphNode);
+			Model model, final GraphNode currentGraphNode, GraphNode nextGraphNode);
 
 	@Override
 	boolean isReserved();
@@ -120,5 +130,7 @@ public interface RailNode extends Node {
 	void free();
 
 	void setModelFacade(ModelFacade modelFacade);
+
+	List<RailNode> getTurnoutGroup();
 
 }

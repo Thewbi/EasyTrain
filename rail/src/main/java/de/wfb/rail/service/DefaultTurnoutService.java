@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.wfb.model.node.RailNode;
+import de.wfb.model.service.ModelService;
 import de.wfb.rail.facade.ProtocolFacade;
 import de.wfb.rail.ui.ShapeType;
 
@@ -21,6 +22,9 @@ public class DefaultTurnoutService implements TurnoutService {
 
 	@Autowired
 	private ProtocolFacade protocolFacade;
+
+	@Autowired
+	private ModelService modelService;
 
 	@Override
 	public void queueStateRequest(final RailNode node) {
@@ -68,6 +72,25 @@ public class DefaultTurnoutService implements TurnoutService {
 		}
 
 		turnoutStatusRequestQueue.removeAll(deleteList);
+	}
+
+	@Override
+	public void createTurnoutGroups() {
+
+		logger.info("Building turnout groups!");
+
+		// buildTurnoutGroup(19);
+		// buildTurnoutGroup(112);
+
+	}
+
+	@SuppressWarnings("unused")
+	private void buildTurnoutGroup(final int address) {
+
+		final List<RailNode> railNodes = modelService.getTurnoutsByAddress(address);
+		for (final RailNode railNode : railNodes) {
+			railNode.getTurnoutGroup().addAll(railNodes);
+		}
 	}
 
 }

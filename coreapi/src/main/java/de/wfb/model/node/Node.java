@@ -55,6 +55,10 @@ public interface Node {
 
 	GraphNode getGraphNodeTwo();
 
+	GraphNode getGraphNodeThree();
+
+	GraphNode getGraphNodeFour();
+
 	boolean isReserved();
 
 	void setReserved(boolean reserved);

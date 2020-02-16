@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.CollectionUtils;
 
+import de.wfb.model.Model;
 import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.RailNode;
@@ -44,7 +45,7 @@ public class Route {
 		}
 
 		final StringBuffer stringBuffer = new StringBuffer();
-		stringBuffer.append("Route:");
+//		stringBuffer.append("Route:");
 
 		for (final GraphNode graphNode : graphNodes) {
 
@@ -73,7 +74,7 @@ public class Route {
 
 		}
 
-		return stringBuffer.toString();
+		return "Route: " + stringBuffer.toString();
 	}
 
 	public void highlightRoute(final ApplicationEventPublisher applicationEventPublisher) {
@@ -109,10 +110,9 @@ public class Route {
 	public void switchTurnouts(final ApplicationEventPublisher applicationEventPublisher,
 			final ProtocolFacade protocolFacade) {
 
-		logger.trace("switchTurnouts()");
+		logger.info("switchTurnouts()");
 
 		try {
-
 			switchTurnouts(graphNodes, applicationEventPublisher, protocolFacade);
 		} catch (final Exception e) {
 			logger.error(e.getMessage(), e);
@@ -122,7 +122,7 @@ public class Route {
 	public static void switchTurnouts(final List<GraphNode> graphNodes,
 			final ApplicationEventPublisher applicationEventPublisher, final ProtocolFacade protocolFacade) {
 
-		logger.trace("switchTurnouts() - static");
+		logger.info("switchTurnouts() - static");
 
 		if (CollectionUtils.isEmpty(graphNodes)) {
 
@@ -149,7 +149,8 @@ public class Route {
 			// if the turnout is NOT traversed in switching direction, continue
 			if (graphNode.getChildren().size() < 2) {
 
-				logger.trace("RailNode.ID: " + graphNode.getRailNode().getId() + " Index = " + index
+				// DEBUG
+				logger.info("RailNode.ID: " + graphNode.getRailNode().getId() + " Index = " + index
 						+ " Turnout found. Not in switching order!");
 
 				index++;
@@ -158,10 +159,10 @@ public class Route {
 
 			final RailNode turnoutRailNode = graphNode.getRailNode();
 
+			// DEBUG
 			logger.trace("Index = " + index + " RN.ID: " + turnoutRailNode.getId() + " GN.ID: " + graphNode.getId()
 					+ " ProcotolAddressId: " + graphNode.getRailNode().getProtocolTurnoutId()
 					+ " Turnout found in switching order!");
-
 			logger.trace("Turnout ShapeType = " + turnoutRailNode.getShapeType().name());
 
 			final int nextIndex = index + 1;
@@ -171,12 +172,15 @@ public class Route {
 			if (nextIndex <= graphNodes.size()) {
 
 				// yolo
+				final GraphNode currentGraphNode = graphNodes.get(index);
 				final GraphNode nextGraphNode = graphNodes.get(nextIndex);
 
 				logger.trace("Switching ProtocolAddress: " + turnoutRailNode.getProtocolTurnoutId() + " RailNode.ID: "
 						+ turnoutRailNode.getId() + " to GraphNode.ID: " + nextGraphNode.getId());
 
-				turnoutRailNode.switchToGraphNode(applicationEventPublisher, protocolFacade, null, nextGraphNode);
+				final Model model = null;
+				turnoutRailNode.switchToGraphNode(applicationEventPublisher, protocolFacade, model, currentGraphNode,
+						nextGraphNode);
 
 				try {
 					Thread.sleep(50);

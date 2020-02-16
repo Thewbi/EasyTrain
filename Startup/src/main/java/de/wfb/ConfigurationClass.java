@@ -10,6 +10,8 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 import de.wbi.model.serializer.DefaultRouteDeserializer;
 import de.wbi.model.serializer.DefaultRouteSerializer;
+import de.wfb.configuration.ConfigurationService;
+import de.wfb.configuration.DefaultConfigurationService;
 import de.wfb.dialogs.BlockNavigationPane;
 import de.wfb.dialogs.DrivingThreadControlPane;
 import de.wfb.dialogs.LayoutElementSelectionPane;
@@ -337,6 +339,11 @@ public class ConfigurationClass implements SchedulingConfigurer {
 	public RoutingService RoutingService() {
 		return new DefaultRoutingService();
 //		return new PreRecordedRoutingService();
+	}
+
+	@Bean
+	public ConfigurationService ConfigurationService() {
+		return new DefaultConfigurationService();
 	}
 
 }

@@ -65,7 +65,9 @@ public class DefaultModel implements Model {
 	public void connectModel() {
 
 		for (final Map.Entry<Integer, Node> entry : idMap.entrySet()) {
-			entry.getValue().connect(this);
+
+			final Node node = entry.getValue();
+			node.connect(this);
 		}
 	}
 
@@ -78,20 +80,28 @@ public class DefaultModel implements Model {
 
 			final Node node = entry.getValue();
 
-			final GraphNode graphNodeOne = node.getGraphNodeOne();
-
-			final List<GraphNode> children = graphNodeOne.getChildren();
-
-			if (CollectionUtils.isEmpty(children)) {
-				continue;
-			}
-
-			if (children.size() > 1) {
-				switchingNodes.add(graphNodeOne);
-			}
+			insertSwitchingNode(switchingNodes, node.getGraphNodeOne());
+			insertSwitchingNode(switchingNodes, node.getGraphNodeTwo());
+			insertSwitchingNode(switchingNodes, node.getGraphNodeThree());
+			insertSwitchingNode(switchingNodes, node.getGraphNodeFour());
 		}
 
 		return switchingNodes;
+	}
+
+	private void insertSwitchingNode(final List<GraphNode> switchingNodes, final GraphNode graphNode) {
+
+		if (graphNode == null) {
+			return;
+		}
+
+		final List<GraphNode> children = graphNode.getChildren();
+		if (CollectionUtils.isEmpty(children)) {
+			return;
+		}
+		if (children.size() > 1) {
+			switchingNodes.add(graphNode);
+		}
 	}
 
 	@Override

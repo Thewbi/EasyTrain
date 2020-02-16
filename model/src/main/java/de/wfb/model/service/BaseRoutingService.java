@@ -92,7 +92,7 @@ public abstract class BaseRoutingService implements RoutingService {
 
 		final Node railNode = graphNode.getRailNode();
 
-		final boolean debugOutput = railNode.getId() == 2383;
+		final boolean debugOutput = railNode.getId() == 2648;
 
 		final boolean graphNodeIsReserved = railNode.isReserved();
 
@@ -102,6 +102,7 @@ public abstract class BaseRoutingService implements RoutingService {
 		}
 
 		if (debugOutput) {
+
 			logger.info("graphNodeIsReserved: " + graphNodeIsReserved);
 			logger.info("locomotive: " + locomotive);
 			logger.info("reservedForLocomotive: " + reservedForLocomotive);
@@ -113,7 +114,7 @@ public abstract class BaseRoutingService implements RoutingService {
 		// created, then there is no problem and the route can pass the node!
 		if (graphNodeIsReserved && !reservedForLocomotive && !routeOverReservedGraphNodes) {
 
-			logger.trace("Cannot traverse GN ID: " + graphNode.getId() + " Reason: reserved!");
+			logger.warn("Cannot traverse GN ID: " + graphNode.getId() + " Reason: reserved!");
 			return false;
 		}
 
@@ -121,7 +122,7 @@ public abstract class BaseRoutingService implements RoutingService {
 		// direction
 		if (graphNode.isBlocked()) {
 
-			logger.info("Cannot traverse GN ID: " + graphNode.getId() + " Reason: blocked!");
+			logger.warn("Cannot traverse GN ID: " + graphNode.getId() + " Reason: blocked!");
 			return false;
 		}
 
@@ -252,6 +253,10 @@ public abstract class BaseRoutingService implements RoutingService {
 		return route;
 	}
 
+	/**
+	 * Computes a route but does not attach the route to the locmotive, does not
+	 * highlight the route, does not switch turnouts.
+	 */
 	@Override
 	public Route startLocomotiveToBlock(final DefaultLocomotive locomotive, final Direction locomotiveOrientation,
 			final Block startBlock, final Direction startEdgeDirection, final Block endBlock,
@@ -286,7 +291,7 @@ public abstract class BaseRoutingService implements RoutingService {
 			return null;
 		}
 
-		final GraphNode startGraphNode = edge.getOutGraphNode();
+		final GraphNode startGraphNode = edge.getOutGraphNodes().get(0);
 		logger.trace("Assign GraphNode " + startGraphNode.getId() + " to locomotive!");
 		locomotive.setGraphNode(startGraphNode);
 
@@ -332,55 +337,10 @@ public abstract class BaseRoutingService implements RoutingService {
 		}
 
 		if (routeA.isEmpty()) {
-			logger.info("No route found!");
-//			try {
-//				Thread.sleep(1000);
-//			} catch (final InterruptedException e) {
-//				logger.error(e.getMessage(), e);
-//			}
+			logger.warn("No route found!");
 		}
 
 		return routeA;
-
-//		Route routeB = new Route();
-//		try {
-//
-//			try {
-//				routeB = route(locomotive, startGraphNode, endRailNode.getGraphNodeTwo(), routeOverReservedNodes,
-//						routeOverBlockedFeedbackBlocks);
-//			} catch (final Exception e) {
-//				routeB = new Route();
-//			}
-//
-//			if (routeB == null || routeB.isEmpty()) {
-//
-//				routeB = route(locomotive, startGraphNode, endRailNode.getGraphNodeTwo(), routeOverReservedNodes,
-//						routeOverBlockedFeedbackBlocks);
-//			}
-//		} catch (final Exception e) {
-//			routeB = new Route();
-//		}
-//
-//		logger.trace("RouteA: " + routeA);
-//		logger.trace("RouteB: " + routeB);
-//
-//		if (routeA.isEmpty() && routeB.isEmpty()) {
-//
-//			return null;
-//
-//		} else if (routeA.isEmpty()) {
-//
-//			return routeB;
-//
-//		} else if (routeB.isEmpty()) {
-//
-//			return routeA;
-//
-//		} else {
-//
-//			return routeA.getGraphNodes().size() < routeB.getGraphNodes().size() ? routeA : routeB;
-//
-//		}
 	}
 
 	@Override
@@ -397,7 +357,6 @@ public abstract class BaseRoutingService implements RoutingService {
 		if (locomotive.getGraphNode().getId() != route.getGraphNodes().get(0).getId()) {
 
 			final String msg = "GraphNode ids do not match for locomotive: " + locomotive;
-			// throw new RuntimeException(msg);
 			logger.warn(msg);
 		}
 
@@ -410,7 +369,7 @@ public abstract class BaseRoutingService implements RoutingService {
 		logger.trace("highlighting the route!");
 		route.highlightRoute(applicationEventPublisher);
 
-		// Send an event that a locomotive now has a route
+		// send an event that a locomotive now has a route
 		final RouteAddedEvent routeAddedEvent = new RouteAddedEvent(this, route, locomotive);
 		applicationEventPublisher.publishEvent(routeAddedEvent);
 
@@ -454,12 +413,8 @@ public abstract class BaseRoutingService implements RoutingService {
 		locomotive.setRailNode(railNode);
 
 		// place a graphnode into the locomotive
-
-		// why was this feature deactivated?
-		final GraphNode outGraphNode = railNode.getEdge(edgeDirection).getOutGraphNode();
-
+		final GraphNode outGraphNode = railNode.getEdge(edgeDirection).getOutGraphNodes().get(0);
 		logger.info("Placing locomotive " + locomotive + " to graphNode: " + outGraphNode);
-
 		locomotive.setGraphNode(outGraphNode);
 
 		final Block block = railNode.getBlock();

@@ -10,4 +10,6 @@ public interface RoutingController {
 
 	boolean isStarted();
 
+	void stop();
+
 }

@@ -7,7 +7,7 @@ import de.wfb.rail.events.FeedbackBlockUpdateEvent;
 
 public interface ProtocolService {
 
-	void nodeClicked(int x, int y);
+	Node nodeClicked(int x, int y);
 
 	void throttleLocomotive(short locomotiveAddress, double throttleValue, boolean dirForward);
 
