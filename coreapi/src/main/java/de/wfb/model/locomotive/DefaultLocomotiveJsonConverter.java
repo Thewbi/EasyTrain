@@ -9,6 +9,7 @@ public class DefaultLocomotiveJsonConverter implements Converter<DefaultLocomoti
 		target.setId(source.getId());
 		target.setAddress(source.getAddress());
 		target.setName(source.getName());
+		target.setImageFilename(source.getImageFilename());
 	}
 
 	@Override

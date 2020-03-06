@@ -33,13 +33,13 @@ public class PlaceLocomotiveStage extends Stage implements ApplicationListener<A
 	}
 
 	public void initialize() {
-		setScene(createContentGrid());
+		setScene(createContentGrid(this));
 	}
 
-	private Scene createContentGrid() {
+	private Scene createContentGrid(final Stage stage) {
 
 		locomotiveListPane.clear();
-		locomotiveListPane.setup();
+		locomotiveListPane.setup(stage, false);
 
 		placeLocomotivePane.clear();
 		placeLocomotivePane.setup();

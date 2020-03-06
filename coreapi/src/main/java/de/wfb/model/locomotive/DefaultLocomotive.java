@@ -34,17 +34,20 @@ public class DefaultLocomotive {
 
 	private boolean direction = FORWARD_DEFAULT_VALUE;
 
+	private String imageFilename;
+
 	private ProtocolFacade protocolFacade;
 
 	public DefaultLocomotive() {
 		super();
 	}
 
-	public DefaultLocomotive(final int id, final String name, final short address) {
+	public DefaultLocomotive(final int id, final String name, final short address, final String imageFilename) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.address = address;
+		this.imageFilename = imageFilename;
 	}
 
 	@Override
@@ -179,6 +182,14 @@ public class DefaultLocomotive {
 
 	public void setDirection(final boolean direction) {
 		this.direction = direction;
+	}
+
+	public String getImageFilename() {
+		return imageFilename;
+	}
+
+	public void setImageFilename(final String imageFilename) {
+		this.imageFilename = imageFilename;
 	}
 
 }

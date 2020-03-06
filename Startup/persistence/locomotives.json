@@ -2,12 +2,14 @@
   {
     "id": 0,
     "address": 74,
-    "name": "74"
+    "name": "74",
+    "imageFilename": "file:/Users/bischowg/Desktop/DSCF3215.JPG"
   },
   {
     "id": 1,
     "address": 49,
-    "name": "Dampflock"
+    "name": "Dampflock",
+    "imageFilename": "file:/Users/bischowg/Desktop/DSCF3216.JPG"
   },
   {
     "id": 2,

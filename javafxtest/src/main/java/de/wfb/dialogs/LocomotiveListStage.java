@@ -27,13 +27,15 @@ public class LocomotiveListStage extends Stage {
 	}
 
 	public void initialize() {
-		setScene(createContentGrid());
+		setScene(createContentGrid(this));
 	}
 
-	private Scene createContentGrid() {
+	private Scene createContentGrid(final Stage stage) {
 
 		locomotiveListPane.clear();
-		locomotiveListPane.setup();
+		final boolean displayDeleteButton = true;
+		locomotiveListPane.setup(stage, displayDeleteButton);
+		locomotiveListPane.setFillWidth(true);
 
 		final BorderPane borderPane = new BorderPane();
 		borderPane.setCenter(locomotiveListPane);

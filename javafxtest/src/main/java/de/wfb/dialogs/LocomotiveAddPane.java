@@ -69,7 +69,7 @@ public class LocomotiveAddPane extends VBox {
 				// add the locomotive to the model
 				final int locomotiveId = modelFacade.retrieveNextLocomotiveId();
 				final DefaultLocomotive defaultLocomotive = new DefaultLocomotive(locomotiveId, nameTextField.getText(),
-						address);
+						address, null);
 				modelFacade.addLocomotive(defaultLocomotive);
 
 				// write the model to disk

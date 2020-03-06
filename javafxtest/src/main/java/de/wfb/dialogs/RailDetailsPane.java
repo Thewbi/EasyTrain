@@ -133,7 +133,7 @@ public class RailDetailsPane extends GridPane {
 			@Override
 			public void handle(final ActionEvent e) {
 
-				logger.info("NORTH");
+				logger.trace("NORTH");
 				node.setTraverse(Direction.NORTH);
 				currentValue.setText("NORTH");
 			}
@@ -149,7 +149,7 @@ public class RailDetailsPane extends GridPane {
 			@Override
 			public void handle(final ActionEvent e) {
 
-				logger.info("EAST");
+				logger.trace("EAST");
 				node.setTraverse(Direction.EAST);
 				currentValue.setText("EAST");
 			}
@@ -165,7 +165,7 @@ public class RailDetailsPane extends GridPane {
 			@Override
 			public void handle(final ActionEvent e) {
 
-				logger.info("SOUTH");
+				logger.trace("SOUTH");
 				node.setTraverse(Direction.SOUTH);
 				currentValue.setText("SOUTH");
 			}
@@ -181,7 +181,7 @@ public class RailDetailsPane extends GridPane {
 			@Override
 			public void handle(final ActionEvent e) {
 
-				logger.info("WEST");
+				logger.trace("WEST");
 				node.setTraverse(Direction.WEST);
 				currentValue.setText("WEST");
 			}
@@ -197,7 +197,7 @@ public class RailDetailsPane extends GridPane {
 			@Override
 			public void handle(final ActionEvent e) {
 
-				logger.info("ALL");
+				logger.trace("ALL");
 				node.setTraverse(null);
 				currentValue.setText("");
 			}

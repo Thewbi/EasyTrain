@@ -8,6 +8,8 @@ public class DefaultLocomotiveJson {
 
 	private String name;
 
+	private String imageFilename;
+
 	public int getId() {
 		return id;
 	}
@@ -30,6 +32,14 @@ public class DefaultLocomotiveJson {
 
 	public void setName(final String name) {
 		this.name = name;
+	}
+
+	public String getImageFilename() {
+		return imageFilename;
+	}
+
+	public void setImageFilename(final String imageFilename) {
+		this.imageFilename = imageFilename;
 	}
 
 }
