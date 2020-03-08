@@ -42,7 +42,11 @@ public enum ShapeType {
 
 	SWITCH_DOUBLECROSS_LEFT_TOP,
 
-	SWITCH_DOUBLECROSS_TOP_RIGHT;
+	SWITCH_DOUBLECROSS_TOP_RIGHT,
+
+	SIGNAL_HORIZONTAL,
+
+	SIGNAL_VERTICAL;
 
 	public static boolean isTurnout(final ShapeType shapeType) {
 
@@ -68,6 +72,23 @@ public enum ShapeType {
 	public static boolean isNotTurnout(final ShapeType shapeType) {
 
 		return !isTurnout(shapeType);
+	}
+
+	public static boolean isSignal(final ShapeType shapeType) {
+
+		switch (shapeType) {
+		case SIGNAL_HORIZONTAL:
+		case SIGNAL_VERTICAL:
+			return true;
+
+		default:
+			return false;
+		}
+	}
+
+	public static boolean isNotSignal(final ShapeType shapeType) {
+
+		return !isSignal(shapeType);
 	}
 
 }

@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.util.CollectionUtils;
 
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.rail.service.Block;
 import de.wfb.rail.service.BlockGroup;
 
@@ -18,7 +18,7 @@ public class DefaultBlockGroup implements BlockGroup {
 	private final List<Block> blocks = new ArrayList<>();
 
 	@Override
-	public void reserveForLocomotive(final DefaultLocomotive locomotive) {
+	public void reserveForLocomotive(final Locomotive locomotive) {
 
 		if (CollectionUtils.isEmpty(blocks)) {
 			return;

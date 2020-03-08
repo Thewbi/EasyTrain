@@ -109,6 +109,11 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	}
 
 	@Override
+	public void toggleSignal() {
+		thrown = !thrown;
+	}
+
+	@Override
 	public void switchToGraphNode(final ApplicationEventPublisher applicationEventPublisher,
 			final ProtocolFacade protocolFacade, final Model model, final GraphNode currentGraphNode,
 			final GraphNode nextGraphNode) {
@@ -475,15 +480,6 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 			return;
 		}
-
-//		// DEBUG
-//		if (getId() == debugRailNodeID) {
-//
-//			for (final GraphNode graphNode : northEdge.getOutGraphNode().getChildren()) {
-//
-//				logger.warn(northEdge.getOutGraphNode().getId() + " -> " + graphNode.getId());
-//			}
-//		}
 
 		for (final GraphNode tempGraphNode : northEdge.getOutGraphNodes()) {
 

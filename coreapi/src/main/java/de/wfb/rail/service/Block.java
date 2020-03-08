@@ -2,7 +2,7 @@ package de.wfb.rail.service;
 
 import java.util.List;
 
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.RailNode;
 
 /**
@@ -25,9 +25,9 @@ public interface Block {
 
 	List<RailNode> getNodes();
 
-	void reserveForLocomotive(DefaultLocomotive defaultLocomotive);
+	void reserveForLocomotive(Locomotive locomotive);
 
-	void reserveForLocomotiveSingular(DefaultLocomotive locomotive);
+	void reserveForLocomotiveSingular(Locomotive locomotive);
 
 	boolean isReserved();
 

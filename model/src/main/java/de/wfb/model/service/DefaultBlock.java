@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.util.CollectionUtils;
 
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.RailNode;
 import de.wfb.rail.service.Block;
 import de.wfb.rail.service.BlockGroup;
@@ -31,7 +31,7 @@ public class DefaultBlock implements Block {
 	}
 
 	@Override
-	public void reserveForLocomotive(final DefaultLocomotive locomotive) {
+	public void reserveForLocomotive(final Locomotive locomotive) {
 
 		if (blockGroup == null) {
 			reserveForLocomotiveSingular(locomotive);
@@ -41,7 +41,7 @@ public class DefaultBlock implements Block {
 	}
 
 	@Override
-	public void reserveForLocomotiveSingular(final DefaultLocomotive locomotive) {
+	public void reserveForLocomotiveSingular(final Locomotive locomotive) {
 
 		// TODO: if the
 		// TODO: check if the block is part of a block group and if so reserved all the
@@ -76,11 +76,13 @@ public class DefaultBlock implements Block {
 		}
 	}
 
+	/**
+	 * if this block is part of a block group, free all the other blocks in the
+	 * group. Prevent recursion!
+	 */
 	@Override
 	public void free() {
 
-		// TODO: if this block is part of a block group, free all the other blocks in
-		// the group. Prevent recursion!
 		if (blockGroup == null) {
 			freeSingular();
 		} else {
@@ -88,6 +90,9 @@ public class DefaultBlock implements Block {
 		}
 	}
 
+	/**
+	 * Ignore block groups and only free this individual block.
+	 */
 	@Override
 	public void freeSingular() {
 
@@ -119,6 +124,23 @@ public class DefaultBlock implements Block {
 	}
 
 	@Override
+	public int getReservedForLocomotive() {
+
+		if (CollectionUtils.isEmpty(getNodes())) {
+			return -1;
+		}
+
+		for (final RailNode blockRailNode : getNodes()) {
+
+			if (blockRailNode.isReserved()) {
+				return blockRailNode.getReservedLocomotiveId();
+			}
+		}
+
+		return -1;
+	}
+
+	@Override
 	public boolean isFeedbackBlockUsed() {
 
 		if (CollectionUtils.isEmpty(getNodes())) {
@@ -136,20 +158,9 @@ public class DefaultBlock implements Block {
 	}
 
 	@Override
-	public int getReservedForLocomotive() {
-
-		if (CollectionUtils.isEmpty(getNodes())) {
-			return -1;
-		}
-
-		for (final RailNode blockRailNode : getNodes()) {
-
-			if (blockRailNode.isReserved()) {
-				return blockRailNode.getReservedLocomotiveId();
-			}
-		}
-
-		return -1;
+	public String toString() {
+		return "Block ID: " + id + " Reserved: " + isReserved() + " Reserved for Loc: " + getReservedForLocomotive()
+				+ " Used: " + isFeedbackBlockUsed();
 	}
 
 	@Override
@@ -186,11 +197,6 @@ public class DefaultBlock implements Block {
 
 	public void setId(final int id) {
 		this.id = id;
-	}
-
-	@Override
-	public String toString() {
-		return "Block ID: " + id + "";
 	}
 
 	public BlockGroup getBlockGroup() {

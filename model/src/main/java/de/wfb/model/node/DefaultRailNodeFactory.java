@@ -71,7 +71,7 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 		final RailNode node = createFromParametersInternal(id, x, y, shapeType, feebackBlockNumber, traverse,
 				isFlipped);
 
-		if (ShapeType.isTurnout(shapeType)) {
+		if (ShapeType.isTurnout(shapeType) || ShapeType.isSignal(shapeType)) {
 
 			if (jsonNode.getProtocolTurnoutId() != null) {
 
@@ -253,6 +253,7 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 
 			break;
 
+		case SIGNAL_HORIZONTAL:
 		case STRAIGHT_HORIZONTAL:
 
 			railNode = new DefaultRailNode();
@@ -275,7 +276,6 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			eastEdge.setDirection(Direction.EAST);
 			railNode.setEdge(Direction.EAST, eastEdge);
 			eastEdge.setInGraphNode(graphNodeTwo);
-//			eastEdge.setOutGraphNode(graphNodeOne);
 			eastEdge.getOutGraphNodes().add(graphNodeOne);
 
 			// west
@@ -283,7 +283,6 @@ public class DefaultRailNodeFactory implements Factory<Node> {
 			westEdge.setDirection(Direction.WEST);
 			railNode.setEdge(Direction.WEST, westEdge);
 			westEdge.setInGraphNode(graphNodeOne);
-//			westEdge.setOutGraphNode(graphNodeTwo);
 			westEdge.getOutGraphNodes().add(graphNodeTwo);
 
 			break;

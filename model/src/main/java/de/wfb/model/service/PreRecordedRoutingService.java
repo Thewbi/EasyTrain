@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.Direction;
 import de.wfb.rail.converter.Converter;
 import de.wfb.rail.service.Block;
@@ -63,7 +63,7 @@ public class PreRecordedRoutingService extends BaseRoutingService {
 	}
 
 	@Override
-	public Route startLocomotiveToBlock(final DefaultLocomotive locomotive, final Direction locomotiveOrientation,
+	public Route startLocomotiveToBlock(final Locomotive locomotive, final Direction locomotiveOrientation,
 			final Block startBlock, final Direction startEdgeDirection, final Block endBlock,
 			final boolean routeOverReservedNodes, final boolean routeOverBlockedFeedbackBlocks) {
 
@@ -84,6 +84,11 @@ public class PreRecordedRoutingService extends BaseRoutingService {
 		routes.remove(result);
 
 		return result;
+	}
+
+	@Override
+	public void removeRoutesAll() {
+		// nop
 	}
 
 }

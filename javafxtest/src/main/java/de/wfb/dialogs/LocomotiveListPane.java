@@ -17,6 +17,7 @@ import org.springframework.context.ApplicationListener;
 
 import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.rail.events.LocomotiveModelChangedEvent;
 import de.wfb.rail.events.LocomotiveSelectedEvent;
 import javafx.collections.FXCollections;
@@ -47,9 +48,9 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 
 	private static final Logger logger = LogManager.getLogger(LocomotiveListPane.class);
 
-	private TableView<DefaultLocomotive> tableView;
+	private TableView<Locomotive> tableView;
 
-	private final ObservableList<DefaultLocomotive> data = FXCollections.observableArrayList();
+	private final ObservableList<Locomotive> data = FXCollections.observableArrayList();
 
 	@Autowired
 	private ModelFacade modelFacade;
@@ -61,7 +62,7 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 
 		data.clear();
 
-		final List<DefaultLocomotive> locomotives = modelFacade.getLocomotives();
+		final List<Locomotive> locomotives = modelFacade.getLocomotives();
 		if (CollectionUtils.isNotEmpty(locomotives)) {
 			data.addAll(locomotives);
 		}
@@ -71,8 +72,9 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 
 		logger.trace("LocomotiveListPane setup()");
 
-		tableView = new TableView<DefaultLocomotive>();
+		tableView = new TableView<Locomotive>();
 		tableView.setEditable(true);
+		tableView.setMinWidth(600);
 
 		addColumns(stage, displayDeleteButton);
 
@@ -99,25 +101,23 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 	private void addColumns(final Stage stage, final boolean displayDeleteButton) {
 
 		// column for the name
-		final TableColumn<DefaultLocomotive, String> nameTableColumn = new TableColumn<DefaultLocomotive, String>(
-				"Name");
-		nameTableColumn.setCellValueFactory(new PropertyValueFactory<DefaultLocomotive, String>("name"));
+		final TableColumn<Locomotive, String> nameTableColumn = new TableColumn<Locomotive, String>("Name");
+		nameTableColumn.setCellValueFactory(new PropertyValueFactory<Locomotive, String>("name"));
 
 		// column for the address
-		final TableColumn<DefaultLocomotive, Integer> addressTableColumn = new TableColumn<DefaultLocomotive, Integer>(
-				"Address");
-		addressTableColumn.setCellValueFactory(new PropertyValueFactory<DefaultLocomotive, Integer>("address"));
+		final TableColumn<Locomotive, Integer> addressTableColumn = new TableColumn<Locomotive, Integer>("Address");
+		addressTableColumn.setCellValueFactory(new PropertyValueFactory<Locomotive, Integer>("address"));
 
 		// delete table column
 		final TableColumn deleteTableColumn = new TableColumn("Action");
 		deleteTableColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-		final Callback<TableColumn<DefaultLocomotive, String>, TableCell<DefaultLocomotive, String>> deleteButtonCellFactory = new Callback<TableColumn<DefaultLocomotive, String>, TableCell<DefaultLocomotive, String>>() {
+		final Callback<TableColumn<Locomotive, String>, TableCell<Locomotive, String>> deleteButtonCellFactory = new Callback<TableColumn<Locomotive, String>, TableCell<Locomotive, String>>() {
 
 			@Override
-			public TableCell call(final TableColumn<DefaultLocomotive, String> param) {
+			public TableCell call(final TableColumn<Locomotive, String> param) {
 
-				final TableCell<DefaultLocomotive, String> cell = new TableCell<DefaultLocomotive, String>() {
+				final TableCell<Locomotive, String> cell = new TableCell<Locomotive, String>() {
 
 					final Button deleteButton = new Button("Delete");
 
@@ -136,7 +136,7 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 
 						deleteButton.setOnAction(event -> {
 
-							final DefaultLocomotive locomotive = getTableView().getItems().get(getIndex());
+							final Locomotive locomotive = getTableView().getItems().get(getIndex());
 
 							logger.info(locomotive.getName() + "   " + locomotive.getAddress());
 
@@ -201,12 +201,12 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 		deleteTableColumn.setCellFactory(deleteButtonCellFactory);
 
 		// Image cell factory
-		final Callback<TableColumn<DefaultLocomotive, String>, TableCell<DefaultLocomotive, String>> imageCellFactory = new Callback<TableColumn<DefaultLocomotive, String>, TableCell<DefaultLocomotive, String>>() {
+		final Callback<TableColumn<Locomotive, String>, TableCell<Locomotive, String>> imageCellFactory = new Callback<TableColumn<Locomotive, String>, TableCell<Locomotive, String>>() {
 
 			@Override
-			public TableCell call(final TableColumn<DefaultLocomotive, String> param) {
+			public TableCell call(final TableColumn<Locomotive, String> param) {
 
-				final TableCell<DefaultLocomotive, String> tableCell = new TableCell<DefaultLocomotive, String>() {
+				final TableCell<Locomotive, String> tableCell = new TableCell<Locomotive, String>() {
 
 					@Override
 					public void updateItem(final String item, final boolean empty) {
@@ -222,11 +222,30 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 
 						}
 
-						final DefaultLocomotive locomotive = getTableView().getItems().get(getIndex());
+						final Locomotive locomotive = getTableView().getItems().get(getIndex());
 
 						final String imageFilename = locomotive.getImageFilename();
 
-						logger.info("imageFilename: " + imageFilename);
+						logger.trace("imageFilename: " + imageFilename);
+
+						final Image image = retrieveImage(imageFilename);
+
+						setGraphic(null);
+						if (image != null) {
+
+							final ImageView imageView = new ImageView();
+							imageView.setPreserveRatio(true);
+							imageView.setImage(image);
+							imageView.setFitHeight(100);
+
+							setGraphic(imageView);
+						}
+
+						setText(null);
+						setUserData(locomotive);
+					}
+
+					private Image retrieveImage(final String imageFilename) {
 
 						Image image = null;
 						if (StringUtils.isEmpty(imageFilename)) {
@@ -242,20 +261,7 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 						} else {
 							image = new Image(imageFilename);
 						}
-
-						setGraphic(null);
-						if (image != null) {
-
-							final ImageView imageView = new ImageView();
-							imageView.setImage(image);
-							imageView.setFitHeight(100);
-							imageView.setFitWidth(100);
-
-							setGraphic(imageView);
-						}
-
-						setText(null);
-						setUserData(locomotive);
+						return image;
 					}
 
 				};
@@ -269,7 +275,7 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 
 						final TableCell<DefaultLocomotive, String> tableCell = (TableCell<DefaultLocomotive, String>) parent;
 
-						logger.info("Hello parent: " + parent + " this: " + tableCell);
+						// logger.info("Hello parent: " + parent + " this: " + tableCell);
 
 						final Object graphicAsObject = tableCell.getGraphic();
 
@@ -308,8 +314,7 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 		};
 
 		// image column
-		final TableColumn<DefaultLocomotive, String> imageTableColumn = new TableColumn<DefaultLocomotive, String>(
-				"Image");
+		final TableColumn<Locomotive, String> imageTableColumn = new TableColumn<Locomotive, String>("Image");
 		imageTableColumn.setCellFactory(imageCellFactory);
 
 		// add all columns
@@ -336,7 +341,7 @@ public class LocomotiveListPane extends VBox implements ApplicationListener<Appl
 
 			final LocomotiveModelChangedEvent locomotiveModelChangedEvent = (LocomotiveModelChangedEvent) event;
 
-			final DefaultLocomotive locomotive = locomotiveModelChangedEvent.getLocomotive();
+			final Locomotive locomotive = locomotiveModelChangedEvent.getLocomotive();
 
 			switch (locomotiveModelChangedEvent.getOperationType()) {
 

@@ -2,10 +2,17 @@ package de.wfb.configuration;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 public class DefaultConfigurationService implements ConfigurationService {
 
 	private boolean automatedDrivingActive = false;
+
+	// move to the config service
+	private static final double DRIVING_SPEED_ABSOLUTE = 50.0d;
+
+	// move to the config service
+	private static final double DRIVING_SPEED_SLOW_PERCENTAGE = 40.0d;
 
 	@Override
 	public String getConfiguration(final String configurationKey) {
@@ -28,9 +35,27 @@ public class DefaultConfigurationService implements ConfigurationService {
 		} else if (StringUtils.equalsIgnoreCase(trimmedKey, ConfigurationConstants.AUTOMATED_DRIVING_ACTIVE)) {
 
 			return Boolean.toString(automatedDrivingActive);
+
+		} else if (StringUtils.equalsIgnoreCase(trimmedKey, ConfigurationConstants.DRIVING_SPEED_ABSOLUTE)) {
+
+			return "50.0";
+
+		} else if (StringUtils.equalsIgnoreCase(trimmedKey, ConfigurationConstants.DRIVING_SPEED_SLOW_PERCENTAGE)) {
+
+			return "40.0";
 		}
 
 		throw new IllegalArgumentException("Unknown configuration key: " + configurationKey);
+	}
+
+	@Override
+	public double getConfigurationAsDouble(final String configurationKey) {
+
+		final String configurationValue = getConfiguration(configurationKey);
+
+		final double result = NumberUtils.toDouble(configurationValue);
+
+		return result;
 	}
 
 	@Override

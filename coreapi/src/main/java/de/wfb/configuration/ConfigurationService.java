@@ -8,4 +8,6 @@ public interface ConfigurationService {
 
 	void setConfigurationAsBoolean(String configurationKey, boolean value);
 
+	double getConfigurationAsDouble(String configurationKey);
+
 }

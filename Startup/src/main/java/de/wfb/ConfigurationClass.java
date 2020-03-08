@@ -14,6 +14,7 @@ import de.wfb.configuration.ConfigurationService;
 import de.wfb.configuration.DefaultConfigurationService;
 import de.wfb.dialogs.BlockNavigationPane;
 import de.wfb.dialogs.DrivingThreadControlPane;
+import de.wfb.dialogs.EmergencyStopPane;
 import de.wfb.dialogs.LayoutElementSelectionPane;
 import de.wfb.dialogs.LocomotiveAddPane;
 import de.wfb.dialogs.LocomotiveListPane;
@@ -23,6 +24,7 @@ import de.wfb.dialogs.PlaceLocomotiveStage;
 import de.wfb.dialogs.RailDetailsPane;
 import de.wfb.dialogs.RoutingPane;
 import de.wfb.dialogs.SidePane;
+import de.wfb.dialogs.SignalDetailsPane;
 import de.wfb.dialogs.ThrottlePane;
 import de.wfb.dialogs.ThrottleStage;
 import de.wfb.dialogs.TurnoutDetailsPane;
@@ -39,6 +41,7 @@ import de.wfb.model.Model;
 import de.wfb.model.driving.RandomRoutingController;
 import de.wfb.model.facade.DefaultModelFacade;
 import de.wfb.model.facade.DefaultRoutingFacade;
+import de.wfb.model.locomotive.DefaultLocomotiveFactory;
 import de.wfb.model.node.DefaultRailNodeFactory;
 import de.wfb.model.service.DefaultBlockService;
 import de.wfb.model.service.DefaultFeedbackBlockService;
@@ -168,6 +171,11 @@ public class ConfigurationClass implements SchedulingConfigurer {
 	@Bean
 	public TurnoutDetailsPane TurnoutDetailsPane() {
 		return new TurnoutDetailsPane();
+	}
+
+	@Bean
+	public SignalDetailsPane SignalDetailsPane() {
+		return new SignalDetailsPane();
 	}
 
 	@Bean
@@ -344,6 +352,16 @@ public class ConfigurationClass implements SchedulingConfigurer {
 	@Bean
 	public ConfigurationService ConfigurationService() {
 		return new DefaultConfigurationService();
+	}
+
+	@Bean
+	public DefaultLocomotiveFactory DefaultLocomotiveFactory() {
+		return new DefaultLocomotiveFactory();
+	}
+
+	@Bean
+	public EmergencyStopPane EmergencyStopPane() {
+		return new EmergencyStopPane();
 	}
 
 }

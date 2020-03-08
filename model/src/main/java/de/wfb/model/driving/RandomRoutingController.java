@@ -19,7 +19,7 @@ import org.springframework.context.ApplicationListener;
 import de.wfb.configuration.ConfigurationConstants;
 import de.wfb.configuration.ConfigurationService;
 import de.wfb.model.facade.ModelFacade;
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.Direction;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.service.RoutingController;
@@ -68,20 +68,17 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 
 	private final Random random = new Random();
 
-//	private static final int LOCOMOTIVE_COUNT_DEFAULT = 1;
 	private static final int LOCOMOTIVE_COUNT_DEFAULT = 2;
 
 	private static final int STOP_COUNT_DEFAULT = 3;
 
 	private final int locomotiveCount = LOCOMOTIVE_COUNT_DEFAULT;
 
-//	private final Set<Integer> requiredBlocks = new HashSet<>();
+	private List<Locomotive> locomotives = new ArrayList<>();
 
-	private List<DefaultLocomotive> locomotives = new ArrayList<>();
+	private final List<Locomotive> activeLocomotives = new ArrayList<>();
 
-	private final List<DefaultLocomotive> activeLocomotives = new ArrayList<>();
-
-	private final Map<DefaultLocomotive, LocomotiveEntry> locomotiveContext = new HashMap<>();
+	private final Map<Locomotive, LocomotiveEntry> locomotiveContext = new HashMap<>();
 
 	private boolean started = false;
 
@@ -126,7 +123,7 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 
 		// create the locomotiveContext for all locomotives that have been placed on the
 		// layout
-		for (final DefaultLocomotive locomotive : locomotives) {
+		for (final Locomotive locomotive : locomotives) {
 
 			final GraphNode graphNode = locomotive.getGraphNode();
 			if (graphNode == null) {
@@ -179,7 +176,7 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 				loopBreaker--;
 				logger.info("Trying to find locomotive ...");
 
-				final DefaultLocomotive randomLocomotive = selectRandomLocomotiveFromContext(random);
+				final Locomotive randomLocomotive = selectRandomLocomotiveFromContext(random);
 
 				logger.info("RandomLocomotive: " + randomLocomotive);
 
@@ -221,7 +218,7 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 		}
 
 		// add routes to all active locomotives
-		for (final DefaultLocomotive locomotive : activeLocomotives) {
+		for (final Locomotive locomotive : activeLocomotives) {
 
 			final boolean addNewRoute = locomotive.getRoute() == null || locomotive.getRoute().isEmpty();
 
@@ -270,7 +267,7 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 
 	private void processRouteFinishedEvent(final RouteFinishedEvent routeFinishedEvent) throws IOException, Exception {
 
-		final DefaultLocomotive locomotive = routeFinishedEvent.getDefaultLocomotive();
+		final Locomotive locomotive = routeFinishedEvent.getLocomotive();
 
 		logger.info("processRouteFinishedEvent() locomotive: " + locomotive);
 
@@ -282,6 +279,12 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 
 		final Block block = locomotive.getRailNode().getBlock();
 		final LocomotiveEntry locomotiveEntry = locomotiveContext.get(locomotive);
+
+		if (locomotiveEntry == null) {
+
+			logger.error("locomotiveEntry is null!");
+			return;
+		}
 
 		logger.info("processRouteFinishedEvent() locomotive: " + locomotive + " locomotiveEntry.loco: "
 				+ locomotiveEntry.getLocomotive());
@@ -367,7 +370,7 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 		}
 	}
 
-	private void addNewRouteToLocomotive(final String label, final DefaultLocomotive locomotive)
+	private void addNewRouteToLocomotive(final String label, final Locomotive locomotive)
 			throws IOException, Exception {
 
 		logger.info("addNewRouteToLocomotive() locomotive = " + locomotive);
@@ -422,18 +425,18 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 	}
 
 	@SuppressWarnings("unused")
-	private DefaultLocomotive selectRandomLocomotive(final Random random) {
+	private Locomotive selectRandomLocomotive(final Random random) {
 
 		final int min = 0;
 		final int max = locomotives.size() - 1;
 		final int index = random.nextInt((max - min) + 1) + min;
 
-		final DefaultLocomotive randomLocomotive = locomotives.get(index);
+		final Locomotive locomotive = locomotives.get(index);
 
-		return randomLocomotive;
+		return locomotive;
 	}
 
-	private DefaultLocomotive selectRandomLocomotiveFromContext(final Random random) {
+	private Locomotive selectRandomLocomotiveFromContext(final Random random) {
 
 		if (locomotiveContext.isEmpty()) {
 			return null;

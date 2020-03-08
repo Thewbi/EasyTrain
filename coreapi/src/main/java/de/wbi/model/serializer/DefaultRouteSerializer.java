@@ -1,6 +1,6 @@
 package de.wbi.model.serializer;
 
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.GraphNode;
 import de.wfb.rail.converter.Converter;
 import de.wfb.rail.service.Route;
@@ -21,7 +21,7 @@ public class DefaultRouteSerializer implements Converter<Route, String> {
 
 		final StringBuilder stringBuilder = new StringBuilder(4096);
 
-		final DefaultLocomotive locomotive = route.getLocomotive();
+		final Locomotive locomotive = route.getLocomotive();
 		if (locomotive != null) {
 			stringBuilder.append(locomotive.getId());
 		}

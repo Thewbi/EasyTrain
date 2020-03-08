@@ -1,19 +1,50 @@
 [
   {
-    "id": 0,
-    "address": 74,
-    "name": "74",
-    "imageFilename": "file:/Users/bischowg/Desktop/DSCF3215.JPG"
-  },
-  {
     "id": 1,
     "address": 49,
     "name": "Dampflock",
-    "imageFilename": "file:/Users/bischowg/Desktop/DSCF3216.JPG"
+    "imageFilename": "file:/Users/bischowg/Documents/workspace_javafx/Startup/src/main/resources/Loc_49.JPG"
   },
   {
     "id": 2,
     "address": 10,
-    "name": "E 10 190"
+    "name": "E 10 190",
+    "imageFilename": "file:/Users/bischowg/Documents/workspace_javafx/Startup/src/main/resources/default_locomotive_image.png"
+  },
+  {
+    "id": 0,
+    "address": 43,
+    "name": "143 007 3",
+    "imageFilename": "file:/Users/bischowg/Documents/workspace_javafx/Startup/src/main/resources/Log_143_007_3.JPG"
+  },
+  {
+    "id": 3,
+    "address": 74,
+    "name": "Loc 74",
+    "imageFilename": "file:/Users/bischowg/Documents/workspace_javafx/Startup/src/main/resources/74.JPG"
+  },
+  {
+    "id": 4,
+    "address": 34,
+    "name": "194 112-9",
+    "imageFilename": "file:/Users/bischowg/Documents/workspace_javafx/Startup/src/main/resources/194_112-9.JPG"
+  },
+  {
+    "id": 5,
+    "address": 87,
+    "name": "Loc 87",
+    "imageFilename": "file:/Users/bischowg/Documents/workspace_javafx/Startup/src/main/resources/Loc_87.JPG"
+  },
+  {
+    "id": 8,
+    "address": 9,
+    "name": "Loc 9",
+    "imageFilename": "file:/Users/bischowg/Documents/workspace_javafx/Startup/src/main/resources/Loc_9.JPG"
+  },
+  {
+    "id": 6,
+    "address": 34,
+    "name": "Loc 34",
+    "imageFilename": "file:/Users/bischowg/Documents/workspace_javafx/Startup/src/main/resources/Loc_34.JPG"
   }
 ]

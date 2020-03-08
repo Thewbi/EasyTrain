@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import de.wfb.model.node.Node;
 import de.wfb.rail.events.FeedbackBlockUpdateEvent;
 import de.wfb.rail.service.ProtocolService;
+import de.wfb.rail.service.TurnoutService;
 
 public class DefaultProtocolFacade implements ProtocolFacade {
 
@@ -16,6 +17,9 @@ public class DefaultProtocolFacade implements ProtocolFacade {
 
 	@Autowired
 	private ProtocolService protocolService;
+
+	@Autowired
+	private TurnoutService turnoutService;
 
 	@Override
 	public Node nodeClicked(final int x, final int y) {
@@ -40,6 +44,21 @@ public class DefaultProtocolFacade implements ProtocolFacade {
 		logger.trace("event() - Sending P50XXEventCommand");
 
 		return protocolService.event();
+	}
+
+	@Override
+	public void connectToIntellibox() throws Exception {
+
+		connect();
+
+		logger.info("xSensOff ...");
+		xSenseOff();
+		logger.info("xSensOff done.");
+
+		// query the turnouts to find out their state on the layout so that the software
+		// can draw them in the correct state and also send the correct commands when
+		// the user of the route service want to switch them
+		turnoutService.startQueryingFromQueue();
 	}
 
 	@Override

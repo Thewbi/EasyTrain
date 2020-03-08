@@ -81,20 +81,20 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 			if (clickedNode != null) {
 
 				if (clickedNode.getGraphNodeOne() != null) {
-					logger.info("GraphNodeOne GN-ID: " + clickedNode.getGraphNodeOne().getId() + " RoutingTable:");
-					logger.info(clickedNode.getGraphNodeOne().dumpRoutingTable());
+					logger.trace("GraphNodeOne GN-ID: " + clickedNode.getGraphNodeOne().getId() + " RoutingTable:");
+					logger.trace(clickedNode.getGraphNodeOne().dumpRoutingTable());
 				}
 				if (clickedNode.getGraphNodeTwo() != null) {
-					logger.info("GraphNodeTwo GN-ID: " + clickedNode.getGraphNodeTwo().getId() + " RoutingTable:");
-					logger.info(clickedNode.getGraphNodeTwo().dumpRoutingTable());
+					logger.trace("GraphNodeTwo GN-ID: " + clickedNode.getGraphNodeTwo().getId() + " RoutingTable:");
+					logger.trace(clickedNode.getGraphNodeTwo().dumpRoutingTable());
 				}
 				if (clickedNode.getGraphNodeThree() != null) {
-					logger.info("GraphNodeThree GN-ID: " + clickedNode.getGraphNodeThree().getId() + " RoutingTable:");
-					logger.info(clickedNode.getGraphNodeThree().dumpRoutingTable());
+					logger.trace("GraphNodeThree GN-ID: " + clickedNode.getGraphNodeThree().getId() + " RoutingTable:");
+					logger.trace(clickedNode.getGraphNodeThree().dumpRoutingTable());
 				}
 				if (clickedNode.getGraphNodeFour() != null) {
-					logger.info("GraphNodeFour GN-ID: " + clickedNode.getGraphNodeFour().getId() + " RoutingTable:");
-					logger.info(clickedNode.getGraphNodeFour().dumpRoutingTable());
+					logger.trace("GraphNodeFour GN-ID: " + clickedNode.getGraphNodeFour().getId() + " RoutingTable:");
+					logger.trace(clickedNode.getGraphNodeFour().dumpRoutingTable());
 				}
 			}
 

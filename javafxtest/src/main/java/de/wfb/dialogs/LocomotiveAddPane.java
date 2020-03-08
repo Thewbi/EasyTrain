@@ -7,7 +7,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.wfb.model.facade.ModelFacade;
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
+import de.wfb.rail.factory.Factory;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -30,6 +31,9 @@ public class LocomotiveAddPane extends VBox {
 	@Autowired
 	private ModelFacade modelFacade;
 
+	@Autowired
+	private Factory<Locomotive> locomotiveFactory;
+
 	public LocomotiveAddPane() {
 
 		nameTextField.setPromptText("Name");
@@ -43,7 +47,7 @@ public class LocomotiveAddPane extends VBox {
 		addButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
-			public void handle(final ActionEvent e) {
+			public void handle(final ActionEvent actionEvent) {
 
 				final String name = nameTextField.getText();
 				final String addressAsString = addressTextField.getText();
@@ -66,18 +70,32 @@ public class LocomotiveAddPane extends VBox {
 
 				final short address = NumberUtils.createInteger(addressAsString).shortValue();
 
-				// add the locomotive to the model
-				final int locomotiveId = modelFacade.retrieveNextLocomotiveId();
-				final DefaultLocomotive defaultLocomotive = new DefaultLocomotive(locomotiveId, nameTextField.getText(),
-						address, null);
-				modelFacade.addLocomotive(defaultLocomotive);
+//				// add the locomotive to the model
+//				final int locomotiveId = modelFacade.retrieveNextLocomotiveId();
 
-				// write the model to disk
-				modelFacade.storeLocomotiveModel(modelFacade.getCurrentLocomotivesModel());
+//				final DefaultLocomotive defaultLocomotive = new DefaultLocomotive(locomotiveId, name, address, null);
+//				defaultLocomotive.setProtocolFacade(protocolFacade);
 
-				// reset
-				nameTextField.clear();
-				addressTextField.clear();
+//				final short address = locomotiveId;
+				final boolean direction = true;
+				final double speed = 0.0d;
+
+				Locomotive locomotive;
+				try {
+					locomotive = locomotiveFactory.create(address, direction, name, speed);
+
+					modelFacade.addLocomotive(locomotive);
+
+					// write the model to disk
+					modelFacade.storeLocomotiveModel(modelFacade.getCurrentLocomotivesModel());
+
+					// reset
+					nameTextField.clear();
+					addressTextField.clear();
+
+				} catch (final Exception e) {
+					logger.error(e.getMessage(), e);
+				}
 			}
 		});
 		GridPane.setColumnIndex(addButton, 3);

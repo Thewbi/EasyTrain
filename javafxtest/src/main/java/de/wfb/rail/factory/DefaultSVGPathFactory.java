@@ -68,6 +68,9 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 		case TRIANGLE:
 			return createTriangle(size, highlighted, blocked, selected, reserved, containsLocomotive);
 
+		case SIGNAL_HORIZONTAL:
+			return createSignalHorizontal(direction, size, highlighted, blocked, selected, reserved,
+					containsLocomotive);
 		case STRAIGHT_HORIZONTAL:
 			return createStraightHorizontal(direction, size, highlighted, blocked, selected, reserved,
 					containsLocomotive);
@@ -581,6 +584,56 @@ public class DefaultSVGPathFactory implements Factory<SVGPath> {
 				.append(" ").append(0).append(",").append(7)
 			    .append(" ").append(0).append(",").append(3);
 			// @formatter:on
+		}
+
+		final SVGPath svgPath = new SVGPath();
+		svgPath.setFill(retrieveFillColor(highlighted, blocked, selected, reserved, containsLocomotive));
+		svgPath.setStroke(LayoutColors.STANDARD_STROKE_COLOR);
+		svgPath.setContent(stringBuffer.toString());
+
+		return svgPath;
+	}
+
+	private SVGPath createSignalHorizontal(final Direction direction, final int size, final boolean highlighted,
+			final boolean blocked, final boolean selected, final boolean reserved, final boolean containsLocomotive) {
+
+		final StringBuffer stringBuffer = new StringBuffer();
+
+		if (direction != null && direction == Direction.WEST) {
+
+			// @formatter:off
+			stringBuffer.append("M10,0").append("L")
+				.append(" ").append(0).append(",").append(5)
+				.append(" ").append(10).append(",").append(size);
+			// @formatter:on
+
+		} else if (direction != null && direction == Direction.EAST) {
+
+			// @formatter:off
+			stringBuffer.append("M0,0").append("L")
+				.append(" ").append(size).append(",").append(5)
+				.append(" ").append(0).append(",").append(size);
+			// @formatter:on
+
+		} else {
+
+			// https://codepen.io/pen/
+			// <svg>
+			// <path d="M0,3 L3,3 L3,0 L7,0 L7,3 L10,3 L10,7 L0,7 L0,3"/>
+			// </svg>
+
+			// @formatter:off
+			stringBuffer.append("M0,3").append("L")
+				.append(" ").append(3).append(",").append(3)
+				.append(" ").append(3).append(",").append(0)
+				.append(" ").append(7).append(",").append(0)
+				.append(" ").append(7).append(",").append(3)
+				.append(" ").append(size).append(",").append(3)
+				.append(" ").append(size).append(",").append(7)
+				.append(" ").append(0).append(",").append(7)
+			    .append(" ").append(0).append(",").append(3);
+			// @formatter:on
+
 		}
 
 		final SVGPath svgPath = new SVGPath();

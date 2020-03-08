@@ -47,6 +47,8 @@ public interface Node {
 
 	void toggleTurnout();
 
+	void toggleSignal();
+
 	void connect(Model model);
 
 	void disconnect(Model model);

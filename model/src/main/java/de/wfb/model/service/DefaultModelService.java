@@ -16,7 +16,7 @@ import org.springframework.context.ApplicationListener;
 
 import de.wfb.dot.DefaultDotSerializer;
 import de.wfb.model.Model;
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.DefaultRailNode;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
@@ -189,6 +189,15 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 				// change thrown status of the node
 				node.toggleTurnout();
 			}
+
+			// switch signals
+			if (ShapeType.isSignal(node.getShapeType())) {
+
+				logger.trace("toggleSignal()");
+
+				// change thrown status of the node
+				node.toggleSignal();
+			}
 		}
 
 		// tell the UI
@@ -201,50 +210,6 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 				              node.isSelected(),
 				              node.isReserved());
 		// @formatter:on
-
-//		// @formatter:off
-//
-//		// tell the UI
-//		if (node instanceof RailNode) {
-//
-//			final RailNode railNode = (RailNode) node;
-//
-//			if (CollectionUtils.isNotEmpty(railNode.getTurnoutGroup())) {
-//
-//				for (final RailNode tempRailNode : railNode.getTurnoutGroup()) {
-//
-//					sendModelChangedEvent(
-//						tempRailNode.getX(),
-//						tempRailNode.getY(),
-//						tempRailNode.isHighlighted(),
-//						tempRailNode.isFeedbackBlockUsed(),
-//						tempRailNode.isSelected(),
-//						tempRailNode.isReserved());
-//				}
-//
-//			} else {
-//
-//				sendModelChangedEvent(
-//						x,
-//						y,
-//						node.isHighlighted(),
-//						node.isFeedbackBlockUsed(),
-//						node.isSelected(),
-//						node.isReserved());
-//			}
-//
-//		} else {
-//
-//			sendModelChangedEvent(
-//				x,
-//				y,
-//				node.isHighlighted(),
-//				node.isFeedbackBlockUsed(),
-//				node.isSelected(),
-//				node.isReserved());
-//		}
-//
-//		// @formatter:on
 	}
 
 	private void sendNodeClickedEvent(final Node node) {
@@ -507,26 +472,26 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 	}
 
 	@Override
-	public List<DefaultLocomotive> getLocomotives() {
+	public List<Locomotive> getLocomotives() {
 		return model.getLocomotives();
 	}
 
 	@Override
-	public void addLocomotive(final DefaultLocomotive defaultLocomotive) {
-		model.getLocomotives().add(defaultLocomotive);
+	public void addLocomotive(final Locomotive locomotive) {
+		model.getLocomotives().add(locomotive);
 
-		// send event
-		final LocomotiveModelChangedEvent event = new LocomotiveModelChangedEvent(this, defaultLocomotive,
+		final LocomotiveModelChangedEvent event = new LocomotiveModelChangedEvent(this, locomotive,
 				OperationType.ADDED);
 		applicationEventPublisher.publishEvent(event);
 	}
 
 	@Override
-	public void deleteLocomotive(final DefaultLocomotive defaultLocomotive) {
-		model.getLocomotives().remove(defaultLocomotive);
+	public void deleteLocomotive(final Locomotive locomotive) {
+
+		model.getLocomotives().remove(locomotive);
 
 		// send event
-		final LocomotiveModelChangedEvent event = new LocomotiveModelChangedEvent(this, defaultLocomotive,
+		final LocomotiveModelChangedEvent event = new LocomotiveModelChangedEvent(this, locomotive,
 				OperationType.REMOVED);
 		applicationEventPublisher.publishEvent(event);
 	}

@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.wfb.model.facade.ModelFacade;
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.Direction;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
@@ -317,7 +317,7 @@ public class RailDetailsPane extends GridPane {
 		stringBuffer.append("Reserved: ").append(node.isReserved()).append("\n");
 		stringBuffer.append("ReservedByLocomotiveId: ").append(node.getReservedLocomotiveId()).append("\n");
 
-		final Optional<DefaultLocomotive> locomotive = modelFacade.getLocomotiveById(node.getReservedLocomotiveId());
+		final Optional<Locomotive> locomotive = modelFacade.getLocomotiveById(node.getReservedLocomotiveId());
 		if (locomotive.isPresent()) {
 			stringBuffer.append("Locomotive Address: ").append(locomotive.get().getAddress()).append("\n");
 		}

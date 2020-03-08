@@ -8,4 +8,8 @@ public interface ConfigurationConstants {
 
 	static final String AUTOMATED_DRIVING_ACTIVE = "AutomatedDrivingActive";
 
+	static final String DRIVING_SPEED_ABSOLUTE = "DrivingSpeedAbsolute";
+
+	static final String DRIVING_SPEED_SLOW_PERCENTAGE = "DrivingSpeedSlowPercentage";
+
 }

@@ -153,6 +153,13 @@ public class LayoutElementSelectionPane extends GridPane {
 		GridPane.setColumnIndex(switchDoubleCrossTopRight, 2);
 		GridPane.setRowIndex(switchDoubleCrossTopRight, 3);
 		getChildren().add(switchDoubleCrossTopRight);
+
+		final ToggleButton signalHorizontal = createToggleButton(applicationEventPublisher, toggleGroup,
+				"src/main/resources/SIGNAL_OPEN_SELECTED.png", "src/main/resources/SIGNAL_OPEN.png",
+				ShapeType.SIGNAL_HORIZONTAL);
+		GridPane.setColumnIndex(signalHorizontal, 3);
+		GridPane.setRowIndex(signalHorizontal, 3);
+		getChildren().add(signalHorizontal);
 	}
 
 	private ToggleButton createToggleButton(final ApplicationEventPublisher applicationEventPublisher,

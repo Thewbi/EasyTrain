@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.Direction;
 import de.wfb.model.node.Edge;
 import de.wfb.model.node.GraphNode;
@@ -45,14 +45,14 @@ public abstract class BaseRoutingService implements RoutingService {
 	private List<Block> ignoredBlocks = new ArrayList<>();
 
 	@Override
-	public Route route(final DefaultLocomotive locomotive, final GraphNode graphNodeStart, final GraphNode graphNodeEnd,
+	public Route route(final Locomotive locomotive, final GraphNode graphNodeStart, final GraphNode graphNodeEnd,
 			final boolean routeOverReservedGraphNodes, final boolean routeOverBlockedFeedbackBlocks)
 			throws IOException, Exception {
 		return null;
 	}
 
 	@Override
-	public Route route(final DefaultLocomotive locomotive, final Node nodeStart, final Node nodeEnd,
+	public Route route(final Locomotive locomotive, final Node nodeStart, final Node nodeEnd,
 			final boolean routeOverReservedGraphNodes, final boolean routeOverBlockedFeedbackBlocks)
 			throws IOException, Exception {
 		return null;
@@ -87,7 +87,7 @@ public abstract class BaseRoutingService implements RoutingService {
 		applicationEventPublisher.publishEvent(nodeHighlightedEvent);
 	}
 
-	protected boolean canTraverseGraphNode(final DefaultLocomotive locomotive, final GraphNode graphNode,
+	protected boolean canTraverseGraphNode(final Locomotive locomotive, final GraphNode graphNode,
 			final boolean routeOverReservedGraphNodes, final boolean routeOverBlockedFeedbackBlocks) {
 
 		final Node railNode = graphNode.getRailNode();
@@ -231,7 +231,7 @@ public abstract class BaseRoutingService implements RoutingService {
 	}
 
 	@Override
-	public Route startLocomotiveToRandomBlock(final DefaultLocomotive locomotive, final Direction locomotiveOrientation,
+	public Route startLocomotiveToRandomBlock(final Locomotive locomotive, final Direction locomotiveOrientation,
 			final Block startBlock, final Direction startEdgeDirection, final boolean routeOverReservedNodes,
 			final boolean routeOverBlockedFeedbackBlocks) {
 
@@ -258,7 +258,7 @@ public abstract class BaseRoutingService implements RoutingService {
 	 * highlight the route, does not switch turnouts.
 	 */
 	@Override
-	public Route startLocomotiveToBlock(final DefaultLocomotive locomotive, final Direction locomotiveOrientation,
+	public Route startLocomotiveToBlock(final Locomotive locomotive, final Direction locomotiveOrientation,
 			final Block startBlock, final Direction startEdgeDirection, final Block endBlock,
 			final boolean routeOverReservedNodes, final boolean routeOverBlockedFeedbackBlocks) {
 
@@ -311,7 +311,7 @@ public abstract class BaseRoutingService implements RoutingService {
 		return route;
 	}
 
-	public Route createRoute(final DefaultLocomotive locomotive, final Block endBlock, final GraphNode startGraphNode,
+	public Route createRoute(final Locomotive locomotive, final Block endBlock, final GraphNode startGraphNode,
 			final boolean routeOverReservedNodes, final boolean routeOverBlockedFeedbackBlocks) {
 
 		logger.trace("createRoute() to endBlock: " + endBlock);
@@ -344,7 +344,7 @@ public abstract class BaseRoutingService implements RoutingService {
 	}
 
 	@Override
-	public void attachRouteToLocomotive(final DefaultLocomotive locomotive, final Route route) {
+	public void attachRouteToLocomotive(final Locomotive locomotive, final Route route) {
 
 		if (RouteUtils.isEmpty(route)) {
 
@@ -394,7 +394,7 @@ public abstract class BaseRoutingService implements RoutingService {
 	 *                      will be produced!
 	 */
 	@Override
-	public void placeLocomotive(final Node node, final DefaultLocomotive locomotive, final Direction edgeDirection) {
+	public void placeLocomotive(final Node node, final Locomotive locomotive, final Direction edgeDirection) {
 
 		if (node == null || locomotive == null || edgeDirection == null) {
 

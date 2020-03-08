@@ -2,14 +2,14 @@ package de.wfb.rail.events;
 
 import org.springframework.context.ApplicationEvent;
 
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.rail.service.Route;
 
 public class RouteAddedEvent extends ApplicationEvent {
 
 	private final Route route;
 
-	private final DefaultLocomotive defaultLocomotive;
+	private final Locomotive locomotive;
 
 	/**
 	 * ctor
@@ -18,19 +18,19 @@ public class RouteAddedEvent extends ApplicationEvent {
 	 * @param route
 	 * @param defaultLocomotive
 	 */
-	public RouteAddedEvent(final Object source, final Route route, final DefaultLocomotive defaultLocomotive) {
+	public RouteAddedEvent(final Object source, final Route route, final Locomotive locomotive) {
 
 		super(source);
 		this.route = route;
-		this.defaultLocomotive = defaultLocomotive;
+		this.locomotive = locomotive;
 	}
 
 	public Route getRoute() {
 		return route;
 	}
 
-	public DefaultLocomotive getDefaultLocomotive() {
-		return defaultLocomotive;
+	public Locomotive getLocomotive() {
+		return locomotive;
 	}
 
 }

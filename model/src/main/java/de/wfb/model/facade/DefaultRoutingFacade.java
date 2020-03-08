@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.RailNode;
 import de.wfb.model.service.ModelService;
 import de.wfb.rail.service.Block;
@@ -30,7 +30,7 @@ public class DefaultRoutingFacade implements RoutingFacade {
 					+ " ReservedLocomotiveID: " + railNode.getReservedLocomotiveId());
 		}
 
-		for (final DefaultLocomotive locomotive : modelService.getLocomotives()) {
+		for (final Locomotive locomotive : modelService.getLocomotives()) {
 
 			if (locomotive.getRoute() == null) {
 				continue;

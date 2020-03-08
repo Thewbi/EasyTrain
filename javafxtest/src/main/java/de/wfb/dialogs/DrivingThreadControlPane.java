@@ -12,6 +12,7 @@ import javafx.scene.layout.HBox;
 
 public class DrivingThreadControlPane extends HBox {
 
+	@SuppressWarnings("unused")
 	private static final Logger logger = LogManager.getLogger(DrivingThreadControlPane.class);
 
 	@Autowired
@@ -48,7 +49,6 @@ public class DrivingThreadControlPane extends HBox {
 		});
 
 		getChildren().addAll(togglePauseButton, singleStepButton);
-
 	}
 
 }

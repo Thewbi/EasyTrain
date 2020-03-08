@@ -78,6 +78,7 @@ public class LayoutSVGConverter implements Converter<Model, String> {
 			final GraphNode graphNodeTwo) {
 		switch (railNode.getShapeType()) {
 
+		case SIGNAL_HORIZONTAL:
 		case STRAIGHT_HORIZONTAL:
 			graphNodeOne.setX(x + 50);
 			graphNodeOne.setY(y + 20);

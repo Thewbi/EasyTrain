@@ -13,7 +13,7 @@ import org.springframework.util.CollectionUtils;
 import de.wfb.configuration.ConfigurationConstants;
 import de.wfb.configuration.ConfigurationService;
 import de.wfb.model.facade.ModelFacade;
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.Edge;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.RailNode;
@@ -114,7 +114,7 @@ public class TimedDrivingThread {
 
 		logger.trace("moveLocomotives " + date);
 
-		final List<DefaultLocomotive> locomotives = modelFacade.getLocomotives();
+		final List<Locomotive> locomotives = modelFacade.getLocomotives();
 
 		if (CollectionUtils.isEmpty(locomotives)) {
 
@@ -122,7 +122,7 @@ public class TimedDrivingThread {
 			return;
 		}
 
-		for (final DefaultLocomotive locomotive : locomotives) {
+		for (final Locomotive locomotive : locomotives) {
 
 			final Route route = locomotive.getRoute();
 			if (route == null) {
@@ -137,7 +137,7 @@ public class TimedDrivingThread {
 		}
 	}
 
-	private void processLocomotive(final DefaultLocomotive locomotive) throws Exception {
+	private void processLocomotive(final Locomotive locomotive) throws Exception {
 
 		logger.trace("processLocomotive() locomotive ID: " + locomotive.getId());
 
@@ -240,7 +240,7 @@ public class TimedDrivingThread {
 	}
 
 	private void processBlocks(final GraphNode currentGraphNode, final RailNode newRailNode,
-			final DefaultLocomotive locomotive) {
+			final Locomotive locomotive) {
 
 		final Block oldBlock = currentGraphNode.getRailNode().getBlock();
 		final Block newBlock = newRailNode.getBlock();
@@ -269,7 +269,7 @@ public class TimedDrivingThread {
 		}
 	}
 
-	private RailNode moveLocomotiveToNextGraphNode(final DefaultLocomotive locomotive, final GraphNode currentGraphNode,
+	private RailNode moveLocomotiveToNextGraphNode(final Locomotive locomotive, final GraphNode currentGraphNode,
 			final GraphNode nextGraphNode) {
 
 		final int currentGraphNodeId = currentGraphNode.getId();
@@ -333,7 +333,7 @@ public class TimedDrivingThread {
 		return nextRailNode;
 	}
 
-	private void sendEnteringMessage(final Block block, final DefaultLocomotive defaultLocomotive) {
+	private void sendEnteringMessage(final Block block, final Locomotive locomotive) {
 
 		logger.trace("Entering block " + block);
 
@@ -345,7 +345,7 @@ public class TimedDrivingThread {
 		applicationEventPublisher.publishEvent(feedbackBlockEvent);
 	}
 
-	private void sendLeavingMessage(final Block block, final DefaultLocomotive defaultLocomotive) {
+	private void sendLeavingMessage(final Block block, final Locomotive locomotive) {
 
 		logger.trace("Leaving block: " + block);
 

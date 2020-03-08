@@ -35,4 +35,6 @@ public interface ProtocolFacade {
 
 	List<FeedbackBlockUpdateEvent> eventSenseCommand();
 
+	void connectToIntellibox() throws Exception;
+
 }

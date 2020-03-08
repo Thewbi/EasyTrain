@@ -2,10 +2,10 @@ package de.wfb.model.locomotive;
 
 import de.wfb.rail.converter.Converter;
 
-public class DefaultJsonLocomotiveConverter implements Converter<DefaultLocomotiveJson, DefaultLocomotive> {
+public class DefaultJsonLocomotiveConverter implements Converter<DefaultLocomotiveJson, Locomotive> {
 
 	@Override
-	public void convert(final DefaultLocomotiveJson source, final DefaultLocomotive target) {
+	public void convert(final DefaultLocomotiveJson source, final Locomotive target) {
 
 		target.setId(source.getId());
 		target.setAddress(source.getAddress());

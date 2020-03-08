@@ -9,7 +9,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.GraphNode;
 import de.wfb.rail.service.Route;
 
@@ -55,7 +55,7 @@ public class NewRoutingService extends BaseRoutingService {
 	private static final Logger logger = LogManager.getLogger(NewRoutingService.class);
 
 	@Override
-	public Route route(final DefaultLocomotive locomotive, final GraphNode graphNodeStart, final GraphNode graphNodeEnd,
+	public Route route(final Locomotive locomotive, final GraphNode graphNodeStart, final GraphNode graphNodeEnd,
 			final boolean routeOverReservedGraphNodes, final boolean routeOverBlockedFeedbackBlocks)
 			throws IOException, Exception {
 
@@ -81,7 +81,7 @@ public class NewRoutingService extends BaseRoutingService {
 		return route;
 	}
 
-	private GraphNode findNextNode(final GraphNode currNode, final DefaultLocomotive locomotive,
+	private GraphNode findNextNode(final GraphNode currNode, final Locomotive locomotive,
 			final Stack<SwitchingFrame> switchingNodeStack, final Route route, final Set<GraphNode> visitedNodes) {
 
 		GraphNode nextNode = null;
@@ -133,7 +133,7 @@ public class NewRoutingService extends BaseRoutingService {
 
 	}
 
-	private GraphNode bb(final GraphNode currNode, final DefaultLocomotive locomotive,
+	private GraphNode bb(final GraphNode currNode, final Locomotive locomotive,
 			final Stack<SwitchingFrame> switchingNodeStack, final Route route, final Set<GraphNode> visitedNodes) {
 
 		GraphNode nextNode = null;
@@ -206,6 +206,11 @@ public class NewRoutingService extends BaseRoutingService {
 
 	@Override
 	public void initialize() {
+		// nop
+	}
+
+	@Override
+	public void removeRoutesAll() {
 		// nop
 	}
 

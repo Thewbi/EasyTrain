@@ -12,7 +12,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.GraphNodeEntry;
 import de.wfb.model.node.SwitchingNodeEntry;
@@ -84,7 +84,7 @@ public class DefaultRoutingService extends BaseRoutingService {
 	}
 
 	@Override
-	public Route route(final DefaultLocomotive locomotive, final GraphNode graphNodeStart, final GraphNode graphNodeEnd,
+	public Route route(final Locomotive locomotive, final GraphNode graphNodeStart, final GraphNode graphNodeEnd,
 			final boolean routeOverReservedGraphNodes, final boolean routeOverBlockedFeedbackBlocks)
 			throws IOException, Exception {
 
@@ -122,7 +122,7 @@ public class DefaultRoutingService extends BaseRoutingService {
 		return route;
 	}
 
-	private GraphNode bb(final GraphNode currNode, final DefaultLocomotive locomotive,
+	private GraphNode bb(final GraphNode currNode, final Locomotive locomotive,
 			final Stack<SwitchingFrame> switchingNodeStack, final Route route, final Set<GraphNode> visitedNodes) {
 
 		GraphNode nextNode = null;
@@ -194,9 +194,9 @@ public class DefaultRoutingService extends BaseRoutingService {
 		return topMostSwitchingFrame.getOtherOption();
 	}
 
-	private GraphNode findNextNode(final GraphNode currNode, final GraphNode graphNodeEnd,
-			final DefaultLocomotive locomotive, final Stack<SwitchingFrame> switchingNodeStack, final Route route,
-			final Set<GraphNode> visitedNodes) throws Exception {
+	private GraphNode findNextNode(final GraphNode currNode, final GraphNode graphNodeEnd, final Locomotive locomotive,
+			final Stack<SwitchingFrame> switchingNodeStack, final Route route, final Set<GraphNode> visitedNodes)
+			throws Exception {
 
 		GraphNode nextNode = null;
 
@@ -269,14 +269,14 @@ public class DefaultRoutingService extends BaseRoutingService {
 		// tables and also insert their switching node children
 		for (final GraphNode switchingGraphNode : switchingNodes) {
 
-			// DEBUG
-			if (switchingGraphNode.getId() == 4598 ||
-				switchingGraphNode.getId() == 4599 ||
-				switchingGraphNode.getId() == 4600||
-				switchingGraphNode.getId() == 4601) {
-
-				logger.info("Debug");
-			}
+//			// DEBUG
+//			if (switchingGraphNode.getId() == 4598 ||
+//				switchingGraphNode.getId() == 4599 ||
+//				switchingGraphNode.getId() == 4600||
+//				switchingGraphNode.getId() == 4601) {
+//
+//				logger.info("Debug");
+//			}
 
 			// over all children of the switching graph node
 			for (final GraphNode child : switchingGraphNode.getChildren()) {
@@ -419,6 +419,31 @@ public class DefaultRoutingService extends BaseRoutingService {
 		}
 
 		// @formatter:on
+	}
+
+	@Override
+	public void removeRoutesAll() {
+
+		final List<Locomotive> locomotives = getModelService().getLocomotives();
+
+		if (CollectionUtils.isEmpty(locomotives)) {
+			return;
+		}
+
+		for (final Locomotive locomotive : locomotives) {
+
+			locomotive.immediateStop();
+
+			final Route route = locomotive.getRoute();
+
+			if (route == null) {
+				continue;
+			}
+
+			route.delete();
+
+			locomotive.setRoute(null);
+		}
 	}
 
 }

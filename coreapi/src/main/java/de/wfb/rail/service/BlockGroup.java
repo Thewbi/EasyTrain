@@ -2,12 +2,11 @@ package de.wfb.rail.service;
 
 import java.util.List;
 
-import de.wfb.model.locomotive.DefaultLocomotive;
-import de.wfb.rail.service.Block;
+import de.wfb.model.locomotive.Locomotive;
 
 public interface BlockGroup {
 
-	void reserveForLocomotive(DefaultLocomotive locomotive);
+	void reserveForLocomotive(Locomotive locomotive);
 
 	void free();
 

@@ -9,7 +9,7 @@ import de.wfb.model.node.RailNode;
 import de.wfb.rail.facade.ProtocolFacade;
 import de.wfb.rail.service.Route;
 
-public class DefaultLocomotive {
+public class DefaultLocomotive implements Locomotive {
 
 	private static final Logger logger = LogManager.getLogger(DefaultLocomotive.class);
 
@@ -51,6 +51,51 @@ public class DefaultLocomotive {
 	}
 
 	@Override
+	public void start(final double speed) {
+
+		if (Math.abs(this.speed - speed) < 0.1d) {
+			return;
+		}
+
+		this.speed = speed;
+		protocolFacade.throttleLocomotive(address, speed, direction);
+	}
+
+	@Override
+	public void stop() {
+
+		// if the locomotive is not running, do not send a command
+		if (speed <= 0.0d) {
+			return;
+		}
+
+		// if the speed is set to 0.0d and the reverse direction is used,
+		// locomotives appruptly stop! This is unrealistic. The direction
+		// has to be choosen as the direction the locomotive is currently going!
+		// This causes the decoder to apply it's configured speed curved to bring
+		// the locomotive to a smooth, realistic halt.
+		speed = 0.0d;
+		protocolFacade.throttleLocomotive(address, speed, direction);
+	}
+
+	@Override
+	public void immediateStop() {
+
+		// if the locomotive is not running, do not send a command
+		if (speed <= 0.0d) {
+			return;
+		}
+
+		// if the speed is set to 0.0d and the reverse direction is used,
+		// locomotives appruptly stop! This is unrealistic. The direction
+		// has to be choosen as the direction the locomotive is currently going!
+		// This causes the decoder to apply it's configured speed curved to bring
+		// the locomotive to a smooth, realistic halt.
+		speed = 0.0d;
+		protocolFacade.throttleLocomotive(address, speed, !direction);
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -77,59 +122,73 @@ public class DefaultLocomotive {
 		return "Locomotive " + name + "";
 	}
 
+	@Override
 	public short getAddress() {
 		return address;
 	}
 
+	@Override
 	public void setAddress(final short address) {
 		this.address = address;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public void setName(final String name) {
 		this.name = name;
 	}
 
+	@Override
 	public int getId() {
 		return id;
 	}
 
+	@Override
 	public void setId(final int id) {
 		this.id = id;
 	}
 
+	@Override
 	public Direction getOrientation() {
 		return edgeDirection;
 	}
 
+	@Override
 	public void setOrientation(final Direction edgeDirection) {
 		logger.trace("OldOrientation = " + this.edgeDirection.name() + " NewOrientation = " + edgeDirection.name());
 		this.edgeDirection = edgeDirection;
 	}
 
+	@Override
 	public RailNode getRailNode() {
 		return railNode;
 	}
 
+	@Override
 	public void setRailNode(final RailNode railNode) {
 		this.railNode = railNode;
 	}
 
+	@Override
 	public Route getRoute() {
 		return route;
 	}
 
+	@Override
 	public void setRoute(final Route route) {
 		this.route = route;
 	}
 
+	@Override
 	public GraphNode getGraphNode() {
 		return graphNode;
 	}
 
+	@Override
 	public void setGraphNode(final GraphNode graphNode) {
 		this.graphNode = graphNode;
 	}
@@ -150,44 +209,22 @@ public class DefaultLocomotive {
 		this.protocolFacade = protocolFacade;
 	}
 
-	public void start(final double speed) {
-
-		if (Math.abs(this.speed - speed) < 0.1d) {
-			return;
-		}
-
-		this.speed = speed;
-		protocolFacade.throttleLocomotive(address, speed, direction);
-	}
-
-	public void stop() {
-
-		// if the locomotive is not running, do not send a command
-		if (speed <= 0.0d) {
-			return;
-		}
-
-		// if the speed is set to 0.0d and the reverse direction is used,
-		// locomotives appruptly stop! This is unrealistic. The direction
-		// has to be choosen as the direction the locomotive is currently going!
-		// This causes the decoder to apply it's configured speed curved to bring
-		// the locomotive to a smooth, realistic halt.
-		speed = 0.0d;
-		protocolFacade.throttleLocomotive(address, speed, direction);
-	}
-
+	@Override
 	public boolean isDirection() {
 		return direction;
 	}
 
+	@Override
 	public void setDirection(final boolean direction) {
 		this.direction = direction;
 	}
 
+	@Override
 	public String getImageFilename() {
 		return imageFilename;
 	}
 
+	@Override
 	public void setImageFilename(final String imageFilename) {
 		this.imageFilename = imageFilename;
 	}

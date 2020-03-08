@@ -5,13 +5,13 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.GraphNode;
 import de.wfb.rail.service.Block;
 
 public class LocomotiveEntry {
 
-	private DefaultLocomotive locomotive;
+	private Locomotive locomotive;
 
 	private GraphNode startGraphNode;
 
@@ -19,11 +19,11 @@ public class LocomotiveEntry {
 
 	private final List<Block> visitedBlocks = new ArrayList<>();
 
-	public DefaultLocomotive getLocomotive() {
+	public Locomotive getLocomotive() {
 		return locomotive;
 	}
 
-	public void setLocomotive(final DefaultLocomotive locomotive) {
+	public void setLocomotive(final Locomotive locomotive) {
 		this.locomotive = locomotive;
 	}
 

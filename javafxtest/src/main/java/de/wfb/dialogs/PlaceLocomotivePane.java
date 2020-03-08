@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.Direction;
 import de.wfb.model.node.Node;
 import de.wfb.model.service.RoutingService;
@@ -37,7 +37,7 @@ public class PlaceLocomotivePane extends VBox implements ApplicationListener<App
 
 	private final Button westButton = new Button("West");
 
-	private DefaultLocomotive defaultLocomotive;
+	private Locomotive locomotive;
 
 	private Node node;
 
@@ -67,12 +67,12 @@ public class PlaceLocomotivePane extends VBox implements ApplicationListener<App
 
 				try {
 
-					routingService.placeLocomotive(node, defaultLocomotive, edgeDirection);
+					routingService.placeLocomotive(node, locomotive, edgeDirection);
 
 					getScene().getWindow().hide();
 
 					edgeDirection = null;
-					defaultLocomotive = null;
+					locomotive = null;
 					node = null;
 
 				} catch (final Exception e) {
@@ -122,7 +122,8 @@ public class PlaceLocomotivePane extends VBox implements ApplicationListener<App
 				result.add(southButton);
 			}
 
-			if (node.getShapeType() == ShapeType.STRAIGHT_HORIZONTAL) {
+			if (node.getShapeType() == ShapeType.STRAIGHT_HORIZONTAL
+					|| node.getShapeType() == ShapeType.SIGNAL_HORIZONTAL) {
 
 				// east
 				eastButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -157,7 +158,7 @@ public class PlaceLocomotivePane extends VBox implements ApplicationListener<App
 		if (event instanceof LocomotiveSelectedEvent) {
 
 			final LocomotiveSelectedEvent locomotiveSelectedEvent = (LocomotiveSelectedEvent) event;
-			defaultLocomotive = locomotiveSelectedEvent.getLocomotive();
+			locomotive = locomotiveSelectedEvent.getLocomotive();
 
 		} else if (event instanceof NodeClickedEvent) {
 

@@ -34,7 +34,11 @@ public class DefaultSerialPortFactory implements Factory<SerialPort> {
 
 	private SerialPort connect(final String portName) throws Exception {
 
+		logger.info("connect portName: " + portName);
+
 		final CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
+
+		logger.info("PortIdentifier: " + portIdentifier);
 
 		if (portIdentifier.isCurrentlyOwned()) {
 
@@ -46,6 +50,8 @@ public class DefaultSerialPortFactory implements Factory<SerialPort> {
 		final int connectionTimeoutInMillis = 2000;
 
 		final CommPort commPort = portIdentifier.open(APPLICATION_NAME, connectionTimeoutInMillis);
+
+		logger.info("CommPort: " + commPort);
 
 		if (!(commPort instanceof SerialPort)) {
 			logger.error("Error: Only serial ports are handled by this example.");

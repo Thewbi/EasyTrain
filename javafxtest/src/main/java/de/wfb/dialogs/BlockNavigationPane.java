@@ -3,7 +3,6 @@ package de.wfb.dialogs;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 
 import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.locomotive.DefaultLocomotive;
@@ -37,9 +36,6 @@ public class BlockNavigationPane extends HBox {
 	@Autowired
 	private RoutingService routingService;
 
-	@Autowired
-	private ApplicationEventPublisher applicationEventPublisher;
-
 	@SuppressWarnings("rawtypes")
 	private final ComboBox locomotiveComboBox = new ComboBox();
 
@@ -72,18 +68,22 @@ public class BlockNavigationPane extends HBox {
 
 		locomotiveComboBox.getItems().addAll(modelFacade.getLocomotives());
 		locomotiveComboBox.getSelectionModel().selectFirst();
+		getChildren().add(locomotiveComboBox);
 
 		startBlockComboBox.getItems().addAll(blockService.getAllBlocks());
 		startBlockComboBox.getSelectionModel().select(19);
+		getChildren().add(startBlockComboBox);
 
 		endBlockComboBox.getItems().addAll(blockService.getAllBlocks());
 		endBlockComboBox.getSelectionModel().select(40);
+		getChildren().add(endBlockComboBox);
 
 		startDirectionComboBox.getItems().add(Direction.NORTH);
 		startDirectionComboBox.getItems().add(Direction.EAST);
 		startDirectionComboBox.getItems().add(Direction.SOUTH);
 		startDirectionComboBox.getItems().add(Direction.WEST);
 		startDirectionComboBox.getSelectionModel().select(1);
+		getChildren().add(startDirectionComboBox);
 
 		startButton.setText("Start");
 		startButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -120,15 +120,15 @@ public class BlockNavigationPane extends HBox {
 				final Route route = routingService.startLocomotiveToBlock(locomotive, locomotiveOrientation, startBlock,
 						startEdgeDirection, endBlock, routeOverReservedNodes, routeOverBlockedFeedbackBlocks);
 
+				logger.info("Route: " + route);
+
 				routingService.attachRouteToLocomotive(locomotive, route);
 			}
 		});
+		getChildren().add(startButton);
 
 		setSpacing(5);
 		setPadding(new Insets(10, 10, 10, 10));
-
-		getChildren().addAll(locomotiveComboBox, startBlockComboBox, startDirectionComboBox, endBlockComboBox,
-				startButton);
 	}
 
 }

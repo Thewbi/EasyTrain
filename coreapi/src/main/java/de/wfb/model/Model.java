@@ -3,7 +3,7 @@ package de.wfb.model;
 import java.util.List;
 import java.util.Map;
 
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
 import de.wfb.model.node.RailNode;
@@ -28,7 +28,7 @@ public interface Model {
 
 	List<RailNode> getAllRailNodes();
 
-	List<DefaultLocomotive> getLocomotives();
+	List<Locomotive> getLocomotives();
 
 	int retrieveNextLocomotiveId();
 

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import de.wfb.dialogs.BlockNavigationPane;
 import de.wfb.dialogs.DrivingThreadControlPane;
+import de.wfb.dialogs.EmergencyStopPane;
 import de.wfb.dialogs.SidePane;
 import de.wfb.javafxtest.controller.LayoutGridController;
 import de.wfb.javafxtest.controls.CustomGridPane;
@@ -46,6 +47,9 @@ public class DefaultSceneFactory implements Factory<Scene> {
 
 	@Autowired
 	private BlockNavigationPane blockNavigationPane;
+
+	@Autowired
+	private EmergencyStopPane emergencyStopPane;
 
 	@Autowired
 	private DrivingThreadControlPane drivingThreadControlPane;
@@ -89,13 +93,18 @@ public class DefaultSceneFactory implements Factory<Scene> {
 
 		final MenuBar menuBar = menuBarFactory.create(stage, layoutGridController);
 
+		final VBox bottomVBox = new VBox();
+		bottomVBox.getChildren().addAll(blockNavigationPane, drivingThreadControlPane);
+
+		final BorderPane bottomBorderPane = new BorderPane();
+		bottomBorderPane.setLeft(bottomVBox);
+		bottomBorderPane.setRight(emergencyStopPane);
+
 		final BorderPane borderPane = new BorderPane();
 		borderPane.setTop(menuBar);
 		borderPane.setCenter(stackPane);
 		borderPane.setRight(createDetailsView());
-		final VBox bottomVBox = new VBox();
-		bottomVBox.getChildren().addAll(blockNavigationPane, drivingThreadControlPane);
-		borderPane.setBottom(bottomVBox);
+		borderPane.setBottom(bottomBorderPane);
 
 		borderPane.setOnKeyReleased(new EventHandler<KeyEvent>() {
 

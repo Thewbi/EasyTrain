@@ -45,6 +45,7 @@ public class DefaultProtocolService implements ProtocolService {
 
 	private OutputStream outputStream;
 
+	@SuppressWarnings("unused")
 	private final ReentrantLock lock = new ReentrantLock(true);
 
 	@Autowired
@@ -74,9 +75,62 @@ public class DefaultProtocolService implements ProtocolService {
 		if (ShapeType.isTurnout(node.getShapeType())) {
 
 			turnTurnout(node);
+		} else if (ShapeType.isSignal(node.getShapeType())) {
+
+			turnSignal(node);
 		}
 
 		return node;
+	}
+
+	private void turnSignal(final Node node) {
+
+		logger.info("turnSignal()");
+
+		if (ShapeType.isNotSignal(node.getShapeType())) {
+
+			logger.info("Not a signal shape!");
+			return;
+		}
+
+		try {
+
+			lockLock(false);
+
+			if (node.getProtocolTurnoutId() == null || node.getProtocolTurnoutId() <= 0) {
+				logger.info("The signal has no valid turnoutId! Cannot switch the turnout via the Intellibox!");
+
+				return;
+			}
+
+			if (!isConnected()) {
+				logger.info("Not connected! Aborting operation!");
+
+				return;
+			}
+
+			// in order to operate a turnout once (one change of direction)
+			// two commands have to be sent!
+			turnoutCommandFirst(inputStream, outputStream, node.getProtocolTurnoutId(), node.isThrown());
+			try {
+				Thread.sleep(100);
+			} catch (final InterruptedException e) {
+				logger.error(e.getMessage(), e);
+			}
+			turnoutCommandSecond(inputStream, outputStream, node.getProtocolTurnoutId(), node.isThrown());
+
+		} catch (final Exception e) {
+
+			logger.error(e.getMessage(), e);
+
+		} finally {
+
+			logger.trace("turnTurnout unlockLock ...");
+			unlockLock();
+			logger.trace("turnTurnout unlockLock done.");
+
+		}
+
 	}
 
 	@Override
@@ -488,9 +542,9 @@ public class DefaultProtocolService implements ProtocolService {
 			return;
 		}
 
-		logger.info("Creating port ... " + serialPortFactory);
+		logger.info("Creating port ... ");
 		serialPort = serialPortFactory.create(SERIAL_PORT_IDENTIFIER);
-		logger.info("Creating port done.");
+		logger.info("Creating port done. SerialPort: " + serialPort);
 
 		if (serialPort != null) {
 			inputStream = serialPort.getInputStream();

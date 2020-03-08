@@ -7,6 +7,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import de.wfb.dialogs.BlockNavigationPane;
 import de.wfb.dialogs.DrivingThreadControlPane;
+import de.wfb.dialogs.EmergencyStopPane;
 import de.wfb.dialogs.LocomotiveListStage;
 import de.wfb.dialogs.PlaceLocomotiveStage;
 import de.wfb.dialogs.ThrottleStage;
@@ -24,22 +25,19 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 /**
- * NEXT:
+ * TODO:
  * <ol>
- *
  * <li>In der UI protocolId der Weichen einstellen</li>
  * <li>Model file explicit speichern</li>
  * <li>Model file explicit laden</li>
  * <li>Bei ungespeicherten Änderungen im Model nicht beenden</li>
- *
- * <li>connect disconnect einbauen</li>
- *
  * </ol>
  */
 public class Startup extends Application {
@@ -71,6 +69,8 @@ public class Startup extends Application {
 	private DrivingThreadControlPane drivingThreadControlPane;
 
 	private CustomThreadPoolScheduler customThreadPoolScheduler;
+
+	private EmergencyStopPane emergencyStopPane;
 
 	private Factory<Scene> sceneFactory;
 
@@ -119,18 +119,25 @@ public class Startup extends Application {
 
 		blockNavigationPane.setup();
 		drivingThreadControlPane.setup();
+		emergencyStopPane.setup();
 
 		// connect to the intellibox
-		connectToIntellibox();
+		try {
+			protocolFacade.connectToIntellibox();
+		} catch (final Exception e) {
+			logger.error(e.getMessage(), e);
 
-		logger.info("xSensOff ...");
-		protocolFacade.xSenseOff();
-		logger.info("xSensOff done.");
+			final Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Connection failed!");
+			alert.setHeaderText("Connection to Intellibox failed!");
+			alert.setContentText("Please connect the cable to the intellibox and try again!");
+			alert.showAndWait().ifPresent(rs -> {
+				if (rs == ButtonType.OK) {
+					logger.info("Not connected message box. Pressed OK.");
+				}
+			});
 
-		// query the turnouts to find out their state on the layout so that the software
-		// can draw them in the correct state and also send the correct commands when
-		// the user of the route service want to switch them
-		turnoutService.startQueryingFromQueue();
+		}
 
 		// locomotive throttle
 		if (SHOW_THROTTLE_NONMODAL_DIALOG) {
@@ -145,18 +152,31 @@ public class Startup extends Application {
 		createAndShowScene(stage);
 	}
 
-	private void createAndShowScene(final Stage stage) throws Exception {
+	@Override
+	public void stop() {
 
-		stage.setScene(sceneFactory.create(stage));
+		logger.info("Startup.stop() - Shutting down scheduler! Active Count: "
+				+ customThreadPoolScheduler.getActiveCount());
 
-		// https://stackoverflow.com/questions/26619566/javafx-stage-close-handler
-		stage.setOnCloseRequest(closeWindowEventHandler);
+		customThreadPoolScheduler.stop();
+		customThreadPoolScheduler.shutdown();
 
-		stage.setTitle("Easy Train (Beta v0.2)");
-		stage.setWidth(1400);
-		stage.setHeight(1000);
+		int activeCount = 0;
+		do {
 
-		stage.show();
+			try {
+				Thread.sleep(1000);
+			} catch (final InterruptedException e) {
+				logger.error(e.getMessage(), e);
+			}
+
+			activeCount = customThreadPoolScheduler.getActiveCount();
+			logger.info("activeCount = " + activeCount + ". Sleeping ...");
+
+		} while (activeCount > 0);
+
+		logger.info("Platform exit!");
+		Platform.exit();
 	}
 
 	private void createAndShowThrottle(final ApplicationContext context) {
@@ -169,13 +189,18 @@ public class Startup extends Application {
 		throttleStage.show();
 	}
 
-	private void connectToIntellibox() {
+	private void createAndShowScene(final Stage stage) throws Exception {
 
-		try {
-			protocolFacade.connect();
-		} catch (final Exception e) {
-			logger.error(e.getMessage(), e);
-		}
+		stage.setScene(sceneFactory.create(stage));
+
+		// https://stackoverflow.com/questions/26619566/javafx-stage-close-handler
+		stage.setOnCloseRequest(closeWindowEventHandler);
+
+		stage.setTitle("Easy Train (Beta v0.2)");
+		stage.setWidth(1400);
+		stage.setHeight(1000);
+
+		stage.show();
 	}
 
 	private void loadModel(final String modelFile, final String locomotivesModelFile) {
@@ -217,6 +242,7 @@ public class Startup extends Application {
 		drivingThreadControlPane = context.getBean(DrivingThreadControlPane.class);
 		locomotiveListStage = context.getBean(LocomotiveListStage.class);
 		placeLocomotiveStage = context.getBean(PlaceLocomotiveStage.class);
+		emergencyStopPane = context.getBean(EmergencyStopPane.class);
 		final GraphNodeSVGMenuItem graphNodeSVGMenuItem = context.getBean(GraphNodeSVGMenuItem.class);
 		graphNodeSVGMenuItem.setStage(stage);
 
@@ -283,33 +309,6 @@ public class Startup extends Application {
 				});
 			}
 		};
-	}
-
-	@Override
-	public void stop() {
-
-		logger.info("Startup.stop() - Shutting down scheduler! Active Count: "
-				+ customThreadPoolScheduler.getActiveCount());
-
-		customThreadPoolScheduler.stop();
-		customThreadPoolScheduler.shutdown();
-
-		int activeCount = 0;
-		do {
-
-			try {
-				Thread.sleep(1000);
-			} catch (final InterruptedException e) {
-				logger.error(e.getMessage(), e);
-			}
-
-			activeCount = customThreadPoolScheduler.getActiveCount();
-			logger.info("activeCount = " + activeCount + ". Sleeping ...");
-
-		} while (activeCount > 0);
-
-		logger.info("Platform exit!");
-		Platform.exit();
 	}
 
 }

@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.wfb.model.Model;
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
 import de.wfb.model.node.RailNode;
@@ -84,18 +84,18 @@ public class DefaultModelFacade implements ModelFacade {
 	}
 
 	@Override
-	public List<DefaultLocomotive> getLocomotives() {
+	public List<Locomotive> getLocomotives() {
 		return modelService.getLocomotives();
 	}
 
 	@Override
-	public void addLocomotive(final DefaultLocomotive defaultLocomotive) {
-		modelService.addLocomotive(defaultLocomotive);
+	public void addLocomotive(final Locomotive locomotive) {
+		modelService.addLocomotive(locomotive);
 	}
 
 	@Override
-	public void deleteLocomotive(final DefaultLocomotive defaultLocomotive) {
-		modelService.deleteLocomotive(defaultLocomotive);
+	public void deleteLocomotive(final Locomotive locomotive) {
+		modelService.deleteLocomotive(locomotive);
 	}
 
 	@Override
@@ -104,12 +104,12 @@ public class DefaultModelFacade implements ModelFacade {
 	}
 
 	@Override
-	public Optional<DefaultLocomotive> getLocomotiveById(final int id) {
+	public Optional<Locomotive> getLocomotiveById(final int id) {
 		return modelService.getLocomotives().stream().filter(locomotive -> locomotive.getId() == id).findFirst();
 	}
 
 	@Override
-	public Optional<DefaultLocomotive> getLocomotiveByAddress(final short locomotiveAddress) {
+	public Optional<Locomotive> getLocomotiveByAddress(final short locomotiveAddress) {
 		return modelService.getLocomotives().stream().filter(locomotive -> locomotive.getAddress() == locomotiveAddress)
 				.findFirst();
 	}

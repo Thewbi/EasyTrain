@@ -2,7 +2,7 @@ package de.wfb.model.service;
 
 import java.io.IOException;
 
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.Direction;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
@@ -11,10 +11,10 @@ import de.wfb.rail.service.Route;
 
 public interface RoutingService {
 
-	Route route(DefaultLocomotive locomotive, GraphNode graphNodeStart, GraphNode graphNodeEnd,
+	Route route(Locomotive locomotive, GraphNode graphNodeStart, GraphNode graphNodeEnd,
 			boolean routeOverReservedGraphNodes, boolean routeOverBlockedFeedbackBlocks) throws IOException, Exception;
 
-	Route route(DefaultLocomotive locomotive, Node nodeStart, Node nodeEnd, boolean routeOverReservedGraphNodes,
+	Route route(Locomotive locomotive, Node nodeStart, Node nodeEnd, boolean routeOverReservedGraphNodes,
 			boolean routeOverBlockedFeedbackBlocks) throws IOException, Exception;
 
 	/**
@@ -41,16 +41,16 @@ public interface RoutingService {
 	 * @param endBlock
 	 * @return
 	 */
-	Route startLocomotiveToBlock(DefaultLocomotive locomotive, Direction locomotiveOrientation, Block startBlock,
+	Route startLocomotiveToBlock(Locomotive locomotive, Direction locomotiveOrientation, Block startBlock,
 			Direction startEdgeDirection, Block endBlock, boolean routeOverReservedNodes,
 			boolean routeOverBlockedFeedbackBlocks);
 
-	Route startLocomotiveToRandomBlock(DefaultLocomotive locomotive, Direction locomotiveOrientation, Block startBlock,
+	Route startLocomotiveToRandomBlock(Locomotive locomotive, Direction locomotiveOrientation, Block startBlock,
 			Direction startEdgeDirection, boolean routeOverReservedNodes, boolean routeOverBlockedFeedbackBlocks);
 
-	void attachRouteToLocomotive(DefaultLocomotive locomotive, Route route);
+	void attachRouteToLocomotive(Locomotive locomotive, Route route);
 
-	void placeLocomotive(Node node, DefaultLocomotive locomotive, Direction edgeDirection);
+	void placeLocomotive(Node node, Locomotive locomotive, Direction edgeDirection);
 
 	void buildRoutingTables();
 
@@ -63,5 +63,7 @@ public interface RoutingService {
 	void highlightNode(Node node);
 
 	void initialize();
+
+	void removeRoutesAll();
 
 }

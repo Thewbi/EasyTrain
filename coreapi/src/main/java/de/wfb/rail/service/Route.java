@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.CollectionUtils;
 
 import de.wfb.model.Model;
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.RailNode;
 import de.wfb.rail.events.NodeHighlightedEvent;
@@ -25,7 +25,7 @@ public class Route {
 
 	private int locomotiveId;
 
-	private DefaultLocomotive locomotive;
+	private Locomotive locomotive;
 
 	private final List<GraphNode> graphNodes = new ArrayList<>();
 
@@ -45,7 +45,6 @@ public class Route {
 		}
 
 		final StringBuffer stringBuffer = new StringBuffer();
-//		stringBuffer.append("Route:");
 
 		for (final GraphNode graphNode : graphNodes) {
 
@@ -457,11 +456,11 @@ public class Route {
 		return graphNodes;
 	}
 
-	public DefaultLocomotive getLocomotive() {
+	public Locomotive getLocomotive() {
 		return locomotive;
 	}
 
-	public void setLocomotive(final DefaultLocomotive locomotive) {
+	public void setLocomotive(final Locomotive locomotive) {
 		this.locomotive = locomotive;
 	}
 
@@ -471,6 +470,23 @@ public class Route {
 
 	public void setLocomotiveId(final int locomotiveId) {
 		this.locomotiveId = locomotiveId;
+	}
+
+	public void delete() {
+
+		if (CollectionUtils.isEmpty(graphNodes)) {
+			return;
+		}
+
+		for (final GraphNode graphNode : graphNodes) {
+
+			graphNode.setBlocked(false);
+
+			final RailNode railNode = graphNode.getRailNode();
+			railNode.setHighlighted(false);
+			railNode.setReserved(false);
+			railNode.setSelected(false);
+		}
 	}
 
 }

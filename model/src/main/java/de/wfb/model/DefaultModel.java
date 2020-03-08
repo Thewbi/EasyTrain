@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
 import de.wfb.model.node.RailNode;
@@ -22,7 +22,7 @@ public class DefaultModel implements Model {
 
 	private Node[][] nodeGrid = new Node[rows][columns];
 
-	private final List<DefaultLocomotive> locomotives = new ArrayList<DefaultLocomotive>();
+	private final List<Locomotive> locomotives = new ArrayList<Locomotive>();
 
 	private Node selectedNode;
 
@@ -142,7 +142,7 @@ public class DefaultModel implements Model {
 	}
 
 	@Override
-	public List<DefaultLocomotive> getLocomotives() {
+	public List<Locomotive> getLocomotives() {
 		return locomotives;
 	}
 
@@ -170,7 +170,8 @@ public class DefaultModel implements Model {
 
 	private boolean findLocomotiveId(final int id) {
 
-		for (final DefaultLocomotive locomotive : locomotives) {
+		for (final Locomotive locomotive : locomotives) {
+
 			if (locomotive.getId() == id) {
 				return true;
 			}

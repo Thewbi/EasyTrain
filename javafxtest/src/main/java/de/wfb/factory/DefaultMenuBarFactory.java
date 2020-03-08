@@ -16,6 +16,7 @@ import de.wfb.javafxtest.controls.CustomGridPane;
 import de.wfb.model.ViewModel;
 import de.wfb.model.facade.ModelFacade;
 import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.RailNode;
 import de.wfb.model.service.RoutingService;
 import de.wfb.rail.events.BlockExitedEvent;
@@ -62,6 +63,7 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 	@Autowired
 	private BlockService blockService;
 
+	@SuppressWarnings("rawtypes")
 	@Autowired
 	private ViewModel viewModel;
 
@@ -268,14 +270,15 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 				try {
 
 					// connect to the intellibox
-					protocolFacade.connect();
+					protocolFacade.connectToIntellibox();
+
 				} catch (final Exception e) {
 
 					logger.error(e.getMessage(), e);
 
 					final Alert alert = new Alert(Alert.AlertType.ERROR);
 					alert.setTitle("Connection Failed!");
-					alert.setHeaderText("Confirm Failed!");
+					alert.setHeaderText("Connection Failed!");
 
 					final StringBuffer stringBuffer = new StringBuffer();
 					stringBuffer.append("Connecting to the serial port ???: ").append(e.getClass().getSimpleName())
@@ -353,7 +356,7 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 
 				logger.info("removeLocomotiveItem");
 
-				final DefaultLocomotive defaultLocomotive = modelFacade.getLocomotives().get(1);
+				final Locomotive defaultLocomotive = modelFacade.getLocomotives().get(1);
 				final Block block = blockService.getAllBlocks().get(1);
 				block.reserveForLocomotive(null);
 				for (final RailNode railNodes : block.getNodes()) {
@@ -449,5 +452,4 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 
 		return menuBar;
 	}
-
 }

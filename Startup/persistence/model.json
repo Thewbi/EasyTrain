@@ -1502,7 +1502,8 @@
     "shapeType": "SWITCH_RIGHT_180",
     "x": 37,
     "y": 17,
-    "protocolTurnoutId": 256
+    "protocolTurnoutId": -1,
+    "flipped": false
   },
   {
     "id": 369,
@@ -1603,12 +1604,6 @@
     "id": 387,
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 26,
-    "y": 18
-  },
-  {
-    "id": 388,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 25,
     "y": 18
   },
   {
@@ -1755,12 +1750,6 @@
     "y": 17
   },
   {
-    "id": 412,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 25,
-    "y": 17
-  },
-  {
     "id": 413,
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 24,
@@ -1794,12 +1783,6 @@
     "id": 418,
     "shapeType": "TURN_LEFT_TOP",
     "x": 29,
-    "y": 19
-  },
-  {
-    "id": 419,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 28,
     "y": 19
   },
   {
@@ -2060,12 +2043,6 @@
     "y": 16
   },
   {
-    "id": 465,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 25,
-    "y": 16
-  },
-  {
     "id": 466,
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 24,
@@ -2111,12 +2088,6 @@
     "id": 473,
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 26,
-    "y": 15
-  },
-  {
-    "id": 474,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 25,
     "y": 15
   },
   {
@@ -2187,12 +2158,6 @@
     "y": 14
   },
   {
-    "id": 486,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 25,
-    "y": 14
-  },
-  {
     "id": 487,
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 24,
@@ -2237,21 +2202,9 @@
     "y": 12
   },
   {
-    "id": 494,
-    "shapeType": "SWITCH_RIGHT_180",
-    "x": 26,
-    "y": 12
-  },
-  {
     "id": 495,
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 26,
-    "y": 13
-  },
-  {
-    "id": 496,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 25,
     "y": 13
   },
   {
@@ -2280,12 +2233,6 @@
     "x": 21,
     "y": 13,
     "feedbackBlockNumber": 2
-  },
-  {
-    "id": 501,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 25,
-    "y": 12
   },
   {
     "id": 502,
@@ -7418,12 +7365,6 @@
     "y": 26
   },
   {
-    "id": 1386,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 19,
-    "y": 26
-  },
-  {
     "id": 1387,
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 20,
@@ -7630,12 +7571,6 @@
     "y": 27
   },
   {
-    "id": 1423,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 18,
-    "y": 27
-  },
-  {
     "id": 1424,
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 19,
@@ -7718,12 +7653,6 @@
     "id": 1437,
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 16,
-    "y": 28
-  },
-  {
-    "id": 1438,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 17,
     "y": 28
   },
   {
@@ -7810,12 +7739,6 @@
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 31,
     "y": 28
-  },
-  {
-    "id": 1453,
-    "shapeType": "STRAIGHT_HORIZONTAL",
-    "x": 16,
-    "y": 29
   },
   {
     "id": 1454,
@@ -14394,5 +14317,95 @@
     "shapeType": "TURN_BOTTOM_LEFT",
     "x": 33,
     "y": 26
+  },
+  {
+    "id": 2656,
+    "shapeType": "SIGNAL_HORIZONTAL",
+    "x": 25,
+    "y": 12,
+    "protocolTurnoutId": 49
+  },
+  {
+    "id": 2657,
+    "shapeType": "SIGNAL_HORIZONTAL",
+    "x": 28,
+    "y": 19,
+    "protocolTurnoutId": 251
+  },
+  {
+    "id": 2658,
+    "shapeType": "SIGNAL_HORIZONTAL",
+    "x": 25,
+    "y": 18,
+    "protocolTurnoutId": 55
+  },
+  {
+    "id": 2659,
+    "shapeType": "SIGNAL_HORIZONTAL",
+    "x": 25,
+    "y": 17,
+    "protocolTurnoutId": 54
+  },
+  {
+    "id": 2660,
+    "shapeType": "SIGNAL_HORIZONTAL",
+    "x": 25,
+    "y": 16,
+    "protocolTurnoutId": 53
+  },
+  {
+    "id": 2661,
+    "shapeType": "SIGNAL_HORIZONTAL",
+    "x": 25,
+    "y": 15,
+    "protocolTurnoutId": 52
+  },
+  {
+    "id": 2662,
+    "shapeType": "SIGNAL_HORIZONTAL",
+    "x": 25,
+    "y": 14,
+    "protocolTurnoutId": 51
+  },
+  {
+    "id": 2663,
+    "shapeType": "SIGNAL_HORIZONTAL",
+    "x": 25,
+    "y": 13,
+    "protocolTurnoutId": 50
+  },
+  {
+    "id": 2664,
+    "shapeType": "STRAIGHT_HORIZONTAL",
+    "x": 26,
+    "y": 12
+  },
+  {
+    "id": 2665,
+    "shapeType": "SIGNAL_HORIZONTAL",
+    "x": 19,
+    "y": 26,
+    "protocolTurnoutId": 101
+  },
+  {
+    "id": 2666,
+    "shapeType": "SIGNAL_HORIZONTAL",
+    "x": 18,
+    "y": 27,
+    "protocolTurnoutId": 102
+  },
+  {
+    "id": 2667,
+    "shapeType": "SIGNAL_HORIZONTAL",
+    "x": 17,
+    "y": 28,
+    "protocolTurnoutId": 103
+  },
+  {
+    "id": 2668,
+    "shapeType": "SIGNAL_HORIZONTAL",
+    "x": 16,
+    "y": 29,
+    "protocolTurnoutId": 104
   }
 ]

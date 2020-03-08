@@ -31,6 +31,7 @@ import de.wfb.model.locomotive.DefaultJsonLocomotiveConverter;
 import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.locomotive.DefaultLocomotiveJson;
 import de.wfb.model.locomotive.DefaultLocomotiveJsonConverter;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.JsonNode;
 import de.wfb.model.node.Node;
 import de.wfb.model.node.RailNode;
@@ -84,9 +85,9 @@ public class DefaultModelPersistenceService implements ModelPersistenceService {
 
 		final List<DefaultLocomotiveJson> jsonNodes = new ArrayList<>();
 
-		final Converter<DefaultLocomotive, DefaultLocomotiveJson> converter = new DefaultLocomotiveJsonConverter();
+		final Converter<Locomotive, DefaultLocomotiveJson> converter = new DefaultLocomotiveJsonConverter();
 
-		for (final DefaultLocomotive defaultLocomotive : model.getLocomotives()) {
+		for (final Locomotive defaultLocomotive : model.getLocomotives()) {
 
 			final DefaultLocomotiveJson target = new DefaultLocomotiveJson();
 			converter.convert(defaultLocomotive, target);

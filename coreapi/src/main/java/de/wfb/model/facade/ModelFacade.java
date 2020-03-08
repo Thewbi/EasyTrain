@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import de.wfb.model.Model;
-import de.wfb.model.locomotive.DefaultLocomotive;
+import de.wfb.model.locomotive.Locomotive;
 import de.wfb.model.node.GraphNode;
 import de.wfb.model.node.Node;
 import de.wfb.model.node.RailNode;
@@ -40,17 +40,17 @@ public interface ModelFacade {
 
 	void connectModel();
 
-	List<DefaultLocomotive> getLocomotives();
+	List<Locomotive> getLocomotives();
 
-	void addLocomotive(DefaultLocomotive defaultLocomotive);
+	void addLocomotive(Locomotive locomotive);
 
-	void deleteLocomotive(DefaultLocomotive locomotive);
+	void deleteLocomotive(Locomotive locomotive);
 
 	int retrieveNextLocomotiveId();
 
-	Optional<DefaultLocomotive> getLocomotiveById(int reservedLocomotiveId);
+	Optional<Locomotive> getLocomotiveById(int reservedLocomotiveId);
 
-	Optional<DefaultLocomotive> getLocomotiveByAddress(short locomotiveAddress);
+	Optional<Locomotive> getLocomotiveByAddress(short locomotiveAddress);
 
 	void sendModelChangedEvent(int x, int y, boolean hightlighted, boolean blocked, boolean selected, boolean reserved);
 

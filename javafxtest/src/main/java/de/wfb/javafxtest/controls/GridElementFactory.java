@@ -97,7 +97,7 @@ public class GridElementFactory implements Factory<GridElement<SVGPath, Text>> {
 				double x = 0;
 				double y = 0;
 
-				if (shapeType == ShapeType.STRAIGHT_HORIZONTAL) {
+				if (shapeType == ShapeType.STRAIGHT_HORIZONTAL || shapeType == ShapeType.SIGNAL_HORIZONTAL) {
 
 					x = (modelChangedEvent.getX() + 0) * cellWidth - 0;
 					y = (modelChangedEvent.getY() + 1) * cellWidth + 5;
