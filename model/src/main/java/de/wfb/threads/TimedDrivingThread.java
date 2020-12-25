@@ -31,7 +31,7 @@ import de.wfb.rail.service.Route;
  * configuration class (de.wfb.ConfigurationClass).<br />
  * <br />
  *
- * It is simulation locomotive motion. Whenever you use EasyTrain with real
+ * It is simulating locomotive motion. Whenever you use EasyTrain with real
  * hardware on a real layout, you do not need this Thread.<br />
  * <br />
  *
@@ -61,15 +61,12 @@ public class TimedDrivingThread {
 
 	private int iterationCount = 0;
 
-//	private final int goToIteration = 290;
-
 	private int infoCounter = 0;
 
-//	@Scheduled(fixedRate = 100)
 	@Scheduled(fixedRate = 150)
 	public void threadFunc() throws Exception {
 
-		if (infoCounter == 100) {
+		if (infoCounter == 1000) {
 			infoCounter = 0;
 		} else {
 			infoCounter++;
@@ -81,24 +78,24 @@ public class TimedDrivingThread {
 		logger.trace("threadFunc() ACTIVE = " + active);
 
 		if (!active) {
-
-			logger.trace("threadFunc() is deactivated!");
+			if (infoCounter == 0) {
+				logger.info("threadFunc() is deactivated!");
+			}
 			return;
 		}
 
 		if (!routingController.isStarted()) {
 
-			logger.trace("Routing controller is not started!");
+			if (infoCounter == 0) {
+				logger.info("Routing controller is not started!");
+			}
 			return;
 		}
 
-//		if (goToIteration > 0 && iterationCount < goToIteration) {
-//			iterationCount++;
-//			moveLocomotives();
-//			return;
-//		}
-
 		if (timedDrivingThreadController.isPaused() && timedDrivingThreadController.decrementSingleStep() <= 0) {
+			if (infoCounter == 0) {
+				logger.info("timedDrivingThreadController is paused!");
+			}
 			return;
 		}
 
@@ -124,12 +121,17 @@ public class TimedDrivingThread {
 
 		for (final Locomotive locomotive : locomotives) {
 
+			// ignore locomotives that have not been placed on the layout
+			if (locomotive.getRailNode() == null) {
+				continue;
+			}
+
 			final Route route = locomotive.getRoute();
 			if (route == null) {
 
-				if (infoCounter == 0) {
-					logger.info("No route found on locomotive ID: " + locomotive.getId());
-				}
+//				if (infoCounter == 0) {
+				logger.info("No route found on locomotive ID: " + locomotive.getId());
+//				}
 				continue;
 			}
 
@@ -152,23 +154,10 @@ public class TimedDrivingThread {
 		logger.trace("Route is null? " + (route == null));
 		logger.trace("Route: " + route);
 
-		// DEBUG - stop locomotives on blocks
-//		if (block != null && (block.getId() == 43 || block.getId() == 17)) {
-//			return;
-//		}
-
-//		final GraphNode currentGraphNode = route.findGraphNode(currentRailNode);
-//		logger.info("GraphNode: " + currentGraphNode);
-//		if (null == currentGraphNode) {
-//			return;
-//		}
-//		locomotive.setGraphNode(currentGraphNode);
-//		if (currentGraphNode != null && currentGraphNode.equals(route.getLastGraphNode())) {
-
 		if (route.endsWith(block)) {
-
-			logger.trace("Locomotive is on the last graph node of it's route!");
+			logger.info("Locomotive is on the last graph node of it's route!");
 			applicationEventPublisher.publishEvent(new RouteFinishedEvent(this, route, locomotive));
+
 			return;
 		}
 
@@ -210,12 +199,10 @@ public class TimedDrivingThread {
 
 				// this happens if both children of a turnout are part of blocks and those
 				// blocks are both part of the same blockgroup. If the locomotive is on one of
-				// the blocks of the
-				// group all blocks get reserved.
+				// the blocks of the group all blocks get reserved.
 				//
 				// The result is that a child can only be visited if it is reserved for the
-				// locomotive and
-				// at the same time really is part of the route
+				// locomotive and at the same time really is part of the route
 
 				continue;
 			}

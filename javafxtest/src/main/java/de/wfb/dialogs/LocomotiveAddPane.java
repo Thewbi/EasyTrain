@@ -70,13 +70,6 @@ public class LocomotiveAddPane extends VBox {
 
 				final short address = NumberUtils.createInteger(addressAsString).shortValue();
 
-//				// add the locomotive to the model
-//				final int locomotiveId = modelFacade.retrieveNextLocomotiveId();
-
-//				final DefaultLocomotive defaultLocomotive = new DefaultLocomotive(locomotiveId, name, address, null);
-//				defaultLocomotive.setProtocolFacade(protocolFacade);
-
-//				final short address = locomotiveId;
 				final boolean direction = true;
 				final double speed = 0.0d;
 

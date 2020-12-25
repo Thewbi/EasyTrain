@@ -109,7 +109,7 @@ public class Route {
 	public void switchTurnouts(final ApplicationEventPublisher applicationEventPublisher,
 			final ProtocolFacade protocolFacade) {
 
-		logger.info("switchTurnouts()");
+		logger.trace("switchTurnouts()");
 
 		try {
 			switchTurnouts(graphNodes, applicationEventPublisher, protocolFacade);
@@ -121,11 +121,11 @@ public class Route {
 	public static void switchTurnouts(final List<GraphNode> graphNodes,
 			final ApplicationEventPublisher applicationEventPublisher, final ProtocolFacade protocolFacade) {
 
-		logger.info("switchTurnouts() - static");
+		logger.trace("switchTurnouts() - static");
 
 		if (CollectionUtils.isEmpty(graphNodes)) {
 
-			logger.info("switchTurnouts() no nodes!");
+			logger.trace("switchTurnouts() no nodes!");
 			return;
 		}
 
@@ -149,7 +149,7 @@ public class Route {
 			if (graphNode.getChildren().size() < 2) {
 
 				// DEBUG
-				logger.info("RailNode.ID: " + graphNode.getRailNode().getId() + " Index = " + index
+				logger.trace("RailNode.ID: " + graphNode.getRailNode().getId() + " Index = " + index
 						+ " Turnout found. Not in switching order!");
 
 				index++;
@@ -203,7 +203,7 @@ public class Route {
 
 		if (CollectionUtils.isEmpty(graphNodes)) {
 
-			logger.info("Route has no graphNodes!");
+			logger.trace("Route has no graphNodes!");
 			return new ArrayList<>();
 		}
 
@@ -387,7 +387,7 @@ public class Route {
 
 			if (set.contains(graphNode)) {
 
-				logger.info("Duplicate GN-ID: " + graphNode.getId());
+				logger.warn("Duplicate GN-ID: " + graphNode.getId());
 				duplicatesFound = true;
 			}
 			set.add(graphNode);
@@ -408,7 +408,7 @@ public class Route {
 			final GraphNode gnB = graphNodes.get(i + 1);
 
 			if (!gnA.getChildren().contains(gnB)) {
-				logger.info("GN-B-ID: " + gnB.getId() + " is not reachable from GN-A-ID: " + gnA.getId());
+				logger.warn("GN-B-ID: " + gnB.getId() + " is not reachable from GN-A-ID: " + gnA.getId());
 				return false;
 			}
 		}

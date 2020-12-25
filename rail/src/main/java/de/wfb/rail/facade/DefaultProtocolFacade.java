@@ -88,7 +88,7 @@ public class DefaultProtocolFacade implements ProtocolFacade {
 	@Override
 	public void xSenseOff() {
 
-		logger.trace("xSenseOff()");
+		logger.info("xSenseOff()");
 
 		protocolService.xSensOff();
 	}
@@ -104,7 +104,7 @@ public class DefaultProtocolFacade implements ProtocolFacade {
 	@Override
 	public void turnTurnout(final Node node) {
 
-		logger.info("turnTurnout() Node RN-ID: " + node.getId());
+		logger.trace("turnTurnout() Node RN-ID: " + node.getId());
 
 		protocolService.turnTurnout(node);
 	}

@@ -88,9 +88,9 @@ public class DefaultRoutingService extends BaseRoutingService {
 			final boolean routeOverReservedGraphNodes, final boolean routeOverBlockedFeedbackBlocks)
 			throws IOException, Exception {
 
-		logger.info("Routing from GraphNodeStart: " + graphNodeStart + " To GraphNodeEnd: " + graphNodeEnd
-				+ " routeOverReservedGraphNodes: " + routeOverReservedGraphNodes + " routeOverBlockedFeedbackBlocks: "
-				+ routeOverBlockedFeedbackBlocks);
+		logger.info("Routing for Locomotive: " + locomotive + " from GraphNodeStart: " + graphNodeStart
+				+ " To GraphNodeEnd: " + graphNodeEnd + " routeOverReservedGraphNodes: " + routeOverReservedGraphNodes
+				+ " routeOverBlockedFeedbackBlocks: " + routeOverBlockedFeedbackBlocks);
 
 		final Route route = new Route();
 		route.getGraphNodes().add(graphNodeStart);

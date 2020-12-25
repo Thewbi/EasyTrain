@@ -35,7 +35,7 @@ public class DefaultTurnoutService implements TurnoutService {
 	@Override
 	public void startQueryingFromQueue() {
 
-		logger.trace("startQueryingFromQueue()");
+		logger.info("startQueryingFromQueue()");
 
 		if (turnoutStatusRequestQueue.isEmpty()) {
 			return;
@@ -50,23 +50,20 @@ public class DefaultTurnoutService implements TurnoutService {
 				continue;
 			}
 
-			logger.trace("startQueryingFromQueue() Querying Turnout Node Status of RailNode ID: " + node.getId());
+			logger.info("startQueryingFromQueue() Querying Turnout Node Status of RailNode ID: " + node.getId());
 
 			// request and set the turnout status
 			final boolean isThrown = protocolFacade.turnoutStatus(node.getProtocolTurnoutId().shortValue());
 
-			// node.setThrown(node.isFlipped() == null ? isThrown : (node.isFlipped() ?
-			// !isThrown : isThrown));
 			node.setThrown(isThrown);
 
-			logger.trace("ProtocolTurnoutID: " + node.getProtocolTurnoutId() + " is "
+			logger.info("ProtocolTurnoutID: " + node.getProtocolTurnoutId() + " is "
 					+ (node.isThrown() ? "THROWN" : "CLOSED"));
 
 			// Or not? update the node in the model, send model changed event so that the ui
 			// changes.
 			// This method is called before the UI initialize for the first time so maybe
-			// the UI
-			// already draws the turnouts correctly initially.
+			// the UI already draws the turnouts correctly initially.
 
 			deleteList.add(node);
 		}
@@ -76,12 +73,7 @@ public class DefaultTurnoutService implements TurnoutService {
 
 	@Override
 	public void createTurnoutGroups() {
-
-		logger.info("Building turnout groups!");
-
-		// buildTurnoutGroup(19);
-		// buildTurnoutGroup(112);
-
+		// nop
 	}
 
 	@SuppressWarnings("unused")

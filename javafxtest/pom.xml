@@ -22,7 +22,6 @@
 			<artifactId>coreapi</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>de.wfb.rail</groupId>
 			<artifactId>model</artifactId>
@@ -75,7 +74,7 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.9</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-collections4 -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -99,6 +98,15 @@
 					<!---->
 					<mainClass>javafxtest.ScrollPaneDemo</mainClass>
 					<!--<mainClass>javafxtest.GraphicsScalingApp</mainClass> -->
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M5</version>
+				<configuration>
+					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
 		</plugins>

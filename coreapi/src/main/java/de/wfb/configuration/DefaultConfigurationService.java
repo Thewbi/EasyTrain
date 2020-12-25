@@ -7,6 +7,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 public class DefaultConfigurationService implements ConfigurationService {
 
 	private boolean automatedDrivingActive = false;
+	// private boolean automatedDrivingActive = true;
 
 	// move to the config service
 	private static final double DRIVING_SPEED_ABSOLUTE = 50.0d;
@@ -26,7 +27,7 @@ public class DefaultConfigurationService implements ConfigurationService {
 
 		if (StringUtils.equalsIgnoreCase(trimmedKey, ConfigurationConstants.TIMED_DRIVING_THREAD_ACTIVE)) {
 
-			return Boolean.FALSE.toString();
+			return Boolean.TRUE.toString();
 
 		} else if (StringUtils.equalsIgnoreCase(trimmedKey, ConfigurationConstants.WRITE_ROUTES_TO_FILE)) {
 

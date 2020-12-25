@@ -23,9 +23,7 @@ public class DrivingThreadControlPane extends HBox {
 	private final Button singleStepButton = new Button();
 
 	public void clear() {
-
 		getChildren().clear();
-
 	}
 
 	public void setup() {

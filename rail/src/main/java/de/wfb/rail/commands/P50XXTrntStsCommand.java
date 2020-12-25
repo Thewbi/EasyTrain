@@ -24,8 +24,6 @@ public class P50XXTrntStsCommand implements Command {
 
 	private boolean thrown;
 
-//	private final Node node;
-
 	/**
 	 * variable length response, -1 == PULL_MODE, read one more byte until 0 is
 	 * returned
@@ -78,13 +76,11 @@ public class P50XXTrntStsCommand implements Command {
 	@Override
 	public void result(final ByteBuffer byteBuffer) {
 
-		logger.trace(getClass().getSimpleName() + " ByteBuffer Position: " + byteBuffer.position() + " data: "
-				+ byteBuffer.toString());
-
 		final byte[] array = byteBuffer.array();
 		final String allDataAsHex = Hex.encodeHexString(array);
 
-		logger.trace(allDataAsHex);
+		logger.info(getClass().getSimpleName() + " Status is: " + status + " ByteBuffer Position: "
+				+ byteBuffer.position() + " data: " + allDataAsHex);
 
 		for (int i = 0; i < byteBuffer.position(); i++) {
 
@@ -117,6 +113,7 @@ public class P50XXTrntStsCommand implements Command {
 					return;
 				}
 
+				// next status in the state machine, read the data byte
 				status++;
 
 				// first byte did contain an OK code, so the command is waiting for the data
@@ -161,6 +158,8 @@ public class P50XXTrntStsCommand implements Command {
 				responseLength = 0;
 
 			} else {
+
+				logger.info("Want another byte!");
 
 				// want another byte
 				responseLength = 1;

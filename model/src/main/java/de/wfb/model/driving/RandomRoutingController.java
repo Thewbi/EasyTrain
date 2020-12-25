@@ -62,8 +62,6 @@ import de.wfb.rail.service.RouteUtils;
  */
 public class RandomRoutingController implements RoutingController, ApplicationListener<ApplicationEvent> {
 
-//	private static final boolean WRITE_ROUTES_TO_FILE = false;
-
 	private static final Logger logger = LogManager.getLogger(RandomRoutingController.class);
 
 	private final Random random = new Random();
@@ -174,6 +172,7 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 			while (!locomotiveFound && loopBreaker > 0) {
 
 				loopBreaker--;
+
 				logger.info("Trying to find locomotive ...");
 
 				final Locomotive randomLocomotive = selectRandomLocomotiveFromContext(random);
@@ -196,8 +195,7 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 
 		// TODO: implement
 		// let all locomotives finish their tour (return them to their start node) but
-		// then do not assign them a
-		// new route any more.
+		// then do not assign them a new route any more.
 
 		started = false;
 		configurationService.setConfigurationAsBoolean(ConfigurationConstants.AUTOMATED_DRIVING_ACTIVE, started);
@@ -212,7 +210,6 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 		configurationService.setConfigurationAsBoolean(ConfigurationConstants.AUTOMATED_DRIVING_ACTIVE, started);
 
 		if (locomotiveContext.isEmpty()) {
-
 			logger.error("The context is empty! Did you place any locomotives onto the track?");
 			return;
 		}
@@ -314,8 +311,8 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 
 			final GraphNode graphNodeStart = locomotiveEntry.getLocomotive().getGraphNode();
 			final GraphNode graphNodeEnd = locomotiveEntry.getStartGraphNode();
-			final boolean routeOverReservedGraphNodes = false;
-			final boolean routeOverBlockedFeedbackBlocks = false;
+			final boolean routeOverReservedGraphNodes = true;
+			final boolean routeOverBlockedFeedbackBlocks = true;
 
 			logger.info("GraphNodeStart: " + graphNodeStart);
 			logger.info("GraphNodeEnd: " + graphNodeEnd);
@@ -323,7 +320,7 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 			final Block startBlock = locomotiveEntry.getCurrentBlock();
 			final Block endBlock = locomotiveEntry.getStartBlock();
 
-			logger.trace("Trying to find a route from startBlock: " + startBlock + " to: " + endBlock);
+			logger.info("Trying to find a route from startBlock: " + startBlock + " to: " + endBlock);
 
 			// reserve the start block
 			startBlock.reserveForLocomotive(locomotive);

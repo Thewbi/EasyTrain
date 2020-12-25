@@ -43,7 +43,6 @@ public class DefaultBlock implements Block {
 	@Override
 	public void reserveForLocomotiveSingular(final Locomotive locomotive) {
 
-		// TODO: if the
 		// TODO: check if the block is part of a block group and if so reserved all the
 		// other blocks in th group
 		// .... block.reserveForLocomotive(locomotive);
@@ -52,7 +51,7 @@ public class DefaultBlock implements Block {
 			return;
 		}
 
-		logger.info("Reserve Block: " + getId() + " for locomotive: " + locomotive.getId());
+		logger.trace("Reserve Block: " + getId() + " for locomotive: " + locomotive.getId());
 
 		// reserve all the block's nodes for this locomotive
 		for (final RailNode blockRailNode : getNodes()) {

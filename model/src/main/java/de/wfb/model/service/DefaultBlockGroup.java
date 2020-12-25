@@ -26,7 +26,7 @@ public class DefaultBlockGroup implements BlockGroup {
 
 		for (final Block block : blocks) {
 
-			logger.info("reserving by group: BlockID: " + block.getId());
+			logger.trace("reserving by group: BlockID: " + block.getId());
 
 			block.reserveForLocomotiveSingular(locomotive);
 		}
@@ -41,7 +41,7 @@ public class DefaultBlockGroup implements BlockGroup {
 
 		for (final Block block : blocks) {
 
-			logger.info("freeing by group: BlockID: " + block.getId());
+			logger.trace("freeing by group: BlockID: " + block.getId());
 
 			block.freeSingular();
 		}

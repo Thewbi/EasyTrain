@@ -134,7 +134,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 			return;
 		}
 
-		logger.info("IN EDGE: " + inEdge.getDirection().name() + " OUT EDGE: " + outEdge.getDirection().name());
+		logger.trace("IN EDGE: " + inEdge.getDirection().name() + " OUT EDGE: " + outEdge.getDirection().name());
 
 		updateSwitchState(applicationEventPublisher, model, inEdge, outEdge, protocolFacade);
 	}
@@ -142,8 +142,8 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	private void updateSwitchState(final ApplicationEventPublisher applicationEventPublisher, final Model model,
 			final Edge inEdge, final Edge outEdge, final ProtocolFacade protocolFacade) {
 
-		logger.info("ShapeType: " + getShapeType().name() + " Direction: " + outEdge.getDirection().name() + " InEdge: "
-				+ inEdge + " OutEdge: " + outEdge);
+		logger.trace("ShapeType: " + getShapeType().name() + " Direction: " + outEdge.getDirection().name()
+				+ " InEdge: " + inEdge + " OutEdge: " + outEdge);
 
 		boolean newThrown = false;
 
@@ -249,7 +249,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 
 			} else {
 
-				logger.info("Update individual turnout!");
+				logger.trace("Update individual turnout!");
 
 				// toggle thrown
 				if (isFlipped() != null && isFlipped()) {

@@ -9444,8 +9444,7 @@
     "id": 1806,
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 67,
-    "y": 59,
-    "traverse": "EAST"
+    "y": 59
   },
   {
     "id": 1807,
@@ -9660,8 +9659,7 @@
     "id": 1847,
     "shapeType": "STRAIGHT_HORIZONTAL",
     "x": 67,
-    "y": 58,
-    "traverse": "WEST"
+    "y": 58
   },
   {
     "id": 1848,

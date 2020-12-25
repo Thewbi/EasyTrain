@@ -6,7 +6,7 @@
 	<groupId>de.wfb.rail</groupId>
 	<artifactId>rail</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.target>13</maven.compiler.target>
@@ -21,8 +21,14 @@
 			<artifactId>coreapi</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		
+        <dependency>
+            <groupId>com.neuronrobotics</groupId>
+            <artifactId>nrjavaserial</artifactId>
+            <version>3.12.0</version>
+        </dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.rxtx/rxtx-->
+		<!-- https://mvnrepository.com/artifact/org.rxtx/rxtx -->
 		<dependency>
 			<groupId>org.rxtx</groupId>
 			<artifactId>rxtx</artifactId>
@@ -54,14 +60,27 @@
 			<artifactId>log4j-core</artifactId>
 			<version>2.13.0</version>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>junit</groupId>
-		    <artifactId>junit</artifactId>
-		    <version>4.13-rc-2</version>
-		    <scope>test</scope>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13-rc-2</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M5</version>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

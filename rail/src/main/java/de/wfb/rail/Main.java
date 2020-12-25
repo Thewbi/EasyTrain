@@ -17,9 +17,16 @@ import gnu.io.NoSuchPortException;
 import gnu.io.SerialPort;
 
 /**
- * MAC OS: Finding names of serial ports: Apple Menu > About this MAC > Swhile :
- * ;do clear;ls -lt /dev|head;i=$((i+1));echo $i;sleep 1;done
+ * MAC OS: Finding names of serial ports: Apple Menu > About this MAC > System
+ * Report
+ *
+ * From: https://www.jmri.org/install/MacOSX.shtml
+ *
+ * <pre>
+ * while : ;do clear;ls -lt /dev|head;i=$((i+1));echo $i;sleep 1;done
  * </pre>
+ *
+ * You want the cu - version, not the tty - version.
  *
  * <pre>
  * cd /dev
@@ -107,7 +114,7 @@ import gnu.io.SerialPort;
  *
  * <pre>
  *
- *DOES NOT WORK:
+ * DOES NOT WORK:
  * You have to add the location of the folder that contains librxtxSerial.jnilib as Native library location:
  *
  *    1. Right-click project and choose Properties
@@ -198,11 +205,25 @@ import gnu.io.SerialPort;
  *
  * sudo cp /Users/bischowg/Documents/workspace_javafx/rail/lib/librxtxSerial.jnilib /Library/Java/Extensions
  * </pre>
+ *
+ *
+ * <pre>
+ * while : ;do clear;ls -lt /dev|head;i=$((i+1));echo $i;sleep 1;done
+ * </pre>
  */
 public class Main {
 
-	// private static final String SERIAL_PORT_IDENTIFIER = "COM3";
-	private static final String SERIAL_PORT_IDENTIFIER = "/dev/cu.usbserial-AO007Q6Q";
+	// public static final String SERIAL_PORT_IDENTIFIER = "COM3"
+
+	// public static final String SERIAL_PORT_IDENTIFIER =
+	// "/dev/cu.usbserial-AO007Q6Q";
+
+	public static final String SERIAL_PORT_IDENTIFIER = "/dev/cu.usbserial";
+
+	// use the cu.usbserial version, not the tty.usbserial version
+	// (https://www.jmri.org/install/MacOSX.shtml,
+	// https://www.jmri.org/install/MacOSXRetro.html)
+	// public static final String SERIAL_PORT_IDENTIFIER = "/dev/tty.usbserial";
 
 	private static Logger logger = LogManager.getLogger(Main.class);
 
@@ -233,9 +254,16 @@ public class Main {
 			// in order to operate a turnout once (one change of direction)
 			// two commands have to be sent!
 			final boolean straight = false;
+
+			logger.info("turnoutCommandFirst ...");
 			turnoutCommandFirst(inputStream, outputStream, straight);
+			logger.info("turnoutCommandFirst done.");
+
 			Thread.sleep(100);
+
+			logger.info("turnoutCommandSecond ...");
 			turnoutCommandSecond(inputStream, outputStream, straight);
+			logger.info("turnoutCommandSecond done.");
 
 //			// Reads the response from the hardware and writes it to std out
 //			final Runnable serialReader = new ConsoleOutputSerialReader(in);

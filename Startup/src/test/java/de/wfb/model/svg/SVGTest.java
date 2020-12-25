@@ -3,10 +3,6 @@ package de.wfb.model.svg;
 import static org.mockito.Matchers.any;
 
 import java.io.File;
-
-//import static org.mockito.Mockito.*;
-//import static org.junit.Assert.*;
-
 import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
@@ -47,6 +43,11 @@ public class SVGTest {
 	@Mock
 	private TurnoutService turnoutService;
 
+	/**
+	 * Takes a model.json file and draws a SVG image of the contained nodes.
+	 *
+	 * @throws IOException
+	 */
 	@Test
 	public void testSVG() throws IOException {
 

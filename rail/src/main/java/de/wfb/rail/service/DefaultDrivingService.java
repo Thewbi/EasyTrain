@@ -260,7 +260,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 	private void processRouteFinishedEvent(final RouteFinishedEvent event) {
 
-		logger.info("processRouteFinishedEvent()");
+		logger.trace("processRouteFinishedEvent()");
 
 		// disable the rest of the method if the timed driving thread is used to
 		// simulate a layout
@@ -271,33 +271,34 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		if (configurationService.getConfigurationAsBoolean(ConfigurationConstants.AUTOMATED_DRIVING_ACTIVE)) {
 
 			// abort because the rest of the method stops the locomotive and removes it's
-			// route.
-			// The automated driving only works if the locomotive keeps going and always has
-			// a route.
+			// route. The automated driving only works if the locomotive keeps going and
+			// always has a route.
 			return;
 		}
 
 		// CONFLICT: this code makes the random routing controller fail!
 
+		// retrieve the locomotive that has finished it's route
 		final Locomotive locomotive = event.getLocomotive();
 
-		logger.info("Removing Route " + locomotive.getRoute());
-
+		// remove the route from the locomotive
+		logger.trace("Removing Route " + locomotive.getRoute());
 		final Route route = locomotive.getRoute();
 		route.setLocomotive(null);
 		locomotive.setRoute(null);
 
+		// DEBUG
 		final RailNode railNode = locomotive.getRailNode();
 		final GraphNode graphNode = locomotive.getGraphNode();
-
-		logger.info("The locomotive '" + locomotive + "' is now on the RailNode ID: " + railNode.getId()
+		logger.trace("The locomotive '" + locomotive + "' is now on the RailNode ID: " + railNode.getId()
 				+ " and on GraphNode ID: " + graphNode.getId() + ". Its orientation is: "
 				+ locomotive.getOrientation().name());
 
-		// removing graphNode
-		logger.info("Removing graphNode from locomotive!");
+		// removing graphNode from the locomotive
+		logger.trace("Removing graphNode from locomotive!");
 		locomotive.setGraphNode(null);
 
+		// stop the locomotive
 		locomotiveStop(locomotive);
 	}
 
@@ -330,7 +331,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 		final int id = (locomotive == null) ? -1 : locomotive.getId();
 
-		logger.info("processBlockExitedEvent() BlockID: " + event.getBlock().getId() + " locomotive ID: " + id);
+		logger.trace("processBlockExitedEvent() BlockID: " + event.getBlock().getId() + " locomotive ID: " + id);
 
 		// continueAllRoutes(locomotive);
 		continueAllRoutes(null);
@@ -418,7 +419,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 	private void processRouteAddedEvent(final RouteAddedEvent event) {
 
-		logger.info("processRouteAddedEvent()");
+		logger.trace("processRouteAddedEvent()");
 
 		final Route route = event.getRoute();
 		final Locomotive locomotive = event.getLocomotive();
@@ -430,13 +431,13 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 	private void proceedToNextRouteSection(final Locomotive locomotive) {
 
-		logger.info("proceedToNextRouteSection()");
+		logger.trace("proceedToNextRouteSection()");
 
 		// try to reserve the next section + switch turnouts
 		final Block nextBlock = reserveUpToIncludingNextBlock(locomotive);
 		if (nextBlock == null) {
 
-			logger.warn("Could not reserve up to next block");
+			logger.trace("Could not reserve up to next block");
 
 			locomotiveStop(locomotive);
 
@@ -519,8 +520,12 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		// @formatter:off
 
 		logger.trace("Locomotive GO - Locomotive: " + locomotive);
-		logger.trace("Locomotive GO - GN: " + graphNode.getId() + " graphNodeExitDirection: " + graphNodeExitDirection.name());
-		logger.trace("Locomotive GO - GN: " + graphNode.getId() + " locomotiveOrientation: " + locomotiveOrientation.name());
+		if (graphNodeExitDirection != null) {
+			logger.trace("Locomotive GO - GN: " + graphNode.getId() + " graphNodeExitDirection: " + graphNodeExitDirection.name());
+		}
+		if (locomotiveOrientation != null) {
+			logger.trace("Locomotive GO - GN: " + graphNode.getId() + " locomotiveOrientation: " + locomotiveOrientation.name());
+		}
 		logger.trace("Locomotive GO - forward: " + forward);
 		logger.trace("Locomotive GO - Address: " + address);
 
@@ -530,13 +535,15 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		locomotive.start(speed);
 	}
 
+	/**
+	 * Calls stop() on the locomotive
+	 */
 	@Override
 	public void locomotiveStop(final Locomotive locomotive) {
 
+		// DEBUG
 		logger.trace("<<<<<<<<<<< STOP Locomotive STOP!");
-
 		final short address = locomotive.getAddress();
-
 		logger.trace("Locomotive STOP Address: " + address);
 
 		locomotive.stop();
@@ -653,7 +660,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		final double drivingSpeedSlowPercentage = configurationService
 				.getConfigurationAsDouble(ConfigurationConstants.DRIVING_SPEED_SLOW_PERCENTAGE);
 
-		logger.info("Continuing all routes ... excludedLocomotive = " + excludedLocomotive);
+		logger.trace("Continuing all routes ... excludedLocomotive = " + excludedLocomotive);
 
 		final List<Locomotive> locomotives = modelFacade.getLocomotives();
 
@@ -688,7 +695,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 			} else {
 
-				logger.info("Continuing locomotive to next block ...");
+				logger.trace("Continuing locomotive to next block ...");
 
 				// a locomotive has to check if the block that was just released is part of
 				// it's current route before continuing to that block. If the block is not
@@ -710,16 +717,16 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 						final long millis = 5000;
 
 						// sleep for 5 seconds, then check if the block is still empty
-						logger.info("Sleeping for " + millis + " milli seconds ...");
+						logger.trace("Sleeping for " + millis + " milli seconds ...");
 						Thread.sleep(millis);
-						logger.info("Sleeping done!");
+						logger.trace("Sleeping done!");
 
-						logger.info("Next Block: " + nextBlock);
+						logger.trace("Next Block: " + nextBlock);
 
 						// if, after waiting, the block is still free, continue route
 						if (!nextBlock.isFeedbackBlockUsed()) {
 
-							logger.info("Continuing locomotive!");
+							logger.trace("Continuing locomotive!");
 
 							// continue locomotive
 							double speed = drivingSpeedAbsolute;
@@ -757,7 +764,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 	 */
 	private Block reserveUpToIncludingNextBlock(final Locomotive locomotive) {
 
-		logger.info("reserveUpToIncludingNextBlock()");
+		logger.trace("reserveUpToIncludingNextBlock()");
 
 		final Route route = locomotive.getRoute();
 		if (route == null) {
@@ -772,16 +779,16 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 			return null;
 		}
 
-		logger.info("Next Block.ID: " + nextBlock.getId() + " locomotiveID: " + locomotive.getId());
+		logger.trace("Next Block.ID: " + nextBlock.getId() + " locomotiveID: " + locomotive.getId());
 
 		// check if the nodes are free
 		if (!checkNodes(locomotive, nextBlock)) {
 
-			logger.info("Nodes are NOT free! BlockID: " + nextBlock.getId());
+			logger.trace("Nodes are NOT free! BlockID: " + nextBlock.getId());
 			return null;
 		}
 
-		logger.info("Nodes are free! BlockID: " + nextBlock.getId());
+		logger.trace("Nodes are free! BlockID: " + nextBlock.getId());
 
 		// reserve the nodes including the nodes in nextBlock
 		reserveNodes(locomotive, nextBlock);
@@ -858,12 +865,14 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 		// @formatter:off
 
-		logger.info("Block-ID: " + nextBlock.getId());
-		logger.info("Block-Reserved: " + nextBlock.isReserved());
-		logger.info("Block-ReservedForLocomotive: " + nextBlock.getReservedForLocomotive());
-		logger.info("Block-isFeedbackBlockUsed: " + nextBlock.isFeedbackBlockUsed());
-
-		logger.info("Locomotive-ID: " + locomotive.getId());
+		final boolean trace = false;
+		if (trace) {
+			logger.info("Locomotive-ID: " + locomotive.getId());
+			logger.info("Block-ID: " + nextBlock.getId());
+			logger.info("Block-Reserved: " + nextBlock.isReserved());
+			logger.info("Block-ReservedForLocomotive: " + nextBlock.getReservedForLocomotive());
+			logger.info("Block-isFeedbackBlockUsed: " + nextBlock.isFeedbackBlockUsed());
+		}
 
 		if (
 				(
@@ -874,7 +883,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		)
 		{
 
-			logger.info("BlockID: " + nextBlock.getId() + " is reserved already for ID: "
+			logger.trace("BlockID: " + nextBlock.getId() + " is reserved already for ID: "
 					+ nextBlock.getReservedForLocomotive() + " used by some object!");
 
 			return false;

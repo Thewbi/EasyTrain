@@ -28,6 +28,7 @@ public abstract class BaseRoutingService implements RoutingService {
 
 	private static final Logger logger = LogManager.getLogger(BaseRoutingService.class);
 
+	/** The Java randomizer object that is able to create random numbers */
 	private final Random random = new Random();
 
 	@Autowired
@@ -60,7 +61,7 @@ public abstract class BaseRoutingService implements RoutingService {
 
 	@Override
 	public void buildRoutingTables() {
-		// Auto-generated method stub
+		// nop
 	}
 
 	@Override
@@ -92,8 +93,6 @@ public abstract class BaseRoutingService implements RoutingService {
 
 		final Node railNode = graphNode.getRailNode();
 
-		final boolean debugOutput = railNode.getId() == 2648;
-
 		final boolean graphNodeIsReserved = railNode.isReserved();
 
 		boolean reservedForLocomotive = false;
@@ -101,8 +100,8 @@ public abstract class BaseRoutingService implements RoutingService {
 			reservedForLocomotive = railNode.getReservedLocomotiveId() == locomotive.getId();
 		}
 
+		final boolean debugOutput = false;
 		if (debugOutput) {
-
 			logger.info("graphNodeIsReserved: " + graphNodeIsReserved);
 			logger.info("locomotive: " + locomotive);
 			logger.info("reservedForLocomotive: " + reservedForLocomotive);
@@ -159,6 +158,13 @@ public abstract class BaseRoutingService implements RoutingService {
 		return true;
 	}
 
+	/**
+	 * Takes a java randomizer object and returns one block of the set of all blocks
+	 * randomly.
+	 *
+	 * @param random the java randomizer
+	 * @return one randomly selected block
+	 */
 	private Block selectRandomBlock(final Random random) {
 
 		final List<Block> allBlocks = blockService.getAllBlocks();
@@ -168,9 +174,7 @@ public abstract class BaseRoutingService implements RoutingService {
 		final int max = allBlocks.size() - 1;
 		final int index = random.nextInt((max - min) + 1) + min;
 
-		final Block block = allBlocks.get(index);
-
-		return block;
+		return allBlocks.get(index);
 	}
 
 	protected List<Block> getIgnoredBlocks() {
@@ -235,19 +239,32 @@ public abstract class BaseRoutingService implements RoutingService {
 			final Block startBlock, final Direction startEdgeDirection, final boolean routeOverReservedNodes,
 			final boolean routeOverBlockedFeedbackBlocks) {
 
+		logger.trace("startLocomotiveToRandomBlock() ...");
+
 		Route route = null;
 		Block randomBlock = null;
-		int loopBreaker = 10;
+		int loopBreaker = 500;
+
+		// loop until a route was found or the loopBreaker prevents a endless loop
 		while ((RouteUtils.isEmpty(route) || route.sizeInBlocks() <= 1) && loopBreaker > 0) {
 
 			loopBreaker--;
 
 			randomBlock = selectRandomBlock(random);
 
-			logger.info("Trying to find route to block " + randomBlock);
+			logger.trace("Trying to find route to block " + randomBlock);
 
 			route = startLocomotiveToBlock(locomotive, locomotiveOrientation, startBlock, startEdgeDirection,
 					randomBlock, routeOverReservedNodes, routeOverBlockedFeedbackBlocks);
+		}
+
+		logger.trace("startLocomotiveToRandomBlock(). Result route is " + route + " Route isEmpty: "
+				+ RouteUtils.isEmpty(route));
+
+		// there is a bug, where a locomotive got stuck, this is a means to debug that
+		// behaviour.
+		if (RouteUtils.isEmpty(route)) {
+			throw new RuntimeException("Could not find random route for locomotive " + locomotive);
 		}
 
 		return route;
@@ -277,14 +294,12 @@ public abstract class BaseRoutingService implements RoutingService {
 		}
 
 		if (railNode == null) {
-
 			logger.error("Returning null!");
 			return null;
 		}
 
 		final Edge edge = railNode.getEdge(startEdgeDirection);
 		if (edge == null) {
-
 			logger.error("The direction startEdgeDirection: " + startEdgeDirection + " does not exist! locomotive: "
 					+ locomotive + " locomotive.getOrientation(): " + locomotive.getOrientation() + " RailNode-ID: "
 					+ railNode.getId());
@@ -306,7 +321,7 @@ public abstract class BaseRoutingService implements RoutingService {
 		final Route route = createRoute(locomotive, endBlock, startGraphNode, routeOverReservedNodes,
 				routeOverBlockedFeedbackBlocks);
 
-		logger.trace("Route retrieved: " + route);
+		logger.info("Route retrieved: " + route);
 
 		return route;
 	}
@@ -325,6 +340,7 @@ public abstract class BaseRoutingService implements RoutingService {
 				routeA = route(locomotive, startGraphNode, endRailNode.getGraphNodeOne(), routeOverReservedNodes,
 						routeOverBlockedFeedbackBlocks);
 			} catch (final Exception e) {
+//				logger.error(e.getMessage(), e);
 				routeA = new Route();
 			}
 
@@ -332,7 +348,9 @@ public abstract class BaseRoutingService implements RoutingService {
 				routeA = route(locomotive, startGraphNode, endRailNode.getGraphNodeTwo(), routeOverReservedNodes,
 						routeOverBlockedFeedbackBlocks);
 			}
+
 		} catch (final Exception e) {
+			logger.error(e.getMessage(), e);
 			routeA = new Route();
 		}
 

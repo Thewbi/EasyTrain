@@ -14,6 +14,7 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import de.wfb.model.Model;
 import de.wfb.model.node.Node;
+import de.wfb.rail.Main;
 import de.wfb.rail.commands.Command;
 import de.wfb.rail.commands.P50XSensorCommand;
 import de.wfb.rail.commands.P50XTurnoutCommand;
@@ -34,7 +35,8 @@ import gnu.io.SerialPort;
 public class DefaultProtocolService implements ProtocolService {
 
 	// private static final String SERIAL_PORT_IDENTIFIER = "COM3";
-	private static final String SERIAL_PORT_IDENTIFIER = "/dev/cu.usbserial-AO007Q6Q";
+	// private static final String SERIAL_PORT_IDENTIFIER =
+	// "/dev/cu.usbserial-AO007Q6Q";
 	// private static final String SERIAL_PORT_IDENTIFIER = "/dev/cu.usbserial";
 
 	private static final Logger logger = LogManager.getLogger(DefaultProtocolService.class);
@@ -136,11 +138,11 @@ public class DefaultProtocolService implements ProtocolService {
 	@Override
 	public synchronized void turnTurnout(final Node node) {
 
-		logger.info("turnTurnout()");
+		logger.trace("turnTurnout()");
 
 		if (ShapeType.isNotTurnout(node.getShapeType())) {
 
-			logger.info("Not a turnout shape!");
+			logger.warn("Not a turnout shape!");
 			return;
 		}
 
@@ -149,13 +151,13 @@ public class DefaultProtocolService implements ProtocolService {
 			lockLock(false);
 
 			if (node.getProtocolTurnoutId() == null || node.getProtocolTurnoutId() <= 0) {
-				logger.info("The turnout has no valid turnoutId! Cannot switch the turnout via the Intellibox!");
+				logger.warn("The turnout has no valid turnoutId! Cannot switch the turnout via the Intellibox!");
 
 				return;
 			}
 
 			if (!isConnected()) {
-				logger.info("Not connected! Aborting operation!");
+				logger.trace("Not connected! Aborting operation!");
 
 				return;
 			}
@@ -519,11 +521,14 @@ public class DefaultProtocolService implements ProtocolService {
 			final short protocolId) {
 
 		synchronized (this) {
-			logger.trace("turnoutStatusCommand()");
+
+			logger.info("turnoutStatusCommand() ...");
 
 			final P50XXTrntStsCommand command = new P50XXTrntStsCommand(protocolId);
 			final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
 			serialTemplate.execute();
+
+			logger.info("turnoutStatusCommand() done.");
 
 			return command;
 		}
@@ -543,7 +548,7 @@ public class DefaultProtocolService implements ProtocolService {
 		}
 
 		logger.info("Creating port ... ");
-		serialPort = serialPortFactory.create(SERIAL_PORT_IDENTIFIER);
+		serialPort = serialPortFactory.create(Main.SERIAL_PORT_IDENTIFIER);
 		logger.info("Creating port done. SerialPort: " + serialPort);
 
 		if (serialPort != null) {

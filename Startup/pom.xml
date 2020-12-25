@@ -30,11 +30,6 @@
 		</dependency>
 		<dependency>
 			<groupId>de.wfb.rail</groupId>
-			<artifactId>coreapi</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.wfb.rail</groupId>
 			<artifactId>rail</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
@@ -140,7 +135,8 @@
 						<!-- Configuration for debugging -->
 						<!-- run with a maven debug configuration: javafx:run@debug -->
 						<!-- The app will start and wait for a remote debugger to connect. -->
-						<!-- Create a Debug configuration: Remote Java Application to localhost and the specified port (8000 in this case)  -->
+						<!-- Create a Debug configuration: Remote Java Application to localhost 
+							and the specified port (8000 in this case) -->
 						<id>debug</id>
 						<configuration>
 							<options>
@@ -151,6 +147,16 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M5</version>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+
 		</plugins>
 
 	</build>
