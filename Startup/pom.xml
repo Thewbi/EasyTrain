@@ -9,8 +9,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.target>13</maven.compiler.target>
-		<maven.compiler.source>13</maven.compiler.source>
+		<maven.compiler.target>8</maven.compiler.target>
+		<maven.compiler.source>8</maven.compiler.source>
 
 		<org.springframework.version>5.2.2.RELEASE</org.springframework.version>
 	</properties>
@@ -26,11 +26,6 @@
 		<dependency>
 			<groupId>de.wfb.rail</groupId>
 			<artifactId>javafxtest</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.wfb.rail</groupId>
-			<artifactId>coreapi</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
@@ -55,12 +50,12 @@
 			<version>13</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.rxtx/rxtx -->
+		<!-- https://mvnrepository.com/artifact/org.rxtx/rxtx 
 		<dependency>
 			<groupId>org.rxtx</groupId>
 			<artifactId>rxtx</artifactId>
 			<version>2.1.7</version>
-		</dependency>
+		</dependency>-->
 
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
 		<dependency>
@@ -105,17 +100,10 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/batik/batik-svggen 
 		<dependency>
-			<groupId>batik</groupId>
-			<artifactId>batik-svggen</artifactId>
-			<version>1.6-1</version>
-		</dependency>-->
-
-		<dependency>
-		    <groupId>org.jfree</groupId>
-		    <artifactId>jfreesvg</artifactId>
-		    <version>3.4</version>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreesvg</artifactId>
+			<version>3.4</version>
 		</dependency>
 
 	</dependencies>
@@ -124,6 +112,7 @@
 
 		<!-- https://openjfx.io/openjfx-docs/#maven -->
 		<plugins>
+
 			<plugin>
 				<groupId>org.openjfx</groupId>
 				<artifactId>javafx-maven-plugin</artifactId>
@@ -136,6 +125,16 @@
 					<mainClass>de.wfb.Startup</mainClass>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.4</version>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+			
 		</plugins>
 
 	</build>

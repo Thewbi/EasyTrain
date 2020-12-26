@@ -187,9 +187,6 @@ public class LayoutSVGConverter implements Converter<Model, String> {
 			return;
 		}
 
-//		System.out.println("Dir: " + edge.getDirection() + " OutGN: " + edge.getOutGraphNode().getId() + " NextOutGN: "
-//				+ (edge.getNextOutGraphNode() == null ? "NULL" : edge.getNextOutGraphNode().getId()));
-
 		final Direction direction = edge.getDirection();
 		final GraphNode outGraphNode = edge.getOutGraphNode();
 		final GraphNode nextOutGraphNode = edge.getNextOutGraphNode();

@@ -107,7 +107,7 @@ import gnu.io.SerialPort;
  *
  * <pre>
  *
- *DOES NOT WORK:
+ * DOES NOT WORK:
  * You have to add the location of the folder that contains librxtxSerial.jnilib as Native library location:
  *
  *    1. Right-click project and choose Properties
@@ -198,11 +198,14 @@ import gnu.io.SerialPort;
  *
  * sudo cp /Users/bischowg/Documents/workspace_javafx/rail/lib/librxtxSerial.jnilib /Library/Java/Extensions
  * </pre>
+ * 
+ * http://fizzed.com/oss/rxtx-for-java
  */
 public class Main {
 
-	// private static final String SERIAL_PORT_IDENTIFIER = "COM3";
-	private static final String SERIAL_PORT_IDENTIFIER = "/dev/cu.usbserial-AO007Q6Q";
+	private static final String SERIAL_PORT_IDENTIFIER = "COM5";
+	
+	//private static final String SERIAL_PORT_IDENTIFIER = "/dev/cu.usbserial-AO007Q6Q";
 
 	private static Logger logger = LogManager.getLogger(Main.class);
 

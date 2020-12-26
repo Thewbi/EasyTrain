@@ -183,15 +183,8 @@ public class ConfigurationClass implements SchedulingConfigurer {
 		return new TimedDrivingThread();
 	}
 
-//	@Bean
-//	public DefaultRoutingService DefaultRoutingService() {
-//		return new DefaultRoutingService();
-//	}
-
 	@Bean
 	public RoutingService RoutingService() {
-//		return new NewRoutingService();
-
 		return new OptimizedNewRoutingService();
 	}
 
@@ -204,11 +197,6 @@ public class ConfigurationClass implements SchedulingConfigurer {
 	public DefaultDebugFacade DefaultDebugFacade() {
 		return new DefaultDebugFacade();
 	}
-
-//	@Bean
-//	public StaticGraphColorStrategy StaticGraphColorStrategy() {
-//		return new StaticGraphColorStrategy();
-//	}
 
 	@Bean
 	public DefaultGraphColorStrategy DefaultGraphColorStrategy() {
