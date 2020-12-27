@@ -11,6 +11,7 @@ import de.wfb.rail.commands.P50XTurnoutCommand;
 import de.wfb.rail.commands.P50XVersionCommand;
 import de.wfb.rail.commands.P50XXNOPCommand;
 import de.wfb.rail.factory.DefaultSerialPortFactory;
+import de.wfb.rail.factory.NRSerialPortFactory;
 import de.wfb.rail.io.template.DefaultSerialTemplate;
 import de.wfb.rail.io.template.SerialTemplate;
 import gnu.io.NoSuchPortException;
@@ -213,12 +214,12 @@ import gnu.io.SerialPort;
  */
 public class Main {
 
-	// public static final String SERIAL_PORT_IDENTIFIER = "COM3"
+	 public static final String SERIAL_PORT_IDENTIFIER = "COM4";
 
 	// public static final String SERIAL_PORT_IDENTIFIER =
 	// "/dev/cu.usbserial-AO007Q6Q";
 
-	public static final String SERIAL_PORT_IDENTIFIER = "/dev/cu.usbserial";
+//	public static final String SERIAL_PORT_IDENTIFIER = "/dev/cu.usbserial";
 
 	// use the cu.usbserial version, not the tty.usbserial version
 	// (https://www.jmri.org/install/MacOSX.shtml,
@@ -239,11 +240,11 @@ public class Main {
 
 		try {
 
-//			final Main main = new Main();
-//			serialPort = main.connect(SERIAL_PORT_IDENTIFIER);
-
-			final DefaultSerialPortFactory defaultSerialPortFactory = new DefaultSerialPortFactory();
-			serialPort = defaultSerialPortFactory.create(SERIAL_PORT_IDENTIFIER);
+//			final DefaultSerialPortFactory serialPortFactory = new DefaultSerialPortFactory();
+			final NRSerialPortFactory serialPortFactory = new NRSerialPortFactory();
+			
+			
+			serialPort = serialPortFactory.create(SERIAL_PORT_IDENTIFIER);
 
 			final InputStream inputStream = serialPort.getInputStream();
 			final OutputStream outputStream = serialPort.getOutputStream();
@@ -253,8 +254,24 @@ public class Main {
 
 			// in order to operate a turnout once (one change of direction)
 			// two commands have to be sent!
-			final boolean straight = false;
+			boolean straight = false;
+			
 
+			logger.info("turnoutCommandFirst ...");
+			turnoutCommandFirst(inputStream, outputStream, straight);
+			logger.info("turnoutCommandFirst done.");
+
+			Thread.sleep(100);
+
+			logger.info("turnoutCommandSecond ...");
+			turnoutCommandSecond(inputStream, outputStream, straight);
+			logger.info("turnoutCommandSecond done.");
+			
+			
+			
+			
+			straight = true;
+			
 			logger.info("turnoutCommandFirst ...");
 			turnoutCommandFirst(inputStream, outputStream, straight);
 			logger.info("turnoutCommandFirst done.");

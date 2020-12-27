@@ -72,7 +72,7 @@ public class DefaultRailNode extends BaseNode implements RailNode {
 	/** the id of the locomotive that currently reserves this field */
 	private int reservedLocomotiveId = NOT_RESERVED;
 
-	/** null means that the rail node is traversable in all directions */
+	/** null means that the rail node can be traversed in all directions */
 	private Direction traverse = null;
 
 	private ModelFacade modelFacade;

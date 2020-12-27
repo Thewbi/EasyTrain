@@ -380,12 +380,13 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 		Block startBlock = null;
 		final Block endBlock = null;
 
-		final int loopBreakerRetries = 100;
+		final int loopBreakerRetries = 9999;
 		int loopBreaker = loopBreakerRetries;
 
 		while (RouteUtils.isEmpty(route) && loopBreaker > 0) {
 
 			loopBreaker--;
+			logger.info("LoopBreaker: " + loopBreaker);
 
 			// always go forward! Do not invert startEdgeDirection
 			final Direction locomotiveOrientation = locomotive.getOrientation();
@@ -393,6 +394,7 @@ public class RandomRoutingController implements RoutingController, ApplicationLi
 			startBlock = locomotiveEntry.getCurrentBlock();
 
 			logger.trace("Trying to find a route from startBlock: " + startBlock + " to: " + endBlock);
+			logger.trace("Locomotive: " + locomotive);
 
 			final boolean routeOverReservedNodes = true;
 			final boolean routeOverBlockedFeedbackBlocks = false;

@@ -27,7 +27,11 @@ public class DefaultConfigurationService implements ConfigurationService {
 
 		if (StringUtils.equalsIgnoreCase(trimmedKey, ConfigurationConstants.TIMED_DRIVING_THREAD_ACTIVE)) {
 
-			return Boolean.TRUE.toString();
+			// when setting this value to false, the orientation is set correctly on locomotives, when they enter a block.
+			// This is needed during operation with a real layout.
+			// The simulation works when this value is set to TRUE.
+//			return Boolean.TRUE.toString();
+			return Boolean.FALSE.toString();
 
 		} else if (StringUtils.equalsIgnoreCase(trimmedKey, ConfigurationConstants.WRITE_ROUTES_TO_FILE)) {
 
@@ -39,11 +43,11 @@ public class DefaultConfigurationService implements ConfigurationService {
 
 		} else if (StringUtils.equalsIgnoreCase(trimmedKey, ConfigurationConstants.DRIVING_SPEED_ABSOLUTE)) {
 
-			return "50.0";
+			return ConfigurationConstants.DRIVING_SPEED_ABSOLUTE_DEFAULT_VALUE;
 
 		} else if (StringUtils.equalsIgnoreCase(trimmedKey, ConfigurationConstants.DRIVING_SPEED_SLOW_PERCENTAGE)) {
 
-			return "40.0";
+			return ConfigurationConstants.DRIVING_SPEED_SLOW_PERCENTAGE_DEFAULT_VALUE;
 		}
 
 		throw new IllegalArgumentException("Unknown configuration key: " + configurationKey);

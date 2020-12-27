@@ -522,13 +522,13 @@ public class DefaultProtocolService implements ProtocolService {
 
 		synchronized (this) {
 
-			logger.info("turnoutStatusCommand() ...");
+			logger.trace("turnoutStatusCommand() ...");
 
 			final P50XXTrntStsCommand command = new P50XXTrntStsCommand(protocolId);
 			final SerialTemplate serialTemplate = new DefaultSerialTemplate(outputStream, inputStream, command);
 			serialTemplate.execute();
 
-			logger.info("turnoutStatusCommand() done.");
+			logger.trace("turnoutStatusCommand() done.");
 
 			return command;
 		}

@@ -64,6 +64,7 @@ import de.wfb.rail.service.DefaultTurnoutService;
 import de.wfb.rail.service.Route;
 import de.wfb.threads.DefaultTimedDrivingThreadController;
 import de.wfb.threads.TimedDrivingThread;
+import de.wfb.rail.factory.NRSerialPortFactory;
 
 /**
  * https://docs.spring.io/spring-boot/docs/current/reference/html/using-spring-boot.html#using-boot-configuration-classes
@@ -153,9 +154,14 @@ public class ConfigurationClass implements SchedulingConfigurer {
 		return new DefaultModelFacade();
 	}
 
+//	@Bean
+//	public DefaultSerialPortFactory DefaultSerialPortFactory() {
+//		return new DefaultSerialPortFactory();
+//	}
+	
 	@Bean
-	public DefaultSerialPortFactory DefaultSerialPortFactory() {
-		return new DefaultSerialPortFactory();
+	public NRSerialPortFactory NRSerialPortFactory() {
+		return new NRSerialPortFactory();
 	}
 
 	@Bean

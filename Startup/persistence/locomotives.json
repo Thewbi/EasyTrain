@@ -46,5 +46,10 @@
     "address": 34,
     "name": "Loc 34",
     "imageFilename": "file:/Users/bischowg/Documents/workspace_javafx/Startup/src/main/resources/Loc_34.JPG"
+  },
+  {
+    "id": 7,
+    "address": 39,
+    "name": "139 165 5"
   }
 ]

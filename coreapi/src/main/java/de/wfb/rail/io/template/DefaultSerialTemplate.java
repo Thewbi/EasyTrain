@@ -44,12 +44,12 @@ public class DefaultSerialTemplate implements SerialTemplate {
 
 		final byte[] byteArray = command.getByteArray();
 
-		logger.info("REQUEST: " + Hex.encodeHexString(byteArray));
+		logger.trace("REQUEST: " + Hex.encodeHexString(byteArray));
 
 		try {
-			logger.info("writing ...");
+			logger.trace("writing ...");
 			outputStream.write(byteArray, 0, byteArray.length);
-			logger.info("writing done.");
+			logger.trace("writing done.");
 		} catch (final IOException e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -73,7 +73,7 @@ public class DefaultSerialTemplate implements SerialTemplate {
 
 	private void processFixedLengthResponse(final int responseLength) throws IOException {
 
-		logger.info("processFixedLengthResponse(): " + responseLength);
+		logger.trace("processFixedLengthResponse(): " + responseLength);
 
 		final ByteBuffer byteBuffer = ByteBuffer.allocate(responseLength + 10);
 
@@ -85,7 +85,7 @@ public class DefaultSerialTemplate implements SerialTemplate {
 		// read bytes until the command says that enough bytes have been read
 		do {
 
-			logger.info("LoopBreaker is " + loopBreaker);
+			logger.trace("LoopBreaker is " + loopBreaker);
 
 			loopBreaker--;
 			if (loopBreaker < 0) {
@@ -95,7 +95,7 @@ public class DefaultSerialTemplate implements SerialTemplate {
 			}
 
 			final int available = inputStream.available();
-			logger.info("reading ... available: " + available);
+			logger.trace("reading ... available: " + available);
 
 			if (available <= 0) {
 				try {
@@ -108,10 +108,10 @@ public class DefaultSerialTemplate implements SerialTemplate {
 			}
 
 			final int bytesRead = inputStream.read(tempBuffer);
-			logger.info("bytesRead: " + bytesRead);
+			logger.trace("bytesRead: " + bytesRead);
 
 			final String allDataAsHex = Hex.encodeHexString(tempBuffer);
-			logger.info("allDataAsHex: " + allDataAsHex);
+			logger.trace("allDataAsHex: " + allDataAsHex);
 
 			if (bytesRead == -1) {
 
@@ -126,14 +126,14 @@ public class DefaultSerialTemplate implements SerialTemplate {
 
 		} while (consumedLength < command.getResponseLength());
 
-		logger.info("RESPONSE: " + byteBuffer.toString());
+		logger.trace("RESPONSE: " + byteBuffer.toString());
 
 		command.result(byteBuffer);
 	}
 
 	private void processVariableLengthResponse() throws IOException {
 
-		logger.info("processVariableLengthResponse() ...");
+		logger.trace("processVariableLengthResponse() ...");
 
 		@SuppressWarnings("unused")
 		int consumedLength = 0;
@@ -144,7 +144,7 @@ public class DefaultSerialTemplate implements SerialTemplate {
 
 		while (mode == -1) {
 
-			logger.info("LoopBreaker is " + loopBreaker + " mode is: " + mode);
+			logger.trace("LoopBreaker is " + loopBreaker + " mode is: " + mode);
 
 			loopBreaker--;
 			if (loopBreaker < 0) {
@@ -156,9 +156,9 @@ public class DefaultSerialTemplate implements SerialTemplate {
 			final byte[] tempBuffer = new byte[1024];
 
 			// read into the buffer
-			logger.info("Reading from input stream ...");
+			logger.trace("Reading from input stream ...");
 			final int bytesRead = inputStream.read(tempBuffer);
-			logger.info("Reading from input stream done. BytesRead: " + bytesRead + " mode = " + mode);
+			logger.trace("Reading from input stream done. BytesRead: " + bytesRead + " mode = " + mode);
 
 			if (bytesRead == -1) {
 

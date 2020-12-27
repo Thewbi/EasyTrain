@@ -339,25 +339,26 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 	private void processBlockEnteredEvent(final BlockEnteredEvent event) {
 
-		logger.trace("processBlockEnteredEvent() Block ID: " + event.getBlock().getId());
+		logger.info("processBlockEnteredEvent() Block ID: " + event.getBlock().getId());
 
 		final Locomotive locomotive = event.getLocomotive();
 		final Block enteredBlock = event.getBlock();
 		final Route route = locomotive.getRoute();
 
-		logger.trace("Locomotive: " + locomotive + " EnteredBlock: " + enteredBlock + " Route: " + route);
+		logger.info("Locomotive: " + locomotive + " EnteredBlock: " + enteredBlock + " Route: " + route);
 
 		if (locomotive != null && enteredBlock != null) {
 
 			final RailNode blockRailNode = enteredBlock.getNodes().get(0);
 
-			logger.trace("Putting locomotive onto RailNode: " + blockRailNode);
+			logger.info("Putting locomotive onto RailNode: " + blockRailNode + " Locomotive: " + locomotive);
 			locomotive.setRailNode(blockRailNode);
 
 			if (!configurationService.getConfigurationAsBoolean(ConfigurationConstants.TIMED_DRIVING_THREAD_ACTIVE)) {
 
 				// CONFLICT: conflicts random driving controller
 				final GraphNode positionalGraphNode = route.findGraphNode(blockRailNode);
+				
 				logger.info("Putting locomotive onto GraphNode: " + positionalGraphNode);
 				locomotive.setGraphNode(positionalGraphNode);
 			}
@@ -375,7 +376,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 					final GraphNode graphNode = route.findGraphNode(railNode);
 
 					if (graphNode == null) {
-
+						
 						logger.error("GraphNode is null because GraphNode " + railNode + " cannot be found in route!");
 
 					} else {
@@ -398,7 +399,8 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 				// if route did finish, stop the locomotive
 				if (route.endsWith(enteredBlock)) {
 
-					logger.trace("Locomotive is on the last block of it's route!");
+					logger.info("Locomotive is on the last block of it's route!");
+					logger.info("Locomotive: " + locomotive);
 
 					// free the last section
 					freeRouteExceptUpToBlock(enteredBlock, locomotive);

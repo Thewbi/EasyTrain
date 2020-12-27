@@ -79,7 +79,7 @@ public class P50XXTrntStsCommand implements Command {
 		final byte[] array = byteBuffer.array();
 		final String allDataAsHex = Hex.encodeHexString(array);
 
-		logger.info(getClass().getSimpleName() + " Status is: " + status + " ByteBuffer Position: "
+		logger.trace(getClass().getSimpleName() + " Status is: " + status + " ByteBuffer Position: "
 				+ byteBuffer.position() + " data: " + allDataAsHex);
 
 		for (int i = 0; i < byteBuffer.position(); i++) {

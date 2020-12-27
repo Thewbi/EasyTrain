@@ -10,6 +10,10 @@ public interface ConfigurationConstants {
 
 	static final String DRIVING_SPEED_ABSOLUTE = "DrivingSpeedAbsolute";
 
+	static final String DRIVING_SPEED_ABSOLUTE_DEFAULT_VALUE = "40.0";
+
 	static final String DRIVING_SPEED_SLOW_PERCENTAGE = "DrivingSpeedSlowPercentage";
+
+	static final String DRIVING_SPEED_SLOW_PERCENTAGE_DEFAULT_VALUE = "50.0";
 
 }

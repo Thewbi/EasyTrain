@@ -42,6 +42,10 @@ import javafx.stage.WindowEvent;
  */
 public class Startup extends Application {
 
+	private static final int WINDOW_HEIGHT = 800;
+
+	private static final int WINDOW_WIDTH = 1400;
+
 	private static final Logger logger = LogManager.getLogger(Startup.class);
 
 	private static final boolean SHOW_THROTTLE_NONMODAL_DIALOG = false;
@@ -197,8 +201,8 @@ public class Startup extends Application {
 		stage.setOnCloseRequest(closeWindowEventHandler);
 
 		stage.setTitle("Easy Train (Beta v0.2)");
-		stage.setWidth(1400);
-		stage.setHeight(1000);
+		stage.setWidth(WINDOW_WIDTH);
+		stage.setHeight(WINDOW_HEIGHT);
 
 		stage.show();
 	}

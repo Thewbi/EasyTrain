@@ -119,7 +119,7 @@ public class DefaultLocomotive implements Locomotive {
 
 	@Override
 	public String toString() {
-		return "Locomotive " + name + "";
+		return "Locomotive name:'" + name + "' Direction: '" + getOrientation() + "'";
 	}
 
 	@Override
@@ -156,10 +156,10 @@ public class DefaultLocomotive implements Locomotive {
 	public Direction getOrientation() {
 		return edgeDirection;
 	}
-
+ 
 	@Override
 	public void setOrientation(final Direction edgeDirection) {
-		logger.trace("OldOrientation = " + this.edgeDirection.name() + " NewOrientation = " + edgeDirection.name());
+		logger.info("OldOrientation = " + this.edgeDirection.name() + " NewOrientation = " + edgeDirection.name());
 		this.edgeDirection = edgeDirection;
 	}
 
@@ -170,6 +170,7 @@ public class DefaultLocomotive implements Locomotive {
 
 	@Override
 	public void setRailNode(final RailNode railNode) {
+		
 		this.railNode = railNode;
 	}
 

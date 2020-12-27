@@ -121,7 +121,7 @@ public abstract class BaseRoutingService implements RoutingService {
 		// direction
 		if (graphNode.isBlocked()) {
 
-			logger.warn("Cannot traverse GN ID: " + graphNode.getId() + " Reason: blocked!");
+			logger.trace("Cannot traverse GN ID: " + graphNode.getId() + " Reason: blocked!");
 			return false;
 		}
 
@@ -243,12 +243,13 @@ public abstract class BaseRoutingService implements RoutingService {
 
 		Route route = null;
 		Block randomBlock = null;
-		int loopBreaker = 500;
+		int loopBreaker = 9999;
 
 		// loop until a route was found or the loopBreaker prevents a endless loop
 		while ((RouteUtils.isEmpty(route) || route.sizeInBlocks() <= 1) && loopBreaker > 0) {
 
 			loopBreaker--;
+			logger.trace("LoopBreaker: " + loopBreaker);
 
 			randomBlock = selectRandomBlock(random);
 
@@ -271,7 +272,7 @@ public abstract class BaseRoutingService implements RoutingService {
 	}
 
 	/**
-	 * Computes a route but does not attach the route to the locmotive, does not
+	 * Computes a route but does not attach the route to the locomotive, does not
 	 * highlight the route, does not switch turnouts.
 	 */
 	@Override
@@ -281,16 +282,19 @@ public abstract class BaseRoutingService implements RoutingService {
 
 		final RailNode railNode = locomotive.getRailNode();
 
-		final boolean debug = false;
+		final boolean debug = true;
 		if (debug) {
-			logger.info("Locomotive: " + locomotive);
-			logger.info("locomotiveOrientation: " + locomotiveOrientation);
-			logger.info("startBlock: " + startBlock);
-			logger.info("startEdgeDirection: " + startEdgeDirection);
-			logger.info("endBlock: " + endBlock);
-			logger.info("routeOverReservedNodes: " + routeOverReservedNodes);
-			logger.info("routeOverBlockedFeedbackBlocks: " + routeOverBlockedFeedbackBlocks);
-			logger.info("Locomotive RailNode is: " + railNode);
+			StringBuffer stringBuffer = new StringBuffer();
+			stringBuffer.append("Locomotive: " + locomotive + " ");
+			stringBuffer.append("locomotiveOrientation: " + locomotiveOrientation + " ");
+			stringBuffer.append("startBlock: " + startBlock + " ");
+			stringBuffer.append("startEdgeDirection: " + startEdgeDirection + " ");
+			stringBuffer.append("endBlock: " + endBlock + " ");
+			stringBuffer.append("routeOverReservedNodes: " + routeOverReservedNodes + " ");
+			stringBuffer.append("routeOverBlockedFeedbackBlocks: " + routeOverBlockedFeedbackBlocks + " ");
+			stringBuffer.append("Locomotive RailNode is: " + railNode);
+			
+			logger.info(stringBuffer.toString());
 		}
 
 		if (railNode == null) {
@@ -321,7 +325,9 @@ public abstract class BaseRoutingService implements RoutingService {
 		final Route route = createRoute(locomotive, endBlock, startGraphNode, routeOverReservedNodes,
 				routeOverBlockedFeedbackBlocks);
 
-		logger.info("Route retrieved: " + route);
+		if (RouteUtils.isNotEmpty(route)) {
+			logger.info("Route retrieved: " + route);
+		}
 
 		return route;
 	}
