@@ -209,11 +209,6 @@ public class ConfigurationClass implements SchedulingConfigurer {
 	}
 
 	@Bean
-	public RoutingService RoutingService() {
-		return new OptimizedNewRoutingService();
-	}
-
-	@Bean
 	public LayoutGridController LayoutGridController() {
 		return new LayoutGridController();
 	}
