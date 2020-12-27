@@ -46,9 +46,9 @@ public class Startup extends Application {
 
 	private static final int WINDOW_WIDTH = 1400;
 
-	private static final Logger logger = LogManager.getLogger(Startup.class);
-
 	private static final boolean SHOW_THROTTLE_NONMODAL_DIALOG = false;
+
+	private static final Logger logger = LogManager.getLogger(Startup.class);
 
 	private EventHandler<WindowEvent> closeWindowEventHandler;
 
@@ -140,7 +140,6 @@ public class Startup extends Application {
 					logger.info("Not connected message box. Pressed OK.");
 				}
 			});
-
 		}
 
 		// locomotive throttle

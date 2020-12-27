@@ -139,7 +139,7 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 	@Override
 	public void nodeClicked(final int x, final int y, final boolean shiftSelected) {
 
-		logger.trace("nodeClicked x = " + x + " y = " + y);
+		logger.info("nodeClicked x = " + x + " y = " + y);
 
 		final Node node = model.getNode(x, y);
 
@@ -163,7 +163,6 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 		}
 
 		if (node == null) {
-
 			sendNodeClickedEvent(null);
 			return;
 		}
@@ -178,6 +177,10 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 			model.setSelectedNode(node);
 
 		} else {
+
+			// remove all highlights and select the currently selected node
+			removeAllHighlights();
+			node.setHighlighted(true);
 
 			sendNodeClickedEvent(node);
 

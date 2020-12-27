@@ -83,10 +83,13 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 				final double z = e.getZ();
 
 				// DEBUG
-				logger.trace("");
-				logger.trace(" sceneX: " + sceneX + "  sceneY: " + sceneY);
-				logger.trace("      X: " + x + "       Y: " + y + "       Z: " + z);
-				logger.trace("screenX: " + screenX + " screenY: " + screenY);
+				final boolean outputMouseClick = true;
+				if (outputMouseClick) {
+					logger.info("");
+					logger.info(" sceneX: " + sceneX + "  sceneY: " + sceneY);
+					logger.info("      X: " + x + "       Y: " + y + "       Z: " + z);
+					logger.info("screenX: " + screenX + " screenY: " + screenY);
+				}
 
 				final int xIndex = (int) x / CELL_WIDTH;
 				final int yIndex = (int) y / CELL_WIDTH;
@@ -175,7 +178,7 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 
 				final Optional<Node> nodeOptional = modelFacade.getNode(x, y);
 
-				if (nodeOptional.isEmpty()) {
+				if (!nodeOptional.isPresent()) {
 
 					logger.info("Node is null!");
 
@@ -208,9 +211,7 @@ public class CustomGridPane extends Pane implements ApplicationListener<Applicat
 				// if the new ShapeType is none, do not add a new shape but bail here
 				final ShapeType shapeType = node.getShapeType();
 				if (shapeType == ShapeType.NONE) {
-
 					logger.info("shapeType is none!");
-
 					return;
 				}
 

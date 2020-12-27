@@ -11,8 +11,11 @@ import de.wfb.dialogs.DrivingThreadControlPane;
 import de.wfb.dialogs.EmergencyStopPane;
 import de.wfb.dialogs.SidePane;
 import de.wfb.javafxtest.controller.LayoutGridController;
+import de.wfb.javafxtest.controller.UIConstants;
 import de.wfb.javafxtest.controls.CustomGridPane;
 import de.wfb.rail.factory.Factory;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
@@ -20,6 +23,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -74,38 +78,30 @@ public class DefaultSceneFactory implements Factory<Scene> {
 		scrollPane.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(final MouseEvent e) {
-
 				logger.trace(e.getSource());
 			}
 		});
 
-		final StackPane stackPane = new StackPane();
-		stackPane.getChildren().addAll(scrollPane);
-		stackPane.setBackground(new Background(new BackgroundFill(Color.DARKGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
-		stackPane.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(final MouseEvent e) {
-
-				logger.trace(e.getSource());
-			}
-		});
+//		final StackPane stackPane = new StackPane();
+//		stackPane.getChildren().addAll(scrollPane);
+//		stackPane.setBackground(new Background(new BackgroundFill(Color.DARKGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+//		stackPane.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(final MouseEvent e) {
+//				logger.trace(e.getSource());
+//			}
+//		});
 
 		final MenuBar menuBar = menuBarFactory.create(stage, layoutGridController);
 
-		final VBox bottomVBox = new VBox();
-		bottomVBox.getChildren().addAll(blockNavigationPane, drivingThreadControlPane);
+		final BorderPane bottomBorderPane = createBottomBorderPane();
 
-		final BorderPane bottomBorderPane = new BorderPane();
-		bottomBorderPane.setLeft(bottomVBox);
-		bottomBorderPane.setRight(emergencyStopPane);
+		final SplitPane splitPane = addSplitPane(scrollPane);
 
 		final BorderPane borderPane = new BorderPane();
 		borderPane.setTop(menuBar);
-		borderPane.setCenter(stackPane);
-		borderPane.setRight(createDetailsView());
+		borderPane.setCenter(splitPane);
 		borderPane.setBottom(bottomBorderPane);
-
 		borderPane.setOnKeyReleased(new EventHandler<KeyEvent>() {
 
 			@Override
@@ -152,10 +148,46 @@ public class DefaultSceneFactory implements Factory<Scene> {
 		return scene;
 	}
 
+	private BorderPane createBottomBorderPane() {
+		final VBox bottomVBox = new VBox();
+
+		if (UIConstants.SIMPLE_UI) {
+			// no manual routing and no driving thread controls
+		} else {
+			bottomVBox.getChildren().addAll(blockNavigationPane, drivingThreadControlPane);
+		}
+
+		final BorderPane bottomBorderPane = new BorderPane();
+		bottomBorderPane.setLeft(bottomVBox);
+		bottomBorderPane.setRight(emergencyStopPane);
+		return bottomBorderPane;
+	}
+
+	private SplitPane addSplitPane(final Node centerPane) {
+
+		final SplitPane splitPane = new SplitPane();
+		splitPane.getItems().addAll(centerPane, createDetailsView());
+
+		// change listener needed because the divider position has to be set on every
+		// size change
+		final ChangeListener<Number> changeListener = new ChangeListener<Number>() {
+			@Override
+			public void changed(final ObservableValue<? extends Number> observable, final Number oldValue,
+					final Number newValue) {
+				splitPane.setDividerPositions(0.97);
+			}
+		};
+		splitPane.widthProperty().addListener(changeListener);
+		splitPane.heightProperty().addListener(changeListener);
+
+		return splitPane;
+	}
+
 	private Node createDetailsView() {
 
 		final StackPane stackPane = new StackPane();
 		stackPane.setMinWidth(300);
+		stackPane.setMinWidth(1);
 
 		try {
 			sidePane.setup();

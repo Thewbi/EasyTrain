@@ -8,13 +8,20 @@ The second mode of operatation besides the manual mode is fully automated mode. 
 
 ## Usage
 
-When EasyTrain is opened, it trys to connect to the IntelliBox and outputs a message if the connection failed.
+Use the up and down arrow keys to zoom in and out.
 
-Without connection, simlated operation is possible.
+When EasyTrain is opened, it trys to connect to the IntelliBox and outputs a message if the connection failed. Without connection, simlated operation is possible.
 
 If a connection the Intellibox is established, EasyTrain will read the status of all blocks from the Intellibox. Reading the status, EasyTrain learns which blocks are used. It does not know yet which block is used by which train. Therefore you have to add your trains into the train list manually while inserting the trains address. Then assign the trains manually to the blocks that they are actually located on.
 
 When EasyTrain knows which blocks are used and when it knows the address of the trains on those blocks, it can compute routes and send the appropriate commands to drive the trains from block to block.
+
+The algorithm will select three blocks at random, drive the locomotive over each of these three blocks and finally it will return the locomotive to the original block that the locomotive started from.
+
+There are currently the following constraints:
+- EasyTrain only drives trains in forward direction. A train will never drive in reverse direction.
+- Starting trains from dead end rails will not work properly (it will work for one cycle only) because the train will enter the dead end in reverse orientation that it started from. Because Easy Train does not ever drive trains in reverse but only heading forward, a train that is headed towards the dead end of a rail will never be able to drive again.
+- Because of the train above, only start trains from blocks that are part of loops.
 
 ### Placing a Train On a Block
 

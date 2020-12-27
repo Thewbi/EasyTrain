@@ -7,9 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import de.wfb.rail.controller.TimedDrivingThreadController;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 
+/**
+ * Contains the toggle pause and the single step buttons.
+ *
+ * @author bischowg
+ *
+ */
 public class DrivingThreadControlPane extends HBox {
 
 	@SuppressWarnings("unused")
@@ -45,6 +52,9 @@ public class DrivingThreadControlPane extends HBox {
 				timedDrivingThreadController.addSingleStep();
 			}
 		});
+
+		setSpacing(5);
+		setPadding(new Insets(10, 10, 10, 10));
 
 		getChildren().addAll(togglePauseButton, singleStepButton);
 	}

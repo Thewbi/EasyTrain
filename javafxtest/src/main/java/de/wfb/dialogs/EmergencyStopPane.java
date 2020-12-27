@@ -28,7 +28,7 @@ public class EmergencyStopPane extends HBox {
 
 	public void setup() {
 
-		emergencyStopButton.setText("STOP");
+		emergencyStopButton.setText("Stop");
 		emergencyStopButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override

@@ -69,6 +69,7 @@ public class LayoutGridController implements Controller, ApplicationListener<App
 		switch (currentShapeType) {
 
 		case NONE:
+
 			// if no shape type is selected, perform a simple click
 			modelFacade.nodeClicked(selectionEvent.getX(), selectionEvent.getY(), selectionEvent.isShiftState());
 

@@ -12,6 +12,7 @@ import de.web.facade.DebugFacade;
 import de.wfb.dialogs.LocomotiveListStage;
 import de.wfb.dialogs.PlaceLocomotiveStage;
 import de.wfb.javafxtest.controller.LayoutGridController;
+import de.wfb.javafxtest.controller.UIConstants;
 import de.wfb.javafxtest.controls.CustomGridPane;
 import de.wfb.model.ViewModel;
 import de.wfb.model.facade.ModelFacade;
@@ -218,6 +219,7 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 				layoutGridController.connect();
 			}
 		});
+
 		final MenuItem locomotiveListItem = new MenuItem("Locomotive List");
 		locomotiveListItem.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -416,11 +418,18 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 				routingControllerMenuItem
 				);
 
-		editMenu.getItems().addAll(
+		if (UIConstants.SIMPLE_UI) {
+			editMenu.getItems().addAll(
+				locomotiveListItem,
+				placeLocomotiveItem
+				);
+		} else {
+			editMenu.getItems().addAll(
 				connectItem,
 				locomotiveListItem,
 				placeLocomotiveItem
 				);
+		}
 
 		serialMenu.getItems().addAll(
 				serialConnectItem,
@@ -439,7 +448,13 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 				);
 
 		// add Menus to the MenuBar
-		menuBar.getMenus().addAll(
+		if (UIConstants.SIMPLE_UI) {
+			menuBar.getMenus().addAll(
+					fileMenu,
+					routingControllerMenu,
+					editMenu);
+		} else {
+			menuBar.getMenus().addAll(
 				fileMenu,
 				routingMenu,
 				routingControllerMenu,
@@ -447,6 +462,7 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 				editMenu,
 				serialMenu,
 				helpMenu);
+		}
 
 		// @formatter:on
 

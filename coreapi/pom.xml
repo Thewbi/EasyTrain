@@ -5,12 +5,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.wfb.rail</groupId>
 	<artifactId>coreapi</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.target>13</maven.compiler.target>
-		<maven.compiler.source>13</maven.compiler.source>
+		<maven.compiler.target>8</maven.compiler.target>
+		<maven.compiler.source>8</maven.compiler.source>
 		<org.springframework.version>5.2.2.RELEASE</org.springframework.version>
 	</properties>
 
