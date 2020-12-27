@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +33,8 @@ import gnu.io.SerialPort;
 
 public class DefaultProtocolService implements ProtocolService {
 
-	// private static final String SERIAL_PORT_IDENTIFIER = "COM3";
+	private static final String SERIAL_PORT_IDENTIFIER = "COM5";
+
 	// private static final String SERIAL_PORT_IDENTIFIER =
 	// "/dev/cu.usbserial-AO007Q6Q";
 	// private static final String SERIAL_PORT_IDENTIFIER = "/dev/cu.usbserial";
@@ -46,9 +46,6 @@ public class DefaultProtocolService implements ProtocolService {
 	private InputStream inputStream;
 
 	private OutputStream outputStream;
-
-	@SuppressWarnings("unused")
-	private final ReentrantLock lock = new ReentrantLock(true);
 
 	@Autowired
 	private Model model;

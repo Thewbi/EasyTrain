@@ -21,17 +21,20 @@
 			<artifactId>coreapi</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-
-<!-- 
-		<dependency>
-			<groupId>com.neuronrobotics</groupId>
-			<artifactId>nrjavaserial</artifactId>
-			<version>3.12.0</version>
-		</dependency> -->
-
-		<!-- https://mvnrepository.com/artifact/org.rxtx/rxtx <dependency> <groupId>org.rxtx</groupId> 
-			<artifactId>rxtx</artifactId> <version>2.1.7</version> <version>100.7.7</version> 
-			</dependency> -->
+		
+		<!-- 
+		Download the 64 bit version from http://fizzed.com/oss/rxtx-for-java
+		The file is called mfz-rxtx-2.2-20081207-win-x64.zip
+		
+		Copy the contained dlls (rxtxParallel.dll, rxtxSerial.dll) to C:\Windows\System32
+		
+		Then install the contained RXTXcomm.jar file with maven and update the maven dependecy to the self-selected version.
+		
+		mvn install:install-file -Dfile=C:\Users\user\Downloads\mfz-rxtx-2.2-20081207-win-x86\RXTXcomm.jar -DgroupId=org.rxtx -DartifactId=rxtx -Dversion=100.7.7 -Dpackaging=jar
+		
+		C:\Users\user\Downloads\apache-maven-3.6.3-bin\apache-maven-3.6.3\bin\mvn install:install-file -Dfile=C:\Users\user\Downloads\mfz-rxtx-2.2-20081207-win-x86\RXTXcomm.jar -DgroupId=org.rxtx -DartifactId=rxtx -Dversion=100.7.7 -Dpackaging=jar
+		C:\Users\user\Downloads\apache-maven-3.6.3-bin\apache-maven-3.6.3\bin\mvn install:install-file -Dfile=C:\Users\user\Downloads\mfz-rxtx-2.2-20081207-win-x64\mfz-rxtx-2.2-20081207-win-x64\RXTXcomm.jar -DgroupId=org.rxtx -DartifactId=rxtx -Dversion=100.7.7 -Dpackaging=jar
+		 -->
 
 		<dependency>
 			<groupId>com.neuronrobotics</groupId>
@@ -73,6 +76,24 @@
 		</dependency>
 
 	</dependencies>
+	
+	<build>
+
+		<!-- https://openjfx.io/openjfx-docs/#maven -->
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.4</version>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+			
+		</plugins>
+
+	</build>
 
 	<build>
 		<plugins>

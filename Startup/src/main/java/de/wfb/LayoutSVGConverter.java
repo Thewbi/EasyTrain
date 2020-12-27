@@ -1,9 +1,8 @@
 package de.wfb;
 
 import java.io.File;
+import java.util.logging.LogManager;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
 import org.jfree.graphics2d.svg.SVGUtils;
 
@@ -187,9 +186,6 @@ public class LayoutSVGConverter implements Converter<Model, String> {
 		if (edge == null) {
 			return;
 		}
-
-//		logger.trace("Dir: " + edge.getDirection() + " OutGN: " + edge.getOutGraphNode().getId() + " NextOutGN: "
-//				+ (edge.getNextOutGraphNode() == null ? "NULL" : edge.getNextOutGraphNode().getId()));
 
 		final Direction direction = edge.getDirection();
 		final GraphNode outGraphNode = edge.getOutGraphNodes().get(0);

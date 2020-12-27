@@ -57,14 +57,13 @@ import de.wfb.rail.controller.TimedDrivingThreadController;
 import de.wfb.rail.converter.Converter;
 import de.wfb.rail.facade.DefaultProtocolFacade;
 import de.wfb.rail.factory.DefaultSVGPathFactory;
-import de.wfb.rail.factory.DefaultSerialPortFactory;
+import de.wfb.rail.factory.NRSerialPortFactory;
 import de.wfb.rail.service.DefaultDrivingService;
 import de.wfb.rail.service.DefaultProtocolService;
 import de.wfb.rail.service.DefaultTurnoutService;
 import de.wfb.rail.service.Route;
 import de.wfb.threads.DefaultTimedDrivingThreadController;
 import de.wfb.threads.TimedDrivingThread;
-import de.wfb.rail.factory.NRSerialPortFactory;
 
 /**
  * https://docs.spring.io/spring-boot/docs/current/reference/html/using-spring-boot.html#using-boot-configuration-classes
@@ -158,7 +157,7 @@ public class ConfigurationClass implements SchedulingConfigurer {
 //	public DefaultSerialPortFactory DefaultSerialPortFactory() {
 //		return new DefaultSerialPortFactory();
 //	}
-	
+
 	@Bean
 	public NRSerialPortFactory NRSerialPortFactory() {
 		return new NRSerialPortFactory();
@@ -207,6 +206,11 @@ public class ConfigurationClass implements SchedulingConfigurer {
 	@Bean
 	public TimedDrivingThread TimedDrivingThread() {
 		return new TimedDrivingThread();
+	}
+
+	@Bean
+	public RoutingService RoutingService() {
+		return new OptimizedNewRoutingService();
 	}
 
 	@Bean

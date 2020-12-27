@@ -1,9 +1,13 @@
 package de.wfb;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.awt.event.WindowEvent;
+import java.util.logging.LogManager;
+
+import org.graalvm.compiler.phases.common.NodeCounterPhase.Stage;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.apple.eawt.Application;
 
 import de.wfb.dialogs.BlockNavigationPane;
 import de.wfb.dialogs.DrivingThreadControlPane;
@@ -20,16 +24,12 @@ import de.wfb.rail.facade.ProtocolFacade;
 import de.wfb.rail.factory.Factory;
 import de.wfb.rail.service.BlockService;
 import de.wfb.rail.service.TurnoutService;
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
+import jdk.tools.jlink.internal.Platform;
 
 /**
  * TODO:

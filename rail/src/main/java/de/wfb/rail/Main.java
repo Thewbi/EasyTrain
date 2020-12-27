@@ -10,7 +10,6 @@ import de.wfb.rail.commands.Command;
 import de.wfb.rail.commands.P50XTurnoutCommand;
 import de.wfb.rail.commands.P50XVersionCommand;
 import de.wfb.rail.commands.P50XXNOPCommand;
-import de.wfb.rail.factory.DefaultSerialPortFactory;
 import de.wfb.rail.factory.NRSerialPortFactory;
 import de.wfb.rail.io.template.DefaultSerialTemplate;
 import de.wfb.rail.io.template.SerialTemplate;
@@ -207,19 +206,18 @@ import gnu.io.SerialPort;
  * sudo cp /Users/bischowg/Documents/workspace_javafx/rail/lib/librxtxSerial.jnilib /Library/Java/Extensions
  * </pre>
  *
- *
  * <pre>
  * while : ;do clear;ls -lt /dev|head;i=$((i+1));echo $i;sleep 1;done
  * </pre>
  */
 public class Main {
 
-	 public static final String SERIAL_PORT_IDENTIFIER = "COM4";
+	public static final String SERIAL_PORT_IDENTIFIER = "COM4";
 
 	// public static final String SERIAL_PORT_IDENTIFIER =
 	// "/dev/cu.usbserial-AO007Q6Q";
 
-//	public static final String SERIAL_PORT_IDENTIFIER = "/dev/cu.usbserial";
+	// public static final String SERIAL_PORT_IDENTIFIER = "/dev/cu.usbserial";
 
 	// use the cu.usbserial version, not the tty.usbserial version
 	// (https://www.jmri.org/install/MacOSX.shtml,
@@ -242,8 +240,7 @@ public class Main {
 
 //			final DefaultSerialPortFactory serialPortFactory = new DefaultSerialPortFactory();
 			final NRSerialPortFactory serialPortFactory = new NRSerialPortFactory();
-			
-			
+
 			serialPort = serialPortFactory.create(SERIAL_PORT_IDENTIFIER);
 
 			final InputStream inputStream = serialPort.getInputStream();
@@ -255,7 +252,6 @@ public class Main {
 			// in order to operate a turnout once (one change of direction)
 			// two commands have to be sent!
 			boolean straight = false;
-			
 
 			logger.info("turnoutCommandFirst ...");
 			turnoutCommandFirst(inputStream, outputStream, straight);
@@ -266,12 +262,9 @@ public class Main {
 			logger.info("turnoutCommandSecond ...");
 			turnoutCommandSecond(inputStream, outputStream, straight);
 			logger.info("turnoutCommandSecond done.");
-			
-			
-			
-			
+
 			straight = true;
-			
+
 			logger.info("turnoutCommandFirst ...");
 			turnoutCommandFirst(inputStream, outputStream, straight);
 			logger.info("turnoutCommandFirst done.");
