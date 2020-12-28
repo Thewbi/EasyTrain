@@ -33,7 +33,7 @@ public class DefaultProtocolFacade implements ProtocolFacade {
 	public void throttleLocomotive(final short locomotiveAddress, final double throttleValue,
 			final boolean dirForward) {
 
-		logger.trace("throttleLocomotive()");
+		logger.info("throttleLocomotive() locomotiveAddress=" + locomotiveAddress + " speed=" + throttleValue + " directionForward=" + dirForward);
 
 		protocolService.throttleLocomotive(locomotiveAddress, throttleValue, dirForward);
 	}

@@ -196,6 +196,8 @@ public class ThrottlePane extends GridPane implements ApplicationListener<Applic
 	}
 
 	private void processEventThrottle(final double newThrottleValue) throws Exception {
+		
+		logger.info("processEventThrottle()");
 
 		if (throttleValue == newThrottleValue) {
 			return;

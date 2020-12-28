@@ -10,4 +10,6 @@ public interface DrivingService {
 
 	void locomotiveStopAll();
 
+	void locomotiveStartAll();
+
 }

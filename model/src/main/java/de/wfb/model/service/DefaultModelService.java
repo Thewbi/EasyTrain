@@ -179,8 +179,10 @@ public class DefaultModelService implements ModelService, ApplicationListener<Ap
 		} else {
 
 			// remove all highlights and select the currently selected node
-			removeAllHighlights();
-			node.setHighlighted(true);
+			// problem is, this removes all markers for blocked node from p50X block sensing and those
+			// markers do not come back automatically, so this feature is not useful as of now.
+//			removeAllHighlights();
+//			node.setHighlighted(true);
 
 			sendNodeClickedEvent(node);
 

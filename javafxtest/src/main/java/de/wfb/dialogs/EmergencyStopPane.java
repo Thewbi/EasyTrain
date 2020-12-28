@@ -16,7 +16,9 @@ public class EmergencyStopPane extends HBox {
 
 	private static final Logger logger = LogManager.getLogger(EmergencyStopPane.class);
 
-	private final Button emergencyStopButton = new Button();
+	private final Button stopButton = new Button();
+	
+	private final Button startButton = new Button();
 
 	private final Button resetButton = new Button();
 
@@ -28,14 +30,26 @@ public class EmergencyStopPane extends HBox {
 
 	public void setup() {
 
-		emergencyStopButton.setText("Stop");
-		emergencyStopButton.setOnAction(new EventHandler<ActionEvent>() {
+		stopButton.setText("Stop");
+		stopButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(final ActionEvent actionEvent) {
 
-				logger.info("Emergency Stop");
+				logger.info("Stop");
 				drivingService.locomotiveStopAll();
+
+			}
+		});
+		
+		startButton.setText("Continue");
+		startButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(final ActionEvent actionEvent) {
+
+				logger.info("Continue");
+				drivingService.locomotiveStartAll();
 
 			}
 		});
@@ -58,7 +72,7 @@ public class EmergencyStopPane extends HBox {
 		setSpacing(5);
 		setPadding(new Insets(10, 10, 10, 10));
 
-		getChildren().addAll(resetButton, emergencyStopButton);
+		getChildren().addAll(resetButton, startButton, stopButton);
 	}
 
 }

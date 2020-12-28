@@ -38,6 +38,8 @@ public class DefaultLocomotive implements Locomotive {
 
 	private ProtocolFacade protocolFacade;
 
+	private boolean stopped;
+
 	public DefaultLocomotive() {
 		super();
 	}
@@ -52,7 +54,15 @@ public class DefaultLocomotive implements Locomotive {
 
 	@Override
 	public void start(final double speed) {
+		
+		logger.info("Locomotive start() speed=" + speed + " stopped=" + stopped);
+		
+		if (stopped) {
+			logger.warn("This locomotive is stopped and will not drive!");
+			return;
+		}
 
+		// if the locomotive is going at the requested speed already, do not send a command
 		if (Math.abs(this.speed - speed) < 0.1d) {
 			return;
 		}
@@ -93,6 +103,9 @@ public class DefaultLocomotive implements Locomotive {
 		// the locomotive to a smooth, realistic halt.
 		speed = 0.0d;
 		protocolFacade.throttleLocomotive(address, speed, !direction);
+		
+		// mark the locomotive stopped
+		stopped = true;
 	}
 
 	@Override
@@ -228,6 +241,14 @@ public class DefaultLocomotive implements Locomotive {
 	@Override
 	public void setImageFilename(final String imageFilename) {
 		this.imageFilename = imageFilename;
+	}
+
+	public boolean isStopped() {
+		return stopped;
+	}
+
+	public void setStopped(boolean stopped) {
+		this.stopped = stopped;
 	}
 
 }

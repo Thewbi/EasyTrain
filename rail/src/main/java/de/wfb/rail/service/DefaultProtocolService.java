@@ -276,6 +276,9 @@ public class DefaultProtocolService implements ProtocolService {
 	@Override
 	public synchronized void throttleLocomotive(final short locomotiveAddress, final double throttleValue,
 			final boolean dirForward) {
+		
+		logger.info("throttleLocomotive() locomotiveAddress=" + locomotiveAddress + " speed=" + throttleValue + " directionForward=" + dirForward);
+
 
 		try {
 

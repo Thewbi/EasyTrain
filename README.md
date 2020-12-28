@@ -10,9 +10,12 @@ The second mode of operatation besides the manual mode is fully automated mode. 
 
 Use the up and down arrow keys to zoom in and out.
 
-When EasyTrain is opened, it trys to connect to the IntelliBox and outputs a message if the connection failed. Without connection, simlated operation is possible.
+When EasyTrain is opened, it tries to connect to the IntelliBox and outputs a message if the connection failed. Without connection, simulated operation is possible.
 
-If a connection the Intellibox is established, EasyTrain will read the status of all blocks from the Intellibox. Reading the status, EasyTrain learns which blocks are used. It does not know yet which block is used by which train. Therefore you have to add your trains into the train list manually while inserting the trains address. Then assign the trains manually to the blocks that they are actually located on.
+If a connection the Intellibox is established, EasyTrain will read the status of all blocks from the Intellibox. Reading the status, EasyTrain learns which blocks are used and draws them in red color. At this point however EasyTrain does not know yet however, which block is used by which train. It needs a trains address to send signals for driving.
+
+In order to teach EasyTrain the addresses, first you have to add your trains into the train list manually while inserting the trains address. 
+Then, in a second step, assign the trains manually to the blocks that they are actually located on. Read the section "Placing a Train On a Block" to learn how to achieve this.
 
 When EasyTrain knows which blocks are used and when it knows the address of the trains on those blocks, it can compute routes and send the appropriate commands to drive the trains from block to block.
 
@@ -22,6 +25,10 @@ There are currently the following constraints:
 - EasyTrain only drives trains in forward direction. A train will never drive in reverse direction.
 - Starting trains from dead end rails will not work properly (it will work for one cycle only) because the train will enter the dead end in reverse orientation that it started from. Because Easy Train does not ever drive trains in reverse but only heading forward, a train that is headed towards the dead end of a rail will never be able to drive again.
 - Because of the train above, only start trains from blocks that are part of loops.
+
+To start the Algorithm, select RoutingController > Start from the MenuBar. The trains will start their randomly selected routes.
+
+To stop the random operation, click the Stop button at the bottom of the screen.
 
 ### Placing a Train On a Block
 

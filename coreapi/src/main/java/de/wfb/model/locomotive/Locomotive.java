@@ -49,4 +49,8 @@ public interface Locomotive {
 
 	void setName(String name);
 
+	boolean isStopped();
+
+	void setStopped(boolean stopped);
+
 }

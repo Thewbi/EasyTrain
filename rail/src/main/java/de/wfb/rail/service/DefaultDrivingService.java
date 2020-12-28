@@ -345,7 +345,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		final Block enteredBlock = event.getBlock();
 		final Route route = locomotive.getRoute();
 
-		logger.info("Locomotive: " + locomotive + " EnteredBlock: " + enteredBlock + " Route: " + route);
+		logger.trace("Locomotive: " + locomotive + " EnteredBlock: " + enteredBlock + " Route: " + route);
 
 		if (locomotive != null && enteredBlock != null) {
 
@@ -359,7 +359,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 				// CONFLICT: conflicts random driving controller
 				final GraphNode positionalGraphNode = route.findGraphNode(blockRailNode);
 				
-				logger.info("Putting locomotive onto GraphNode: " + positionalGraphNode);
+				logger.trace("Putting locomotive onto GraphNode: " + positionalGraphNode);
 				locomotive.setGraphNode(positionalGraphNode);
 			}
 
@@ -381,14 +381,14 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 					} else {
 
-						logger.info("Assuming GraphNode ID: " + graphNode.getId());
-						logger.info("GraphNode Direction: " + graphNode.getDirection());
+						logger.trace("Assuming GraphNode ID: " + graphNode.getId());
+						logger.trace("GraphNode Direction: " + graphNode.getDirection());
 
 						// locomotive.isDirection() == true means forward
 						final Direction dir = locomotive.isDirection() ? graphNode.getDirection()
 								: graphNode.getInverseDirection();
 
-						logger.info("Assuming Direction: " + dir);
+						logger.trace("Assuming Direction: " + dir);
 
 						locomotive.setOrientation(dir);
 
@@ -433,7 +433,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 
 	private void proceedToNextRouteSection(final Locomotive locomotive) {
 
-		logger.trace("proceedToNextRouteSection()");
+		logger.info("proceedToNextRouteSection()");
 
 		// try to reserve the next section + switch turnouts
 		final Block nextBlock = reserveUpToIncludingNextBlock(locomotive);
@@ -497,7 +497,7 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 	@Override
 	public void locomotiveGo(final Locomotive locomotive, final double speed) {
 
-		logger.trace(">>>>>>>>>> GO Locomotive GO! locomotive ID: " + locomotive.getId() + " Speed: " + speed);
+		logger.info(">>>>>>>>>> GO Locomotive GO! locomotive ID: " + locomotive.getId() + " Speed: " + speed);
 
 		final Direction locomotiveOrientation = locomotive.getOrientation();
 		final GraphNode graphNode = locomotive.getGraphNode();
@@ -656,6 +656,8 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 	}
 
 	private void continueAllRoutes(final Locomotive excludedLocomotive) {
+		
+		logger.info("continueAllRoutes()");
 
 		final double drivingSpeedAbsolute = configurationService
 				.getConfigurationAsDouble(ConfigurationConstants.DRIVING_SPEED_ABSOLUTE);
@@ -965,6 +967,34 @@ public class DefaultDrivingService implements DrivingService, ApplicationListene
 		for (final Locomotive locomotive : locomotives) {
 
 			locomotive.immediateStop();
+		}
+	}
+
+	@Override
+	public void locomotiveStartAll() {
+		
+		logger.info("locomotiveStartAll()");
+		
+		final List<Locomotive> locomotives = modelFacade.getLocomotives();
+
+		if (CollectionUtils.isEmpty(locomotives)) {
+			return;
+		}
+		
+		final double drivingSpeedAbsolute = configurationService
+				.getConfigurationAsDouble(ConfigurationConstants.DRIVING_SPEED_ABSOLUTE);
+
+		for (final Locomotive locomotive : locomotives) {
+			
+			locomotive.setStopped(false);
+			
+			// do not start locomotives that have no route
+			if (RouteUtils.isEmpty(locomotive.getRoute())) {
+				continue;
+			}
+			
+			locomotive.start(drivingSpeedAbsolute);
+			
 		}
 	}
 

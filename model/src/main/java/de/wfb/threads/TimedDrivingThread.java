@@ -125,6 +125,9 @@ public class TimedDrivingThread {
 			if (locomotive.getRailNode() == null) {
 				continue;
 			}
+			if (locomotive.isStopped()) {
+				continue;
+			}
 
 			final Route route = locomotive.getRoute();
 			if (route == null) {
