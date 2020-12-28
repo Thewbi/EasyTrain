@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 public class GraphNode {
 
-	private static final boolean DUMP_ROUTING_TABLE = false;
+//	private static final boolean DUMP_ROUTING_TABLE = false;
 
 	private static final Logger logger = LogManager.getLogger(GraphNode.class);
 

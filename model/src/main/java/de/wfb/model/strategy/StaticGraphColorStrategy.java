@@ -1,16 +1,12 @@
 package de.wfb.model.strategy;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import de.wfb.model.service.ModelService;
-
 /**
  * Paints every node green
  */
 public class StaticGraphColorStrategy implements GraphColorStrategy {
 
-	@Autowired
-	private ModelService modelService;
+//	@Autowired
+//	private ModelService modelService;
 
 	@Override
 	public void execute() {

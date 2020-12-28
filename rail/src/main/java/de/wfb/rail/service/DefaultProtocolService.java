@@ -33,7 +33,7 @@ import gnu.io.SerialPort;
 
 public class DefaultProtocolService implements ProtocolService {
 
-	private static final String SERIAL_PORT_IDENTIFIER = "COM5";
+//	private static final String SERIAL_PORT_IDENTIFIER = "COM5";
 
 	// private static final String SERIAL_PORT_IDENTIFIER =
 	// "/dev/cu.usbserial-AO007Q6Q";
@@ -276,9 +276,9 @@ public class DefaultProtocolService implements ProtocolService {
 	@Override
 	public synchronized void throttleLocomotive(final short locomotiveAddress, final double throttleValue,
 			final boolean dirForward) {
-		
-		logger.info("throttleLocomotive() locomotiveAddress=" + locomotiveAddress + " speed=" + throttleValue + " directionForward=" + dirForward);
 
+		logger.info("throttleLocomotive() locomotiveAddress=" + locomotiveAddress + " speed=" + throttleValue
+				+ " directionForward=" + dirForward);
 
 		try {
 
@@ -550,6 +550,10 @@ public class DefaultProtocolService implements ProtocolService {
 		logger.info("Creating port ... ");
 		serialPort = serialPortFactory.create(Main.SERIAL_PORT_IDENTIFIER);
 		logger.info("Creating port done. SerialPort: " + serialPort);
+
+		if (serialPort == null) {
+			throw new IOException("Could not open serial port!");
+		}
 
 		if (serialPort != null) {
 			inputStream = serialPort.getInputStream();

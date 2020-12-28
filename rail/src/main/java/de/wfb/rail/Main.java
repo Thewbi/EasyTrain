@@ -239,9 +239,10 @@ public class Main {
 		try {
 
 //			final DefaultSerialPortFactory serialPortFactory = new DefaultSerialPortFactory();
-			final NRSerialPortFactory serialPortFactory = new NRSerialPortFactory();
+//			serialPort = serialPortFactory.create(SERIAL_PORT_IDENTIFIER);
 
-			serialPort = serialPortFactory.create(SERIAL_PORT_IDENTIFIER);
+			final NRSerialPortFactory serialPortFactory = new NRSerialPortFactory();
+			serialPort = serialPortFactory.create();
 
 			final InputStream inputStream = serialPort.getInputStream();
 			final OutputStream outputStream = serialPort.getOutputStream();
@@ -300,7 +301,7 @@ public class Main {
 		} catch (final NoSuchPortException e) {
 
 			logger.error(e.getMessage(), e);
-			logger.error("Port '" + SERIAL_PORT_IDENTIFIER + "' does not exist! Cannot connect! Aborting application!");
+//			logger.error("Port '" + SERIAL_PORT_IDENTIFIER + "' does not exist! Cannot connect! Aborting application!");
 
 		} catch (final Exception e) {
 

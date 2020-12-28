@@ -10,10 +10,10 @@ public class DefaultConfigurationService implements ConfigurationService {
 	// private boolean automatedDrivingActive = true;
 
 	// move to the config service
-	private static final double DRIVING_SPEED_ABSOLUTE = 50.0d;
+//	private static final double DRIVING_SPEED_ABSOLUTE = 50.0d;
 
 	// move to the config service
-	private static final double DRIVING_SPEED_SLOW_PERCENTAGE = 40.0d;
+//	private static final double DRIVING_SPEED_SLOW_PERCENTAGE = 40.0d;
 
 	@Override
 	public String getConfiguration(final String configurationKey) {
@@ -27,7 +27,8 @@ public class DefaultConfigurationService implements ConfigurationService {
 
 		if (StringUtils.equalsIgnoreCase(trimmedKey, ConfigurationConstants.TIMED_DRIVING_THREAD_ACTIVE)) {
 
-			// when setting this value to false, the orientation is set correctly on locomotives, when they enter a block.
+			// when setting this value to false, the orientation is set correctly on
+			// locomotives, when they enter a block.
 			// This is needed during operation with a real layout.
 			// The simulation works when this value is set to TRUE.
 //			return Boolean.TRUE.toString();

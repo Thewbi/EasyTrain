@@ -1,17 +1,11 @@
 package de.wfb.model.strategy;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import de.wfb.model.service.ModelService;
-
 public class DefaultGraphColorStrategy implements GraphColorStrategy {
 
-	private static final Logger logger = LogManager.getLogger(DefaultGraphColorStrategy.class);
+//	private static final Logger logger = LogManager.getLogger(DefaultGraphColorStrategy.class);
 
-	@Autowired
-	private ModelService modelService;
+//	@Autowired
+//	private ModelService modelService;
 
 	@Override
 	public void execute() {

@@ -31,7 +31,10 @@ import de.wfb.dialogs.TurnoutDetailsPane;
 import de.wfb.factory.DefaultMenuBarFactory;
 import de.wfb.factory.DefaultSceneFactory;
 import de.wfb.factory.GraphNodeSVGMenuItem;
+import de.wfb.factory.ResetMenuItem;
 import de.wfb.factory.RoutingControllerMenuItem;
+import de.wfb.factory.StartMenuItem;
+import de.wfb.factory.StopMenuItem;
 import de.wfb.factory.XTrntStatusMenuItem;
 import de.wfb.javafxtest.controller.LayoutGridController;
 import de.wfb.javafxtest.controls.GridElementFactory;
@@ -321,6 +324,21 @@ public class ConfigurationClass implements SchedulingConfigurer {
 	@Bean
 	public RoutingControllerMenuItem RoutingControllerMenuItem() {
 		return new RoutingControllerMenuItem("Start");
+	}
+
+	@Bean
+	public StartMenuItem StartMenuItem() {
+		return new StartMenuItem("Emergency Start");
+	}
+
+	@Bean
+	public StopMenuItem StopMenuItem() {
+		return new StopMenuItem("Emergency Stop");
+	}
+
+	@Bean
+	public ResetMenuItem ResetMenuItem() {
+		return new ResetMenuItem("Reset");
 	}
 
 	@Bean

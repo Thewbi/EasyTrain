@@ -1,20 +1,20 @@
 # EasyTrain
 
-EasyTrain is a Java Application that talks to the Uhlenbrock Intellibox via p50x commands to control model trains. The trains are controlled on a layout that can be modelled using EasyTrains user interface. 
+EasyTrain is a Java Application that talks to the Uhlenbrock Intellibox via p50x commands to control model trains. The trains are controlled on a layout that can be modelled using EasyTrain's user interface.
 
-Easy Train allows the user to drive trains manually from a start block to a destination block. The route in between the blocks is determined by EasyTrains automatic routing feature.
+The purpose of EasyTrain is to operate a model train layout with as little interaction as possible. Once the layout is modelled appropriatly, trains are put onto the layout and a start menu item is selected which let's EasyTrain operate your layout automatically.
 
-The second mode of operatation besides the manual mode is fully automated mode. In fully automated mode, trains will start from their initial block, randomly select target blocks to drive to and then loop back to their initial block from where they start their random routing over again. The automated mode allows the show-casing of your layout without manual planning of routes.
+In fully automated mode, trains will start from their initial block, randomly select target blocks to drive to and then loop back to their initial block from where they start their random routing again. The automated mode allows the show-casing of your layout without manual planning of routes.
 
 ## Usage
 
-Use the up and down arrow keys to zoom in and out.
+Use the up and down arrow keys to zoom into and out of the layout.
 
-When EasyTrain is opened, it tries to connect to the IntelliBox and outputs a message if the connection failed. Without connection, simulated operation is possible.
+When EasyTrain is opened, it tries to connect to the IntelliBox and outputs a message if the connection failed. Without connection to a Intellibox, only simulated operation is possible.
 
-If a connection the Intellibox is established, EasyTrain will read the status of all blocks from the Intellibox. Reading the status, EasyTrain learns which blocks are used and draws them in red color. At this point however EasyTrain does not know yet however, which block is used by which train. It needs a trains address to send signals for driving.
+If a connection to the Intellibox is established, EasyTrain will read the status of all blocks from the Intellibox. Reading the status, EasyTrain learns which blocks are used by trains and draws them in a red color. At this point however EasyTrain does not know yet, which blocks are used by which trains! It needs a locomotive's address to send signals for driving.
 
-In order to teach EasyTrain the addresses, first you have to add your trains into the train list manually while inserting the trains address. 
+In order to teach EasyTrain the addresses, first you have to add your trains and their decoder addresses into the train list manually once. 
 Then, in a second step, assign the trains manually to the blocks that they are actually located on. Read the section "Placing a Train On a Block" to learn how to achieve this.
 
 When EasyTrain knows which blocks are used and when it knows the address of the trains on those blocks, it can compute routes and send the appropriate commands to drive the trains from block to block.
@@ -26,7 +26,7 @@ There are currently the following constraints:
 - Starting trains from dead end rails will not work properly (it will work for one cycle only) because the train will enter the dead end in reverse orientation that it started from. Because Easy Train does not ever drive trains in reverse but only heading forward, a train that is headed towards the dead end of a rail will never be able to drive again.
 - Because of the train above, only start trains from blocks that are part of loops.
 
-To start the Algorithm, select RoutingController > Start from the MenuBar. The trains will start their randomly selected routes.
+To start the algorithm, select RoutingController > Start from the MenuBar. The trains will start their randomly selected routes.
 
 To stop the random operation, click the Stop button at the bottom of the screen.
 

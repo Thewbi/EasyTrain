@@ -55,6 +55,7 @@ public class DefaultSceneFactory implements Factory<Scene> {
 	@Autowired
 	private EmergencyStopPane emergencyStopPane;
 
+	/** For pause and single step */
 	@Autowired
 	private DrivingThreadControlPane drivingThreadControlPane;
 
@@ -94,14 +95,17 @@ public class DefaultSceneFactory implements Factory<Scene> {
 
 		final MenuBar menuBar = menuBarFactory.create(stage, layoutGridController);
 
-		final BorderPane bottomBorderPane = createBottomBorderPane();
-
 		final SplitPane splitPane = addSplitPane(scrollPane);
 
 		final BorderPane borderPane = new BorderPane();
 		borderPane.setTop(menuBar);
 		borderPane.setCenter(splitPane);
-		borderPane.setBottom(bottomBorderPane);
+
+		if (!UIConstants.SIMPLE_UI) {
+			final BorderPane bottomBorderPane = createBottomBorderPane();
+			borderPane.setBottom(bottomBorderPane);
+		}
+
 		borderPane.setOnKeyReleased(new EventHandler<KeyEvent>() {
 
 			@Override
@@ -160,6 +164,7 @@ public class DefaultSceneFactory implements Factory<Scene> {
 		final BorderPane bottomBorderPane = new BorderPane();
 		bottomBorderPane.setLeft(bottomVBox);
 		bottomBorderPane.setRight(emergencyStopPane);
+
 		return bottomBorderPane;
 	}
 

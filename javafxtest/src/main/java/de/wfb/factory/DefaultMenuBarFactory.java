@@ -86,6 +86,15 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 	@Autowired
 	private RoutingControllerMenuItem routingControllerMenuItem;
 
+	@Autowired
+	private StartMenuItem startMenuItem;
+
+	@Autowired
+	private StopMenuItem stopMenuItem;
+
+	@Autowired
+	private ResetMenuItem resetMenuItem;
+
 	@Override
 	public MenuBar create(final Object... args) throws Exception {
 
@@ -415,7 +424,10 @@ public class DefaultMenuBarFactory implements Factory<MenuBar> {
 				);
 
 		routingControllerMenu.getItems().addAll(
-				routingControllerMenuItem
+				routingControllerMenuItem,
+				startMenuItem,
+				stopMenuItem,
+				resetMenuItem
 				);
 
 		if (UIConstants.SIMPLE_UI) {

@@ -1,11 +1,11 @@
 package de.wbi.model.serializer;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import de.wfb.model.locomotive.DefaultLocomotive;
 import de.wfb.model.node.GraphNode;
 import de.wfb.rail.service.Route;
-import junit.framework.Assert;
 
 public class DefaultRouteSerializerTest {
 
